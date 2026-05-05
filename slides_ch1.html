@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 1 — พื้นฐาน C | ก๋วยเตี๋ยวเรือ Programming</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="slide.css">
+<style>
+/* Chapter 1 accent — forest green */
+:root { --ca:#1a6b4a; --cal:#e6f4ee; --cam:#4caf84; }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- ════════════════════════════════════
+  SLIDE 0 — COVER
+════════════════════════════════════ -->
+<div class="slide active" data-ch="0">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · ภาษา C</div>
+        <div class="cover-title">บทที่ 1<br><em>พื้นฐาน C</em></div>
+        <div class="cover-subtitle">รู้จักภาษา C ตั้งแต่ต้น — โครงสร้างโปรแกรม ตัวแปร ชนิดข้อมูล และการรับ-แสดงผล</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>โปรแกรม C ทำงานยังไง?</div>
+          <div class="topic-row"><div class="topic-dot"></div>Variables &amp; Data Types</div>
+          <div class="topic-row"><div class="topic-dot"></div>Input / Output ด้วย printf &amp; scanf</div>
+          <div class="topic-row"><div class="topic-dot"></div>Operators &amp; Expressions</div>
+          <div class="topic-row"><div class="topic-dot"></div>Comments &amp; Best Practices</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">01</div>
+        <div class="cover-badge">CHAPTER 1</div>
+        <div class="cover-slides-count">12 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SLIDE 1 — C คืออะไร + Compilation
+════════════════════════════════════ -->
+<div class="slide" data-ch="1">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · แนวคิดหลัก</div>
+    <div class="slide-h1">C คืออะไร? <em>ทำงานยังไง?</em></div>
+    <div class="slide-lead">ภาษา C เขียนแล้วต้อง compile ก่อน — computer ไม่อ่านภาษาคนได้โดยตรง</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🔑 ทำไมต้องเรียน C?</div>
+          <div class="box-body">C อยู่เบื้องหลัง OS, embedded systems, และ compiler ทุกตัว เข้าใจ C = เข้าใจว่า computer ทำงานยังไงจริงๆ</div>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-n">1</div>
+            <div class="step-body"><strong>เขียน code</strong> ในไฟล์ <code>.c</code><small>เช่น hello.c ด้วย editor ใดก็ได้</small></div>
+          </div>
+          <div class="step">
+            <div class="step-n">2</div>
+            <div class="step-body"><strong>Compile</strong> ด้วย <code>gcc hello.c -o hello</code><small>แปลงเป็น machine code ที่ CPU เข้าใจได้</small></div>
+          </div>
+          <div class="step">
+            <div class="step-n">3</div>
+            <div class="step-body"><strong>Run</strong> ด้วย <code>./hello</code><small>โปรแกรมทำงานจริงๆ เห็นผลลัพธ์</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">hello.c — โปรแกรมแรก</div>
+        <div class="code"><span class="inc">#include &lt;stdio.h&gt;</span>  <span class="cm">/* บอกว่าใช้ stdio */</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {            <span class="cm">/* จุดเริ่มโปรแกรม */</span>
+    <span class="fn">printf</span>(<span class="st">"Hello!\n"</span>); <span class="cm">/* พิมพ์ข้อความ */</span>
+    <span class="kw">return</span> <span class="nm">0</span>;           <span class="cm">/* จบสำเร็จ */</span>
+}</div>
+        <div class="box amber">
+          <div class="box-title">⚠️ สิ่งที่ขาดไม่ได้</div>
+          <div class="box-body">ทุกโปรแกรม C ต้องมี <code>main()</code> — เป็น entry point ที่ OS จะเรียกก่อนเสมอ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SLIDE 2 — Variables & Data Types
+════════════════════════════════════ -->
+<div class="slide" data-ch="2">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Variables</div>
+    <div class="slide-h1">ตัวแปร คือ <em>"กล่องเก็บของ"</em></div>
+    <div class="slide-lead">ก่อนใช้ตัวแปรใน C ต้องประกาศ (declare) ก่อนเสมอ — บอกว่ากล่องใบนี้เก็บของประเภทอะไร</div>
+
+    <div class="split w60">
+      <div class="split-col">
+        <table class="kv-table">
+          <thead><tr><th>Type</th><th>เก็บอะไร</th><th>ขนาด</th><th>ตัวอย่าง</th></tr></thead>
+          <tbody>
+            <tr><td>int</td><td>จำนวนเต็ม</td><td>4 bytes</td><td><code>int age = 20;</code></td></tr>
+            <tr><td>float</td><td>ทศนิยม (~7 หลัก)</td><td>4 bytes</td><td><code>float gpa = 3.5;</code></td></tr>
+            <tr><td>double</td><td>ทศนิยม (~15 หลัก)</td><td>8 bytes</td><td><code>double pi = 3.14159;</code></td></tr>
+            <tr><td>char</td><td>ตัวอักษร 1 ตัว</td><td>1 byte</td><td><code>char g = 'A';</code></td></tr>
+          </tbody>
+        </table>
+        <div class="box red">
+          <div class="box-title">❌ ข้อผิดพลาดที่พบบ่อย</div>
+          <div class="box-body">ใช้ตัวแปรก่อนประกาศ หรือเขียน <code>Int</code> แทน <code>int</code> (case-sensitive!)</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">การประกาศและใช้งาน</div>
+        <div class="code"><span class="kw">int</span>    age    = <span class="nm">20</span>;
+<span class="kw">float</span>  gpa    = <span class="nm">3.5</span>;
+<span class="kw">char</span>   grade  = <span class="st">'A'</span>;
+<span class="kw">double</span> salary = <span class="nm">25000.75</span>;
+
+<span class="cm">/* ประกาศก่อน กำหนดค่าทีหลัง */</span>
+<span class="kw">int</span> score;
+score = <span class="nm">85</span>;
+
+<span class="cm">/* ประกาศหลายตัวพร้อมกัน */</span>
+<span class="kw">int</span> x = <span class="nm">0</span>, y = <span class="nm">0</span>, z = <span class="nm">10</span>;</div>
+        <div class="mem-wrap">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:8px;letter-spacing:.5px">MEMORY</div>
+          <div class="mem-row">
+            <div class="mem-name">age</div>
+            <div class="mem-cells"><div class="mem-cell hi"><div class="mc-val">20</div><div class="mc-type">int</div></div></div>
+          </div>
+          <div class="mem-row">
+            <div class="mem-name">grade</div>
+            <div class="mem-cells"><div class="mem-cell"><div class="mc-val">'A'</div><div class="mc-type">char</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SLIDE 3 — printf & scanf
+════════════════════════════════════ -->
+<div class="slide" data-ch="3">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Input / Output</div>
+    <div class="slide-h1"><em>printf</em> แสดงผล · <em>scanf</em> รับค่า</div>
+    <div class="slide-lead">สองฟังก์ชันนี้ใช้บ่อยที่สุดใน C ทั้งคู่อยู่ใน <code>&lt;stdio.h&gt;</code></div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">Format Specifiers — สำคัญมาก!</div>
+          <div class="box-body">
+            <code>%d</code> — int &nbsp;&nbsp; <code>%f</code> — float<br>
+            <code>%lf</code> — double &nbsp;&nbsp; <code>%c</code> — char<br>
+            <code>%s</code> — string &nbsp;&nbsp; <code>%%</code> — พิมพ์ %<br><br>
+            <code>%.2f</code> — ทศนิยม 2 ตำแหน่ง<br>
+            <code>%5d</code> — กว้าง 5 ช่อง จัดขวา
+          </div>
+        </div>
+        <div class="box red">
+          <div class="box-title">⚠️ scanf ต้องใช้ &amp;</div>
+          <div class="box-body"><code>&amp;n</code> = "ตำแหน่งใน memory ของ n" ถ้าลืม <code>&amp;</code> โปรแกรม crash ทันที</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">ตัวอย่างครบ</div>
+        <div class="code"><span class="inc">#include &lt;stdio.h&gt;</span>
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span>   age;
+    <span class="kw">float</span> gpa;
+
+    <span class="fn">printf</span>(<span class="st">"Enter age: "</span>);
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, <span class="op">&amp;</span>age);   <span class="cm">/* ต้องมี & */</span>
+
+    <span class="fn">printf</span>(<span class="st">"Enter GPA: "</span>);
+    <span class="fn">scanf</span>(<span class="st">"%f"</span>, <span class="op">&amp;</span>gpa);
+
+    <span class="fn">printf</span>(<span class="st">"Age=%d GPA=%.2f\n"</span>,
+           age, gpa);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</div>
+        <div class="code good">Output (ถ้าใส่ 20 และ 3.5):
+Age=20 GPA=3.50</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SLIDE 4 — Operators
+════════════════════════════════════ -->
+<div class="slide" data-ch="4">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Operators</div>
+    <div class="slide-h1">Operators — <em>สัญลักษณ์คำนวณ</em></div>
+    <div class="slide-lead">C มี operator หลายประเภท ที่สำคัญคือ arithmetic, comparison, logical และ assignment</div>
+
+    <div class="split">
+      <div class="split-col">
+        <table class="kv-table">
+          <thead><tr><th>Operator</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr></thead>
+          <tbody>
+            <tr><td>+ - * /</td><td>บวก ลบ คูณ หาร</td><td><code>10 / 3 = 3</code> (int!)</td></tr>
+            <tr><td>%</td><td>เศษหาร (modulo)</td><td><code>10 % 3 = 1</code></td></tr>
+            <tr><td>== != &lt; &gt;</td><td>เปรียบเทียบ</td><td><code>x == 5</code> → 0 หรือ 1</td></tr>
+            <tr><td>&amp;&amp; ‖</td><td>AND / OR</td><td><code>x&gt;0 &amp;&amp; x&lt;10</code></td></tr>
+            <tr><td>!</td><td>NOT</td><td><code>!0</code> = 1</td></tr>
+            <tr><td>++ --</td><td>เพิ่ม/ลด 1</td><td><code>x++</code> / <code>--x</code></td></tr>
+            <tr><td>+= -=</td><td>สะสม</td><td><code>x += 5</code> = <code>x = x+5</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="split-col">
+        <div class="code-label">จุดสำคัญ — Integer Division</div>
+        <div class="code bad"><span class="cm">/* ⚠️ int หาร int = int เสมอ */</span>
+<span class="kw">int</span> a = <span class="nm">10</span>, b = <span class="nm">3</span>;
+<span class="fn">printf</span>(<span class="st">"%d"</span>, a / b);   <span class="cm">/* = 3 ไม่ใช่ 3.33 */</span></div>
+        <div class="code good"><span class="cm">/* ✅ cast ให้เป็น float ก่อน */</span>
+<span class="fn">printf</span>(<span class="st">"%.2f"</span>, (<span class="kw">float</span>)a / b); <span class="cm">/* = 3.33 */</span></div>
+        <div class="code-label">Pre vs Post Increment</div>
+        <div class="code"><span class="kw">int</span> x = <span class="nm">5</span>;
+<span class="fn">printf</span>(<span class="st">"%d"</span>, x++); <span class="cm">/* พิมพ์ 5 แล้ว x=6 */</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>, ++x); <span class="cm">/* x=7 แล้วพิมพ์ 7 */</span></div>
+        <div class="box amber">
+          <div class="box-title">🎯 กฎ Operator Precedence</div>
+          <div class="box-body"><code>*</code> <code>/</code> <code>%</code> ก่อน → <code>+</code> <code>-</code><br>ถ้าไม่แน่ใจ ใส่วงเล็บ <code>()</code> ดีที่สุด</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SLIDE 5 — Constants & Comments
+════════════════════════════════════ -->
+<div class="slide" data-ch="5">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Constants &amp; Comments</div>
+    <div class="slide-h1">Constants — <em>ค่าที่เปลี่ยนไม่ได้</em></div>
+    <div class="slide-lead">ใช้ <code>const</code> หรือ <code>#define</code> เพื่อป้องกันการเปลี่ยนค่าโดยไม่ตั้งใจ และทำให้ code อ่านง่ายขึ้น</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">2 วิธีประกาศค่าคงที่</div>
+        <div class="code"><span class="cm">/* วิธีที่ 1: const variable */</span>
+<span class="kw">const</span> <span class="kw">float</span> PI = <span class="nm">3.14159</span>;
+<span class="kw">const</span> <span class="kw">int</span>   MAX = <span class="nm">100</span>;
+
+<span class="cm">/* วิธีที่ 2: preprocessor define */</span>
+<span class="inc">#define</span> TAX_RATE  <span class="nm">0.07</span>
+<span class="inc">#define</span> BANK_NAME <span class="st">"KTB"</span>
+
+<span class="cm">/* ลองแก้ค่า const จะ error! */</span>
+PI = <span class="nm">3.0</span>; <span class="cm">/* ❌ error: const */</span></div>
+
+        <div class="code-label">Comments — อธิบาย code</div>
+        <div class="code"><span class="cm">// Single-line comment</span>
+
+<span class="cm">/*
+   Multi-line comment
+   อธิบายได้หลายบรรทัด
+*/</span>
+
+<span class="cm">/* ✅ comment ที่ดี: อธิบาย "ทำไม" */</span>
+score += <span class="nm">10</span>; <span class="cm">/* bonus for first login */</span>
+
+<span class="cm">/* ❌ comment ที่ไม่มีประโยชน์ */</span>
+x = x + <span class="nm">1</span>; <span class="cm">/* บวก 1 ให้ x */</span></div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">ต่างกันยังไง? const vs #define</div>
+          <div class="box-body">
+            <strong>const</strong> — มี type, compiler ตรวจสอบ error ได้<br><br>
+            <strong>#define</strong> — แทนที่ตัวอักษรก่อน compile ไม่มี type, เร็วกว่าเล็กน้อย<br><br>
+            ใน C สมัยใหม่แนะนำใช้ <code>const</code> เพราะปลอดภัยกว่า
+          </div>
+        </div>
+        <div class="usecase">
+          <div class="usecase-label">🏦 Use Case — ธนาคาร</div>
+          <div class="usecase-title">อัตราดอกเบี้ยคงที่</div>
+          <div class="usecase-body">ระบบสินเชื่อ KTB ใช้ <code>const float INTEREST_RATE = 0.05</code> แทน <code>0.05</code> กระจายอยู่ใน code — ถ้าอัตราเปลี่ยนแก้ที่เดียวได้เลย</div>
+        </div>
+        <div class="think">
+          <div class="think-q">ถ้าเขียน <code>#define MAX 100</code> แล้วเขียน <code>MAX = 50;</code> จะเกิดอะไรขึ้น? ทำไม?</div>
+          <div class="think-hint">💡 #define ไม่ใช่ตัวแปร — มันแค่แทนที่ข้อความก่อน compile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SLIDE 6 — Type Conversion
+════════════════════════════════════ -->
+<div class="slide" data-ch="6">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Type Conversion</div>
+    <div class="slide-h1">Type Conversion — <em>แปลงชนิดข้อมูล</em></div>
+    <div class="slide-lead">C แปลงชนิดข้อมูลได้ 2 แบบ — อัตโนมัติ (implicit) และแบบบังคับ (explicit cast) ต้องระวัง implicit เพราะทำให้เกิด bug ที่หาไม่เจอ</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">Implicit — C แปลงให้อัตโนมัติ</div>
+        <div class="code note"><span class="kw">int</span>    i = <span class="nm">5</span>;
+<span class="kw">float</span>  f = i;     <span class="cm">/* int → float = 5.0 ✅ */</span>
+
+<span class="kw">float</span>  x = <span class="nm">3.9</span>;
+<span class="kw">int</span>    n = x;     <span class="cm">/* float → int = 3 ⚠️ ตัดทศนิยม! */</span>
+
+<span class="kw">int</span> a = <span class="nm">10</span>, b = <span class="nm">3</span>;
+<span class="kw">float</span> r = a / b;  <span class="cm">/* = 3.0 ⚠️ หารก่อน แล้วค่อยแปลง */</span></div>
+
+        <div class="code-label">Explicit Cast — บังคับแปลง</div>
+        <div class="code good"><span class="kw">int</span> a = <span class="nm">10</span>, b = <span class="nm">3</span>;
+
+<span class="cm">/* cast ก่อนหาร */</span>
+<span class="kw">float</span> r = (<span class="kw">float</span>)a / b;  <span class="cm">/* = 3.33 ✅ */</span>
+
+<span class="cm">/* char ↔ int ใช้ได้เลย */</span>
+<span class="kw">char</span> c = <span class="st">'A'</span>;
+<span class="fn">printf</span>(<span class="st">"%d"</span>, c);        <span class="cm">/* = 65 (ASCII) */</span></div>
+      </div>
+      <div class="split-col">
+        <div class="box amber">
+          <div class="box-title">⚠️ Bug ที่เจอบ่อย</div>
+          <div class="box-body">
+            <code>int a=7, b=2;</code><br>
+            <code>float r = a/b;</code><br><br>
+            คิดว่าจะได้ <strong>3.5</strong> แต่ได้ <strong>3.0</strong><br><br>
+            เพราะ C หาร int/int ก่อน = 3<br>
+            แล้วค่อย assign ให้ float = 3.0<br><br>
+            แก้ด้วย: <code>float r = (float)a/b;</code>
+          </div>
+        </div>
+        <div class="box blue">
+          <div class="box-title">ASCII Table — ควรรู้</div>
+          <div class="box-body">
+            <code>'A'</code> = 65 &nbsp; <code>'Z'</code> = 90<br>
+            <code>'a'</code> = 97 &nbsp; <code>'z'</code> = 122<br>
+            <code>'0'</code> = 48 &nbsp; <code>'9'</code> = 57<br><br>
+            ดังนั้น <code>'A' + 1</code> = <code>'B'</code> ใช้ได้เลย!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SLIDE 7 — Use Case: ระบบธนาคาร
+════════════════════════════════════ -->
+<div class="slide" data-ch="7">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Use Case</div>
+    <div class="slide-h1">🏦 <em>Use Case จริง</em> — ระบบธนาคาร</div>
+    <div class="slide-lead">เนื้อหาบทที่ 1 ทั้งหมดประกอบกันสร้างโปรแกรมจริงได้แล้ว</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="usecase" style="border-left-color:var(--ca)">
+          <div class="usecase-label" style="color:var(--ca)">🎯 โจทย์ระบบจริง</div>
+          <div class="usecase-title">คำนวณดอกเบี้ยเงินฝาก</div>
+          <div class="usecase-body">ระบบรับยอดเงินต้น อัตราดอกเบี้ยต่อปี และจำนวนปี แล้วคำนวณดอกเบี้ยและยอดรวม<br><br>
+          สูตร: <strong>ดอกเบี้ย = เงินต้น × อัตรา × ปี</strong></div>
+        </div>
+        <div class="box">
+          <div class="box-title">ต้องใช้อะไรจากบทที่ 1</div>
+          <div class="box-body">
+            ✅ <code>double</code> เพราะเงินต้องละเอียด<br>
+            ✅ <code>scanf</code> รับยอดเงินและอัตรา<br>
+            ✅ Arithmetic operators คำนวณ<br>
+            ✅ <code>const</code> สำหรับ rate คงที่<br>
+            ✅ <code>printf("%.2f")</code> แสดงผล
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">โปรแกรมเต็ม</div>
+        <div class="code"><span class="inc">#include &lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">double</span> principal, rate, years;
+    <span class="kw">double</span> interest, total;
+
+    <span class="fn">printf</span>(<span class="st">"เงินต้น (บาท): "</span>);
+    <span class="fn">scanf</span>(<span class="st">"%lf"</span>, <span class="op">&amp;</span>principal);
+
+    <span class="fn">printf</span>(<span class="st">"อัตราดอกเบี้ย (%%/ปี): "</span>);
+    <span class="fn">scanf</span>(<span class="st">"%lf"</span>, <span class="op">&amp;</span>rate);
+
+    <span class="fn">printf</span>(<span class="st">"จำนวนปี: "</span>);
+    <span class="fn">scanf</span>(<span class="st">"%lf"</span>, <span class="op">&amp;</span>years);
+
+    interest = principal * (rate/<span class="nm">100</span>) * years;
+    total    = principal + interest;
+
+    <span class="fn">printf</span>(<span class="st">"\n=== สรุป ===\n"</span>);
+    <span class="fn">printf</span>(<span class="st">"ดอกเบี้ย : %.2f บาท\n"</span>, interest);
+    <span class="fn">printf</span>(<span class="st">"ยอดรวม  : %.2f บาท\n"</span>, total);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SLIDE 8 — Think! ก่อนโจทย์
+════════════════════════════════════ -->
+<div class="slide" data-ch="8">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 1 · Think!</div>
+    <div class="slide-h1">คิดก่อน <em>เขียน</em></div>
+    <div class="slide-lead">อ่านแต่ละโจทย์แล้วตอบในใจก่อนกด เฉลย — ฝึก logic ก่อนพิมพ์ code จริง</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">1. ผลลัพธ์ของ <code>printf("%d", 17 % 5);</code> คือเท่าไหร่?</div>
+          <div class="think-hint">💡 % คือเศษจากการหาร — 17 ÷ 5 = 3 เศษ ?</div>
+        </div>
+        <div class="think">
+          <div class="think-q">2. ถ้าประกาศ <code>int x = 3.9;</code> ค่าของ x จะเป็นเท่าไหร่? ทำไม?</div>
+          <div class="think-hint">💡 int ไม่มีทศนิยม — จะเกิด implicit conversion</div>
+        </div>
+        <div class="think">
+          <div class="think-q">3. <code>printf("%d", 5 == 5);</code> จะพิมพ์อะไร?</div>
+          <div class="think-hint">💡 ใน C ผลของ comparison คือ 0 (false) หรือ 1 (true)</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">4. จะใช้ type อะไรเก็บ: เลขบัตรประชาชน 13 หลัก?</div>
+          <div class="think-hint">💡 int เก็บได้ ~2 billion — 13 หลักเกินแน่นอน ลองคิด long long หรือ string</div>
+        </div>
+        <div class="think">
+          <div class="think-q">5. ถ้า <code>int a=5; printf("%d", a++);</code> แล้ว <code>printf("%d", a);</code> อีกครั้ง จะได้ค่าอะไรทั้งสอง?</div>
+          <div class="think-hint">💡 post-increment ใช้ค่าเดิมก่อน แล้วค่อยเพิ่ม</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SLIDE 9 — โจทย์ 1: Fill in
+════════════════════════════════════ -->
+<div class="slide" data-ch="9">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · โจทย์ฝึก</div>
+    <div class="slide-h1">โจทย์ <em>เติมคำ</em></div>
+    <div class="slide-lead">เติมส่วนที่หายไปให้ code ทำงานถูกต้อง — ลองคิดก่อนกด Check</div>
+
+    <!-- Q1 -->
+    <div class="exercise" id="eq1">
+      <div class="ex-label">โจทย์ 1 — Format Specifier</div>
+      <div class="ex-q">ต้องการพิมพ์ตัวเลข <strong>3.14</strong> จาก <code>float pi = 3.14159;</code> ให้มีทศนิยม 2 ตำแหน่ง
+      <br>เติม format specifier ที่ถูกต้องใน <code>printf("___", pi);</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in1" placeholder='เช่น "%.2f"' type="text">
+        <button class="ex-btn" onclick="checkFill('in1','%.2f',['%.2f'],['%f','%d'],
+          'ถูก! %.2f แปลว่า float ทศนิยม 2 ตำแหน่ง',
+          'ลองใหม่ — ต้องการ float format ที่บอกจำนวนทศนิยมด้วย')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="exercise" id="eq2">
+      <div class="ex-label">โจทย์ 2 — scanf</div>
+      <div class="ex-q">ต้องการรับค่า int จากผู้ใช้ไปเก็บในตัวแปร <code>age</code>
+      <br>เติมส่วนที่ขาดหายใน <code>scanf("%d", ___age);</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in2" placeholder="เติม operator" type="text">
+        <button class="ex-btn" onclick="checkFill('in2','&',['&','& '],['&&'],
+          'ถูก! & (address-of) บอก scanf ตำแหน่ง memory ของ age',
+          'ลองใหม่ — scanf ต้องรู้ว่าจะเก็บค่าไว้ที่ไหนใน memory')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="exercise" id="eq3">
+      <div class="ex-label">โจทย์ 3 — Integer Division</div>
+      <div class="ex-q">ต้องการให้ <code>result</code> มีค่า <strong>2.5</strong> จาก <code>int a=5, b=2;</code>
+      <br>เติมให้ถูก: <code>float result = ___ a / b;</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in3" placeholder="explicit cast" type="text">
+        <button class="ex-btn" onclick="checkFill('in3','(float)',['(float)','( float )'],['float'],
+          'ถูก! (float) cast ทำให้ a กลายเป็น float ก่อนหาร → 2.5',
+          'ลองใหม่ — ต้องใช้ cast operator รูปแบบ (type)')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SLIDE 10 — โจทย์ 2: Trace
+════════════════════════════════════ -->
+<div class="slide" data-ch="10">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · โจทย์ Trace</div>
+    <div class="slide-h1">โจทย์ <em>อ่าน code</em> ทายผลลัพธ์</div>
+    <div class="slide-lead">อ่าน code แล้วเลือกผลลัพธ์ที่ถูก — ไม่มีการรันจริง ฝึก trace ในหัว</div>
+
+    <!-- Q1 -->
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — Output คืออะไร?</div>
+      <div class="code" style="margin-bottom:10px"><span class="kw">int</span> x = <span class="nm">10</span>;
+<span class="fn">printf</span>(<span class="st">"%d %d %d"</span>, x, x+<span class="nm">1</span>, x*<span class="nm">2</span>);</div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" onclick="pickMC('mc1',0,1,'10 11 20 ✓ — x=10, x+1=11, x*2=20')">
+          <span class="mc-ltr">A</span> 10 11 20
+        </div>
+        <div class="mc-opt" onclick="pickMC('mc1',1,1,'10 11 20 ✓ — x=10, x+1=11, x*2=20')">
+          <span class="mc-ltr">B</span> 10 10 10
+        </div>
+        <div class="mc-opt" onclick="pickMC('mc1',2,1,'10 11 20 ✓ — x=10, x+1=11, x*2=20')">
+          <span class="mc-ltr">C</span> 11 12 20
+        </div>
+        <div class="mc-opt" onclick="pickMC('mc1',3,1,'10 11 20 ✓ — x=10, x+1=11, x*2=20')">
+          <span class="mc-ltr">D</span> 10 11 21
+        </div>
+      </div>
+      <div class="ex-feedback" id="mc1-fb"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — ค่าของ z คือ?</div>
+      <div class="code" style="margin-bottom:10px"><span class="kw">int</span> a = <span class="nm">7</span>, b = <span class="nm">3</span>;
+<span class="kw">int</span> z = a % b + a / b;</div>
+      <div class="mc-opts" id="mc2">
+        <div class="mc-opt" onclick="pickMC('mc2',0,2,'ถูก! 7%3=1, 7/3=2 (int div), 1+2=3')">
+          <span class="mc-ltr">A</span> 1
+        </div>
+        <div class="mc-opt" onclick="pickMC('mc2',1,2,'ถูก! 7%3=1, 7/3=2 (int div), 1+2=3')">
+          <span class="mc-ltr">B</span> 2
+        </div>
+        <div class="mc-opt" onclick="pickMC('mc2',2,2,'ถูก! 7%3=1, 7/3=2 (int div), 1+2=3')">
+          <span class="mc-ltr">C</span> 3
+        </div>
+        <div class="mc-opt" onclick="pickMC('mc2',3,2,'ถูก! 7%3=1, 7/3=2 (int div), 1+2=3')">
+          <span class="mc-ltr">D</span> 4
+        </div>
+      </div>
+      <div class="ex-feedback" id="mc2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SLIDE 11 — สรุปบทที่ 1
+════════════════════════════════════ -->
+<div class="slide" data-ch="11">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 1 · สรุป</div>
+    <div class="slide-h1">สรุป <em>บทที่ 1</em></div>
+    <div class="slide-lead">ก่อนไปบทถัดไป ตรวจสอบให้แน่ใจว่าเข้าใจทุกจุดเหล่านี้</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="steps">
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body">โปรแกรม C ต้องมี <code>main()</code> และ compile ก่อน run<small>Write → Compile (gcc) → Execute</small></div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body">Data types: <code>int</code> <code>float</code> <code>double</code> <code>char</code><small>เลือก type ให้เหมาะกับข้อมูลที่จะเก็บ</small></div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body">Format specifier: <code>%d</code> <code>%f</code> <code>%lf</code> <code>%c</code><small>ต้องตรงกับ type ของตัวแปรที่ใช้</small></div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body"><code>scanf</code> ต้องใส่ <code>&amp;</code> เสมอ<small>ยกเว้น string (char array) ที่ไม่ต้อง</small></div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body"><code>int/int = int</code> เสมอ — ใช้ <code>(float)</code> cast ถ้าต้องการทศนิยม<small>bug ที่เจอบ่อยที่สุดในบทนี้</small></div></div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🚀 พร้อมไปบทที่ 2?</div>
+          <div class="box-body">
+            บทที่ 2 — <strong>Control Flow</strong><br>
+            if / else if / else / switch<br><br>
+            ต้องการ: เข้าใจ operators เปรียบเทียบ <code>==</code> <code>!=</code> <code>&gt;</code> <code>&lt;</code> และ logical <code>&amp;&amp;</code> <code>||</code> จากบทนี้ก่อน
+          </div>
+        </div>
+        <div class="exercise">
+          <div class="ex-label">🏆 Challenge โจทย์ปิดบท</div>
+          <div class="ex-q" style="color:#dde3f0">เขียนโปรแกรมรับ <strong>น้ำหนัก (kg)</strong> และ <strong>ส่วนสูง (m)</strong> แล้วคำนวณและแสดง BMI = น้ำหนัก ÷ (ส่วนสูง²) ให้มีทศนิยม 2 ตำแหน่ง ใช้เฉพาะความรู้จากบทที่ 1 เท่านั้น</div>
+          <div style="font-size:12px;color:#4a5568;margin-top:8px;font-family:var(--mono)">// variables + scanf + arithmetic + printf("%.2f")</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<!-- NAV -->
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 1 — พื้นฐาน C</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover','C คืออะไร','Variables','printf & scanf',
+  'Operators','Constants','Type Conversion',
+  'Use Case','Think!','โจทย์เติมคำ','โจทย์ Trace','สรุปบทที่ 1'
+];
+</script>
+<script src="slide-engine.js"></script>
+</body>
+</html>

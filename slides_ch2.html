@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 2 — Control Flow | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="slide.css">
+<style>
+/* Chapter 2 accent — indigo blue */
+:root { --ca:#2c4ea0; --cal:#e8edf9; --cam:#5b7fd4; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════════ SLIDE 0 — COVER ════════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · ภาษา C</div>
+        <div class="cover-title">บทที่ 2<br><em>Control Flow</em></div>
+        <div class="cover-subtitle">ควบคุมทิศทางการทำงานของโปรแกรม — ให้ทำหรือข้ามตามเงื่อนไข</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>if / else if / else</div>
+          <div class="topic-row"><div class="topic-dot"></div>Nested conditions</div>
+          <div class="topic-row"><div class="topic-dot"></div>switch / case</div>
+          <div class="topic-row"><div class="topic-dot"></div>Ternary operator ?:</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">02</div>
+        <div class="cover-badge">CHAPTER 2</div>
+        <div class="cover-slides-count">12 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 1 — if / else ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · if / else</div>
+    <div class="slide-h1"><em>if</em> ตรวจเงื่อนไข — ทำหรือข้าม</div>
+    <div class="slide-lead">โปรแกรมทำงานตามลำดับบรรทัด แต่ if ทำให้ "เลือก" ได้ว่าจะทำส่วนไหนขึ้นอยู่กับเงื่อนไข</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">โครงสร้าง if-else</div>
+          <div class="box-body">
+            <code>if (เงื่อนไข) { ... }</code><br>
+            เงื่อนไขเป็น <strong>true (≠0)</strong> → ทำ block นั้น<br>
+            เงื่อนไขเป็น <strong>false (=0)</strong> → ข้ามไป<br><br>
+            <code>else</code> รับ "กรณีที่เหลือทั้งหมด" หลังจาก if ไม่ผ่าน
+          </div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div class="step-body">ตรวจ if ก่อนเสมอ<small>ถ้าจริง ทำแล้วข้ามทุก else ถัดไป</small></div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-body">else if ตรวจถัดไป<small>ตรวจเฉพาะเมื่อ if บนไม่ผ่าน</small></div></div>
+          <div class="step"><div class="step-n">3</div><div class="step-body">else รับกรณีที่เหลือ<small>ไม่ต้องเขียนเงื่อนไข — ถ้าถึงตรงนี้แสดงว่าทุก if ข้างบนไม่ผ่านแล้ว</small></div></div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">ตัวอย่าง — ตรวจเกรด</div>
+        <div class="code"><span class="kw">int</span> score = <span class="nm">75</span>;
+
+<span class="kw">if</span> (score >= <span class="nm">80</span>) {
+    <span class="fn">printf</span>(<span class="st">"Grade: A or B\n"</span>);
+} <span class="kw">else if</span> (score >= <span class="nm">70</span>) {
+    <span class="fn">printf</span>(<span class="st">"Grade: C\n"</span>);   <span class="cm">/* ← runs */</span>
+} <span class="kw">else if</span> (score >= <span class="nm">60</span>) {
+    <span class="fn">printf</span>(<span class="st">"Grade: D\n"</span>);
+} <span class="kw">else</span> {
+    <span class="fn">printf</span>(<span class="st">"Grade: F\n"</span>);
+}</div>
+        <div class="box amber">
+          <div class="box-title">⚠️ = vs ==</div>
+          <div class="box-body"><code>if (x = 5)</code> ← กำหนดค่า ผลเป็น true เสมอ (bug!)<br><code>if (x == 5)</code> ← เปรียบเทียบ ✅</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 2 — Logical Operators ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Logical Operators</div>
+    <div class="slide-h1">เงื่อนไข <em>ซับซ้อน</em> ด้วย &amp;&amp; || !</div>
+    <div class="slide-lead">รวมหลายเงื่อนไขเข้าด้วยกันด้วย logical operators — ใช้บ่อยมากใน if</div>
+
+    <div class="split">
+      <div class="split-col">
+        <table class="kv-table">
+          <thead><tr><th>Operator</th><th>ความหมาย</th><th>True เมื่อ</th></tr></thead>
+          <tbody>
+            <tr><td>&amp;&amp;</td><td>AND</td><td>ทั้งสองเงื่อนไขเป็น true</td></tr>
+            <tr><td>||</td><td>OR</td><td>อย่างน้อยหนึ่งเป็น true</td></tr>
+            <tr><td>!</td><td>NOT</td><td>กลับค่า — true→false, false→true</td></tr>
+          </tbody>
+        </table>
+        <div class="code-label">ตัวอย่างรวมเงื่อนไข</div>
+        <div class="code"><span class="cm">/* ช่วงอายุ 18-60 */</span>
+<span class="kw">if</span> (age >= <span class="nm">18</span> <span class="op">&amp;&amp;</span> age <= <span class="nm">60</span>) { ... }
+
+<span class="cm">/* วันหยุด */</span>
+<span class="kw">if</span> (day == <span class="nm">6</span> <span class="op">||</span> day == <span class="nm">7</span>) { ... }
+
+<span class="cm">/* ไม่ใช่ admin */</span>
+<span class="kw">if</span> (<span class="op">!</span>isAdmin) { ... }</div>
+      </div>
+      <div class="split-col">
+        <div class="box blue">
+          <div class="box-title">Short-circuit Evaluation</div>
+          <div class="box-body">
+            <code>A &amp;&amp; B</code> — ถ้า A เป็น false ไม่ตรวจ B เลย<br><br>
+            <code>A || B</code> — ถ้า A เป็น true ไม่ตรวจ B เลย<br><br>
+            ประโยชน์: ป้องกัน null pointer<br>
+            <code>if (p != NULL &amp;&amp; *p == 5)</code>
+          </div>
+        </div>
+        <div class="think">
+          <div class="think-q">ผลลัพธ์ของ <code>if (5 &gt; 3 || 1/0 == 0)</code> คืออะไร? โปรแกรม crash ไหม?</div>
+          <div class="think-hint">💡 Short-circuit — ถ้าส่วนแรก true แล้ว ส่วนหลังจะถูก evaluate หรือเปล่า?</div>
+        </div>
+        <div class="usecase">
+          <div class="usecase-label">🏦 Use Case — KTB</div>
+          <div class="usecase-title">ตรวจสอบสิทธิ์กู้เงิน</div>
+          <div class="usecase-body"><code>if (age >= 20 &amp;&amp; income >= 15000 &amp;&amp; creditScore >= 600)</code> — ต้องผ่านทุกเงื่อนไขพร้อมกันจึงอนุมัติสินเชื่อ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 3 — Nested if ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Nested Conditions</div>
+    <div class="slide-h1">if <em>ซ้อน</em> if — เงื่อนไขหลายชั้น</div>
+    <div class="slide-lead">บางครั้งต้องตรวจเงื่อนไขใน block ของเงื่อนไขอื่น — แต่ถ้าซ้อนลึกมากให้คิดวิธีเขียน if-else if แทน</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="code-label">Nested if — อ่านได้แต่ระวัง indentation</div>
+        <div class="code"><span class="kw">int</span> score = <span class="nm">85</span>;
+<span class="kw">int</span> attended = <span class="nm">1</span>;  <span class="cm">/* 1=yes */</span>
+
+<span class="kw">if</span> (score >= <span class="nm">60</span>) {
+    <span class="kw">if</span> (attended) {
+        <span class="fn">printf</span>(<span class="st">"ผ่าน ✓\n"</span>);
+    } <span class="kw">else</span> {
+        <span class="fn">printf</span>(<span class="st">"ขาดสอบ\n"</span>);
+    }
+} <span class="kw">else</span> {
+    <span class="fn">printf</span>(<span class="st">"สอบตก\n"</span>);
+}</div>
+        <div class="code-label">เขียนใหม่ด้วย &amp;&amp; — อ่านง่ายกว่า</div>
+        <div class="code good"><span class="kw">if</span> (score >= <span class="nm">60</span> <span class="op">&amp;&amp;</span> attended)
+    <span class="fn">printf</span>(<span class="st">"ผ่าน ✓\n"</span>);
+<span class="kw">else if</span> (score >= <span class="nm">60</span>)
+    <span class="fn">printf</span>(<span class="st">"ขาดสอบ\n"</span>);
+<span class="kw">else</span>
+    <span class="fn">printf</span>(<span class="st">"สอบตก\n"</span>);</div>
+      </div>
+      <div class="split-col">
+        <div class="box amber">
+          <div class="box-title">⚠️ Dangling else ปัญหาคลาสสิก</div>
+          <div class="box-body">
+            <code>if (x &gt; 0)</code><br>
+            <code>&nbsp;&nbsp;if (x &gt; 10)</code><br>
+            <code>&nbsp;&nbsp;&nbsp;&nbsp;printf("big");</code><br>
+            <code>else</code> ← else นี้ belongs กับ if ตัวไหน?<br><br>
+            ใน C: else จับคู่กับ <strong>if ใกล้ที่สุด</strong> เสมอ ใส่ <code>{}</code> ทุกครั้งเพื่อหลีกเลี่ยง
+          </div>
+        </div>
+        <div class="box">
+          <div class="box-title">✅ Best Practice</div>
+          <div class="box-body">
+            ใส่ <code>{}</code> ทุก block เสมอ แม้จะมีบรรทัดเดียว<br><br>
+            Indent สม่ำเสมอ — 4 spaces ต่อ level<br><br>
+            ถ้า nest ลึกกว่า 3 ชั้น ให้คิดใหม่ว่าเขียน function แยกได้ไหม
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 4 — switch ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · switch</div>
+    <div class="slide-h1"><em>switch</em> — เลือกจากหลายค่าตรงๆ</div>
+    <div class="slide-lead">เมื่อต้องเปรียบเทียบตัวแปรเดียวกับหลายค่า switch อ่านง่ายกว่า if-else if chain มาก</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">โครงสร้าง switch</div>
+        <div class="code"><span class="kw">int</span> day = <span class="nm">3</span>;
+
+<span class="kw">switch</span> (day) {
+    <span class="kw">case</span> <span class="nm">1</span>: <span class="fn">printf</span>(<span class="st">"จันทร์"</span>); <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="nm">2</span>: <span class="fn">printf</span>(<span class="st">"อังคาร"</span>); <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="nm">3</span>: <span class="fn">printf</span>(<span class="st">"พุธ"</span>);    <span class="kw">break</span>; <span class="cm">/* runs */</span>
+    <span class="kw">case</span> <span class="nm">4</span>: <span class="fn">printf</span>(<span class="st">"พฤหัส"</span>); <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="nm">5</span>: <span class="fn">printf</span>(<span class="st">"ศุกร์"</span>);  <span class="kw">break</span>;
+    <span class="kw">default</span>: <span class="fn">printf</span>(<span class="st">"วันหยุด"</span>);
+}</div>
+        <div class="box red">
+          <div class="box-title">❌ ลืม break — Fall-through!</div>
+          <div class="box-body">ถ้าไม่มี <code>break</code> โปรแกรมจะรันต่อไปยัง case ถัดไปเลย (fall-through) บางครั้งตั้งใจ แต่ส่วนใหญ่คือ bug</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">Fall-through ใช้ประโยชน์ได้</div>
+        <div class="code good"><span class="cm">/* รวม case ที่ทำเหมือนกัน */</span>
+<span class="kw">switch</span> (month) {
+    <span class="kw">case</span> <span class="nm">1</span>:
+    <span class="kw">case</span> <span class="nm">3</span>:
+    <span class="kw">case</span> <span class="nm">5</span>:  <span class="cm">/* ไม่มี break ตั้งใจ */</span>
+        days = <span class="nm">31</span>; <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="nm">4</span>:
+    <span class="kw">case</span> <span class="nm">6</span>:
+        days = <span class="nm">30</span>; <span class="kw">break</span>;
+    <span class="kw">default</span>:
+        days = <span class="nm">28</span>;
+}</div>
+        <div class="usecase">
+          <div class="usecase-label">🏦 Use Case — ATM Menu</div>
+          <div class="usecase-title">เลือก transaction type</div>
+          <div class="usecase-body">switch รับ choice 1-4: ฝาก, ถอน, โอน, ตรวจยอด — แต่ละ case ทำงานแยกชัดเจน default ขึ้น error</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 5 — Ternary ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Ternary Operator</div>
+    <div class="slide-h1">Ternary <em>?:</em> — if-else บรรทัดเดียว</div>
+    <div class="slide-lead"><code>condition ? value_if_true : value_if_false</code> — ใช้เมื่อต้องการกำหนดค่าตามเงื่อนไข สั้นกว่า if-else มาก</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">เปรียบเทียบ if-else vs ternary</div>
+        <div class="code bad"><span class="cm">/* แบบยาว — if-else */</span>
+<span class="kw">int</span> max;
+<span class="kw">if</span> (a > b)
+    max = a;
+<span class="kw">else</span>
+    max = b;</div>
+        <div class="code good"><span class="cm">/* แบบสั้น — ternary */</span>
+<span class="kw">int</span> max = (a > b) ? a : b;</div>
+        <div class="code-label">ตัวอย่างที่ใช้บ่อย</div>
+        <div class="code"><span class="cm">/* ตรวจคู่/คี่ */</span>
+<span class="fn">printf</span>(<span class="st">"%s"</span>, (n%<span class="nm">2</span>==<span class="nm">0</span>) ? <span class="st">"Even"</span> : <span class="st">"Odd"</span>);
+
+<span class="cm">/* แสดงสถานะ */</span>
+<span class="kw">char</span> *status = (score>=<span class="nm">50</span>) ? <span class="st">"Pass"</span> : <span class="st">"Fail"</span>;
+<span class="fn">printf</span>(<span class="st">"%s"</span>, status);
+
+<span class="cm">/* ค่าสัมบูรณ์ */</span>
+<span class="kw">int</span> abs = (x >= <span class="nm">0</span>) ? x : -x;</div>
+      </div>
+      <div class="split-col">
+        <div class="box amber">
+          <div class="box-title">⚠️ อย่า nest ternary</div>
+          <div class="box-body">
+            <code>a ? b ? c : d : e</code><br><br>
+            อ่านยากมาก ถ้าเงื่อนไขซับซ้อนให้ใช้ if-else แทนเสมอ<br><br>
+            Ternary เหมาะกับเงื่อนไขง่ายๆ 2 กรณีเท่านั้น
+          </div>
+        </div>
+        <div class="think">
+          <div class="think-q">เขียน ternary ที่พิมพ์ "Positive", "Negative", หรือ "Zero" สำหรับตัวแปร <code>int n</code> ได้ไหม? ถ้าไม่ได้ทำไม?</div>
+          <div class="think-hint">💡 ternary มีแค่ 2 branch (true/false) — 3 กรณีต้องซ้อน หรือใช้ if-else if แทน</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 6 — Common Patterns ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Patterns</div>
+    <div class="slide-h1">Pattern ที่ใช้บ่อย — <em>จำไว้ใช้ได้เลย</em></div>
+    <div class="slide-lead">โจทย์ส่วนใหญ่มี pattern ซ้ำๆ — เข้าใจ pattern เหล่านี้แล้วแก้โจทย์ได้เร็วขึ้นมาก</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">Pattern 1 — Range Check</div>
+        <div class="code"><span class="cm">/* ตรวจว่า x อยู่ในช่วง [a, b] */</span>
+<span class="kw">if</span> (x >= <span class="nm">1</span> <span class="op">&amp;&amp;</span> x <= <span class="nm">10</span>)
+    <span class="fn">printf</span>(<span class="st">"in range"</span>);</div>
+
+        <div class="code-label">Pattern 2 — Guard Clause (ตรวจ error ก่อน)</div>
+        <div class="code good"><span class="cm">/* ตรวจ invalid ก่อน แล้วค่อยทำงานจริง */</span>
+<span class="kw">if</span> (score < <span class="nm">0</span> <span class="op">||</span> score > <span class="nm">100</span>) {
+    <span class="fn">printf</span>(<span class="st">"Invalid!"</span>);
+    <span class="kw">return</span>;     <span class="cm">/* ออกจาก function เลย */</span>
+}
+<span class="cm">/* ถึงตรงนี้ score ถูกต้องแน่นอน */</span>
+<span class="kw">if</span> (score >= <span class="nm">80</span>) ...</div>
+
+        <div class="code-label">Pattern 3 — Multi-tier (จาก High → Low)</div>
+        <div class="code"><span class="cm">/* เรียงจากมากไปน้อย เสมอ */</span>
+<span class="kw">if</span>      (price >= <span class="nm">1000</span>) disc = <span class="nm">20</span>;
+<span class="kw">else if</span> (price >=  <span class="nm">500</span>) disc = <span class="nm">10</span>;
+<span class="kw">else if</span> (price >=  <span class="nm">100</span>) disc =  <span class="nm">5</span>;
+<span class="kw">else</span>                    disc =  <span class="nm">0</span>;</div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">💡 ทำไม Guard Clause ดี</div>
+          <div class="box-body">แทนที่จะ nest deep: <code>if valid { if (...) { if (...) {</code><br><br>ให้ตรวจ error แล้ว return ออกก่อน code หลักจะแบนและอ่านง่ายกว่ามาก<br><br>เรียกว่า "Early return" pattern</div>
+        </div>
+        <div class="usecase">
+          <div class="usecase-label">🏦 Use Case — KTB Loan</div>
+          <div class="usecase-title">อัตราดอกเบี้ยขั้นบันได</div>
+          <div class="usecase-body">วงเงินกู้ ≥ 5M → 3.5% | ≥ 1M → 4.5% | ≥ 500K → 5.5% | น้อยกว่า → 6.5% — Multi-tier pattern จาก high ลง low</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 7 — Use Case ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Use Case</div>
+    <div class="slide-h1">🏦 <em>Use Case จริง</em> — ระบบ ATM</div>
+    <div class="slide-lead">รวม if-else + switch + ternary เพื่อสร้างระบบ ATM อย่างง่าย — ทุก control flow ที่เรียนมาอยู่ในนี้</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="usecase" style="border-left-color:var(--ca)">
+          <div class="usecase-label" style="color:var(--ca)">โจทย์ระบบ ATM</div>
+          <div class="usecase-title">ระบบเลือก transaction</div>
+          <div class="usecase-body">
+            รับยอดเงินในบัญชีและ choice ของผู้ใช้<br>
+            1=ฝาก, 2=ถอน, 3=ตรวจยอด<br><br>
+            ถ้าถอน: ตรวจว่าเงินพอไหม<br>
+            แสดงยอดใหม่และสถานะ "Balance OK" / "Low Balance"
+          </div>
+        </div>
+        <div class="box">
+          <div class="box-title">ใช้ทุก concept บทนี้</div>
+          <div class="box-body">
+            <code>switch</code> — เลือก transaction type<br>
+            <code>if-else</code> — ตรวจเงินพอไหม<br>
+            <code>ternary</code> — แสดงสถานะยอดเงิน<br>
+            <code>&amp;&amp;</code> — เงื่อนไขซ้อน
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">โปรแกรม ATM อย่างง่าย</div>
+        <div class="code"><span class="kw">int</span> balance = <span class="nm">5000</span>, choice, amount;
+<span class="fn">printf</span>(<span class="st">"1=ฝาก 2=ถอน 3=ยอด: "</span>);
+<span class="fn">scanf</span>(<span class="st">"%d"</span>, <span class="op">&amp;</span>choice);
+
+<span class="kw">switch</span> (choice) {
+  <span class="kw">case</span> <span class="nm">1</span>:
+    <span class="fn">printf</span>(<span class="st">"ฝากเท่าไหร่: "</span>);
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, <span class="op">&amp;</span>amount);
+    balance += amount;
+    <span class="fn">printf</span>(<span class="st">"ยอดใหม่: %d\n"</span>, balance);
+    <span class="kw">break</span>;
+  <span class="kw">case</span> <span class="nm">2</span>:
+    <span class="fn">printf</span>(<span class="st">"ถอนเท่าไหร่: "</span>);
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, <span class="op">&amp;</span>amount);
+    <span class="kw">if</span> (amount > balance)
+      <span class="fn">printf</span>(<span class="st">"เงินไม่พอ!\n"</span>);
+    <span class="kw">else</span> {
+      balance -= amount;
+      <span class="fn">printf</span>(<span class="st">"ยอดใหม่: %d | %s\n"</span>,
+        balance,
+        (balance < <span class="nm">1000</span>) ? <span class="st">"⚠ Low"</span> : <span class="st">"OK"</span>);
+    }
+    <span class="kw">break</span>;
+  <span class="kw">case</span> <span class="nm">3</span>:
+    <span class="fn">printf</span>(<span class="st">"ยอดปัจจุบัน: %d\n"</span>, balance);
+    <span class="kw">break</span>;
+  <span class="kw">default</span>:
+    <span class="fn">printf</span>(<span class="st">"ตัวเลือกไม่ถูกต้อง\n"</span>);
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 8 — Think! ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 2 · Think!</div>
+    <div class="slide-h1">คิดก่อน <em>เขียน</em></div>
+    <div class="slide-lead">อ่านแต่ละโจทย์แล้วคิดในใจก่อน — ฝึก trace code และวิเคราะห์ logic</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">1. ถ้า <code>x = 0</code> แล้ว <code>if (x)</code> จะเข้า block ไหม? เพราะอะไร?</div>
+          <div class="think-hint">💡 ใน C: 0 = false, non-zero = true ไม่ต้องเขียน <code>x != 0</code> ก็ได้</div>
+        </div>
+        <div class="think">
+          <div class="think-q">2. Code ต่อไปนี้มี bug อะไร?<br><code>if (score = 80) printf("Pass");</code></div>
+          <div class="think-hint">💡 = กับ == ต่างกัน — ตัวไหนเป็นการกำหนดค่า ตัวไหนเปรียบเทียบ?</div>
+        </div>
+        <div class="think">
+          <div class="think-q">3. Output คืออะไร?<br><code>int x=5; printf("%d", (x&gt;3) ? x*2 : x+1);</code></div>
+          <div class="think-hint">💡 ตรวจเงื่อนไขก่อน — 5 &gt; 3 จริงหรือเปล่า?</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">4. switch ใช้กับ <code>float</code> ได้ไหม? เช่น <code>switch (3.14)</code></div>
+          <div class="think-hint">💡 switch ใช้ได้เฉพาะ integer types เท่านั้น (int, char, enum)</div>
+        </div>
+        <div class="think">
+          <div class="think-q">5. ระบบตรวจว่าปีนั้นเป็นปีอธิกสุรทิน (leap year) หรือไม่<br>เงื่อนไข: หาร 4 ลงตัว และ (ไม่หาร 100 ลงตัว หรือ หาร 400 ลงตัว)<br>เขียน if condition ได้ไหม?</div>
+          <div class="think-hint">💡 <code>(year%4==0 &amp;&amp; year%100!=0) || year%400==0</code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 9 — โจทย์ Trace ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · โจทย์ Trace</div>
+    <div class="slide-h1">โจทย์ <em>อ่าน code</em> ทายผลลัพธ์</div>
+    <div class="slide-lead">Trace ในหัว — เลือกคำตอบที่ถูก แล้วกดดูเฉลยพร้อมคำอธิบาย</div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — Output คืออะไร?</div>
+      <div class="code" style="margin-bottom:10px"><span class="kw">int</span> x = <span class="nm">15</span>;
+<span class="kw">if</span> (x % <span class="nm">3</span> == <span class="nm">0</span> <span class="op">&amp;&amp;</span> x % <span class="nm">5</span> == <span class="nm">0</span>)
+    <span class="fn">printf</span>(<span class="st">"FizzBuzz"</span>);
+<span class="kw">else if</span> (x % <span class="nm">3</span> == <span class="nm">0</span>)
+    <span class="fn">printf</span>(<span class="st">"Fizz"</span>);
+<span class="kw">else if</span> (x % <span class="nm">5</span> == <span class="nm">0</span>)
+    <span class="fn">printf</span>(<span class="st">"Buzz"</span>);
+<span class="kw">else</span>
+    <span class="fn">printf</span>(<span class="st">"%d"</span>, x);</div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" onclick="pickMC('mc1',0,0,'15%3=0 AND 15%5=0 ทั้งคู่ true → FizzBuzz ✓')"><span class="mc-ltr">A</span>FizzBuzz</div>
+        <div class="mc-opt" onclick="pickMC('mc1',1,0,'15%3=0 AND 15%5=0 ทั้งคู่ true → FizzBuzz ✓')"><span class="mc-ltr">B</span>Fizz</div>
+        <div class="mc-opt" onclick="pickMC('mc1',2,0,'15%3=0 AND 15%5=0 ทั้งคู่ true → FizzBuzz ✓')"><span class="mc-ltr">C</span>Buzz</div>
+        <div class="mc-opt" onclick="pickMC('mc1',3,0,'15%3=0 AND 15%5=0 ทั้งคู่ true → FizzBuzz ✓')"><span class="mc-ltr">D</span>15</div>
+      </div>
+      <div class="ex-feedback" id="mc1-fb"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — ค่าของ result คือ?</div>
+      <div class="code" style="margin-bottom:10px"><span class="kw">int</span> a = <span class="nm">4</span>, b = <span class="nm">7</span>;
+<span class="kw">int</span> result = (a > b) ? a - b : b - a;</div>
+      <div class="mc-opts" id="mc2">
+        <div class="mc-opt" onclick="pickMC('mc2',0,2,'-3 หรือ 3? — 4>7 เป็น false → ใช้ b-a = 7-4 = 3 ✓')"><span class="mc-ltr">A</span>-3</div>
+        <div class="mc-opt" onclick="pickMC('mc2',1,2,'-3 หรือ 3? — 4>7 เป็น false → ใช้ b-a = 7-4 = 3 ✓')"><span class="mc-ltr">B</span>0</div>
+        <div class="mc-opt" onclick="pickMC('mc2',2,2,'-3 หรือ 3? — 4>7 เป็น false → ใช้ b-a = 7-4 = 3 ✓')"><span class="mc-ltr">C</span>3</div>
+        <div class="mc-opt" onclick="pickMC('mc2',3,2,'-3 หรือ 3? — 4>7 เป็น false → ใช้ b-a = 7-4 = 3 ✓')"><span class="mc-ltr">D</span>11</div>
+      </div>
+      <div class="ex-feedback" id="mc2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 10 — โจทย์ Fill-in ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · โจทย์เติมคำ</div>
+    <div class="slide-h1">โจทย์ <em>เติมคำ</em></div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — Leap Year Condition</div>
+      <div class="ex-q">เติม condition ให้สมบูรณ์: ปีอธิกสุรทินคือหาร 4 ลงตัว แต่ไม่หาร 100 ลงตัว ยกเว้นหาร 400 ลงตัว<br><code>if (___)</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in1" placeholder="เขียน condition" type="text">
+        <button class="ex-btn" onclick="checkFill('in1',
+          '(year%4==0 && year%100!=0) || year%400==0',
+          ['year%4==0&&year%100!=0||year%400==0','(year%4 == 0 && year%100 != 0) || year%400 == 0'],
+          ['year%4==0'],
+          'ถูก! ครอบคลุมทุกกรณีของ leap year',
+          'ต้องตรวจทั้ง 3 กรณี: หาร4ลงตัว AND ไม่หาร100 OR หาร400ลงตัว')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — Ternary</div>
+      <div class="ex-q">เขียน ternary expression ที่ return <code>"Pass"</code> ถ้า score >= 50 หรือ <code>"Fail"</code> ถ้าไม่ถึง</div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in2" placeholder="(condition) ? ... : ..." type="text">
+        <button class="ex-btn" onclick="checkFill('in2',
+          '(score >= 50) ? Pass : Fail',
+          ['score >= 50 ? Pass : Fail','(score>=50)?Pass:Fail','score>=50?Pass:Fail',
+           '(score >= 50) ? &quot;Pass&quot; : &quot;Fail&quot;',
+           'score >= 50 ? &quot;Pass&quot; : &quot;Fail&quot;',
+           'score>=50 ? Pass : Fail','score >=50 ? Pass : Fail'],
+          ['score > 50 ? Pass : Fail','(score > 50) ? Pass : Fail'],
+          'ถูก! ternary ครบถ้วน — condition ? true_value : false_value',
+          'ตรวจ: เงื่อนไขต้องใช้ >= 50 ไม่ใช่ > 50')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 3 — Guard Clause</div>
+      <div class="ex-q">ระบบรับ age แล้วตรวจสอบ: ถ้า age < 0 หรือ > 120 ให้พิมพ์ "Invalid" แล้ว return<br>เติม condition ใน <code>if (___) { printf("Invalid"); return 0; }</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in3" placeholder="เงื่อนไข invalid" type="text">
+        <button class="ex-btn" onclick="checkFill('in3',
+          'age < 0 || age > 120',
+          ['age<0||age>120','age < 0 || age > 120','(age < 0) || (age > 120)'],
+          ['age < 0 && age > 120'],
+          'ถูก! ใช้ || เพราะ invalid เมื่ออย่างใดอย่างหนึ่งเป็นจริง',
+          'ระวัง: && หรือ ||? invalid เมื่อน้อยกว่า 0 หรือมากกว่า 120 — ต้องการ OR')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 11 — สรุป ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 2 · สรุป</div>
+    <div class="slide-h1">สรุป <em>บทที่ 2</em></div>
+    <div class="slide-lead">ก่อนไปบทที่ 3 (Loop) ตรวจสอบว่าเข้าใจทุกจุดเหล่านี้</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="steps">
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body">if → else if → else ตรวจจาก <strong>บนลงล่าง</strong> หยุดที่แรกที่ผ่าน<small>ลำดับ condition สำคัญมาก</small></div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body"><code>&amp;&amp;</code> AND, <code>||</code> OR, <code>!</code> NOT + Short-circuit<small>ถ้า A false แล้ว A&amp;&amp;B ไม่ตรวจ B</small></div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body">switch สำหรับ exact value match + อย่าลืม break<small>fall-through ตั้งใจได้ แต่ต้อง comment ไว้</small></div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body">Ternary <code>? :</code> สำหรับกำหนดค่า 2 กรณี<small>ถ้ามากกว่า 2 กรณีใช้ if-else แทน</small></div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body">Guard clause — ตรวจ error แล้ว return ก่อน<small>ทำให้ code หลักสะอาดและอ่านง่าย</small></div></div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🚀 พร้อมไปบทที่ 3?</div>
+          <div class="box-body">บทที่ 3 — <strong>Loop</strong><br>for / while / do-while / break / continue<br><br>ต้องการ: เข้าใจ if และ operators จากบทนี้ก่อน เพราะ loop ใช้ condition เดียวกัน</div>
+        </div>
+        <div class="exercise">
+          <div class="ex-label">🏆 Challenge โจทย์ปิดบท</div>
+          <div class="ex-q" style="color:#dde3f0">เขียนระบบตรวจเกรดอัตโนมัติ รับคะแนน 0–100 แล้วแสดง: เกรด A–F พร้อมแสดง "ผ่าน" หรือ "ตก" และถ้าคะแนนนอกช่วง ให้ขึ้น "Invalid" และหยุดทันที<br><br>ใช้ Guard Clause + Multi-tier if-else + ternary สำหรับ ผ่าน/ตก</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 2 — Control Flow</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover','if / else','Logical Operators','Nested if',
+  'switch','Ternary ?:','Common Patterns',
+  'Use Case ATM','Think!','โจทย์ Trace','โจทย์เติมคำ','สรุปบทที่ 2'
+];
+</script>
+<script src="slide-engine.js"></script>
+</body>
+</html>
