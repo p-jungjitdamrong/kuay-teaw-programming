@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C Language Pretest</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181c25;
+  --surface2: #1e2330;
+  --border: #2a2f3d;
+  --accent: #00d4aa;
+  --accent2: #7c6eff;
+  --red: #ff5c5c;
+  --text: #e8eaf0;
+  --muted: #8891a8;
+  --code-bg: #0a0d12;
+  --correct: #00d4aa;
+  --wrong: #ff5c5c;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* HEADER */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-bowl {
+  font-size: 22px;
+  line-height: 1;
+}
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.logo-th {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.2px;
+}
+.logo-en {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+}
+.header-meta {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* PROGRESS */
+.progress-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 16px 20px 0;
+}
+.progress-track {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  border-radius: 2px;
+  transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  width: 0%;
+}
+.progress-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* MAIN */
+.main {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+
+/* QUESTION CARD */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  animation: fadeIn 0.25s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.q-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.q-num-badge {
+  background: var(--accent2);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+}
+.q-topic {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+.q-text {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+  margin-bottom: 14px;
+  font-weight: 400;
+}
+.q-code {
+  /* font-family: 'JetBrains Mono', monospace; */
+  font-family: 'Sarabun', sans-serif;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.8;
+  margin-bottom: 18px;
+  white-space: pre;
+  overflow-x: auto;
+  color: #c9d1e0;
+}
+
+/* OPTIONS */
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text);
+  background: var(--surface2);
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-family: 'Sarabun', sans-serif;
+  line-height: 1.5;
+}
+.opt:hover:not(:disabled) {
+  border-color: var(--accent2);
+  background: #22283a;
+  transform: translateX(2px);
+}
+.opt-letter {
+  /* font-family: 'JetBrains Mono', monospace; */
+  font-family: 'Sarabun', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  min-width: 20px;
+  padding-top: 1px;
+}
+.opt.correct {
+  border-color: var(--correct);
+  background: rgba(0,212,170,0.08);
+}
+.opt.correct .opt-letter { color: var(--correct); }
+.opt.wrong {
+  border-color: var(--wrong);
+  background: rgba(255,92,92,0.08);
+}
+.opt.wrong .opt-letter { color: var(--wrong); }
+.opt.reveal {
+  border-color: var(--correct);
+  background: rgba(0,212,170,0.06);
+}
+.opt.reveal .opt-letter { color: var(--correct); }
+.opt:disabled { cursor: default; transform: none; }
+
+/* EXPLANATION */
+.explain {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: rgba(124,110,255,0.08);
+  border: 1px solid rgba(124,110,255,0.25);
+  border-radius: 10px;
+  font-size: 13px;
+  color: #b8bdd0;
+  line-height: 1.7;
+  display: none;
+}
+.explain.show { display: block; animation: fadeIn 0.2s ease; }
+.explain-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent2);
+  /* font-family: 'JetBrains Mono', monospace; */
+  font-family: 'Sarabun', sans-serif;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+/* NAV */
+.nav-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(15,17,23,0.92);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  padding: 12px 20px;
+  z-index: 100;
+}
+.nav-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  gap: 10px;
+}
+.nav-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-family: 'Sarabun', sans-serif;
+  transition: all 0.15s;
+}
+.nav-btn:hover:not(:disabled) {
+  border-color: var(--accent2);
+  color: var(--accent2);
+}
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+.nav-btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0a0d12;
+}
+.nav-btn.primary:hover:not(:disabled) {
+  background: #00f0c0;
+  border-color: #00f0c0;
+  color: #0a0d12;
+}
+
+/* SCORE */
+.score-view { display: none; animation: fadeIn 0.35s ease; }
+.score-hero {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.score-big {
+  font-size: 72px;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.score-denom {
+  font-size: 16px;
+  color: var(--muted);
+  /* font-family: 'JetBrains Mono', monospace; */
+  font-family: 'Sarabun', sans-serif;
+  margin-bottom: 16px;
+}
+.grade-pill {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  /* font-family: 'JetBrains Mono', monospace; */
+  font-family: 'Sarabun', sans-serif;
+}
+.grade-ex  { background: rgba(0,212,170,0.15); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); }
+.grade-gd  { background: rgba(255,193,7,0.12); color: #ffc107; border: 1px solid rgba(255,193,7,0.25); }
+.grade-np  { background: rgba(255,92,92,0.12); color: var(--red); border: 1px solid rgba(255,92,92,0.25); }
+
+.breakdown {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+.breakdown h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.8px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+.cat-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.cat-row:last-child { margin-bottom: 0; }
+.cat-name {
+  font-size: 13px;
+  color: var(--text);
+  min-width: 160px;
+  flex-shrink: 0;
+}
+.cat-bar-track {
+  flex: 1;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cat-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+}
+.cat-score {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  min-width: 36px;
+  text-align: right;
+}
+
+.restart-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--accent);
+  border: none;
+  color: #0a0d12;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+  transition: background 0.15s;
+  margin-bottom: 80px;
+}
+.restart-btn:hover { background: #00f0c0; }
+
+/* INTRO */
+.intro {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 24px;
+  margin-bottom: 24px;
+}
+.intro-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.intro-logo-img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  margin-bottom: 14px;
+}
+.intro-logo-emoji {
+  font-size: 72px;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.intro-brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 2px;
+  text-align: center;
+}
+.intro-sub {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+.intro h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.intro p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.intro-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.stat-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+.stat-n {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-l {
+  font-size: 11px;
+  color: var(--muted);
+  /* font-family: 'JetBrains Mono', monospace; */
+  font-family: 'Sarabun', sans-serif;
+}
+.start-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--accent);
+  border: none;
+  color: #0a0d12;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+  transition: background 0.15s;
+}
+.start-btn:hover { background: #00f0c0; }
+
+#quiz-view { display: none; }
+
+.home-btn{font-size:11px;color:var(--muted);text-decoration:none;font-family:'JetBrains Mono',monospace;border:1px solid var(--border);padding:5px 12px;border-radius:7px;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.home-btn:hover{border-color:var(--accent);color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-bowl">🍜</span>
+      <div class="logo-text">
+        <span class="logo-th">ก๋วยเตี๋ยวเรือ Programming</span>
+        <span class="logo-en">C Language Pretest</span>
+      </div>
+    </div>
+    <a class="home-btn" href="index.html">🏠 Home</a>
+  </div>
+</div>
+
+<div class="progress-wrap" id="prog-wrap" style="display:none">
+  <div class="progress-track">
+    <div class="progress-fill" id="prog-fill"></div>
+  </div>
+  <div class="progress-label">
+    <span id="prog-left">Question 1 of 30</span>
+    <span id="prog-right">0%</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- INTRO -->
+  <div id="intro-view">
+    <div class="intro">
+      <div class="intro-hero">
+        <span class="intro-logo-emoji">🍜</span>
+        <div class="intro-brand">ก๋วยเตี๋ยวเรือ Programming</div>
+        <div class="intro-sub">// เส้นดี · น้ำข้น · โค้ดลื่น · ชีวิตมีรสชาติ</div>
+      </div>
+      <h2>C Language Pretest</h2>
+      <p>Test your foundational knowledge of the C programming language. Read each question carefully and choose the best answer. After answering, you'll see an explanation in Thai.</p>
+      <div class="intro-stats">
+        <div class="stat-box"><div class="stat-n">30</div><div class="stat-l">questions</div></div>
+        <div class="stat-box"><div class="stat-n">5</div><div class="stat-l">topics</div></div>
+        <div class="stat-box"><div class="stat-n">80%</div><div class="stat-l">to pass</div></div>
+      </div>
+      <button class="start-btn" onclick="startQuiz()">Start Test →</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz-view">
+    <div id="q-container"></div>
+  </div>
+
+  <!-- SCORE -->
+  <div class="score-view" id="score-view">
+    <div class="score-hero">
+      <div class="score-big" id="sc-num">0</div>
+      <div class="score-denom">/ 30 correct</div>
+      <div class="grade-pill" id="sc-badge">—</div>
+      <div style="font-size:13px;color:var(--muted)">ทำข้อสอบ C Language Pretest เสร็จแล้ว</div>
+    </div>
+    <div class="breakdown">
+      <h3>Score by topic</h3>
+      <div id="cat-rows"></div>
+    </div>
+    <button class="restart-btn" onclick="restart()">↺ Try Again</button>
+  </div>
+
+</div>
+
+<!-- NAV -->
+<div class="nav-bar" id="nav-bar" style="display:none">
+  <div class="nav-inner">
+    <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>← Prev</button>
+    <button class="nav-btn primary" id="nextBtn" onclick="navigate(1)" disabled>Next →</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    q: "What does the following code print?",
+    code: '#include <stdio.h>\nint main() {\n    printf("Hello, World!");\n    return 0;\n}',
+    opts: ["Hello, World!", "hello, world!", "Hello World", "Error"],
+    ans: 0,
+    topic: "Basic Output",
+    th: "printf() พิมพ์ข้อความตามที่เขียนไว้ตรงๆ รวมถึงตัวพิมพ์ใหญ่-เล็กด้วย ดังนั้น ผลลัพธ์คือ Hello, World! พร้อมเครื่องหมาย comma และ !"
+  },
+  {
+    q: "Which of the following is the correct way to declare an integer variable named 'age' with value 25?",
+    code: "",
+    opts: ["int age = 25;", "integer age = 25;", "age int = 25;", "var age = 25;"],
+    ans: 0,
+    topic: "Variables",
+    th: "ภาษา C ใช้ keyword 'int' สำหรับจำนวนเต็ม รูปแบบที่ถูกคือ: ชนิดข้อมูล ชื่อตัวแปร = ค่าเริ่มต้น; ตัวเลือกอื่นผิด syntax ของ C"
+  },
+  {
+    q: "What is the output of this code?",
+    code: "int x = 10;\nint y = 3;\nprintf(\"%d\", x / y);",
+    opts: ["3.33", "3", "4", "3.3"],
+    ans: 1,
+    topic: "Operators",
+    th: "การหารระหว่าง int กับ int ใน C จะได้ผลเป็น int เสมอ (integer division) ทศนิยมจะถูกตัดออก ดังนั้น 10/3 = 3 ไม่ใช่ 3.33"
+  },
+  {
+    q: "Which symbol is used for single-line comments in C?",
+    code: "",
+    opts: ["//", "/* */", "#", "--"],
+    ans: 0,
+    topic: "Syntax",
+    th: "// ใช้สำหรับ comment บรรทัดเดียว ส่วน /* */ ใช้สำหรับ comment หลายบรรทัด ส่วน # ใช้สำหรับ preprocessor directive เช่น #include"
+  },
+  {
+    q: "What does '%f' do inside printf()?",
+    code: "",
+    opts: ["Prints an integer", "Prints a float/double number", "Prints a character", "Prints a string"],
+    ans: 1,
+    topic: "Format Specifiers",
+    th: "Format specifiers ใน C: %d = integer, %f = float/double, %c = char, %s = string ดังนั้น %f ใช้พิมพ์เลขทศนิยม"
+  },
+  {
+    q: "What is the output?",
+    code: "int a = 5;\na = a + 3;\nprintf(\"%d\", a);",
+    opts: ["5", "3", "8", "53"],
+    ans: 2,
+    topic: "Variables",
+    th: "a = a + 3 คือการกำหนดค่าใหม่ให้ a โดยเอาค่าเดิม (5) บวกกับ 3 ได้ 8 แล้วเก็บกลับในตัวแปร a จึง print ออกมาเป็น 8"
+  },
+  {
+    q: "Which data type is used to store a single character in C?",
+    code: "",
+    opts: ["string", "char", "text", "letter"],
+    ans: 1,
+    topic: "Data Types",
+    th: "ภาษา C ใช้ 'char' เก็บตัวอักษรเพียง 1 ตัว เช่น char grade = 'A'; ไม่มี type 'string' ใน C โดยตรง (string คือ array of char)"
+  },
+  {
+    q: "What is the correct syntax for an if statement in C?",
+    code: "",
+    opts: ["if x > 5 { }", "if (x > 5) { }", "if x > 5 then { }", "if [x > 5] { }"],
+    ans: 1,
+    topic: "Control Flow",
+    th: "ใน C เงื่อนไขของ if ต้องอยู่ใน วงเล็บ () เสมอ รูปแบบที่ถูกคือ if (condition) { code; } ต่างจาก Python ที่ไม่ต้องใช้วงเล็บ"
+  },
+  {
+    q: "What does this loop print?",
+    code: "for (int i = 0; i < 3; i++) {\n    printf(\"%d \", i);\n}",
+    opts: ["1 2 3", "0 1 2", "0 1 2 3", "1 2"],
+    ans: 1,
+    topic: "Loops",
+    th: "for loop เริ่มที่ i=0 เงื่อนไขคือ i<3 (ไม่ใช่ <=3) loop จะทำงานเมื่อ i=0, 1, 2 แล้วหยุดเมื่อ i=3 ผลลัพธ์จึงเป็น 0 1 2"
+  },
+  {
+    q: "What is the output?",
+    code: 'int x = 10;\nif (x > 5) {\n    printf("Big");\n} else {\n    printf("Small");\n}',
+    opts: ["Big", "Small", "BigSmall", "Error"],
+    ans: 0,
+    topic: "Control Flow",
+    th: "x มีค่า 10 ซึ่ง 10 > 5 เป็น true ดังนั้นจะเข้า block if แล้ว print Big ส่วน else จะถูกข้ามไป"
+  },
+  {
+    q: "Which operator checks if two values are EQUAL in C?",
+    code: "",
+    opts: ["=", "==", "===", "!="],
+    ans: 1,
+    topic: "Operators",
+    th: "= คือการกำหนดค่า (assignment) ส่วน == คือการเปรียบเทียบ (comparison) ข้อผิดพลาดที่พบบ่อยคือเขียน if(x=5) แทน if(x==5)"
+  },
+  {
+    q: "What does 'return 0;' mean in main()?",
+    code: "",
+    opts: ["The program crashed", "The program ended successfully", "Restart the program", "Print zero"],
+    ans: 1,
+    topic: "Functions",
+    th: "ตามมาตรฐาน C การ return 0 จาก main() หมายความว่าโปรแกรมสิ้นสุดการทำงานแบบปกติ (success) ค่าที่ไม่ใช่ 0 หมายถึงมี error"
+  },
+  {
+    q: "What is the output?",
+    code: 'int i = 0;\nwhile (i < 3) {\n    printf("*");\n    i++;\n}',
+    opts: ["**", "***", "****", "*"],
+    ans: 1,
+    topic: "Loops",
+    th: "while loop ทำงานตราบที่ i < 3 เริ่มจาก i=0 → print * (i=1) → print * (i=2) → print * (i=3 หยุด) รวมได้ *** คือ 3 ดาว"
+  },
+  {
+    q: "Which header file is needed to use printf() and scanf()?",
+    code: "",
+    opts: ["math.h", "string.h", "stdio.h", "stdlib.h"],
+    ans: 2,
+    topic: "Syntax",
+    th: "stdio.h ย่อมาจาก Standard Input/Output มีฟังก์ชัน printf() สำหรับแสดงผล และ scanf() สำหรับรับค่าจากผู้ใช้"
+  },
+  {
+    q: "What is the value of x after this code?",
+    code: "int x = 10;\nx *= 2;",
+    opts: ["2", "10", "20", "12"],
+    ans: 2,
+    topic: "Operators",
+    th: "x *= 2 เป็น shorthand ของ x = x * 2 ดังนั้น x = 10 * 2 = 20 ทำนองเดียวกัน += บวกสะสม, -= ลบสะสม, /= หารสะสม"
+  },
+  {
+    q: "Which of these correctly reads an integer from the user?",
+    code: "",
+    opts: ["scanf(\"%d\", num);", "scanf(\"%d\", &num);", "input(\"%d\", num);", "read(\"%d\", &num);"],
+    ans: 1,
+    topic: "Input/Output",
+    th: "scanf() ต้องใช้ & (address-of operator) หน้าตัวแปรเพื่อบอกตำแหน่งในหน่วยความจำ ถ้าลืมใส่ & โปรแกรมจะ crash หรือให้ผลผิด"
+  },
+  {
+    q: "What does this code output?",
+    code: "int x = 7;\nprintf(\"%d\", x % 3);",
+    opts: ["2", "1", "3", "0"],
+    ans: 1,
+    topic: "Operators",
+    th: "% คือ modulo operator (เศษของการหาร) 7 หารด้วย 3 ได้ผลลัพธ์ 2 เศษ 1 ดังนั้น 7 % 3 = 1 มักใช้ตรวจสอบว่าตัวเลขเป็นคู่หรือคี่"
+  },
+  {
+    q: "What is an array in C?",
+    code: "",
+    opts: ["A single variable", "A collection of same-type variables", "A type of loop", "A function"],
+    ans: 1,
+    topic: "Arrays",
+    th: "Array คือการเก็บตัวแปรหลายตัวที่มีชนิดเดียวกันในชื่อเดียว เช่น int scores[5] เก็บตัวเลข 5 ตัว โดย index เริ่มที่ 0"
+  },
+  {
+    q: "What is the output?",
+    code: "int arr[] = {10, 20, 30};\nprintf(\"%d\", arr[1]);",
+    opts: ["10", "20", "30", "1"],
+    ans: 1,
+    topic: "Arrays",
+    th: "Array index เริ่มที่ 0 ดังนั้น arr[0]=10, arr[1]=20, arr[2]=30 การที่ index เริ่มที่ 0 เป็นสิ่งสำคัญที่ต้องจำ!"
+  },
+  {
+    q: "Which keyword is used to exit a loop immediately?",
+    code: "",
+    opts: ["exit", "stop", "break", "return"],
+    ans: 2,
+    topic: "Control Flow",
+    th: "break ใช้หยุด loop (for, while, do-while) หรือ switch-case ทันที ต่างจาก continue ที่ข้ามไปรอบถัดไปแต่ยัง loop ต่อ"
+  },
+  {
+    q: "What is a function in C?",
+    code: "",
+    opts: ["A variable that stores many values", "A block of code that performs a specific task", "A type of loop", "A way to declare variables"],
+    ans: 1,
+    topic: "Functions",
+    th: "Function คือกลุ่มของ code ที่ทำงานเฉพาะด้านและสามารถเรียกใช้ซ้ำได้ ช่วยให้โปรแกรมเป็นระเบียบและไม่ต้องเขียน code ซ้ำๆ"
+  },
+  {
+    q: "What is the output?",
+    code: "int add(int a, int b) {\n    return a + b;\n}\nprintf(\"%d\", add(3, 4));",
+    opts: ["3", "4", "7", "34"],
+    ans: 2,
+    topic: "Functions",
+    th: "ฟังก์ชัน add() รับ 2 parameter (a=3, b=4) แล้ว return ผลรวม 3+4=7 จากนั้น printf นำค่า 7 ไปแสดงผล"
+  },
+  {
+    q: "Which of the following declares a constant in C?",
+    code: "",
+    opts: ["constant int x = 5;", "const int x = 5;", "final int x = 5;", "fixed int x = 5;"],
+    ans: 1,
+    topic: "Variables",
+    th: "ใน C ใช้ keyword 'const' เพื่อประกาศค่าคงที่ที่เปลี่ยนแปลงไม่ได้ อีกวิธีคือใช้ #define PI 3.14 (preprocessor constant)"
+  },
+  {
+    q: "What does this code print?",
+    code: "int x = 1;\ndo {\n    printf(\"%d \", x);\n    x++;\n} while (x < 1);",
+    opts: ["nothing", "1", "1 2", "0"],
+    ans: 1,
+    topic: "Loops",
+    th: "do-while จะทำงานอย่างน้อย 1 ครั้งก่อนจึงค่อยตรวจเงื่อนไข: print 1, แล้ว x=2, ตรวจ 2<1 เป็น false จึงหยุด ต่างจาก while ที่ตรวจก่อน"
+  },
+  {
+    q: "What does && mean in C?",
+    code: "",
+    opts: ["Bitwise AND", "Logical AND", "Bitwise OR", "Logical OR"],
+    ans: 1,
+    topic: "Operators",
+    th: "&& คือ Logical AND ใช้เชื่อมเงื่อนไขว่าทั้งสองต้องเป็น true เช่น if(age>18 && age<60) ส่วน || คือ Logical OR (อย่างใดอย่างหนึ่งเป็น true)"
+  },
+  {
+    q: "What is the size of int on most modern systems?",
+    code: "",
+    opts: ["1 byte", "2 bytes", "4 bytes", "8 bytes"],
+    ans: 2,
+    topic: "Data Types",
+    th: "บนระบบ 32-bit และ 64-bit ส่วนใหญ่ int มีขนาด 4 bytes (32 bits) เก็บค่าได้ตั้งแต่ประมาณ -2 พันล้าน ถึง 2 พันล้าน"
+  },
+  {
+    q: "What happens if you use a variable before declaring it in C?",
+    code: "",
+    opts: ["It defaults to 0", "The program crashes at runtime", "A compile error occurs", "It uses a garbage value"],
+    ans: 2,
+    topic: "Variables",
+    th: "ใน C ต้องประกาศตัวแปรก่อนใช้เสมอ ถ้าใช้โดยไม่ประกาศจะเกิด compile error ทันที (ไม่ใช่ runtime error)"
+  },
+  {
+    q: "What is the output?",
+    code: "printf(\"%d\", 2 + 3 * 4);",
+    opts: ["20", "14", "24", "11"],
+    ans: 1,
+    topic: "Operators",
+    th: "C ใช้กฎ operator precedence เหมือนคณิตศาสตร์: คูณ/หารก่อน บวก/ลบทีหลัง ดังนั้น 3*4=12 ก่อน แล้ว 2+12=14 ถ้าต้องการบวกก่อนใส่วงเล็บ: (2+3)*4"
+  },
+  {
+    q: "Which of these is a valid variable name in C?",
+    code: "",
+    opts: ["2score", "my-score", "my_score", "my score"],
+    ans: 2,
+    topic: "Syntax",
+    th: "กฎการตั้งชื่อตัวแปรใน C: ขึ้นต้นด้วยตัวอักษรหรือ _ เท่านั้น ประกอบด้วย a-z, A-Z, 0-9, _ เท่านั้น ห้ามมีช่องว่างหรือ - และห้ามขึ้นต้นด้วยตัวเลข"
+  },
+  {
+    q: "What does this code output?",
+    code: "int x = 5;\nprintf(\"%d\", x++);\nprintf(\"%d\", x);",
+    opts: ["5 6", "6 6", "5 5", "6 5"],
+    ans: 0,
+    topic: "Operators",
+    th: "x++ คือ post-increment: ใช้ค่าเดิมก่อน แล้วค่อยเพิ่ม ดังนั้น printf แรกแสดง 5 (ค่าก่อนเพิ่ม) แล้ว x กลายเป็น 6 printf สองแสดง 6"
+  }
+];
+
+const CATS = [
+  { name: "Variables & Types", range: [0, 7] },
+  { name: "Operators",         range: [7, 14] },
+  { name: "Control Flow",      range: [14, 20] },
+  { name: "Functions",         range: [20, 25] },
+  { name: "Arrays & Misc",     range: [25, 30] }
+];
+
+let current = 0;
+let answers = Array(QUESTIONS.length).fill(null);
+let answered = Array(QUESTIONS.length).fill(false);
+
+function startQuiz() {
+  document.getElementById('intro-view').style.display = 'none';
+  document.getElementById('quiz-view').style.display = 'block';
+  document.getElementById('prog-wrap').style.display = 'block';
+  document.getElementById('nav-bar').style.display = 'block';
+  render();
+}
+
+function render() {
+  const q = QUESTIONS[current];
+  const pct = Math.round(((current) / QUESTIONS.length) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-left').textContent = `Question ${current + 1} of ${QUESTIONS.length}`;
+  document.getElementById('prog-right').textContent = pct + '%';
+  document.getElementById('header-meta').textContent = `${answered.filter(Boolean).length} answered`;
+
+  const isAns = answered[current];
+  const sel = answers[current];
+
+  let optsHtml = q.opts.map((o, i) => {
+    let cls = 'opt';
+    if (isAns) {
+      if (i === q.ans) cls += ' reveal';
+      else if (i === sel) cls += ' wrong';
+    }
+    return `<button class="${cls}" onclick="selectAns(${i})" ${isAns ? 'disabled' : ''}>
+      <span class="opt-letter">${String.fromCharCode(65 + i)}</span>
+      <span>${o}</span>
+    </button>`;
+  }).join('');
+
+  document.getElementById('q-container').innerHTML = `
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num-badge">Q${current + 1}</span>
+        <span class="q-topic">${q.topic}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      ${q.code ? `<div class="q-code">${escHtml(q.code)}</div>` : ''}
+      <div class="opts">${optsHtml}</div>
+      <div class="explain ${isAns ? 'show' : ''}" id="explain-box">
+        <div class="explain-label">🇹🇭 คำอธิบาย</div>
+        ${q.th}
+      </div>
+    </div>`;
+
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  prevBtn.disabled = current === 0;
+  nextBtn.disabled = !isAns;
+
+  if (current === QUESTIONS.length - 1 && isAns) {
+    nextBtn.textContent = 'See Results ✓';
+    nextBtn.onclick = showScore;
+  } else {
+    nextBtn.textContent = 'Next →';
+    nextBtn.onclick = () => navigate(1);
+  }
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function selectAns(i) {
+  if (answered[current]) return;
+  answers[current] = i;
+  answered[current] = true;
+  render();
+}
+
+function navigate(dir) {
+  current = Math.max(0, Math.min(QUESTIONS.length - 1, current + dir));
+  render();
+}
+
+function showScore() {
+  const correct = answers.reduce((sum, a, i) => sum + (a === QUESTIONS[i].ans ? 1 : 0), 0);
+  const pct = Math.round((correct / QUESTIONS.length) * 100);
+
+  document.getElementById('quiz-view').style.display = 'none';
+  document.getElementById('prog-wrap').style.display = 'none';
+  document.getElementById('nav-bar').style.display = 'none';
+  document.getElementById('score-view').style.display = 'block';
+
+  document.getElementById('sc-num').textContent = correct;
+
+  const badge = document.getElementById('sc-badge');
+  if (pct >= 80) { badge.textContent = 'Excellent ★★★'; badge.className = 'grade-pill grade-ex'; }
+  else if (pct >= 60) { badge.textContent = 'Good ★★'; badge.className = 'grade-pill grade-gd'; }
+  else { badge.textContent = 'Need Practice ★'; badge.className = 'grade-pill grade-np'; }
+
+  const catRows = CATS.map(c => {
+    const [s, e] = c.range;
+    const tot = e - s;
+    const got = answers.slice(s, e).reduce((sum, a, j) => sum + (a === QUESTIONS[s + j].ans ? 1 : 0), 0);
+    const barPct = Math.round((got / tot) * 100);
+    return `<div class="cat-row">
+      <div class="cat-name">${c.name}</div>
+      <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${barPct}%"></div></div>
+      <div class="cat-score">${got}/${tot}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('cat-rows').innerHTML = catRows;
+}
+
+function restart() {
+  current = 0;
+  answers = Array(QUESTIONS.length).fill(null);
+  answered = Array(QUESTIONS.length).fill(false);
+  document.getElementById('score-view').style.display = 'none';
+  document.getElementById('quiz-view').style.display = 'block';
+  document.getElementById('prog-wrap').style.display = 'block';
+  document.getElementById('nav-bar').style.display = 'block';
+  render();
+}
+</script>
+</body>
+</html>
