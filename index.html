@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ก๋วยเตี๋ยวเรือ Programming</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sarabun:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181c25;
+  --surface2: #1e2330;
+  --border: #2a2f3d;
+  --accent: #00d4aa;
+  --accent2: #7c6eff;
+  --red: #ff5c5c;
+  --yellow: #ffc107;
+  --orange: #ff8c42;
+  --text: #e8eaf0;
+  --muted: #8891a8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── HERO ── */
+.hero {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 52px 24px 32px;
+  text-align: center;
+}
+.hero-emoji {
+  font-size: 80px;
+  line-height: 1;
+  display: block;
+  margin-bottom: 18px;
+  animation: floatBowl 3s ease-in-out infinite;
+}
+@keyframes floatBowl {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+.hero-brand {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.3px;
+  margin-bottom: 4px;
+}
+.hero-tagline {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+}
+.hero-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 400px;
+  margin: 0 auto 32px;
+}
+
+/* ── CARDS ── */
+.cards {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.course-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: border-color 0.2s, transform 0.2s, background 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.course-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 20px 20px 0 0;
+  transition: opacity 0.2s;
+  opacity: 0.6;
+}
+.card-pretest::before  { background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+.card-logic::before    { background: linear-gradient(90deg, var(--yellow), #ff8c42); }
+
+.course-card:hover {
+  border-color: var(--accent2);
+  transform: translateY(-2px);
+  background: #1c2132;
+}
+.course-card:hover::before { opacity: 1; }
+
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.card-icon { font-size: 36px; line-height: 1; }
+.card-arrow {
+  font-size: 18px;
+  color: var(--muted);
+  margin-top: 4px;
+  transition: transform 0.2s, color 0.2s;
+}
+.course-card:hover .card-arrow { transform: translateX(4px); color: var(--accent); }
+
+.card-label {
+  font-size: 10px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.8px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+.label-pretest { background: rgba(124,110,255,0.15); color: #a89fff; border: 1px solid rgba(124,110,255,0.25); }
+.label-logic   { background: rgba(255,193,7,0.12); color: var(--yellow); border: 1px solid rgba(255,193,7,0.25); }
+.label-challenge { background: rgba(255,92,92,0.12); color: #ff8c8c; border: 1px solid rgba(255,92,92,0.25); }
+.card-challenge::before { background: linear-gradient(90deg, var(--red), var(--orange)); }
+.label-slides { background: rgba(79,195,247,0.12); color: #4fc3f7; border: 1px solid rgba(79,195,247,0.25); }
+.card-slides::before { background: linear-gradient(90deg, #4fc3f7, var(--accent2)); }
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.card-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+.card-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.meta-chip {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center;
+  padding: 24px 20px 40px;
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+.footer span { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="hero-emoji">🍜</span>
+  <div class="hero-brand">ก๋วยเตี๋ยวเรือ Programming</div>
+  <div class="hero-tagline">// เส้นดี · น้ำข้น · โค้ดลื่น · ชีวิตมีรสชาติ</div>
+  <p class="hero-desc">
+    เรียนรู้ภาษา C ด้วยโจทย์ที่ออกแบบมาเพื่อฝึก Logic
+    ตั้งแต่พื้นฐานจนถึงการเขียนโปรแกรมเอง
+  </p>
+</div>
+
+<div class="cards">
+
+  <!-- PRETEST -->
+  <a class="course-card card-pretest" href="c_pretest_v2.html">
+    <div class="card-top">
+      <span class="card-icon">📋</span>
+      <span class="card-arrow">→</span>
+    </div>
+    <span class="card-label label-pretest">PRETEST</span>
+    <div class="card-title">C Language Pretest</div>
+    <div class="card-desc">
+      ทดสอบความรู้พื้นฐานภาษา C ก่อนเรียน
+      ครอบคลุม Variables, Operators, Control Flow,
+      Functions และ Arrays พร้อมเฉลยภาษาไทยทุกข้อ
+    </div>
+    <div class="card-meta">
+      <span class="meta-chip">30 questions</span>
+      <span class="meta-chip">MCQ</span>
+      <span class="meta-chip">Thai explanation</span>
+      <span class="meta-chip">Pass: 80%</span>
+    </div>
+  </a>
+
+  <!-- LOGIC -->
+  <a class="course-card card-logic" href="c_logic_exercises.html">
+    <div class="card-top">
+      <span class="card-icon">🧠</span>
+      <span class="card-arrow">→</span>
+    </div>
+    <span class="card-label label-logic">EXERCISES</span>
+    <div class="card-title">C Logic Exercises</div>
+    <div class="card-desc">
+      ฝึก Logic การเขียนโปรแกรม 3 รูปแบบ
+      ตั้งแต่ Easy ไปจนถึง Hard แบบ Progressive
+      ฝึกอ่านโค้ด เติมโค้ด และเขียนโค้ดเอง
+    </div>
+    <div class="card-meta">
+      <span class="meta-chip">20 exercises</span>
+      <span class="meta-chip">Trace · Fill · Write</span>
+      <span class="meta-chip">3 levels</span>
+      <span class="meta-chip">Thai explanation</span>
+    </div>
+  </a>
+
+  <!-- CHALLENGES -->
+  <a class="course-card card-challenge" href="c_challenges.html">
+    <div class="card-top">
+      <span class="card-icon">🏆</span>
+      <span class="card-arrow">→</span>
+    </div>
+    <span class="card-label label-challenge">CHALLENGES</span>
+    <div class="card-title">C Challenges</div>
+    <div class="card-desc">
+      โจทย์เขียนโปรแกรมให้ได้ผลลัพธ์ตามตัวอย่าง
+      ฝึก if-else และ loop แบบจริงจัง
+      ตั้งแต่พิมพ์ดาวจนถึงระบบร้านก๋วยเตี๋ยว
+    </div>
+    <div class="card-meta">
+      <span class="meta-chip">10 challenges</span>
+      <span class="meta-chip">Output · System</span>
+      <span class="meta-chip">Easy → Hard</span>
+      <span class="meta-chip">Hint + เฉลย</span>
+    </div>
+  </a>
+
+  <!-- SLIDES -->
+  <a class="course-card card-slides" href="c_slides.html">
+    <div class="card-top">
+      <span class="card-icon">📽️</span>
+      <span class="card-arrow">→</span>
+    </div>
+    <span class="card-label label-slides">SLIDES</span>
+    <div class="card-title">Array · Function · Pointer</div>
+    <div class="card-desc">
+      สไลด์สอน 3 หัวข้อหลักที่น้องๆ อ่อน
+      พร้อม Memory Diagram, Use Case จริง
+      และโจทย์วิเคราะห์ paragraph แบบ progressive
+    </div>
+    <div class="card-meta">
+      <span class="meta-chip">20+ slides</span>
+      <span class="meta-chip">Array · Function · Pointer</span>
+      <span class="meta-chip">Use Case + Think!</span>
+      <span class="meta-chip">← → เลื่อนได้</span>
+    </div>
+  </a>
+
+</div>
+
+<div class="footer">
+  made with ♥ by <span>ก๋วยเตี๋ยวเรือ Programming</span>
+</div>
+
+</body>
+</html>

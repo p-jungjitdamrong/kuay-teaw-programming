@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C Logic Exercises</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181c25;
+  --surface2: #1e2330;
+  --border: #2a2f3d;
+  --accent: #00d4aa;
+  --accent2: #7c6eff;
+  --red: #ff5c5c;
+  --yellow: #ffc107;
+  --text: #e8eaf0;
+  --muted: #8891a8;
+  --code-bg: #0a0d12;
+  --correct: #00d4aa;
+  --wrong: #ff5c5c;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Sarabun', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* HEADER */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  position: sticky; top: 0; z-index: 100;
+}
+.header-inner {
+  max-width: 700px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-bowl { font-size: 22px; line-height: 1; }
+.logo-text { display: flex; flex-direction: column; line-height: 1.15; }
+.logo-th { font-size: 13px; font-weight: 700; color: var(--accent); }
+.logo-en { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+.header-meta { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+/* PROGRESS */
+.prog-wrap { max-width: 700px; margin: 0 auto; padding: 14px 20px 0; }
+.prog-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 6px; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 2px; transition: width 0.4s; width: 0%; }
+.prog-label { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; display: flex; justify-content: space-between; }
+
+/* MAIN */
+.main { max-width: 700px; margin: 0 auto; padding: 20px 20px 100px; }
+
+/* LEVEL BADGE */
+.level-divider {
+  display: flex; align-items: center; gap: 12px; margin: 28px 0 16px;
+}
+.level-divider:first-child { margin-top: 0; }
+.level-line { flex: 1; height: 1px; background: var(--border); }
+.level-badge {
+  font-size: 11px; font-weight: 600; padding: 4px 14px; border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; white-space: nowrap;
+}
+.lvl-easy  { background: rgba(0,212,170,0.12); color: var(--accent); border: 1px solid rgba(0,212,170,0.25); }
+.lvl-med   { background: rgba(255,193,7,0.12); color: var(--yellow); border: 1px solid rgba(255,193,7,0.25); }
+.lvl-hard  { background: rgba(255,92,92,0.12); color: var(--red); border: 1px solid rgba(255,92,92,0.25); }
+
+/* EXERCISE CARD */
+.ex-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 14px;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+.ex-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.ex-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--muted); }
+.type-pill {
+  font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace; letter-spacing: 0.3px;
+}
+.tp-trace { background: rgba(124,110,255,0.15); color: #a89fff; border: 1px solid rgba(124,110,255,0.25); }
+.tp-fill  { background: rgba(0,212,170,0.12); color: var(--accent); border: 1px solid rgba(0,212,170,0.25); }
+.tp-write { background: rgba(255,193,7,0.12); color: var(--yellow); border: 1px solid rgba(255,193,7,0.25); }
+
+.ex-q { font-size: 14px; line-height: 1.65; color: var(--text); margin-bottom: 12px; }
+.ex-code {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 13px; line-height: 1.9;
+  margin-bottom: 14px;
+  white-space: pre; overflow-x: auto;
+  color: #c9d1e0;
+}
+.blank {
+  display: inline-block;
+  background: rgba(124,110,255,0.15);
+  border-bottom: 2px solid var(--accent2);
+  border-radius: 3px;
+  min-width: 60px; padding: 0 6px;
+  color: #a89fff; font-style: italic; font-size: 12px;
+}
+
+/* ANSWER AREA */
+.ans-label { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 6px; letter-spacing: 0.5px; }
+
+/* TRACE: multiple choice */
+.trace-opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.trace-opt {
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 14px; font-size: 13px; cursor: pointer;
+  color: var(--text); background: var(--surface2);
+  text-align: left; transition: border-color 0.15s, background 0.15s;
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.trace-opt:hover:not(:disabled) { border-color: var(--accent2); background: #22283a; }
+.trace-opt.correct { border-color: var(--correct); background: rgba(0,212,170,0.08); }
+.trace-opt.wrong   { border-color: var(--wrong); background: rgba(255,92,92,0.08); }
+.trace-opt.reveal  { border-color: var(--correct); background: rgba(0,212,170,0.06); }
+.trace-opt:disabled { cursor: default; }
+.opt-ltr { font-size: 11px; font-weight: 600; color: var(--muted); min-width: 18px; }
+.trace-opt.correct .opt-ltr { color: var(--correct); }
+.trace-opt.wrong   .opt-ltr { color: var(--wrong); }
+.trace-opt.reveal  .opt-ltr { color: var(--correct); }
+
+/* FILL: text input */
+.fill-row { display: flex; gap: 8px; align-items: stretch; margin-bottom: 12px; }
+.fill-input {
+  flex: 1; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 14px; font-size: 13px;
+  color: var(--text); font-family: 'JetBrains Mono', monospace;
+  outline: none; transition: border-color 0.15s;
+}
+.fill-input:focus { border-color: var(--accent2); }
+.fill-input.correct { border-color: var(--correct); background: rgba(0,212,170,0.06); }
+.fill-input.wrong   { border-color: var(--wrong); background: rgba(255,92,92,0.06); }
+.fill-input:disabled { cursor: default; }
+.check-btn {
+  padding: 10px 16px; border-radius: 8px;
+  background: var(--accent2); border: none;
+  color: #fff; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: 'Sarabun', sans-serif;
+  transition: background 0.15s; white-space: nowrap;
+}
+.check-btn:hover { background: #6a5cee; }
+.check-btn:disabled { opacity: 0.35; cursor: default; }
+
+/* WRITE: textarea */
+.write-area {
+  width: 100%; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; font-size: 13px;
+  color: var(--text); font-family: 'JetBrains Mono', monospace;
+  outline: none; resize: vertical; min-height: 90px;
+  line-height: 1.8; transition: border-color 0.15s;
+  margin-bottom: 8px;
+}
+.write-area:focus { border-color: var(--accent2); }
+.write-btn-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.show-ans-btn {
+  flex: 1; padding: 10px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface2);
+  color: var(--muted); font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: 'Sarabun', sans-serif;
+  transition: all 0.15s;
+}
+.show-ans-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+.model-ans {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--code-bg);
+  border: 1px solid rgba(0,212,170,0.2);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px 14px; font-size: 12px; line-height: 1.9;
+  color: #9effe3; white-space: pre; overflow-x: auto;
+  margin-bottom: 12px; display: none;
+  animation: fadeIn 0.2s ease;
+}
+.model-ans.show { display: block; }
+
+/* EXPLANATION */
+.explain {
+  margin-top: 4px; padding: 12px 14px;
+  background: rgba(124,110,255,0.07);
+  border: 1px solid rgba(124,110,255,0.2);
+  border-radius: 8px;
+  font-size: 13px; color: #b8bdd0; line-height: 1.7;
+  display: none;
+}
+.explain.show { display: block; animation: fadeIn 0.2s ease; }
+.explain-lbl { font-size: 10px; font-weight: 600; color: var(--accent2); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; margin-bottom: 5px; }
+
+/* NAV */
+.nav-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(15,17,23,0.93); backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border); padding: 12px 20px; z-index: 100;
+}
+.nav-inner { max-width: 700px; margin: 0 auto; display: flex; gap: 10px; align-items: center; }
+.score-chip {
+  font-size: 12px; font-family: 'JetBrains Mono', monospace;
+  color: var(--accent); background: rgba(0,212,170,0.1);
+  border: 1px solid rgba(0,212,170,0.2); border-radius: 999px;
+  padding: 6px 12px; white-space: nowrap;
+}
+
+/* INTRO */
+.intro-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 28px 24px; margin-bottom: 20px;
+}
+.intro-hero { text-align: center; margin-bottom: 20px; }
+.intro-emoji { font-size: 64px; line-height: 1; display: block; margin-bottom: 10px; }
+.intro-brand { font-size: 20px; font-weight: 700; color: var(--accent); margin-bottom: 3px; }
+.intro-en { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; }
+.intro-card h2 { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.intro-card p { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
+.type-legend { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.legend-row { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+.legend-pill { font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 999px; font-family: 'JetBrains Mono', monospace; white-space: nowrap; margin-top: 1px; }
+.intro-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.stat-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; }
+.stat-n { font-size: 22px; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 4px; }
+.stat-l { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+.start-btn {
+  width: 100%; padding: 14px; border-radius: 12px;
+  background: var(--accent); border: none; color: #0a0d12;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  font-family: 'Sarabun', sans-serif; transition: background 0.15s;
+}
+.start-btn:hover { background: #00f0c0; }
+
+/* SCORE PAGE */
+.score-page { display: none; }
+.score-hero-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 32px 24px; text-align: center; margin-bottom: 16px;
+}
+.score-big { font-size: 64px; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 4px; }
+.score-sub { font-size: 14px; color: var(--muted); margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; }
+.grade-pill { display: inline-block; padding: 5px 16px; border-radius: 999px; font-size: 13px; font-weight: 600; margin-bottom: 16px; }
+.grade-ex { background: rgba(0,212,170,0.15); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); }
+.grade-gd { background: rgba(255,193,7,0.12); color: var(--yellow); border: 1px solid rgba(255,193,7,0.25); }
+.grade-np { background: rgba(255,92,92,0.12); color: var(--red); border: 1px solid rgba(255,92,92,0.25); }
+.breakdown-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px 24px; margin-bottom: 16px; }
+.breakdown-card h3 { font-size: 11px; font-weight: 600; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 14px; }
+.bk-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.bk-row:last-child { margin-bottom: 0; }
+.bk-name { font-size: 13px; color: var(--text); min-width: 80px; flex-shrink: 0; }
+.bk-track { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.bk-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+.bk-score { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; min-width: 32px; text-align: right; }
+.restart-btn {
+  width: 100%; padding: 14px; border-radius: 12px;
+  background: var(--accent); border: none; color: #0a0d12;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  font-family: 'Sarabun', sans-serif; transition: background 0.15s; margin-bottom: 80px;
+}
+.restart-btn:hover { background: #00f0c0; }
+
+#quiz-section { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-bowl">🍜</span>
+      <div class="logo-text">
+        <span class="logo-th">ก๋วยเตี๋ยวเรือ Programming</span>
+        <span class="logo-en">C Logic Exercises</span>
+      </div>
+    </div>
+    <div class="header-meta" id="hdr-meta">20 exercises</div>
+  </div>
+</div>
+
+<div class="prog-wrap" id="prog-wrap" style="display:none">
+  <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+  <div class="prog-label"><span id="prog-left">0 / 20 done</span><span id="prog-right">0%</span></div>
+</div>
+
+<div class="main">
+
+<!-- INTRO -->
+<div id="intro-section">
+  <div class="intro-card">
+    <div class="intro-hero">
+      <span class="intro-emoji">🍜</span>
+      <div class="intro-brand">ก๋วยเตี๋ยวเรือ Programming</div>
+      <div class="intro-en">// เส้นดี · น้ำข้น · โค้ดลื่น · ชีวิตมีรสชาติ</div>
+    </div>
+    <h2>C Logic Exercises</h2>
+    <p>Train your programming logic with 3 types of exercises — from reading code to writing it yourself. Questions get harder as you go.</p>
+    <div class="type-legend">
+      <div class="legend-row">
+        <span class="legend-pill tp-trace">TRACE</span>
+        <span>Read the code and predict the output. Choose the correct answer.</span>
+      </div>
+      <div class="legend-row">
+        <span class="legend-pill tp-fill">FILL IN</span>
+        <span>Complete the missing part of the code to make it work correctly.</span>
+      </div>
+      <div class="legend-row">
+        <span class="legend-pill tp-write">WRITE</span>
+        <span>Write the code yourself based on the given requirement.</span>
+      </div>
+    </div>
+    <div class="intro-stats">
+      <div class="stat-box"><div class="stat-n">20</div><div class="stat-l">exercises</div></div>
+      <div class="stat-box"><div class="stat-n">3</div><div class="stat-l">levels</div></div>
+      <div class="stat-box"><div class="stat-n">3</div><div class="stat-l">types</div></div>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">Start Exercises →</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz-section">
+  <div id="ex-container"></div>
+</div>
+
+<!-- SCORE -->
+<div class="score-page" id="score-page">
+  <div class="score-hero-card">
+    <div class="score-big" id="sc-num">0</div>
+    <div class="score-sub" id="sc-sub">/ 14 auto-scored</div>
+    <div class="grade-pill" id="sc-badge">—</div>
+    <div style="font-size:13px;color:var(--muted)">ทำ C Logic Exercises เสร็จแล้ว 🎉</div>
+  </div>
+  <div class="breakdown-card">
+    <h3>Score by level</h3>
+    <div id="bk-rows"></div>
+  </div>
+  <button class="restart-btn" onclick="restart()">↺ Try Again</button>
+</div>
+
+</div><!-- end main -->
+
+<div class="nav-bar" id="nav-bar" style="display:none">
+  <div class="nav-inner">
+    <div class="score-chip" id="score-chip">0 / 0</div>
+    <div style="flex:1"></div>
+    <button onclick="showScore()" style="padding:10px 20px;border-radius:8px;background:var(--accent);border:none;color:#0a0d12;font-size:13px;font-weight:700;cursor:pointer;font-family:'Sarabun',sans-serif;">
+      See Results ✓
+    </button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   EXERCISE DATA
+   type: trace | fill | write
+   level: easy | medium | hard
+   For trace: opts[], ans (index)
+   For fill:  ans (string, trimmed compare), blanks shown in code as ___
+   For write: modelAns (shown as reference)
+   All have: th (Thai explanation)
+============================================================ */
+const EX = [
+
+/* ── EASY TRACE ─────────────────────────────────────── */
+{
+  level:"easy", type:"trace",
+  q: "What is the output of this program?",
+  code:
+`int x = 4;
+int y = 6;
+int sum = x + y;
+printf("%d", sum);`,
+  opts:["4","6","10","46"],
+  ans: 2,
+  th: "x=4, y=6 บวกกันได้ 10 เก็บในตัวแปร sum แล้ว printf พิมพ์ออกมา ผลคือ 10"
+},
+
+{
+  level:"easy", type:"trace",
+  q: "What does this code print?",
+  code:
+`int i;
+for (i = 1; i <= 4; i++) {
+    printf("%d ", i);
+}`,
+  opts:["0 1 2 3","1 2 3 4","1 2 3 4 5","2 3 4"],
+  ans: 1,
+  th: "loop เริ่มที่ i=1 เงื่อนไข i<=4 ดังนั้นพิมพ์ 1, 2, 3, 4 แล้วหยุดเมื่อ i=5"
+},
+
+{
+  level:"easy", type:"trace",
+  q: "What is the output?",
+  code:
+`int a = 10;
+if (a % 2 == 0) {
+    printf("Even");
+} else {
+    printf("Odd");
+}`,
+  opts:["Odd","Even","10","Error"],
+  ans: 1,
+  th: "10 % 2 = 0 (หารลงตัว) เงื่อนไข 0==0 เป็น true จึงพิมพ์ Even"
+},
+
+/* ── EASY FILL ─────────────────────────────────────── */
+{
+  level:"easy", type:"fill",
+  q: "Fill in the blank so the loop prints: 0 1 2 3 4",
+  code:
+`int i;
+for (i = 0; i ___; i++) {
+    printf("%d ", i);
+}`,
+  hint: "Think about the condition that stops the loop after printing 4.",
+  ans: "< 5",
+  alt: ["<5","<=4","<= 4"],
+  th: "เงื่อนไขคือ i < 5 (หรือ i <= 4) ทำให้ loop รันเมื่อ i = 0,1,2,3,4 แล้วหยุดเมื่อ i = 5"
+},
+
+{
+  level:"easy", type:"fill",
+  q: "Fill in the blank to print the character grade.",
+  code:
+`char grade = 'A';
+printf(___, grade);`,
+  hint: "What format specifier is used for a char?",
+  ans: '"%c"',
+  alt: ['"%c"',"'%c'"],
+  th: "%c คือ format specifier สำหรับ char (ตัวอักษร 1 ตัว) ต่างจาก %s ที่ใช้กับ string"
+},
+
+/* ── EASY WRITE ─────────────────────────────────────── */
+{
+  level:"easy", type:"write",
+  q: "Write a line of code that declares an integer variable named 'score' and sets its value to 95.",
+  modelAns: `int score = 95;`,
+  th: "รูปแบบการประกาศตัวแปร C: [ชนิดข้อมูล] [ชื่อตัวแปร] = [ค่า]; ดังนั้นคือ int score = 95;"
+},
+
+{
+  level:"easy", type:"write",
+  q: "Write an if-else statement: if variable 'age' is 18 or more, print \"Adult\". Otherwise, print \"Minor\".",
+  modelAns:
+`if (age >= 18) {
+    printf("Adult");
+} else {
+    printf("Minor");
+}`,
+  th: "เงื่อนไขใช้ >= (มากกว่าหรือเท่ากับ) ต้องใส่วงเล็บรอบเงื่อนไข และ curly braces {} สำหรับ block"
+},
+
+/* ── MEDIUM TRACE ─────────────────────────────────────── */
+{
+  level:"medium", type:"trace",
+  q: "What is the output? (Trace step by step)",
+  code:
+`int x = 5;
+int y = 2;
+int result;
+result = (x > y) ? x * y : x + y;
+printf("%d", result);`,
+  opts:["7","10","3","25"],
+  ans: 1,
+  th: "ternary operator: (x > y) คือ (5 > 2) เป็น true → ใช้ x * y = 5*2 = 10 ถ้า false จะใช้ x+y แทน"
+},
+
+{
+  level:"medium", type:"trace",
+  q: "What does this function return when called as add(3, 7)?",
+  code:
+`int add(int a, int b) {
+    int result = a + b;
+    return result * 2;
+}
+printf("%d", add(3, 7));`,
+  opts:["10","20","21","14"],
+  ans: 1,
+  th: "a=3, b=7 → result = 3+7 = 10 → return 10*2 = 20 ระวัง! ฟังก์ชันนี้ return result*2 ไม่ใช่แค่ result"
+},
+
+{
+  level:"medium", type:"trace",
+  q: "What is the final value of 'count' after this loop?",
+  code:
+`int count = 0;
+int i;
+for (i = 1; i <= 10; i++) {
+    if (i % 3 == 0) {
+        count++;
+    }
+}
+printf("%d", count);`,
+  opts:["3","4","10","30"],
+  ans: 0,
+  th: "นับตัวเลข 1-10 ที่หาร 3 ลงตัว ได้แก่: 3, 6, 9 รวม 3 ตัว count++ ทำงาน 3 ครั้ง"
+},
+
+/* ── MEDIUM FILL ─────────────────────────────────────── */
+{
+  level:"medium", type:"fill",
+  q: "Fill in the blank so the function correctly returns the larger number.",
+  code:
+`int max(int a, int b) {
+    if (___)
+        return a;
+    else
+        return b;
+}`,
+  hint: "When should we return 'a' instead of 'b'?",
+  ans: "a > b",
+  alt: ["a>b","a >= b","a>=b"],
+  th: "เงื่อนไขคือ a > b ถ้า a มากกว่า b ให้ return a มิฉะนั้น return b (ถ้าใช้ >= ก็ได้เช่นกัน)"
+},
+
+{
+  level:"medium", type:"fill",
+  q: "Fill in the blank to correctly receive user input for variable 'num'.",
+  code:
+`int num;
+printf("Enter a number: ");
+scanf("%d", ___);`,
+  hint: "scanf needs to know WHERE in memory to store the value.",
+  ans: "&num",
+  alt: ["& num"],
+  th: "& (address-of operator) บอก scanf ว่าจะเก็บค่าไว้ที่ตำแหน่งหน่วยความจำของตัวแปร num ถ้าลืม & โปรแกรมจะ crash"
+},
+
+/* ── MEDIUM WRITE ─────────────────────────────────────── */
+{
+  level:"medium", type:"write",
+  q: "Write a for loop that prints the multiplication table of 3, from 3×1 to 3×5.\nExpected output:  3 6 9 12 15",
+  modelAns:
+`int i;
+for (i = 1; i <= 5; i++) {
+    printf("%d ", 3 * i);
+}`,
+  th: "loop ตั้งแต่ i=1 ถึง 5 แล้วพิมพ์ 3*i ในแต่ละรอบ จะได้ 3, 6, 9, 12, 15"
+},
+
+{
+  level:"medium", type:"write",
+  q: "Write a complete function named 'isEven' that takes one integer parameter and returns 1 if it is even, or 0 if it is odd.",
+  modelAns:
+`int isEven(int n) {
+    if (n % 2 == 0)
+        return 1;
+    else
+        return 0;
+}`,
+  th: "ใช้ % (modulo) ตรวจว่าเศษเมื่อหาร 2 เป็น 0 หรือไม่ ถ้าใช่คือเลขคู่ return 1 (true) ถ้าไม่ใช่ return 0 (false)"
+},
+
+/* ── HARD TRACE ─────────────────────────────────────── */
+{
+  level:"hard", type:"trace",
+  q: "Trace through the code. What is the output?",
+  code:
+`int arr[] = {5, 3, 8, 1, 9};
+int max = arr[0];
+int i;
+for (i = 1; i < 5; i++) {
+    if (arr[i] > max) {
+        max = arr[i];
+    }
+}
+printf("%d", max);`,
+  opts:["5","8","9","1"],
+  ans: 2,
+  th: "เริ่มต้น max=5 (arr[0]) วน loop เปรียบเทียบทีละตัว: 3<5, 8>5→max=8, 1<8, 9>8→max=9 ผลลัพธ์คือ 9"
+},
+
+{
+  level:"hard", type:"trace",
+  q: "What does this recursive function print when called as mystery(4)?",
+  code:
+`void mystery(int n) {
+    if (n == 0) return;
+    mystery(n - 1);
+    printf("%d ", n);
+}
+mystery(4);`,
+  opts:["4 3 2 1","1 2 3 4","0 1 2 3 4","4 3 2 1 0"],
+  ans: 1,
+  th: "recursion จะเรียกตัวเองจนถึง n=0 แล้วค่อย return กลับขึ้นมาพิมพ์ ลำดับ print จึงเป็น 1, 2, 3, 4 (ขาขึ้น)"
+},
+
+/* ── HARD FILL ─────────────────────────────────────── */
+{
+  level:"hard", type:"fill",
+  q: "This function should sum all elements in an array. Fill in the blank.",
+  code:
+`int sumArray(int arr[], int size) {
+    int total = 0, i;
+    for (i = 0; i < size; i++) {
+        ___ += arr[i];
+    }
+    return total;
+}`,
+  hint: "Which variable is accumulating the sum?",
+  ans: "total",
+  alt: [],
+  th: "total คือตัวแปรสะสมผลรวม เขียน total += arr[i] คือ total = total + arr[i] ในแต่ละรอบ loop"
+},
+
+{
+  level:"hard", type:"fill",
+  q: "Fill in the condition to make this bubble sort swap work correctly.",
+  code:
+`if (___ ) {
+    int temp = arr[j];
+    arr[j] = arr[j+1];
+    arr[j+1] = temp;
+}`,
+  hint: "We swap when the current element is BIGGER than the next one.",
+  ans: "arr[j] > arr[j+1]",
+  alt: ["arr[j]>arr[j+1]","arr[j] > arr[j + 1]"],
+  th: "Bubble sort swap เมื่อตัวหน้า > ตัวหลัง เพื่อเรียงจากน้อยไปมาก ถ้าต้องการมากไปน้อยใช้ < แทน"
+},
+
+/* ── HARD WRITE ─────────────────────────────────────── */
+{
+  level:"hard", type:"write",
+  q: "Write a function named 'factorial' that takes an integer n and returns n! (n factorial).\nNote: factorial(0) = 1, factorial(5) = 120",
+  modelAns:
+`int factorial(int n) {
+    if (n == 0)
+        return 1;
+    return n * factorial(n - 1);
+}`,
+  th: "Recursive factorial: base case คือ n=0 return 1 กรณีอื่น return n * factorial(n-1) เช่น factorial(3) = 3 * factorial(2) = 3*2*1 = 6"
+},
+
+{
+  level:"hard", type:"write",
+  q: "Write a complete function that searches for a value in an integer array.\nReturn the index if found, or -1 if not found.\nFunction signature: int search(int arr[], int size, int target)",
+  modelAns:
+`int search(int arr[], int size, int target) {
+    int i;
+    for (i = 0; i < size; i++) {
+        if (arr[i] == target)
+            return i;
+    }
+    return -1;
+}`,
+  th: "Linear search วน loop ดูทุก element ถ้าเจอ target ให้ return index นั้นทันที ถ้าวนครบแล้วไม่เจอ return -1"
+}
+
+];
+
+/* ── STATE ─────────────────────────────────────────── */
+let done    = {};   // ex index → true/false (correct) for trace/fill; true for write
+let written = {};   // write answers typed
+let shown   = {};   // model answer shown for write
+
+function startQuiz() {
+  document.getElementById('intro-section').style.display = 'none';
+  document.getElementById('quiz-section').style.display  = 'block';
+  document.getElementById('prog-wrap').style.display     = 'block';
+  document.getElementById('nav-bar').style.display       = 'block';
+  renderAll();
+}
+
+function renderAll() {
+  const container = document.getElementById('ex-container');
+  let html = '';
+  let level = '';
+
+  EX.forEach((ex, idx) => {
+    if (ex.level !== level) {
+      level = ex.level;
+      const lvlMeta = {
+        easy:   { label: '⬤ Easy',   cls: 'lvl-easy'  },
+        medium: { label: '⬤ Medium', cls: 'lvl-med'   },
+        hard:   { label: '⬤ Hard',   cls: 'lvl-hard'  }
+      }[level];
+      html += `<div class="level-divider">
+        <div class="level-line"></div>
+        <span class="level-badge ${lvlMeta.cls}">${lvlMeta.label}</span>
+        <div class="level-line"></div>
+      </div>`;
+    }
+    html += renderCard(ex, idx);
+  });
+
+  container.innerHTML = html;
+  updateProgress();
+}
+
+function renderCard(ex, idx) {
+  const typeMeta = {
+    trace: { label: 'TRACE',   cls: 'tp-trace' },
+    fill:  { label: 'FILL IN', cls: 'tp-fill'  },
+    write: { label: 'WRITE',   cls: 'tp-write' }
+  }[ex.type];
+
+  const isDone = done[idx] !== undefined;
+  const isCorrect = done[idx] === true;
+
+  let bodyHtml = '';
+
+  if (ex.type === 'trace') {
+    const optsHtml = ex.opts.map((o, i) => {
+      let cls = 'trace-opt';
+      if (isDone) {
+        if (i === ex.ans) cls += ' reveal';
+        else if (i === (done[idx+'_sel'])) cls += ' wrong';
+      }
+      return `<button class="${cls}" onclick="pickTrace(${idx},${i})" ${isDone?'disabled':''}>
+        <span class="opt-ltr">${String.fromCharCode(65+i)}</span>
+        <span>${o}</span>
+      </button>`;
+    }).join('');
+    bodyHtml = `
+      <div class="ans-label">YOUR ANSWER</div>
+      <div class="trace-opts">${optsHtml}</div>`;
+  }
+
+  else if (ex.type === 'fill') {
+    const inpCls = !isDone ? '' : (isCorrect ? ' correct' : ' wrong');
+    const val = written[idx] || '';
+    bodyHtml = `
+      <div class="ans-label">FILL IN THE BLANK</div>
+      <div class="fill-row">
+        <input class="fill-input${inpCls}" id="fill-${idx}" type="text"
+          placeholder="type your answer..." value="${escAttr(val)}"
+          ${isDone?'disabled':''} onkeydown="if(event.key==='Enter')checkFill(${idx})">
+        <button class="check-btn" id="fill-btn-${idx}" onclick="checkFill(${idx})" ${isDone?'disabled':''}>Check</button>
+      </div>`;
+  }
+
+  else { // write
+    const val = written[idx] || '';
+    const modelShown = shown[idx];
+    bodyHtml = `
+      <div class="ans-label">WRITE YOUR CODE</div>
+      <textarea class="write-area" id="write-${idx}" placeholder="Write your C code here..."
+        oninput="saveWrite(${idx})">${escHtml(val)}</textarea>
+      <div class="write-btn-row">
+        <button class="show-ans-btn" onclick="toggleModel(${idx})">
+          ${modelShown ? 'Hide' : 'Show'} Answer
+        </button>
+      </div>
+      <div class="model-ans ${modelShown?'show':''}" id="model-${idx}">${escHtml(ex.modelAns)}</div>`;
+  }
+
+  const explainShow = isDone || (ex.type === 'write' && shown[idx]);
+  return `
+  <div class="ex-card" id="card-${idx}">
+    <div class="ex-header">
+      <span class="ex-num">Exercise ${idx+1}</span>
+      <span class="type-pill ${typeMeta.cls}">${typeMeta.label}</span>
+    </div>
+    <div class="ex-q">${ex.q.replace(/\n/g,'<br>')}</div>
+    ${ex.code ? `<div class="ex-code">${escHtml(ex.code)}</div>` : ''}
+    ${bodyHtml}
+    <div class="explain ${explainShow?'show':''}" id="exp-${idx}">
+      <div class="explain-lbl">🇹🇭 คำอธิบาย</div>
+      ${ex.th}
+    </div>
+  </div>`;
+}
+
+/* ── INTERACTIONS ───────────────────────────────────── */
+function pickTrace(idx, sel) {
+  if (done[idx] !== undefined) return;
+  done[idx+'_sel'] = sel;
+  done[idx] = (sel === EX[idx].ans);
+  refreshCard(idx);
+  updateProgress();
+}
+
+function checkFill(idx) {
+  const ex = EX[idx];
+  if (done[idx] !== undefined) return;
+  const raw = document.getElementById('fill-'+idx).value.trim();
+  written[idx] = raw;
+  const correct = [ex.ans, ...(ex.alt||[])].map(s=>s.trim());
+  done[idx] = correct.includes(raw);
+  refreshCard(idx);
+  updateProgress();
+}
+
+function saveWrite(idx) {
+  written[idx] = document.getElementById('write-'+idx).value;
+}
+
+function toggleModel(idx) {
+  shown[idx] = !shown[idx];
+  if (!done[idx]) done[idx] = true; // count write as done when answer viewed
+  refreshCard(idx);
+  updateProgress();
+}
+
+function refreshCard(idx) {
+  const card = document.getElementById('card-'+idx);
+  const tmp = document.createElement('div');
+  tmp.innerHTML = renderCard(EX[idx], idx);
+  card.replaceWith(tmp.firstElementChild);
+}
+
+function updateProgress() {
+  const autoCount = EX.filter((_,i) => EX[i].type !== 'write').length;
+  const correct   = EX.filter((_,i) => EX[i].type !== 'write' && done[i] === true).length;
+  const doneAll   = Object.keys(done).filter(k => !k.includes('_')).length;
+  const pct = Math.round((doneAll / EX.length) * 100);
+
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-left').textContent  = `${doneAll} / ${EX.length} done`;
+  document.getElementById('prog-right').textContent = pct + '%';
+  document.getElementById('hdr-meta').textContent   = `${doneAll} done`;
+  document.getElementById('score-chip').textContent = `${correct} / ${autoCount} correct`;
+}
+
+/* ── SCORE PAGE ─────────────────────────────────────── */
+function showScore() {
+  document.getElementById('quiz-section').style.display = 'none';
+  document.getElementById('prog-wrap').style.display    = 'none';
+  document.getElementById('nav-bar').style.display      = 'none';
+  document.getElementById('score-page').style.display   = 'block';
+
+  const levels = ['easy','medium','hard'];
+  let totalAuto = 0, totalCorrect = 0;
+
+  const bkHtml = levels.map(lvl => {
+    const idxs = EX.map((_,i)=>i).filter(i => EX[i].level===lvl && EX[i].type!=='write');
+    const tot = idxs.length;
+    const got = idxs.filter(i => done[i]===true).length;
+    totalAuto    += tot;
+    totalCorrect += got;
+    const pct = tot ? Math.round((got/tot)*100) : 0;
+    return `<div class="bk-row">
+      <div class="bk-name">${lvl.charAt(0).toUpperCase()+lvl.slice(1)}</div>
+      <div class="bk-track"><div class="bk-fill" style="width:${pct}%"></div></div>
+      <div class="bk-score">${got}/${tot}</div>
+    </div>`;
+  }).join('');
+
+  const pct = Math.round((totalCorrect/totalAuto)*100);
+  document.getElementById('sc-num').textContent = totalCorrect;
+  document.getElementById('sc-sub').textContent = `/ ${totalAuto} auto-scored (WRITE not counted)`;
+
+  const badge = document.getElementById('sc-badge');
+  if (pct >= 80) { badge.textContent='Excellent ★★★'; badge.className='grade-pill grade-ex'; }
+  else if (pct >= 60) { badge.textContent='Good ★★'; badge.className='grade-pill grade-gd'; }
+  else { badge.textContent='Need Practice ★'; badge.className='grade-pill grade-np'; }
+
+  document.getElementById('bk-rows').innerHTML = bkHtml;
+}
+
+function restart() {
+  done={}; written={}; shown={};
+  document.getElementById('score-page').style.display  = 'none';
+  document.getElementById('quiz-section').style.display = 'block';
+  document.getElementById('prog-wrap').style.display    = 'block';
+  document.getElementById('nav-bar').style.display      = 'block';
+  renderAll();
+  window.scrollTo(0,0);
+}
+
+/* ── UTILS ─────────────────────────────────────────── */
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escAttr(s){return String(s).replace(/"/g,'&quot;');}
+</script>
+</body>
+</html>

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C Challenges — ก๋วยเตี๋ยวเรือ Programming</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sarabun:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f1117; --surface:#181c25; --surface2:#1e2330;
+  --border:#2a2f3d; --accent:#00d4aa; --accent2:#7c6eff;
+  --red:#ff5c5c; --yellow:#ffc107; --orange:#ff8c42;
+  --text:#e8eaf0; --muted:#8891a8; --code-bg:#0a0d12;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 20px;position:sticky;top:0;z-index:100}
+.header-inner{max-width:720px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-bowl{font-size:22px;line-height:1}
+.logo-text{display:flex;flex-direction:column;line-height:1.15}
+.logo-th{font-size:13px;font-weight:700;color:var(--accent)}
+.logo-en{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.back-btn{font-size:12px;color:var(--muted);text-decoration:none;font-family:'JetBrains Mono',monospace;border:1px solid var(--border);padding:6px 12px;border-radius:8px;transition:all .15s}
+.back-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+
+/* MAIN */
+.main{max-width:720px;margin:0 auto;padding:24px 20px 80px}
+
+/* INTRO STRIP */
+.intro-strip{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 24px;margin-bottom:28px;display:flex;align-items:center;gap:16px}
+.strip-emoji{font-size:40px;line-height:1;flex-shrink:0}
+.strip-text h2{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px}
+.strip-text p{font-size:13px;color:var(--muted);line-height:1.65}
+.strip-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.s-chip{font-size:10px;font-family:'JetBrains Mono',monospace;padding:3px 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--muted)}
+
+/* LEVEL DIVIDER */
+.level-div{display:flex;align-items:center;gap:12px;margin:32px 0 16px}
+.level-div:first-of-type{margin-top:0}
+.lv-line{flex:1;height:1px;background:var(--border)}
+.lv-badge{font-size:11px;font-weight:600;padding:4px 14px;border-radius:999px;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.lv-easy{background:rgba(0,212,170,.12);color:var(--accent);border:1px solid rgba(0,212,170,.25)}
+.lv-med {background:rgba(255,193,7,.12);color:var(--yellow);border:1px solid rgba(255,193,7,.25)}
+.lv-hard{background:rgba(255,92,92,.12);color:var(--red);border:1px solid rgba(255,92,92,.25)}
+
+/* CHALLENGE CARD */
+.ch-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-bottom:14px;overflow:hidden}
+.ch-card-header{padding:18px 20px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.ch-num-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ch-num{font-size:11px;font-weight:600;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.type-pill{font-size:10px;font-weight:600;padding:2px 9px;border-radius:999px;font-family:'JetBrains Mono',monospace}
+.tp-output{background:rgba(124,110,255,.15);color:#a89fff;border:1px solid rgba(124,110,255,.25)}
+.tp-system{background:rgba(255,140,66,.12);color:var(--orange);border:1px solid rgba(255,140,66,.25)}
+.ch-done-badge{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--accent);background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.2);border-radius:999px;padding:3px 10px;white-space:nowrap;display:none}
+
+.ch-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;padding:0 20px}
+.ch-desc{font-size:13px;color:var(--muted);line-height:1.65;padding:0 20px;margin-bottom:14px}
+
+/* RULES */
+.rules-box{margin:0 20px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.rules-title{font-size:10px;font-weight:600;color:var(--accent2);font-family:'JetBrains Mono',monospace;letter-spacing:.5px;margin-bottom:8px}
+.rule-row{display:flex;align-items:baseline;gap:8px;font-size:13px;color:var(--muted);line-height:1.6}
+.rule-cond{font-family:'JetBrains Mono',monospace;color:var(--text);font-size:12px;white-space:nowrap}
+
+/* CODE BLOCK */
+.code-block{font-family:'JetBrains Mono',monospace;background:var(--code-bg);border-left:3px solid var(--accent2);padding:14px 16px;font-size:12px;line-height:1.9;white-space:pre;overflow-x:auto;color:#c9d1e0;margin:0 20px 14px;border-radius:8px;border:1px solid var(--border)}
+.code-block.output{border-left-color:var(--accent);color:#9effe3}
+
+.io-label{font-size:10px;font-weight:600;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.5px;padding:0 20px;margin-bottom:6px}
+
+/* ACCORDION */
+.hint-toggle{width:100%;background:none;border:none;border-top:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;transition:background .15s}
+.hint-toggle:hover{background:var(--surface2)}
+.hint-toggle.open{color:var(--accent2)}
+.hint-arrow{transition:transform .2s}
+.hint-toggle.open .hint-arrow{transform:rotate(180deg)}
+.hint-body{display:none;padding:12px 20px 16px;border-top:1px solid var(--border);background:rgba(124,110,255,.04)}
+.hint-body.show{display:block;animation:fadeIn .2s ease}
+.hint-body p{font-size:13px;color:#b8bdd0;line-height:1.7;margin-bottom:8px}
+.hint-body p:last-child{margin-bottom:0}
+.hint-body .hint-code{font-family:'JetBrains Mono',monospace;background:var(--code-bg);border-radius:6px;padding:10px 12px;font-size:12px;line-height:1.8;color:#c9d1e0;white-space:pre;overflow-x:auto;margin-top:8px;border:1px solid var(--border)}
+.hint-lbl{font-size:10px;font-weight:600;color:var(--accent2);font-family:'JetBrains Mono',monospace;letter-spacing:.5px;margin-bottom:6px}
+
+/* DONE TOGGLE */
+.done-bar{border-top:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between}
+.done-bar label{font-size:12px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:8px;user-select:none}
+.done-bar input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+
+/* NAV BAR */
+.nav-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(15,17,23,.93);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:12px 20px;z-index:100}
+.nav-inner{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.progress-pill{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--accent);background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.2);border-radius:999px;padding:6px 14px;white-space:nowrap}
+.nav-prog-track{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.nav-prog-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:2px;transition:width .4s}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-bowl">🍜</span>
+      <div class="logo-text">
+        <span class="logo-th">ก๋วยเตี๋ยวเรือ Programming</span>
+        <span class="logo-en">C Challenges</span>
+      </div>
+    </div>
+    <a class="nav-btn" href="c_challenges_answers.html">เฉลย →</a>
+    <a class="back-btn" href="index.html">← Home</a>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="intro-strip">
+    <span class="strip-emoji">🏆</span>
+    <div class="strip-text">
+      <h2>C Challenges — if, else, loop</h2>
+      <p>โจทย์เขียนโปรแกรมให้ได้ผลลัพธ์ตามตัวอย่าง ฝึก Logic การคิดจริงๆ ไล่ตั้งแต่ง่ายไปยาก</p>
+      <div class="strip-chips">
+        <span class="s-chip">10 challenges</span>
+        <span class="s-chip">if / else</span>
+        <span class="s-chip">for / while loop</span>
+        <span class="s-chip">Easy → Hard</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ EASY ══════════════ -->
+  <div class="level-div"><div class="lv-line"></div><span class="lv-badge lv-easy">⬤ Easy</span><div class="lv-line"></div></div>
+
+  <!-- #1 -->
+  <div class="ch-card" id="card-0">
+    <div class="ch-card-header">
+      <div>
+        <div class="ch-num-row">
+          <span class="ch-num">#01</span>
+          <span class="type-pill tp-output">OUTPUT</span>
+          <span class="ch-done-badge" id="badge-0">✓ Done</span>
+        </div>
+      </div>
+    </div>
+    <div class="ch-title">Positive / Negative / Zero</div>
+    <div class="ch-desc">Write a program that reads one integer and prints whether it is Positive, Negative, or Zero.</div>
+    <div class="io-label">EXAMPLE INPUT / OUTPUT</div>
+    <div class="code-block output">Input:  5
+Output: Positive
+
+Input:  -3
+Output: Negative
+
+Input:  0
+Output: Zero</div>
+    <button class="hint-toggle" onclick="toggleHint(0)">
+      <span>💡 Hint &amp; Thai Explanation</span>
+      <span class="hint-arrow">▾</span>
+    </button>
+    <div class="hint-body" id="hint-0">
+      <div class="hint-lbl">🇹🇭 แนวคิด</div>
+      <p>ใช้ if-else if-else ตรวจ 3 กรณี: มากกว่า 0, น้อยกว่า 0, และเท่ากับ 0</p>
+      <p>ลำดับสำคัญ — ตรวจ <code>&gt; 0</code> ก่อน ถ้าไม่ใช่ค่อยตรวจ <code>&lt; 0</code> ที่เหลือคือ 0</p>
+      <div class="hint-code">if (n > 0)       printf("Positive");
+else if (n < 0)  printf("Negative");
+else             printf("Zero");</div>
+    </div>
+    <div class="done-bar">
+      <label><input type="checkbox" onchange="toggleDone(0, this)"> Mark as done</label>
+    </div>
+  </div>
+
+  <!-- #2 -->
+  <div class="ch-card" id="card-1">
+    <div class="ch-card-header">
+      <div>
+        <div class="ch-num-row">
+          <span class="ch-num">#02</span>
+          <span class="type-pill tp-output">OUTPUT</span>
+          <span class="ch-done-badge" id="badge-1">✓ Done</span>
+        </div>
+      </div>
+    </div>
+    <div class="ch-title">Even [E] / Odd [O]</div>
+    <div class="ch-desc">Print numbers 1–10. Put <code>[E]</code> before even numbers and <code>[O]</code> before odd numbers.</div>
+    <div class="io-label">EXPECTED OUTPUT</div>
+    <div class="code-block output">[O] 1
+[E] 2
+[O] 3
+[E] 4
+[O] 5
+[E] 6
+[O] 7
+[E] 8
+[O] 9
+[E] 10</div>
+    <button class="hint-toggle" onclick="toggleHint(1)">
+      <span>💡 Hint &amp; Thai Explanation</span>
+      <span class="hint-arrow">▾</span>
+    </button>
+    <div class="hint-body" id="hint-1">
+      <div class="hint-lbl">🇹🇭 แนวคิด</div>
+      <p>ใช้ for loop วน i=1 ถึง 10 แล้วตรวจ <code>i % 2 == 0</code> ว่าเป็นเลขคู่ไหม</p>
+      <p>% คือ modulo (เศษหาร) — ถ้าเศษเป็น 0 แสดงว่าหาร 2 ลงตัว = เลขคู่</p>
+      <div class="hint-code">for (i = 1; i &lt;= 10; i++) {
+    if (i % 2 == 0)
+        printf("[E] %d\n", i);
+    else
+        printf("[O] %d\n", i);
+}</div>
+    </div>
+    <div class="done-bar">
+      <label><input type="checkbox" onchange="toggleDone(1, this)"> Mark as done</label>
+    </div>
+  </div>
+
+  <!-- #3 -->
+  <div class="ch-card" id="card-2">
+    <div class="ch-card-header">
+      <div>
+        <div class="ch-num-row">
+          <span class="ch-num">#03</span>
+          <span class="type-pill tp-output">OUTPUT</span>
+          <span class="ch-done-badge" id="badge-2">✓ Done</span>
+        </div>
+      </div>
+    </div>
+    <div class="ch-title">Star Triangle</div>
+    <div class="ch-desc">Read an integer n and print a right triangle of stars with n rows.</div>
+    <div class="io-label">EXAMPLE INPUT / OUTPUT</div>
+    <div class="code-block output">Input: 4
+Output:
+*
+**
+***
+****</div>
+    <button class="hint-toggle" onclick="toggleHint(2)">
+      <span>💡 Hint &amp; Thai Explanation</span>
+      <span class="hint-arrow">▾</span>
+    </button>
+    <div class="hint-body" id="hint-2">
+      <div class="hint-lbl">🇹🇭 แนวคิด</div>
+      <p>ต้องใช้ loop ซ้อน 2 ชั้น (nested loop) — loop นอกคือแถว, loop ในคือจำนวนดาวในแถวนั้น</p>
+      <p>แถวที่ i จะมีดาว i ดวง เช่น แถว 1 = 1 ดาว, แถว 2 = 2 ดาว</p>
+      <div class="hint-code">for (i = 1; i &lt;= n; i++) {
+    for (j = 1; j &lt;= i; j++) {
+        printf("*");
+    }
+    printf("\n");
+}</div>
+    </div>
+    <div class="done-bar">
+      <label><input type="checkbox" onchange="toggleDone(2, this)"> Mark as done</label>
+    </div>
+  </div>
+
+  <!-- ══════════════ EASY-MEDIUM ══════════════ -->
+  <div class="level-div"><div class="lv-line"></div><span class="lv-badge lv-easy">⬤ Easy — Medium</span><div class="lv-line"></div></div>
+
+  <!-- #4 -->
+  <div class="ch-card" id="card-3">
+    <div class="ch-card-header">
+      <div>
+        <div class="ch-num-row">
+          <span class="ch-num">#04</span>
+          <span class="type-pill tp-system">SYSTEM</span>
+          <span class="ch-done-badge" id="badge-3">✓ Done</span>
+        </div>
+      </div>
+    </div>
+    <div class="ch-title">Discount Calculator</div>
+    <div class="ch-desc">Read a product price and calculate the discount based on the following rules.</div>
+    <div class="rules-box">
+      <div class="rules-title">DISCOUNT RULES</div>
+      <div class="rule-row"><span class="rule-cond">price &gt;= 1000</span><span>→ 20% discount</span></div>
+      <div class="rule-row"><span class="rule-cond">price &gt;= 500 </span><span>→ 10% discount</span></div>
+      <div class="rule-row"><span class="rule-cond">price &gt;= 100 </span><span>→  5% discount</span></div>
+      <div class="rule-row"><span class="rule-cond">price &lt;  100 </span><span>→  no discount</span></div>
+    </div>
+    <div class="io-label">EXAMPLE INPUT / OUTPUT</div>
+    <div class="code-block output">Input: 1200
+Original price : 1200
+Discount       : 20%
+You pay        : 960
+
+Input: 450
+Original price : 450
+Discount       : 10%
+You pay        : 405
+
+Input: 80
+Original price : 80
+Discount       : 0%
+You pay        : 80</div>
+    <button class="hint-toggle" onclick="toggleHint(3)">
+      <span>💡 Hint &amp; Thai Explanation</span>
+      <span class="hint-arrow">▾</span>
+    </button>
+    <div class="hint-body" id="hint-3">
+      <div class="hint-lbl">🇹🇭 แนวคิด</div>
+      <p>ใช้ if-else if ตรวจจากราคาสูงลงมา (ตรวจ >= 1000 ก่อนเสมอ) เพราะถ้าตรวจ >= 100 ก่อน ราคา 1000 ก็จะผ่านเงื่อนไขนั้นด้วย</p>
+      <p>คำนวณราคาหลังลด: <code>final = price - (price * discount / 100)</code></p>
+      <div class="hint-code">int disc = 0;
+if (price >= 1000)      disc = 20;
+else if (price >= 500)  disc = 10;
+else if (price >= 100)  disc = 5;
+int final = price - (price * disc / 100);</div>
+    </div>
+    <div class="done-bar">
+      <label><input type="checkbox" onchange="toggleDone(3, this)"> Mark as done</label>
+    </div>
+  </div>
+
+  <!-- #5 -->
+  <div class="ch-card" id="card-4">
+    <div class="ch-card-header">
+      <div>
+        <div class="ch-num-row">
+          <span class="ch-num">#05</span>
+          <span class="type-pill tp-system">SYSTEM</span>
+          <span class="ch-done-badge" id="badge-4">✓ Done</span>
+        </div>
+      </div>
+    </div>
+    <div class="ch-title">Grade Checker</div>
+    <div class="ch-desc">Read a score (0–100) and print the grade. If the score is out of range, print "Invalid score".</div>
+    <div class="rules-box">
+      <div class="rules-title">GRADE RULES</div>
+      <div class="rule-row"><span class="rule-cond">90–100</span><span>→ A</span></div>
+      <div class="rule-row"><span class="rule-cond">80–89 </span><span>→ B</span></div>
+      <div class="rule-row"><span class="rule-cond">70–79 </span><span>→ C</span></div>
+      <div class="rule-row"><span class="rule-cond">60–69 </span><span>→ D</span></div>
+      <div class="rule-row"><span class="rule-cond">0–59  </span><span>→ F</span></div>
+      <div class="rule-row"><span class="rule-cond">other </span><span>→ Invalid score</span></div>
+    </div>
+    <div class="io-label">EXAMPLE INPUT / OUTPUT</div>
+    <div class="code-block output">Input: 85   → Grade: B
+Input: 59   → Grade: F
+Input: 150  → Invalid score</div>
+    <button class="hint-toggle" onclick="toggleHint(4)">
+      <span>💡 Hint &amp; Thai Explanation</span>
+      <span class="hint-arrow">▾</span>
+    </button>
+    <div class="hint-body" id="hint-4">
+      <div class="hint-lbl">🇹🇭 แนวคิด</div>
+      <p>ตรวจ out-of-range ก่อนเลย (<code>score &lt; 0 || score &gt; 100</code>) แล้วค่อยตรวจเกรดจากสูงลงมา</p>
+      <p>สังเกต: ถ้าเงื่อนไข if เรียง >= 90, >= 80, >= 70... ไม่ต้องเขียน && เพราะ else if จะตรวจเฉพาะเมื่อ if บนไม่ผ่านแล้ว</p>
+      <div class="hint-code">if (score &lt; 0 || score > 100)
+    printf("Invalid score");
+else if (score >= 90)  printf("Grade: A");
+else if (score >= 80)  printf("Grade: B");
+else if (score >= 70)  printf("Grade: C");
+else if (score >= 60)  printf("Grade: D");
+else                   printf("Grade: F");</div>
+    </div>
+    <div class="done-bar">
+      <label><input type="checkbox" onchange="toggleDone(4, this)"> Mark as done</label>
+    </div>
+  </div>
+
+  <!-- ══════════════ MEDIUM ══════════════ -->
+  <div class="level-div"><div class="lv-line"></div><span class="lv-badge lv-med">⬤ Medium</span><div class="lv-line"></div></div>
+
+  <!-- #6 -->
+  <div class="ch-card" id="card-5">
+    <div class="ch-card-header">
+      <div>
+        <div class="ch-num-row">
+          <span class="ch-num">#06</span>
+          <span class="type-pill tp-output">OUTPUT</span>
+          <span class="ch-done-badge" id="badge-5">✓ Done</span>
+        </div>
+      </div>
+    </div>
+    <div class="ch-title">FizzBuzz</div>
+    <div class="ch-desc">Read n. Print numbers 1 to n. Apply FizzBuzz rules below.</div>
+    <div class="rules-box">
+      <div class="rules-title">RULES</div>
+      <div class="rule-row"><span class="rule-cond">divisible by 15</span><span>→ FizzBuzz</span></div>
+      <div class="rule-row"><span class="rule-cond">divisible by 3 </span><span>→ Fizz</span></div>
+      <div class="rule-row"><span class="rule-cond">divisible by 5 </span><span>→ Buzz</span></div>
+      <div class="rule-row"><span class="rule-cond">otherwise      </span><span>→ print the number</span></div>
+    </div>
+    <div class="io-label">EXAMPLE — Input: 15</div>
+    <div class="code-block output">1
+2
+Fizz
+4
+Buzz
+Fizz
+7
+8
+Fizz
+Buzz
+11
+Fizz
+13
+14
+FizzBuzz</div>
+    <button class="hint-toggle" onclick="toggleHint(5)">
+      <span>💡 Hint &amp; Thai Explanation</span>
+      <span class="hint-arrow">▾</span>
+    </button>
+    <div class="hint-body" id="hint-5">
+      <div class="hint-lbl">🇹🇭 แนวคิด</div>
+      <p>ต้องตรวจ <strong>% 15 ก่อนเสมอ</strong> เพราะตัวที่หาร 15 ได้ก็หาร 3 และ 5 ได้ด้วย ถ้าตรวจ % 3 ก่อนจะพิมพ์ Fizz แทนที่จะเป็น FizzBuzz</p>
+      <div class="hint-code">for (i = 1; i &lt;= n; i++) {
+    if      (i % 15 == 0) printf("FizzBuzz\n");
+    else if (i % 3  == 0) printf("Fizz\n");
+    else if (i % 5  == 0) printf("Buzz\n");
+    else                  printf("%d\n", i);
+}</div>
+    </div>
+    <div class="done-bar">
+      <label><input type="checkbox" onchange="toggleDone(5, this)"> Mark as done</label>
+    </div>
+  </div>
+
+  <!-- #7 -->
+  <div class="ch-card" id="card-6">
+    <div class="ch-card-header">
+      <div>
+        <div class="ch-num-row">
+          <span class="ch-num">#07</span>
+          <span class="type-pill tp-system">SYSTEM</span>
+          <span class="ch-done-badge" id="badge-6">✓ Done</span>
+        </div>
+      </div>
+    </div>
+    <div class="ch-title">Electricity Bill Calculator</div>
+    <div class="ch-desc">Read the number of electricity units used and calculate the bill using a tiered rate system.</div>
+    <div class="rules-box">
+      <div class="rules-title">RATE (tiered — not flat)</div>
+      <div class="rule-row"><span class="rule-cond">1–100 units  </span><span>→ 3.00 baht/unit</span></div>
+      <div class="rule-row"><span class="rule-cond">101–200 units</span><span>→ 4.00 baht/unit</span></div>
+      <div class="rule-row"><span class="rule-cond">201+ units   </span><span>→ 5.00 baht/unit</span></div>
+    </div>
+    <div class="io-label">EXAMPLE INPUT / OUTPUT</div>
+    <div class="code-block output">Input: 90
+Units used : 90
+Total cost : 270.00 baht
+
+Input: 150
+Units used : 150
+Total cost : 500.00 baht
+
+Input: 250
+Units used : 250
+Total cost : 950.00 baht
+(100×3) + (100×4) + (50×5) = 300+400+250 = 950</div>
+    <button class="hint-toggle" onclick="toggleHint(6)">
+      <span>💡 Hint &amp; Thai Explanation</span>
+      <span class="hint-arrow">▾</span>
+    </button>
+    <div class="hint-body" id="hint-6">
+      <div class="hint-lbl">🇹🇭 แนวคิด</div>
+      <p>คำนวณแบบขั้นบันได ไม่ใช่ flat rate — คือต้องคิดแยกแต่ละ tier ตัวอย่างเช่น 250 หน่วย:</p>
+      <p>100 หน่วยแรก × 3 + 100 หน่วยถัดมา × 4 + 50 หน่วยที่เหลือ × 5</p>
+      <div class="hint-code">float cost = 0;
+if (units &lt;= 100) {
+    cost = units * 3.0;
+} else if (units &lt;= 200) {
+    cost = 100*3.0 + (units-100)*4.0;
+} else {
+    cost = 100*3.0 + 100*4.0 + (units-200)*5.0;
+}
+printf("Total cost : %.2f baht\n", cost);</div>
+    </div>
+    <div class="done-bar">
+      <label><input type="checkbox" onchange="toggleDone(6, this)"> Mark as done</label>
+    </div>
+  </div>
+
+  <!-- #8 -->
+  <div class="ch-card" id="card-7">
+    <div class="ch-card-header">
+      <div>
+        <div class="ch-num-row">
+          <span class="ch-num">#08</span>
+          <span class="type-pill tp-output">OUTPUT</span>
+          <span class="ch-done-badge" id="badge-7">✓ Done</span>
+        </div>
+      </div>
+    </div>
+    <div class="ch-title">Multiplication Table</div>
+    <div class="ch-desc">Read n and print an n×n multiplication table. Each column must be the same width (use <code>%3d</code>).</div>
+    <div class="io-label">EXAMPLE — Input: 4</div>
+    <div class="code-block output"> 1  2  3  4
+ 2  4  6  8
+ 3  6  9 12
+ 4  8 12 16</div>
+    <button class="hint-toggle" onclick="toggleHint(7)">
+      <span>💡 Hint &amp; Thai Explanation</span>
+      <span class="hint-arrow">▾</span>
+    </button>
+    <div class="hint-body" id="hint-7">
+      <div class="hint-lbl">🇹🇭 แนวคิด</div>
+      <p>Nested loop — loop นอกคือแถว (row), loop ในคือคอลัมน์ (col) แล้วพิมพ์ row × col</p>
+      <p><code>%3d</code> หมายความว่าให้ตัวเลขกินพื้นที่ 3 ช่อง จัดชิดขวา ทำให้คอลัมน์ตรงกัน</p>
+      <div class="hint-code">for (i = 1; i &lt;= n; i++) {
+    for (j = 1; j &lt;= n; j++) {
+        printf("%3d", i * j);
+    }
+    printf("\n");
+}</div>
+    </div>
+    <div class="done-bar">
+      <label><input type="checkbox" onchange="toggleDone(7, this)"> Mark as done</label>
+    </div>
+  </div>
+
+  <!-- ══════════════ HARD ══════════════ -->
+  <div class="level-div"><div class="lv-line"></div><span class="lv-badge lv-hard">⬤ Hard</span><div class="lv-line"></div></div>
+
+  <!-- #9 -->
+  <div class="ch-card" id="card-8">
+    <div class="ch-card-header">
+      <div>
+        <div class="ch-num-row">
+          <span class="ch-num">#09</span>
+          <span class="type-pill tp-system">SYSTEM</span>
+          <span class="ch-done-badge" id="badge-8">✓ Done</span>
+        </div>
+      </div>
+    </div>
+    <div class="ch-title">Simple ATM</div>
+    <div class="ch-desc">Starting balance is 5000 baht. Read commands in a loop until the user types <code>quit</code>.</div>
+    <div class="rules-box">
+      <div class="rules-title">COMMANDS</div>
+      <div class="rule-row"><span class="rule-cond">balance         </span><span>→ show current balance</span></div>
+      <div class="rule-row"><span class="rule-cond">deposit &lt;amt&gt;  </span><span>→ add money</span></div>
+      <div class="rule-row"><span class="rule-cond">withdraw &lt;amt&gt; </span><span>→ subtract money (check if enough)</span></div>
+      <div class="rule-row"><span class="rule-cond">quit            </span><span>→ exit the program</span></div>
+    </div>
+    <div class="io-label">EXAMPLE SESSION</div>
+    <div class="code-block output">> balance
+Balance: 5000 baht
+
+> deposit 1000
+Deposited: 1000 baht
+Balance: 6000 baht
+
+> withdraw 2000
+Withdrew: 2000 baht
+Balance: 4000 baht
+
+> withdraw 9000
+Insufficient funds. Balance: 4000 baht
+
+> quit
+Thank you. Goodbye!</div>
+    <button class="hint-toggle" onclick="toggleHint(8)">
+      <span>💡 Hint &amp; Thai Explanation</span>
+      <span class="hint-arrow">▾</span>
+    </button>
+    <div class="hint-body" id="hint-8">
+      <div class="hint-lbl">🇹🇭 แนวคิด</div>
+      <p>ใช้ <code>while(1)</code> loop ไม่มีที่สิ้นสุด แล้ว break เมื่อ input เป็น "quit"</p>
+      <p>ใช้ <code>scanf("%s", cmd)</code> อ่าน command แล้ว <code>strcmp(cmd, "balance")</code> เปรียบเทียบ string — ต้อง include <code>&lt;string.h&gt;</code></p>
+      <p>สำหรับ deposit/withdraw ใช้ <code>scanf("%s %d", cmd, &amt)</code> อ่านพร้อมกัน</p>
+      <div class="hint-code">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+int main() {
+    int balance = 5000, amt;
+    char cmd[20];
+    while (1) {
+        printf("> ");
+        scanf("%s", cmd);
+        if (strcmp(cmd, "quit") == 0) {
+            printf("Thank you. Goodbye!\n");
+            break;
+        } else if (strcmp(cmd, "balance") == 0) {
+            printf("Balance: %d baht\n", balance);
+        } else if (strcmp(cmd, "deposit") == 0) {
+            scanf("%d", &amt);
+            balance += amt;
+            printf("Deposited: %d baht\nBalance: %d baht\n", amt, balance);
+        } else if (strcmp(cmd, "withdraw") == 0) {
+            scanf("%d", &amt);
+            if (amt > balance)
+                printf("Insufficient funds. Balance: %d baht\n", balance);
+            else {
+                balance -= amt;
+                printf("Withdrew: %d baht\nBalance: %d baht\n", amt, balance);
+            }
+        }
+    }
+    return 0;
+}</div>
+    </div>
+    <div class="done-bar">
+      <label><input type="checkbox" onchange="toggleDone(8, this)"> Mark as done</label>
+    </div>
+  </div>
+
+  <!-- #10 -->
+  <div class="ch-card" id="card-9">
+    <div class="ch-card-header">
+      <div>
+        <div class="ch-num-row">
+          <span class="ch-num">#10</span>
+          <span class="type-pill tp-system">SYSTEM</span>
+          <span class="ch-done-badge" id="badge-9">✓ Done</span>
+        </div>
+      </div>
+    </div>
+    <div class="ch-title">🍜 ก๋วยเตี๋ยวเรือ Order System</div>
+    <div class="ch-desc">Build a restaurant ordering system. User picks menu items and quantity. Press 0 to finish and see the receipt.</div>
+    <div class="rules-box">
+      <div class="rules-title">MENU</div>
+      <div class="rule-row"><span class="rule-cond">1. ก๋วยเตี๋ยวเรือ </span><span>45 baht</span></div>
+      <div class="rule-row"><span class="rule-cond">2. ก๋วยเตี๋ยวต้มยำ</span><span>50 baht</span></div>
+      <div class="rule-row"><span class="rule-cond">3. ข้าวหมูแดง     </span><span>55 baht</span></div>
+      <div class="rule-row"><span class="rule-cond">4. น้ำเปล่า       </span><span>10 baht</span></div>
+      <div class="rule-row"><span class="rule-cond">order >= 3 items  </span><span>→ 10% discount on subtotal</span></div>
+    </div>
+    <div class="io-label">EXAMPLE SESSION</div>
+    <div class="code-block output">=== Welcome to ก๋วยเตี๋ยวเรือ ===
+Select item (0 to finish):
+> 1
+Quantity: 2
+> 3
+Quantity: 1
+> 4
+Quantity: 3
+> 0
+
+======= RECEIPT =======
+ก๋วยเตี๋ยวเรือ  x2   90
+ข้าวหมูแดง     x1   55
+น้ำเปล่า       x3   30
+-----------------------
+Subtotal       : 175
+Discount (10%) : 17
+Total          : 158
+=======================
+Thank you! Come again.</div>
+    <button class="hint-toggle" onclick="toggleHint(9)">
+      <span>💡 Hint &amp; Thai Explanation</span>
+      <span class="hint-arrow">▾</span>
+    </button>
+    <div class="hint-body" id="hint-9">
+      <div class="hint-lbl">🇹🇭 แนวคิด</div>
+      <p>ใช้ array เก็บจำนวนที่สั่งแต่ละเมนู เช่น <code>int qty[5]</code> (index 1–4 ตรงกับเมนู)</p>
+      <p>วนรับ input ด้วย while loop จนกว่าจะกด 0 แล้วค่อยคำนวณใบเสร็จ</p>
+      <p>นับ total items สำหรับเช็กส่วนลด: <code>qty[1]+qty[2]+qty[3]+qty[4] >= 3</code></p>
+      <div class="hint-code">int price[] = {0, 45, 50, 55, 10};
+int qty[]   = {0,  0,  0,  0,  0};
+int choice, q;
+while (1) {
+    printf("> ");
+    scanf("%d", &choice);
+    if (choice == 0) break;
+    printf("Quantity: ");
+    scanf("%d", &q);
+    qty[choice] += q;
+}
+int subtotal = qty[1]*45 + qty[2]*50
+             + qty[3]*55 + qty[4]*10;
+int total_qty = qty[1]+qty[2]+qty[3]+qty[4];
+int disc = (total_qty >= 3) ? subtotal/10 : 0;
+int total = subtotal - disc;</div>
+    </div>
+    <div class="done-bar">
+      <label><input type="checkbox" onchange="toggleDone(9, this)"> Mark as done</label>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<div class="nav-bar">
+  <div class="nav-inner">
+    <div class="progress-pill" id="prog-pill">0 / 10 done</div>
+    <div class="nav-prog-track">
+      <div class="nav-prog-fill" id="nav-fill" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let doneSet = new Set();
+
+function toggleHint(idx) {
+  const btn  = document.querySelectorAll('.hint-toggle')[idx];
+  const body = document.getElementById('hint-'+idx);
+  btn.classList.toggle('open');
+  body.classList.toggle('show');
+}
+
+function toggleDone(idx, cb) {
+  if (cb.checked) {
+    doneSet.add(idx);
+    document.getElementById('badge-'+idx).style.display = 'inline-block';
+    document.getElementById('card-'+idx).style.borderColor = 'rgba(0,212,170,0.35)';
+  } else {
+    doneSet.delete(idx);
+    document.getElementById('badge-'+idx).style.display = 'none';
+    document.getElementById('card-'+idx).style.borderColor = '';
+  }
+  const pct = Math.round((doneSet.size / 10) * 100);
+  document.getElementById('prog-pill').textContent = `${doneSet.size} / 10 done`;
+  document.getElementById('nav-fill').style.width = pct + '%';
+}
+</script>
+</body>
+</html>

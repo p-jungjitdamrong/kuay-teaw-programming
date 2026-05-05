@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C Challenges — เฉลย</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sarabun:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f1117; --surface:#181c25; --surface2:#1e2330;
+  --border:#2a2f3d; --accent:#00d4aa; --accent2:#7c6eff;
+  --red:#ff5c5c; --yellow:#ffc107; --orange:#ff8c42;
+  --text:#e8eaf0; --muted:#8891a8; --code-bg:#0a0d12;
+  --green:#00d4aa; --purple:#a89fff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 20px;position:sticky;top:0;z-index:100}
+.header-inner{max-width:720px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-bowl{font-size:20px}
+.logo-text{display:flex;flex-direction:column;line-height:1.15}
+.logo-th{font-size:13px;font-weight:700;color:var(--accent)}
+.logo-en{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.nav-links{display:flex;gap:8px}
+.nav-btn{font-size:11px;color:var(--muted);text-decoration:none;font-family:'JetBrains Mono',monospace;border:1px solid var(--border);padding:5px 10px;border-radius:7px;transition:all .15s;white-space:nowrap}
+.nav-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+.nav-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,212,170,.08)}
+
+/* TOC */
+.toc-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;overflow-x:auto;white-space:nowrap}
+.toc-inner{max-width:720px;margin:0 auto;display:flex;gap:6px}
+.toc-btn{font-size:11px;font-family:'JetBrains Mono',monospace;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);cursor:pointer;transition:all .15s;flex-shrink:0}
+.toc-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+
+/* MAIN */
+.main{max-width:720px;margin:0 auto;padding:24px 20px 60px}
+
+/* INTRO */
+.intro-strip{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 22px;margin-bottom:28px;display:flex;align-items:center;gap:14px}
+.strip-emoji{font-size:36px;flex-shrink:0}
+.strip-text h2{font-size:16px;font-weight:700;margin-bottom:4px}
+.strip-text p{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* LEVEL DIVIDER */
+.level-div{display:flex;align-items:center;gap:12px;margin:32px 0 16px}
+.lv-line{flex:1;height:1px;background:var(--border)}
+.lv-badge{font-size:11px;font-weight:600;padding:4px 14px;border-radius:999px;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.lv-easy{background:rgba(0,212,170,.12);color:var(--accent);border:1px solid rgba(0,212,170,.25)}
+.lv-med {background:rgba(255,193,7,.12);color:var(--yellow);border:1px solid rgba(255,193,7,.25)}
+.lv-hard{background:rgba(255,92,92,.12);color:var(--red);border:1px solid rgba(255,92,92,.25)}
+
+/* ANSWER CARD */
+.ans-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-bottom:16px;overflow:hidden}
+.ans-card-top{padding:18px 20px 0}
+.num-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ch-num{font-size:11px;font-weight:600;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.type-pill{font-size:10px;font-weight:600;padding:2px 9px;border-radius:999px;font-family:'JetBrains Mono',monospace}
+.tp-output{background:rgba(124,110,255,.15);color:var(--purple);border:1px solid rgba(124,110,255,.25)}
+.tp-system{background:rgba(255,140,66,.12);color:var(--orange);border:1px solid rgba(255,140,66,.25)}
+.ans-title{font-size:16px;font-weight:700;color:var(--text);padding:0 20px;margin-bottom:10px}
+
+/* SECTION LABELS */
+.sec-label{font-size:10px;font-weight:600;letter-spacing:.7px;font-family:'JetBrains Mono',monospace;padding:0 20px;margin-bottom:6px}
+.lbl-code   {color:var(--accent2)}
+.lbl-output {color:var(--accent)}
+.lbl-explain{color:var(--yellow)}
+
+/* CODE BLOCK */
+.code-block{font-family:'JetBrains Mono',monospace;background:var(--code-bg);padding:14px 16px;font-size:12.5px;line-height:1.95;white-space:pre;overflow-x:auto;margin:0 20px 14px;border-radius:8px;border:1px solid var(--border)}
+.code-block.solution{border-left:3px solid var(--accent2)}
+.code-block.output  {border-left:3px solid var(--accent);color:#9effe3;font-size:12px}
+
+/* SYNTAX HIGHLIGHTING */
+.kw  {color:#ff7eb3}   /* keywords */
+.fn  {color:#79d5f7}   /* functions */
+.cm  {color:#546e7a;font-style:italic} /* comments */
+.num {color:#f9a96a}   /* numbers */
+.str {color:#9effe3}   /* strings */
+.op  {color:#c792ea}   /* operators */
+.inc {color:#c3e88d}   /* includes */
+.var {color:#e8eaf0}   /* variables */
+.punc{color:#8891a8}
+
+/* EXPLAIN BOX */
+.explain-box{margin:0 20px 16px;background:rgba(255,193,7,.05);border:1px solid rgba(255,193,7,.18);border-radius:10px;padding:14px 16px}
+.explain-box .sec-label{padding:0;margin-bottom:10px}
+.explain-item{display:flex;gap:10px;margin-bottom:10px;font-size:13px;line-height:1.65;color:#c9cfdf}
+.explain-item:last-child{margin-bottom:0}
+.ex-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.ex-body strong{color:var(--text);font-weight:600}
+.ex-body code{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--purple);background:rgba(124,110,255,.1);padding:1px 5px;border-radius:3px}
+
+/* KEY CONCEPT */
+.concept-bar{margin:0 20px 14px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:8px}
+.concept-bar strong{color:var(--accent);font-weight:600}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ans-card{animation:fadeIn .2s ease}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-bowl">🍜</span>
+      <div class="logo-text">
+        <span class="logo-th">ก๋วยเตี๋ยวเรือ Programming</span>
+        <span class="logo-en">C Challenges — เฉลย</span>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a class="nav-btn" href="c_challenges.html">← โจทย์</a>
+      <a class="nav-btn" href="index.html">Home</a>
+    </div>
+  </div>
+</div>
+
+<div class="toc-bar">
+  <div class="toc-inner">
+    <button class="toc-btn" onclick="jump(0)">#01 Pos/Neg</button>
+    <button class="toc-btn" onclick="jump(1)">#02 Even/Odd</button>
+    <button class="toc-btn" onclick="jump(2)">#03 Triangle</button>
+    <button class="toc-btn" onclick="jump(3)">#04 Discount</button>
+    <button class="toc-btn" onclick="jump(4)">#05 Grade</button>
+    <button class="toc-btn" onclick="jump(5)">#06 FizzBuzz</button>
+    <button class="toc-btn" onclick="jump(6)">#07 Electric</button>
+    <button class="toc-btn" onclick="jump(7)">#08 Multiply</button>
+    <button class="toc-btn" onclick="jump(8)">#09 ATM</button>
+    <button class="toc-btn" onclick="jump(9)">#10 ก๋วยเตี๋ยว</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="intro-strip">
+    <span class="strip-emoji">📖</span>
+    <div class="strip-text">
+      <h2>เฉลยพร้อมอธิบาย Code ทีละบรรทัด</h2>
+      <p>อ่านโจทย์และลองเขียนเองก่อนดูเฉลยนะครับ จะได้ประโยชน์สูงสุด</p>
+    </div>
+  </div>
+
+  <!-- ══ EASY ══ -->
+  <div class="level-div"><div class="lv-line"></div><span class="lv-badge lv-easy">⬤ Easy</span><div class="lv-line"></div></div>
+
+  <!-- #1 -->
+  <div class="ans-card" id="ans-0">
+    <div class="ans-card-top">
+      <div class="num-row"><span class="ch-num">#01</span><span class="type-pill tp-output">OUTPUT</span></div>
+    </div>
+    <div class="ans-title">Positive / Negative / Zero</div>
+
+    <div class="sec-label lbl-code">SOLUTION CODE</div>
+    <div class="code-block solution"><span class="inc">#include &lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span><span class="punc">() {</span>
+    <span class="kw">int</span> n<span class="punc">;</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Enter number: "</span><span class="punc">);</span>
+    <span class="fn">scanf</span><span class="punc">(</span><span class="str">"%d"</span><span class="punc">, &amp;n);</span>
+
+    <span class="kw">if</span> <span class="punc">(</span>n <span class="op">&gt;</span> <span class="num">0</span><span class="punc">)</span>
+        <span class="fn">printf</span><span class="punc">(</span><span class="str">"Positive\n"</span><span class="punc">);</span>
+    <span class="kw">else if</span> <span class="punc">(</span>n <span class="op">&lt;</span> <span class="num">0</span><span class="punc">)</span>
+        <span class="fn">printf</span><span class="punc">(</span><span class="str">"Negative\n"</span><span class="punc">);</span>
+    <span class="kw">else</span>
+        <span class="fn">printf</span><span class="punc">(</span><span class="str">"Zero\n"</span><span class="punc">);</span>
+
+    <span class="kw">return</span> <span class="num">0</span><span class="punc">;</span>
+<span class="punc">}</span></div>
+
+    <div class="concept-bar">🔑 Key Concept: <strong>if → else if → else</strong> &nbsp;|&nbsp; ตรวจ 3 กรณี ด้วยเงื่อนไข 2 ข้อ ที่เหลือ else รับทั้งหมด</div>
+
+    <div class="explain-box">
+      <div class="sec-label lbl-explain">🇹🇭 อธิบายทีละส่วน</div>
+      <div class="explain-item"><span class="ex-icon">①</span><div class="ex-body"><strong>ประกาศตัวแปร &amp; รับค่า</strong><br><code>int n;</code> ประกาศตัวแปรจำนวนเต็ม แล้ว <code>scanf("%d", &amp;n)</code> รับค่าจาก keyboard อย่าลืม <code>&amp;</code> หน้า n เพื่อบอกตำแหน่ง memory</div></div>
+      <div class="explain-item"><span class="ex-icon">②</span><div class="ex-body"><strong>ตรวจ Positive ก่อน</strong><br><code>if (n &gt; 0)</code> ถ้า n มากกว่า 0 พิมพ์ Positive แล้วข้ามไปเลย ไม่ตรวจส่วนที่เหลือ</div></div>
+      <div class="explain-item"><span class="ex-icon">③</span><div class="ex-body"><strong>else if สำหรับ Negative</strong><br>เมื่อผ่าน if แรกมาแล้ว แปลว่า n ≤ 0 แน่ๆ จึงตรวจแค่ <code>n &lt; 0</code> ไม่ต้องเขียน <code>n &lt; 0 &amp;&amp; n != 0</code></div></div>
+      <div class="explain-item"><span class="ex-icon">④</span><div class="ex-body"><strong>else รับกรณีที่เหลือ</strong><br>ผ่านมาถึง else ได้ แปลว่า n ไม่ใช่ &gt;0 และไม่ใช่ &lt;0 เหลือแค่ 0 เพียงค่าเดียว</div></div>
+    </div>
+  </div>
+
+  <!-- #2 -->
+  <div class="ans-card" id="ans-1">
+    <div class="ans-card-top">
+      <div class="num-row"><span class="ch-num">#02</span><span class="type-pill tp-output">OUTPUT</span></div>
+    </div>
+    <div class="ans-title">Even [E] / Odd [O]</div>
+
+    <div class="sec-label lbl-code">SOLUTION CODE</div>
+    <div class="code-block solution"><span class="inc">#include &lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span><span class="punc">() {</span>
+    <span class="kw">int</span> i<span class="punc">;</span>
+    <span class="kw">for</span> <span class="punc">(</span>i <span class="op">=</span> <span class="num">1</span><span class="punc">;</span> i <span class="op">&lt;=</span> <span class="num">10</span><span class="punc">;</span> i<span class="op">++</span><span class="punc">) {</span>
+        <span class="kw">if</span> <span class="punc">(</span>i <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span><span class="punc">)</span>
+            <span class="fn">printf</span><span class="punc">(</span><span class="str">"[E] %d\n"</span><span class="punc">, i);</span>
+        <span class="kw">else</span>
+            <span class="fn">printf</span><span class="punc">(</span><span class="str">"[O] %d\n"</span><span class="punc">, i);</span>
+    <span class="punc">}</span>
+    <span class="kw">return</span> <span class="num">0</span><span class="punc">;</span>
+<span class="punc">}</span></div>
+
+    <div class="concept-bar">🔑 Key Concept: <strong>% (modulo)</strong> &nbsp;|&nbsp; เศษจากการหาร — ถ้า i % 2 == 0 คือหาร 2 ลงตัว = เลขคู่</div>
+
+    <div class="explain-box">
+      <div class="sec-label lbl-explain">🇹🇭 อธิบายทีละส่วน</div>
+      <div class="explain-item"><span class="ex-icon">①</span><div class="ex-body"><strong>for loop ตั้งแต่ 1 ถึง 10</strong><br><code>i = 1</code> คือค่าเริ่มต้น, <code>i &lt;= 10</code> คือเงื่อนไข (รวม 10), <code>i++</code> คือเพิ่มทีละ 1 ทุกรอบ</div></div>
+      <div class="explain-item"><span class="ex-icon">②</span><div class="ex-body"><strong>ตรวจเลขคู่ด้วย modulo</strong><br><code>i % 2</code> คือเศษเมื่อหาร 2 ถ้าเศษ = 0 แปลว่าหารลงตัว = เลขคู่ → พิมพ์ [E] ถ้าไม่ใช่ → พิมพ์ [O]</div></div>
+      <div class="explain-item"><span class="ex-icon">③</span><div class="ex-body"><strong>\n คืออะไร?</strong><br><code>\n</code> ใน printf คือ newline ขึ้นบรรทัดใหม่ ถ้าไม่ใส่ทุกตัวเลขจะพิมพ์ติดกันเป็นแถวเดียว</div></div>
+    </div>
+  </div>
+
+  <!-- #3 -->
+  <div class="ans-card" id="ans-2">
+    <div class="ans-card-top">
+      <div class="num-row"><span class="ch-num">#03</span><span class="type-pill tp-output">OUTPUT</span></div>
+    </div>
+    <div class="ans-title">Star Triangle</div>
+
+    <div class="sec-label lbl-code">SOLUTION CODE</div>
+    <div class="code-block solution"><span class="inc">#include &lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span><span class="punc">() {</span>
+    <span class="kw">int</span> n<span class="punc">, i, j;</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Enter n: "</span><span class="punc">);</span>
+    <span class="fn">scanf</span><span class="punc">(</span><span class="str">"%d"</span><span class="punc">, &amp;n);</span>
+
+    <span class="kw">for</span> <span class="punc">(</span>i <span class="op">=</span> <span class="num">1</span><span class="punc">;</span> i <span class="op">&lt;=</span> n<span class="punc">;</span> i<span class="op">++</span><span class="punc">) {</span>       <span class="cm">/* วนทีละแถว */</span>
+        <span class="kw">for</span> <span class="punc">(</span>j <span class="op">=</span> <span class="num">1</span><span class="punc">;</span> j <span class="op">&lt;=</span> i<span class="punc">;</span> j<span class="op">++</span><span class="punc">) {</span>   <span class="cm">/* พิมพ์ดาว i ดวง */</span>
+            <span class="fn">printf</span><span class="punc">(</span><span class="str">"*"</span><span class="punc">);</span>
+        <span class="punc">}</span>
+        <span class="fn">printf</span><span class="punc">(</span><span class="str">"\n"</span><span class="punc">);</span>               <span class="cm">/* ขึ้นบรรทัดใหม่หลังจบแต่ละแถว */</span>
+    <span class="punc">}</span>
+    <span class="kw">return</span> <span class="num">0</span><span class="punc">;</span>
+<span class="punc">}</span></div>
+
+    <div class="concept-bar">🔑 Key Concept: <strong>Nested Loop</strong> &nbsp;|&nbsp; loop ซ้อน loop — loop นอก = แถว, loop ใน = จำนวนดาวในแถวนั้น</div>
+
+    <div class="explain-box">
+      <div class="sec-label lbl-explain">🇹🇭 อธิบายทีละส่วน</div>
+      <div class="explain-item"><span class="ex-icon">①</span><div class="ex-body"><strong>Loop นอก (i) = แถว</strong><br>i วิ่งจาก 1 ถึง n แต่ละค่าของ i คือหมายเลขแถว เช่น i=1 คือแถว 1, i=2 คือแถว 2</div></div>
+      <div class="explain-item"><span class="ex-icon">②</span><div class="ex-body"><strong>Loop ใน (j) = ดาวในแถวนั้น</strong><br>j วิ่งจาก 1 ถึง <strong>i</strong> (ไม่ใช่ n) ทำให้แถวที่ i มีดาว i ดวงพอดี เช่น i=3 → j วิ่ง 1,2,3 → พิมพ์ ***</div></div>
+      <div class="explain-item"><span class="ex-icon">③</span><div class="ex-body"><strong>\n อยู่นอก loop ใน</strong><br><code>printf("\n")</code> อยู่หลัง loop ใน (แต่อยู่ใน loop นอก) เพื่อขึ้นบรรทัดหลังพิมพ์ดาวแต่ละแถวเสร็จ</div></div>
+      <div class="explain-item"><span class="ex-icon">④</span><div class="ex-body"><strong>Trace n=3</strong><br>i=1: j วิ่ง 1→1 พิมพ์ * แล้ว \n<br>i=2: j วิ่ง 1→2 พิมพ์ ** แล้ว \n<br>i=3: j วิ่ง 1→3 พิมพ์ *** แล้ว \n</div></div>
+    </div>
+  </div>
+
+  <!-- ══ EASY-MEDIUM ══ -->
+  <div class="level-div"><div class="lv-line"></div><span class="lv-badge lv-easy">⬤ Easy — Medium</span><div class="lv-line"></div></div>
+
+  <!-- #4 -->
+  <div class="ans-card" id="ans-3">
+    <div class="ans-card-top">
+      <div class="num-row"><span class="ch-num">#04</span><span class="type-pill tp-system">SYSTEM</span></div>
+    </div>
+    <div class="ans-title">Discount Calculator</div>
+
+    <div class="sec-label lbl-code">SOLUTION CODE</div>
+    <div class="code-block solution"><span class="inc">#include &lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span><span class="punc">() {</span>
+    <span class="kw">int</span> price, disc <span class="op">=</span> <span class="num">0</span>, final_price<span class="punc">;</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Enter price: "</span><span class="punc">);</span>
+    <span class="fn">scanf</span><span class="punc">(</span><span class="str">"%d"</span><span class="punc">, &amp;price);</span>
+
+    <span class="kw">if</span>      <span class="punc">(</span>price <span class="op">&gt;=</span> <span class="num">1000</span><span class="punc">)</span> disc <span class="op">=</span> <span class="num">20</span><span class="punc">;</span>
+    <span class="kw">else if</span> <span class="punc">(</span>price <span class="op">&gt;=</span>  <span class="num">500</span><span class="punc">)</span> disc <span class="op">=</span> <span class="num">10</span><span class="punc">;</span>
+    <span class="kw">else if</span> <span class="punc">(</span>price <span class="op">&gt;=</span>  <span class="num">100</span><span class="punc">)</span> disc <span class="op">=</span>  <span class="num">5</span><span class="punc">;</span>
+    <span class="cm">/* ถ้าต่ำกว่า 100 disc ยังเป็น 0 (ค่า default ที่ตั้งไว้) */</span>
+
+    final_price <span class="op">=</span> price <span class="op">-</span> <span class="punc">(</span>price <span class="op">*</span> disc <span class="op">/</span> <span class="num">100</span><span class="punc">);</span>
+
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Original price : %d\n"</span><span class="punc">, price);</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Discount       : %d%%\n"</span><span class="punc">, disc);</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"You pay        : %d\n"</span><span class="punc">, final_price);</span>
+
+    <span class="kw">return</span> <span class="num">0</span><span class="punc">;</span>
+<span class="punc">}</span></div>
+
+    <div class="concept-bar">🔑 Key Concept: <strong>if-else if จากสูงลงต่ำ</strong> &nbsp;|&nbsp; ต้องตรวจ >= 1000 ก่อนเสมอ มิฉะนั้น 1200 จะติด >= 500 แทน</div>
+
+    <div class="explain-box">
+      <div class="sec-label lbl-explain">🇹🇭 อธิบายทีละส่วน</div>
+      <div class="explain-item"><span class="ex-icon">①</span><div class="ex-body"><strong>ตั้งค่า disc = 0 ตั้งแต่แรก</strong><br>กำหนดค่า default ไว้เลย ถ้า price &lt; 100 ไม่มี if ไหนทำงาน disc ก็ยังเป็น 0 อยู่ ไม่ต้องเขียน else แยกต่างหาก</div></div>
+      <div class="explain-item"><span class="ex-icon">②</span><div class="ex-body"><strong>ลำดับ if สำคัญมาก</strong><br>ต้องตรวจจาก >= 1000 ก่อนเสมอ เพราะ 1200 >= 500 ก็เป็น true เช่นกัน ถ้าตรวจ >= 500 ก่อน จะได้ disc=10 ผิด</div></div>
+      <div class="explain-item"><span class="ex-icon">③</span><div class="ex-body"><strong>คำนวณราคาหลังลด</strong><br><code>price * disc / 100</code> คือจำนวนเงินที่ลด เช่น 1200 * 20 / 100 = 240 แล้ว final = 1200 - 240 = 960</div></div>
+      <div class="explain-item"><span class="ex-icon">④</span><div class="ex-body"><strong>%% ใน printf</strong><br>ต้องการพิมพ์ % จริงๆ ต้องเขียน <code>%%</code> เพราะ % ตัวเดียวคือ format specifier</div></div>
+    </div>
+  </div>
+
+  <!-- #5 -->
+  <div class="ans-card" id="ans-4">
+    <div class="ans-card-top">
+      <div class="num-row"><span class="ch-num">#05</span><span class="type-pill tp-system">SYSTEM</span></div>
+    </div>
+    <div class="ans-title">Grade Checker</div>
+
+    <div class="sec-label lbl-code">SOLUTION CODE</div>
+    <div class="code-block solution"><span class="inc">#include &lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span><span class="punc">() {</span>
+    <span class="kw">int</span> score<span class="punc">;</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Enter score: "</span><span class="punc">);</span>
+    <span class="fn">scanf</span><span class="punc">(</span><span class="str">"%d"</span><span class="punc">, &amp;score);</span>
+
+    <span class="kw">if</span> <span class="punc">(</span>score <span class="op">&lt;</span> <span class="num">0</span> <span class="op">||</span> score <span class="op">&gt;</span> <span class="num">100</span><span class="punc">) {</span>
+        <span class="fn">printf</span><span class="punc">(</span><span class="str">"Invalid score\n"</span><span class="punc">);</span>
+    <span class="punc">}</span> <span class="kw">else if</span> <span class="punc">(</span>score <span class="op">&gt;=</span> <span class="num">90</span><span class="punc">)</span> <span class="fn">printf</span><span class="punc">(</span><span class="str">"Grade: A\n"</span><span class="punc">);</span>
+      <span class="kw">else if</span> <span class="punc">(</span>score <span class="op">&gt;=</span> <span class="num">80</span><span class="punc">)</span> <span class="fn">printf</span><span class="punc">(</span><span class="str">"Grade: B\n"</span><span class="punc">);</span>
+      <span class="kw">else if</span> <span class="punc">(</span>score <span class="op">&gt;=</span> <span class="num">70</span><span class="punc">)</span> <span class="fn">printf</span><span class="punc">(</span><span class="str">"Grade: C\n"</span><span class="punc">);</span>
+      <span class="kw">else if</span> <span class="punc">(</span>score <span class="op">&gt;=</span> <span class="num">60</span><span class="punc">)</span> <span class="fn">printf</span><span class="punc">(</span><span class="str">"Grade: D\n"</span><span class="punc">);</span>
+      <span class="kw">else</span>                    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Grade: F\n"</span><span class="punc">);</span>
+
+    <span class="kw">return</span> <span class="num">0</span><span class="punc">;</span>
+<span class="punc">}</span></div>
+
+    <div class="concept-bar">🔑 Key Concept: <strong>|| (Logical OR)</strong> &nbsp;|&nbsp; ตรวจ out-of-range ด้วย <code>score &lt; 0 || score &gt; 100</code> ก่อนเสมอ</div>
+
+    <div class="explain-box">
+      <div class="sec-label lbl-explain">🇹🇭 อธิบายทีละส่วน</div>
+      <div class="explain-item"><span class="ex-icon">①</span><div class="ex-body"><strong>ตรวจ Invalid ก่อน</strong><br><code>score &lt; 0 || score &gt; 100</code> — <code>||</code> คือ OR ถ้าอย่างใดอย่างหนึ่งเป็น true ทั้งหมดเป็น true ตรวจก่อนเพื่อกำจัดค่าผิดปกติทิ้ง</div></div>
+      <div class="explain-item"><span class="ex-icon">②</span><div class="ex-body"><strong>ไม่ต้องเขียน range ซ้อน</strong><br>ไม่จำเป็นต้องเขียน <code>score &gt;= 80 &amp;&amp; score &lt;= 89</code> เพราะ else if ทำงานก็ต่อเมื่อ if ข้างบนไม่ผ่านแล้ว ดังนั้น <code>else if (score &gt;= 80)</code> ก็หมายถึง 80–89 อัตโนมัติ</div></div>
+      <div class="explain-item"><span class="ex-icon">③</span><div class="ex-body"><strong>else รับ F ทั้งหมด</strong><br>ถ้าผ่านมาถึง else แปลว่า score อยู่ระหว่าง 0–59 แน่ๆ (เพราะ Invalid และ A-D ถูก filter ออกไปแล้ว)</div></div>
+    </div>
+  </div>
+
+  <!-- ══ MEDIUM ══ -->
+  <div class="level-div"><div class="lv-line"></div><span class="lv-badge lv-med">⬤ Medium</span><div class="lv-line"></div></div>
+
+  <!-- #6 -->
+  <div class="ans-card" id="ans-5">
+    <div class="ans-card-top">
+      <div class="num-row"><span class="ch-num">#06</span><span class="type-pill tp-output">OUTPUT</span></div>
+    </div>
+    <div class="ans-title">FizzBuzz</div>
+
+    <div class="sec-label lbl-code">SOLUTION CODE</div>
+    <div class="code-block solution"><span class="inc">#include &lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span><span class="punc">() {</span>
+    <span class="kw">int</span> n<span class="punc">, i;</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Enter n: "</span><span class="punc">);</span>
+    <span class="fn">scanf</span><span class="punc">(</span><span class="str">"%d"</span><span class="punc">, &amp;n);</span>
+
+    <span class="kw">for</span> <span class="punc">(</span>i <span class="op">=</span> <span class="num">1</span><span class="punc">;</span> i <span class="op">&lt;=</span> n<span class="punc">;</span> i<span class="op">++</span><span class="punc">) {</span>
+        <span class="kw">if</span>      <span class="punc">(</span>i <span class="op">%</span> <span class="num">15</span> <span class="op">==</span> <span class="num">0</span><span class="punc">)</span> <span class="fn">printf</span><span class="punc">(</span><span class="str">"FizzBuzz\n"</span><span class="punc">);</span>
+        <span class="kw">else if</span> <span class="punc">(</span>i <span class="op">%</span>  <span class="num">3</span> <span class="op">==</span> <span class="num">0</span><span class="punc">)</span> <span class="fn">printf</span><span class="punc">(</span><span class="str">"Fizz\n"</span><span class="punc">);</span>
+        <span class="kw">else if</span> <span class="punc">(</span>i <span class="op">%</span>  <span class="num">5</span> <span class="op">==</span> <span class="num">0</span><span class="punc">)</span> <span class="fn">printf</span><span class="punc">(</span><span class="str">"Buzz\n"</span><span class="punc">);</span>
+        <span class="kw">else</span>                    <span class="fn">printf</span><span class="punc">(</span><span class="str">"%d\n"</span><span class="punc">, i);</span>
+    <span class="punc">}</span>
+    <span class="kw">return</span> <span class="num">0</span><span class="punc">;</span>
+<span class="punc">}</span></div>
+
+    <div class="concept-bar">🔑 Key Concept: <strong>ลำดับเงื่อนไข</strong> &nbsp;|&nbsp; % 15 ต้องอยู่บนสุดเสมอ เพราะตัวที่หาร 15 ได้ก็หาร 3 และ 5 ได้ด้วย</div>
+
+    <div class="explain-box">
+      <div class="sec-label lbl-explain">🇹🇭 อธิบายทีละส่วน</div>
+      <div class="explain-item"><span class="ex-icon">①</span><div class="ex-body"><strong>ทำไม % 15 ต้องก่อน</strong><br>เลข 15 หาร 3 ลงตัว และหาร 5 ลงตัวด้วย ถ้าตรวจ % 3 ก่อน → พิมพ์ Fizz แล้วข้ามไปเลย ไม่มีโอกาสพิมพ์ FizzBuzz อีก</div></div>
+      <div class="explain-item"><span class="ex-icon">②</span><div class="ex-body"><strong>else รับตัวเลขธรรมดา</strong><br>ถ้าไม่หาร 15, 3, หรือ 5 ลงตัว ก็พิมพ์ตัวเลข i ออกมาตรงๆ ด้วย <code>%d</code></div></div>
+      <div class="explain-item"><span class="ex-icon">③</span><div class="ex-body"><strong>Trace เลข 15</strong><br>15 % 15 = 0 → เงื่อนไขแรกผ่าน → พิมพ์ FizzBuzz → ข้าม else if ทั้งหมด ✓</div></div>
+    </div>
+  </div>
+
+  <!-- #7 -->
+  <div class="ans-card" id="ans-6">
+    <div class="ans-card-top">
+      <div class="num-row"><span class="ch-num">#07</span><span class="type-pill tp-system">SYSTEM</span></div>
+    </div>
+    <div class="ans-title">Electricity Bill Calculator</div>
+
+    <div class="sec-label lbl-code">SOLUTION CODE</div>
+    <div class="code-block solution"><span class="inc">#include &lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span><span class="punc">() {</span>
+    <span class="kw">int</span>   units<span class="punc">;</span>
+    <span class="kw">float</span> cost<span class="punc">;</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Enter units: "</span><span class="punc">);</span>
+    <span class="fn">scanf</span><span class="punc">(</span><span class="str">"%d"</span><span class="punc">, &amp;units);</span>
+
+    <span class="kw">if</span> <span class="punc">(</span>units <span class="op">&lt;=</span> <span class="num">100</span><span class="punc">) {</span>
+        cost <span class="op">=</span> units <span class="op">*</span> <span class="num">3.0</span><span class="punc">;</span>
+    <span class="punc">}</span> <span class="kw">else if</span> <span class="punc">(</span>units <span class="op">&lt;=</span> <span class="num">200</span><span class="punc">) {</span>
+        cost <span class="op">=</span> <span class="num">100</span> <span class="op">*</span> <span class="num">3.0</span>
+             <span class="op">+</span> <span class="punc">(</span>units <span class="op">-</span> <span class="num">100</span><span class="punc">)</span> <span class="op">*</span> <span class="num">4.0</span><span class="punc">;</span>
+    <span class="punc">}</span> <span class="kw">else</span> <span class="punc">{</span>
+        cost <span class="op">=</span> <span class="num">100</span> <span class="op">*</span> <span class="num">3.0</span>
+             <span class="op">+</span> <span class="num">100</span> <span class="op">*</span> <span class="num">4.0</span>
+             <span class="op">+</span> <span class="punc">(</span>units <span class="op">-</span> <span class="num">200</span><span class="punc">)</span> <span class="op">*</span> <span class="num">5.0</span><span class="punc">;</span>
+    <span class="punc">}</span>
+
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Units used : %d\n"</span><span class="punc">, units);</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Total cost : %.2f baht\n"</span><span class="punc">, cost);</span>
+    <span class="kw">return</span> <span class="num">0</span><span class="punc">;</span>
+<span class="punc">}</span></div>
+
+    <div class="concept-bar">🔑 Key Concept: <strong>Tiered / Progressive Rate</strong> &nbsp;|&nbsp; คิดแยกแต่ละช่วง ไม่ใช่คูณอัตราเดียวทั้งหมด</div>
+
+    <div class="explain-box">
+      <div class="sec-label lbl-explain">🇹🇭 อธิบายทีละส่วน</div>
+      <div class="explain-item"><span class="ex-icon">①</span><div class="ex-body"><strong>ใช้ float เพราะมีทศนิยม</strong><br><code>float cost</code> รองรับเลขทศนิยม และ <code>%.2f</code> ใน printf พิมพ์ทศนิยม 2 ตำแหน่ง เช่น 270.00</div></div>
+      <div class="explain-item"><span class="ex-icon">②</span><div class="ex-body"><strong>Tier 2: units - 100</strong><br>ใช้ 150 หน่วย → 100 หน่วยแรกคิด tier 1, อีก <code>150-100=50</code> หน่วยคิด tier 2 จึงต้องลบ 100 ออกก่อนคูณ 4.0</div></div>
+      <div class="explain-item"><span class="ex-icon">③</span><div class="ex-body"><strong>Trace 250 หน่วย</strong><br>100×3.0 = 300 → บวก 100×4.0 = 400 → บวก (250-200)×5.0 = 250 → รวม 950 ✓</div></div>
+    </div>
+  </div>
+
+  <!-- #8 -->
+  <div class="ans-card" id="ans-7">
+    <div class="ans-card-top">
+      <div class="num-row"><span class="ch-num">#08</span><span class="type-pill tp-output">OUTPUT</span></div>
+    </div>
+    <div class="ans-title">Multiplication Table</div>
+
+    <div class="sec-label lbl-code">SOLUTION CODE</div>
+    <div class="code-block solution"><span class="inc">#include &lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span><span class="punc">() {</span>
+    <span class="kw">int</span> n<span class="punc">, i, j;</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Enter n: "</span><span class="punc">);</span>
+    <span class="fn">scanf</span><span class="punc">(</span><span class="str">"%d"</span><span class="punc">, &amp;n);</span>
+
+    <span class="kw">for</span> <span class="punc">(</span>i <span class="op">=</span> <span class="num">1</span><span class="punc">;</span> i <span class="op">&lt;=</span> n<span class="punc">;</span> i<span class="op">++</span><span class="punc">) {</span>        <span class="cm">/* แถว */</span>
+        <span class="kw">for</span> <span class="punc">(</span>j <span class="op">=</span> <span class="num">1</span><span class="punc">;</span> j <span class="op">&lt;=</span> n<span class="punc">;</span> j<span class="op">++</span><span class="punc">) {</span>    <span class="cm">/* คอลัมน์ */</span>
+            <span class="fn">printf</span><span class="punc">(</span><span class="str">"%3d"</span><span class="punc">, i <span class="op">*</span> j);</span>    <span class="cm">/* กว้าง 3 ช่อง จัดชิดขวา */</span>
+        <span class="punc">}</span>
+        <span class="fn">printf</span><span class="punc">(</span><span class="str">"\n"</span><span class="punc">);</span>
+    <span class="punc">}</span>
+    <span class="kw">return</span> <span class="num">0</span><span class="punc">;</span>
+<span class="punc">}</span></div>
+
+    <div class="concept-bar">🔑 Key Concept: <strong>%3d format</strong> &nbsp;|&nbsp; จองพื้นที่ 3 ช่อง จัดชิดขวา ทำให้คอลัมน์ตรงกันทุกแถว</div>
+
+    <div class="explain-box">
+      <div class="sec-label lbl-explain">🇹🇭 อธิบายทีละส่วน</div>
+      <div class="explain-item"><span class="ex-icon">①</span><div class="ex-body"><strong>Nested loop ทั้งคู่วิ่งถึง n</strong><br>ต่างจากโจทย์ดาวที่ loop ในวิ่งถึง i ตรงนี้ทั้ง loop นอก (i) และ loop ใน (j) วิ่งถึง n เพราะต้องการตาราง n×n สมมาตร</div></div>
+      <div class="explain-item"><span class="ex-icon">②</span><div class="ex-body"><strong>%3d คืออะไร</strong><br><code>%3d</code> แปลว่า พิมพ์ integer โดยจองพื้นที่ 3 ช่อง ถ้าตัวเลขสั้นกว่าจะเติม space หน้า เช่น 1 → " &nbsp;1", 12 → " 12", 100 → "100"</div></div>
+      <div class="explain-item"><span class="ex-icon">③</span><div class="ex-body"><strong>i * j คือค่าในตาราง</strong><br>แถวที่ i คอลัมน์ที่ j ค่าในช่องนั้นคือ i×j เช่น แถว 3 คอลัมน์ 4 = 3×4 = 12</div></div>
+    </div>
+  </div>
+
+  <!-- ══ HARD ══ -->
+  <div class="level-div"><div class="lv-line"></div><span class="lv-badge lv-hard">⬤ Hard</span><div class="lv-line"></div></div>
+
+  <!-- #9 -->
+  <div class="ans-card" id="ans-8">
+    <div class="ans-card-top">
+      <div class="num-row"><span class="ch-num">#09</span><span class="type-pill tp-system">SYSTEM</span></div>
+    </div>
+    <div class="ans-title">Simple ATM</div>
+
+    <div class="sec-label lbl-code">SOLUTION CODE</div>
+    <div class="code-block solution"><span class="inc">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;</span>   <span class="cm">/* สำหรับ strcmp() */</span>
+
+<span class="kw">int</span> <span class="fn">main</span><span class="punc">() {</span>
+    <span class="kw">int</span>  balance <span class="op">=</span> <span class="num">5000</span><span class="punc">;</span>
+    <span class="kw">int</span>  amt<span class="punc">;</span>
+    <span class="kw">char</span> cmd<span class="punc">[20];</span>   <span class="cm">/* เก็บคำสั่งที่พิมพ์ */</span>
+
+    <span class="kw">while</span> <span class="punc">(</span><span class="num">1</span><span class="punc">) {</span>    <span class="cm">/* loop ไม่มีสิ้นสุด หยุดด้วย break */</span>
+        <span class="fn">printf</span><span class="punc">(</span><span class="str">"> "</span><span class="punc">);</span>
+        <span class="fn">scanf</span><span class="punc">(</span><span class="str">"%s"</span><span class="punc">, cmd);</span>
+
+        <span class="kw">if</span> <span class="punc">(</span><span class="fn">strcmp</span><span class="punc">(</span>cmd<span class="punc">,</span> <span class="str">"quit"</span><span class="punc">)</span> <span class="op">==</span> <span class="num">0</span><span class="punc">) {</span>
+            <span class="fn">printf</span><span class="punc">(</span><span class="str">"Thank you. Goodbye!\n"</span><span class="punc">);</span>
+            <span class="kw">break</span><span class="punc">;</span>
+
+        <span class="punc">}</span> <span class="kw">else if</span> <span class="punc">(</span><span class="fn">strcmp</span><span class="punc">(</span>cmd<span class="punc">,</span> <span class="str">"balance"</span><span class="punc">)</span> <span class="op">==</span> <span class="num">0</span><span class="punc">) {</span>
+            <span class="fn">printf</span><span class="punc">(</span><span class="str">"Balance: %d baht\n"</span><span class="punc">, balance);</span>
+
+        <span class="punc">}</span> <span class="kw">else if</span> <span class="punc">(</span><span class="fn">strcmp</span><span class="punc">(</span>cmd<span class="punc">,</span> <span class="str">"deposit"</span><span class="punc">)</span> <span class="op">==</span> <span class="num">0</span><span class="punc">) {</span>
+            <span class="fn">scanf</span><span class="punc">(</span><span class="str">"%d"</span><span class="punc">, &amp;amt);</span>
+            balance <span class="op">+=</span> amt<span class="punc">;</span>
+            <span class="fn">printf</span><span class="punc">(</span><span class="str">"Deposited: %d baht\n"</span><span class="punc">, amt);</span>
+            <span class="fn">printf</span><span class="punc">(</span><span class="str">"Balance: %d baht\n"</span><span class="punc">, balance);</span>
+
+        <span class="punc">}</span> <span class="kw">else if</span> <span class="punc">(</span><span class="fn">strcmp</span><span class="punc">(</span>cmd<span class="punc">,</span> <span class="str">"withdraw"</span><span class="punc">)</span> <span class="op">==</span> <span class="num">0</span><span class="punc">) {</span>
+            <span class="fn">scanf</span><span class="punc">(</span><span class="str">"%d"</span><span class="punc">, &amp;amt);</span>
+            <span class="kw">if</span> <span class="punc">(</span>amt <span class="op">&gt;</span> balance<span class="punc">)</span>
+                <span class="fn">printf</span><span class="punc">(</span><span class="str">"Insufficient funds. Balance: %d baht\n"</span><span class="punc">, balance);</span>
+            <span class="kw">else</span> <span class="punc">{</span>
+                balance <span class="op">-=</span> amt<span class="punc">;</span>
+                <span class="fn">printf</span><span class="punc">(</span><span class="str">"Withdrew: %d baht\n"</span><span class="punc">, amt);</span>
+                <span class="fn">printf</span><span class="punc">(</span><span class="str">"Balance: %d baht\n"</span><span class="punc">, balance);</span>
+            <span class="punc">}</span>
+        <span class="punc">}</span>
+    <span class="punc">}</span>
+    <span class="kw">return</span> <span class="num">0</span><span class="punc">;</span>
+<span class="punc">}</span></div>
+
+    <div class="concept-bar">🔑 Key Concept: <strong>while(1) + break</strong> &nbsp;|&nbsp; loop ไม่มีสิ้นสุด ใช้ break หยุดเมื่อได้รับ quit + <strong>strcmp()</strong> เปรียบเทียบ string</div>
+
+    <div class="explain-box">
+      <div class="sec-label lbl-explain">🇹🇭 อธิบายทีละส่วน</div>
+      <div class="explain-item"><span class="ex-icon">①</span><div class="ex-body"><strong>while(1) คืออะไร</strong><br>เงื่อนไข 1 = true ตลอดเวลา ทำให้ loop ทำงานไม่หยุด จนกว่าจะ <code>break</code> ออก เหมาะสำหรับ menu-driven program ที่ไม่รู้ล่วงหน้าว่าจะรับกี่ครั้ง</div></div>
+      <div class="explain-item"><span class="ex-icon">②</span><div class="ex-body"><strong>strcmp() เปรียบเทียบ string</strong><br>ใน C ห้าม <code>cmd == "quit"</code> โดยตรง (เป็นการเปรียบเทียบ address) ต้องใช้ <code>strcmp(cmd, "quit") == 0</code> แทน ต้อง include <code>&lt;string.h&gt;</code></div></div>
+      <div class="explain-item"><span class="ex-icon">③</span><div class="ex-body"><strong>deposit/withdraw อ่าน scanf ต่อ</strong><br>หลัง scanf อ่าน cmd แล้ว ถ้าเป็น deposit/withdraw ก็ scanf ต่ออีกครั้งเพื่ออ่านตัวเลขจำนวนเงิน</div></div>
+      <div class="explain-item"><span class="ex-icon">④</span><div class="ex-body"><strong>ตรวจ Insufficient funds</strong><br><code>if (amt &gt; balance)</code> ถ้าจะถอนมากกว่าที่มี ให้แจ้งและ <strong>ไม่</strong> ลด balance ถ้าโอเคค่อย <code>balance -= amt</code></div></div>
+    </div>
+  </div>
+
+  <!-- #10 -->
+  <div class="ans-card" id="ans-9">
+    <div class="ans-card-top">
+      <div class="num-row"><span class="ch-num">#10</span><span class="type-pill tp-system">SYSTEM</span></div>
+    </div>
+    <div class="ans-title">🍜 ก๋วยเตี๋ยวเรือ Order System</div>
+
+    <div class="sec-label lbl-code">SOLUTION CODE</div>
+    <div class="code-block solution"><span class="inc">#include &lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span><span class="punc">() {</span>
+    <span class="cm">/* ราคาแต่ละเมนู index 0 ไม่ใช้ */</span>
+    <span class="kw">int</span> price<span class="punc">[] = {</span><span class="num">0</span><span class="punc">,</span> <span class="num">45</span><span class="punc">,</span> <span class="num">50</span><span class="punc">,</span> <span class="num">55</span><span class="punc">,</span> <span class="num">10</span><span class="punc">};</span>
+    <span class="kw">char</span> <span class="op">*</span>name<span class="punc">[] = {</span><span class="str">""</span><span class="punc">,</span>
+        <span class="str">"Kuay Teaw Ruea"</span><span class="punc">,</span>
+        <span class="str">"Kuay Teaw Tom Yum"</span><span class="punc">,</span>
+        <span class="str">"Khao Moo Daeng"</span><span class="punc">,</span>
+        <span class="str">"Nam Plao"</span>
+    <span class="punc">};</span>
+    <span class="kw">int</span> qty<span class="punc">[] = {</span><span class="num">0</span><span class="punc">,</span> <span class="num">0</span><span class="punc">,</span> <span class="num">0</span><span class="punc">,</span> <span class="num">0</span><span class="punc">,</span> <span class="num">0</span><span class="punc">};</span>  <span class="cm">/* จำนวนที่สั่ง */</span>
+
+    <span class="kw">int</span> choice<span class="punc">, q, i;</span>
+
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"=== Welcome to Kuay Teaw Ruea ===\n"</span><span class="punc">);</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Select item (0 to finish):\n"</span><span class="punc">);</span>
+
+    <span class="kw">while</span> <span class="punc">(</span><span class="num">1</span><span class="punc">) {</span>
+        <span class="fn">printf</span><span class="punc">(</span><span class="str">"> "</span><span class="punc">);</span>
+        <span class="fn">scanf</span><span class="punc">(</span><span class="str">"%d"</span><span class="punc">, &amp;choice);</span>
+        <span class="kw">if</span> <span class="punc">(</span>choice <span class="op">==</span> <span class="num">0</span><span class="punc">)</span> <span class="kw">break</span><span class="punc">;</span>
+        <span class="kw">if</span> <span class="punc">(</span>choice <span class="op">&lt;</span> <span class="num">1</span> <span class="op">||</span> choice <span class="op">&gt;</span> <span class="num">4</span><span class="punc">) {</span>
+            <span class="fn">printf</span><span class="punc">(</span><span class="str">"Invalid item.\n"</span><span class="punc">);</span>
+            <span class="kw">continue</span><span class="punc">;</span>
+        <span class="punc">}</span>
+        <span class="fn">printf</span><span class="punc">(</span><span class="str">"Quantity: "</span><span class="punc">);</span>
+        <span class="fn">scanf</span><span class="punc">(</span><span class="str">"%d"</span><span class="punc">, &amp;q);</span>
+        qty<span class="punc">[</span>choice<span class="punc">]</span> <span class="op">+=</span> q<span class="punc">;</span>
+    <span class="punc">}</span>
+
+    <span class="cm">/* คำนวณ subtotal และจำนวนรวม */</span>
+    <span class="kw">int</span> subtotal <span class="op">=</span> <span class="num">0</span><span class="punc">, total_qty =</span> <span class="num">0</span><span class="punc">;</span>
+    <span class="kw">for</span> <span class="punc">(</span>i <span class="op">=</span> <span class="num">1</span><span class="punc">;</span> i <span class="op">&lt;=</span> <span class="num">4</span><span class="punc">;</span> i<span class="op">++</span><span class="punc">) {</span>
+        subtotal  <span class="op">+=</span> qty<span class="punc">[</span>i<span class="punc">]</span> <span class="op">*</span> price<span class="punc">[</span>i<span class="punc">];</span>
+        total_qty <span class="op">+=</span> qty<span class="punc">[</span>i<span class="punc">];</span>
+    <span class="punc">}</span>
+
+    <span class="kw">int</span> disc  <span class="op">=</span> <span class="punc">(</span>total_qty <span class="op">&gt;=</span> <span class="num">3</span><span class="punc">)</span> <span class="op">?</span> subtotal <span class="op">/</span> <span class="num">10</span> <span class="op">:</span> <span class="num">0</span><span class="punc">;</span>
+    <span class="kw">int</span> total <span class="op">=</span> subtotal <span class="op">-</span> disc<span class="punc">;</span>
+
+    <span class="cm">/* พิมพ์ใบเสร็จ */</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"\n======= RECEIPT =======\n"</span><span class="punc">);</span>
+    <span class="kw">for</span> <span class="punc">(</span>i <span class="op">=</span> <span class="num">1</span><span class="punc">;</span> i <span class="op">&lt;=</span> <span class="num">4</span><span class="punc">;</span> i<span class="op">++</span><span class="punc">) {</span>
+        <span class="kw">if</span> <span class="punc">(</span>qty<span class="punc">[</span>i<span class="punc">]</span> <span class="op">&gt;</span> <span class="num">0</span><span class="punc">)</span>
+            <span class="fn">printf</span><span class="punc">(</span><span class="str">"%-18s x%d %4d\n"</span><span class="punc">,</span>
+                   name<span class="punc">[</span>i<span class="punc">],</span> qty<span class="punc">[</span>i<span class="punc">],</span> qty<span class="punc">[</span>i<span class="punc">]</span><span class="op">*</span>price<span class="punc">[</span>i<span class="punc">]);</span>
+    <span class="punc">}</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"-----------------------\n"</span><span class="punc">);</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Subtotal       : %d\n"</span><span class="punc">, subtotal);</span>
+    <span class="kw">if</span> <span class="punc">(</span>disc <span class="op">&gt;</span> <span class="num">0</span><span class="punc">)</span>
+        <span class="fn">printf</span><span class="punc">(</span><span class="str">"Discount (10%%) : %d\n"</span><span class="punc">, disc);</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Total          : %d\n"</span><span class="punc">, total);</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"=======================\n"</span><span class="punc">);</span>
+    <span class="fn">printf</span><span class="punc">(</span><span class="str">"Thank you! Come again.\n"</span><span class="punc">);</span>
+    <span class="kw">return</span> <span class="num">0</span><span class="punc">;</span>
+<span class="punc">}</span></div>
+
+    <div class="concept-bar">🔑 Key Concept: <strong>Array + while(1) + ternary operator</strong> &nbsp;|&nbsp; รวม concept หลายอย่างในโปรแกรมเดียว</div>
+
+    <div class="explain-box">
+      <div class="sec-label lbl-explain">🇹🇭 อธิบายทีละส่วน</div>
+      <div class="explain-item"><span class="ex-icon">①</span><div class="ex-body"><strong>ใช้ Array เก็บเมนูและจำนวน</strong><br><code>price[]</code> เก็บราคา, <code>name[]</code> เก็บชื่อ, <code>qty[]</code> เก็บจำนวนที่สั่ง ทั้งหมด index 1–4 ตรงกับเมนู 1–4 index 0 ไม่ใช้ (เว้นว่างไว้)</div></div>
+      <div class="explain-item"><span class="ex-icon">②</span><div class="ex-body"><strong>qty[choice] += q</strong><br>ถ้าสั่งเมนูเดิมซ้ำ ก็บวกเพิ่มเข้าไปในช่อง array ของเมนูนั้น เช่น สั่ง เมนู 1 อีกครั้ง qty[1] ก็เพิ่มขึ้น</div></div>
+      <div class="explain-item"><span class="ex-icon">③</span><div class="ex-body"><strong>Ternary operator สำหรับส่วนลด</strong><br><code>(total_qty &gt;= 3) ? subtotal/10 : 0</code> — ถ้าสั่ง &gt;= 3 ชิ้น disc = subtotal/10 (10%) มิฉะนั้น disc = 0</div></div>
+      <div class="explain-item"><span class="ex-icon">④</span><div class="ex-body"><strong>%-18s จัดชิดซ้าย</strong><br><code>%-18s</code> คือพิมพ์ string จองพื้นที่ 18 ช่อง จัดชิดซ้าย (- คือซ้าย) ทำให้ชื่อเมนูเรียงกันเป็นระเบียบ</div></div>
+      <div class="explain-item"><span class="ex-icon">⑤</span><div class="ex-body"><strong>แสดงส่วนลดเฉพาะถ้ามี</strong><br><code>if (disc &gt; 0)</code> ก่อนพิมพ์บรรทัด Discount ถ้าไม่มีส่วนลดก็ไม่ต้องแสดงบรรทัดนั้น</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function jump(idx) {
+  const el = document.getElementById('ans-'+idx);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
