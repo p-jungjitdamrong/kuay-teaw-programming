@@ -318,7 +318,135 @@ body{background:var(--paper)}
       <span class="done-stamp" id="stamp3">✓ เสร็จแล้ว</span>
     </div>
   </div>
-  <div class="proj-title">⚡ ระบบคำนวณค่าไฟฟ้าแบบขั้นบันได</div>
+  <div class="proj-title">🔐 ระบบตรวจความแข็งแกร่งของรหัสผ่าน</div>
+  <div class="req-box">
+    <div class="req-label">📋 Requirement</div>
+    <div class="req-text">ระบบ Internet Banking ของ KTB ต้องตรวจรหัสผ่านก่อนยอมรับ รับ 3 ข้อมูล: <strong>ความยาว (ตัวเลข)</strong>, <strong>จำนวน digit ในรหัส</strong>, และ <strong>มีตัวพิมพ์ใหญ่ไหม (1=มี 0=ไม่มี)</strong> แล้วตัดสินว่า: ความยาว &lt; 8 → <strong>"อ่อนมาก"</strong> | ความยาว 8–11 และ digit ≥ 2 → <strong>"พอใช้"</strong> | ความยาว ≥ 12 และ digit ≥ 3 และมีตัวพิมพ์ใหญ่ → <strong>"แข็งแกร่ง"</strong> | กรณีอื่น → <strong>"ปานกลาง"</strong> พร้อมพิมพ์คำแนะนำสั้นๆ ทุกกรณี</div>
+  </div>
+  <div class="tech-row">
+    <span class="tech" style="background:#e6f4ee;color:#1a6b4a">int</span>
+    <span class="tech" style="background:#e8f0fa;color:#1a4e8a">if-else if chain</span>
+    <span class="tech" style="background:#fff0e6;color:#b84c00">&amp;&amp; operator</span>
+    <span class="tech" style="background:#fce7f3;color:#9b1d6a">Guard clause</span>
+  </div>
+  <div class="io-spec">
+    <div class="io-box">
+      <div class="io-label" style="color:#7c6eff">INPUT</div>
+      <div class="io-code">ความยาว: 13
+จำนวน digit: 4
+มีตัวพิมพ์ใหญ่ (1/0): 1</div>
+    </div>
+    <div class="io-box">
+      <div class="io-label" style="color:#00c9aa">OUTPUT</div>
+      <div class="io-code">ระดับ: แข็งแกร่ง 💪
+คำแนะนำ: รหัสผ่านผ่านมาตรฐาน</div>
+    </div>
+  </div>
+  <button class="hint-toggle" onclick="toggleSection('hint3','htgl3')">
+    <span>💡 Hint — แนวทาง</span><span class="hint-arrow" id="harr3">▾</span>
+  </button>
+  <div class="hint-body" id="hint3">
+    <div class="hint-step"><span class="hint-n">1</span><span>ตรวจ len &lt; 8 ก่อนเลย (Guard Clause) → return ทันที</span></div>
+    <div class="hint-step"><span class="hint-n">2</span><span>ตรวจ "แข็งแกร่ง" ก่อน "พอใช้" เพราะ condition ครอบคลุมกว่า</span></div>
+    <div class="hint-step"><span class="hint-n">3</span><span>ใช้ <span class="hint-code-sm">len &gt;= 12 &amp;&amp; digits &gt;= 3 &amp;&amp; hasUpper</span> เชื่อม 3 เงื่อนไข</span></div>
+    <div class="hint-step"><span class="hint-n">4</span><span>else สุดท้ายรับ "ปานกลาง" ทุกกรณีที่เหลือ</span></div>
+  </div>
+  <button class="sol-toggle" onclick="toggleSection('sol3','stgl3')">
+    <span>✅ ดูเฉลย + คำอธิบาย</span><span class="hint-arrow" id="sarr3">▾</span>
+  </button>
+  <div class="sol-body" id="sol3">
+    <pre class="sol-code"><span class="inc">#include &lt;stdio.h&gt;</span>
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> len, digits, hasUpper;
+    <span class="fn">printf</span>(<span class="st">"ความยาว: "</span>);            <span class="fn">scanf</span>(<span class="st">"%d"</span>, &len);
+    <span class="fn">printf</span>(<span class="st">"จำนวน digit: "</span>);          <span class="fn">scanf</span>(<span class="st">"%d"</span>, &digits);
+    <span class="fn">printf</span>(<span class="st">"มีตัวพิมพ์ใหญ่ (1/0): "</span>);  <span class="fn">scanf</span>(<span class="st">"%d"</span>, &hasUpper);
+
+    <span class="kw">if</span> (len < <span class="nm">8</span>) {
+        <span class="fn">printf</span>(<span class="st">"ระดับ: อ่อนมาก ❌\n"</span>);
+        <span class="fn">printf</span>(<span class="st">"คำแนะนำ: ต้องยาวอย่างน้อย 8 ตัวอักษร\n"</span>);
+    } <span class="kw">else if</span> (len >= <span class="nm">12</span> && digits >= <span class="nm">3</span> && hasUpper) {
+        <span class="fn">printf</span>(<span class="st">"ระดับ: แข็งแกร่ง 💪\n"</span>);
+        <span class="fn">printf</span>(<span class="st">"คำแนะนำ: รหัสผ่านผ่านมาตรฐาน\n"</span>);
+    } <span class="kw">else if</span> (len >= <span class="nm">8</span> && digits >= <span class="nm">2</span>) {
+        <span class="fn">printf</span>(<span class="st">"ระดับ: พอใช้ 👍\n"</span>);
+        <span class="fn">printf</span>(<span class="st">"คำแนะนำ: เพิ่มความยาวและตัวพิมพ์ใหญ่\n"</span>);
+    } <span class="kw">else</span> {
+        <span class="fn">printf</span>(<span class="st">"ระดับ: ปานกลาง ⚠\n"</span>);
+        <span class="fn">printf</span>(<span class="st">"คำแนะนำ: เพิ่มตัวเลขและตัวพิมพ์ใหญ่\n"</span>);
+    }
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+    <div class="sol-explain"><strong>อธิบาย:</strong> ตรวจ "แข็งแกร่ง" ก่อน "พอใช้" เพราะถ้าสลับ รหัส len=13 จะถูกจับที่ else if แรก (len&gt;=8) แล้วได้ "พอใช้" แทน — ลำดับ if-else if สำคัญมาก</div>
+  </div>
+  <div class="done-bar">
+    <label class="done-label"><input type="checkbox" onchange="markDone(3,this)"> เขียนและทดสอบเสร็จแล้ว</label>
+  </div>
+</div>
+  <div class="req-box">
+    <div class="req-label">📋 Requirement</div>
+    <div class="req-text">ระบบธนาคาร KTB ต้องการตรวจสอบรหัสผ่านของลูกค้าก่อนยอมรับ รับ <strong>ตัวเลขความยาวของรหัสผ่าน</strong> และ <strong>จำนวนตัวเลข (digit) ในรหัส</strong> และ <strong>มีตัวพิมพ์ใหญ่หรือไม่ (1=มี 0=ไม่มี)</strong> จากนั้นตัดสิน: ถ้าความยาวน้อยกว่า 8 → <strong>"อ่อนมาก"</strong>, ความยาว 8–11 และมี digit อย่างน้อย 2 ตัว → <strong>"พอใช้"</strong>, ความยาว 12+ และมี digit 3+ ตัว และมีตัวพิมพ์ใหญ่ → <strong>"แข็งแกร่ง"</strong>, นอกนั้น → <strong>"ปานกลาง"</strong> และพิมพ์คำแนะนำสั้นๆ ท้ายทุกกรณี</div>
+  </div>
+  <div class="tech-row">
+    <span class="tech" style="background:#e6f4ee;color:#1a6b4a">int</span>
+    <span class="tech" style="background:#e8f0fa;color:#1a4e8a">if-else if chain</span>
+    <span class="tech" style="background:#fff0e6;color:#b84c00">&amp;&amp; || operators</span>
+    <span class="tech" style="background:#fce7f3;color:#9b1d6a">nested condition</span>
+  </div>
+  <div class="io-spec">
+    <div class="io-box">
+      <div class="io-label" style="color:#7c6eff">INPUT</div>
+      <div class="io-code">ความยาว: 13
+จำนวน digit: 4
+มีตัวพิมพ์ใหญ่ (1/0): 1</div>
+    </div>
+    <div class="io-box">
+      <div class="io-label" style="color:#00c9aa">OUTPUT</div>
+      <div class="io-code">ระดับ: แข็งแกร่ง 💪
+คำแนะนำ: รหัสผ่านผ่านมาตรฐาน</div>
+    </div>
+  </div>
+  <button class="hint-toggle" onclick="toggleSection('hint3','htgl3')">
+    <span>💡 Hint — แนวทาง</span><span class="hint-arrow" id="harr3">▾</span>
+  </button>
+  <div class="hint-body" id="hint3">
+    <div class="hint-step"><span class="hint-n">1</span><span>ตรวจจากเงื่อนไขง่ายสุดก่อน: ความยาว &lt; 8 → อ่อนมากทันที (Guard)</span></div>
+    <div class="hint-step"><span class="hint-n">2</span><span>ใช้ <span class="hint-code-sm">&amp;&amp;</span> เชื่อมหลายเงื่อนไข: <span class="hint-code-sm">len &gt;= 12 &amp;&amp; digits &gt;= 3 &amp;&amp; hasUpper</span></span></div>
+    <div class="hint-step"><span class="hint-n">3</span><span>ตรวจ "แข็งแกร่ง" ก่อน "พอใช้" เพราะ condition ครอบคลุมกว่า</span></div>
+    <div class="hint-step"><span class="hint-n">4</span><span>ใช้ <span class="hint-code-sm">else</span> สุดท้ายรับกรณี "ปานกลาง" ที่เหลือทั้งหมด</span></div>
+  </div>
+  <button class="sol-toggle" onclick="toggleSection('sol3','stgl3')">
+    <span>✅ ดูเฉลย + คำอธิบาย</span><span class="hint-arrow" id="sarr3">▾</span>
+  </button>
+  <div class="sol-body" id="sol3">
+    <pre class="sol-code"><span class="inc">#include &lt;stdio.h&gt;</span>
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> len, digits, hasUpper;
+    <span class="fn">printf</span>(<span class="st">"ความยาว: "</span>);           <span class="fn">scanf</span>(<span class="st">"%d"</span>, &len);
+    <span class="fn">printf</span>(<span class="st">"จำนวน digit: "</span>);         <span class="fn">scanf</span>(<span class="st">"%d"</span>, &digits);
+    <span class="fn">printf</span>(<span class="st">"มีตัวพิมพ์ใหญ่ (1/0): "</span>); <span class="fn">scanf</span>(<span class="st">"%d"</span>, &hasUpper);
+
+    <span class="kw">if</span> (len &lt; <span class="nm">8</span>) {
+        <span class="fn">printf</span>(<span class="st">"ระดับ: อ่อนมาก ❌\n"</span>);
+        <span class="fn">printf</span>(<span class="st">"คำแนะนำ: ต้องยาวอย่างน้อย 8 ตัวอักษร\n"</span>);
+    } <span class="kw">else if</span> (len >= <span class="nm">12</span> && digits >= <span class="nm">3</span> && hasUpper) {
+        <span class="fn">printf</span>(<span class="st">"ระดับ: แข็งแกร่ง 💪\n"</span>);
+        <span class="fn">printf</span>(<span class="st">"คำแนะนำ: รหัสผ่านผ่านมาตรฐาน\n"</span>);
+    } <span class="kw">else if</span> (len >= <span class="nm">8</span> && digits >= <span class="nm">2</span>) {
+        <span class="fn">printf</span>(<span class="st">"ระดับ: พอใช้ 👍\n"</span>);
+        <span class="fn">printf</span>(<span class="st">"คำแนะนำ: เพิ่มความยาวและตัวพิมพ์ใหญ่\n"</span>);
+    } <span class="kw">else</span> {
+        <span class="fn">printf</span>(<span class="st">"ระดับ: ปานกลาง ⚠\n"</span>);
+        <span class="fn">printf</span>(<span class="st">"คำแนะนำ: เพิ่มตัวเลขและตัวพิมพ์ใหญ่\n"</span>);
+    }
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+    <div class="sol-explain"><strong>อธิบาย:</strong> ตรวจ "แข็งแกร่ง" ก่อน "พอใช้" เพราะถ้าตรวจ len&gt;=8 ก่อน รหัสที่ยาว 12+ จะถูกจับได้ที่ else if แรกแล้วไม่มีโอกาสได้ "แข็งแกร่ง" — ลำดับ if-else if สำคัญมาก</div>
+  </div>
+  <div class="done-bar">
+    <label class="done-label"><input type="checkbox" onchange="markDone(3,this)"> เขียนและทดสอบเสร็จแล้ว</label>
+  </div>
+</div>
   <div class="req-box">
     <div class="req-label">📋 Requirement</div>
     <div class="req-text">การไฟฟ้าต้องการโปรแกรมคำนวณค่าไฟฟ้าแบบ <strong>Tiered Rate</strong> รับ <strong>จำนวนหน่วยที่ใช้</strong> แล้วคำนวณตามอัตรา: <strong>1–100 หน่วย = 3.50 บาท/หน่วย</strong>, <strong>101–200 หน่วย = 4.50 บาท/หน่วย</strong>, <strong>201+ หน่วย = 5.50 บาท/หน่วย</strong> โดยคิดแบบขั้นบันได (ไม่ใช่อัตราเดียว) ถ้าใช้ 0 หน่วยให้แสดง "ไม่มีการใช้ไฟฟ้า" ถ้าใช้มากกว่า 300 หน่วยให้เพิ่มค่าธรรมเนียม VAT 7%</div>
@@ -646,7 +774,166 @@ void  printReport(int[], int)</div>
       <span class="done-stamp" id="stamp7">✓ เสร็จแล้ว</span>
     </div>
   </div>
-  <div class="proj-title">🍜 ระบบ POS ร้านก๋วยเตี๋ยวเรือ</div>
+  <div class="proj-title">📅 ระบบบันทึกการเข้าเรียน 5 วิชา 5 คน</div>
+  <div class="req-box">
+    <div class="req-label">📋 Requirement</div>
+    <div class="req-text">อาจารย์ต้องการโปรแกรมบันทึกการเข้าเรียน นักเรียน <strong>5 คน × 5 วิชา</strong> เก็บใน <strong>2D array</strong> (1=มา, 0=ขาด) รับข้อมูลจากผู้ใช้ทีละช่อง จากนั้นเรียก function แยก: (1) <strong>นับจำนวนครั้งที่แต่ละคนมาเรียน</strong> และพิมพ์ว่า "ผ่าน" (มา ≥ 4 วิชา) หรือ "ตก", (2) <strong>หาวิชาที่มีคนมาน้อยที่สุด</strong> คืนหมายเลขวิชานั้น ทุก function ต้องมี prototype และรับ 2D array เป็น parameter</div>
+  </div>
+  <div class="tech-row">
+    <span class="tech" style="background:#e6f4ee;color:#1a6b4a">int att[5][5]</span>
+    <span class="tech" style="background:#e8f0fa;color:#1a4e8a">nested loop</span>
+    <span class="tech" style="background:#fff0e6;color:#b84c00">function + prototype</span>
+    <span class="tech" style="background:#fce7f3;color:#9b1d6a">2D array param [][5]</span>
+  </div>
+  <div class="io-spec">
+    <div class="io-box">
+      <div class="io-label" style="color:#7c6eff">Functions ที่ต้องมี</div>
+      <div class="io-code">void checkAttend(int a[][5], int n);
+int  worstSubject(int a[][5], int n);</div>
+    </div>
+    <div class="io-box">
+      <div class="io-label" style="color:#00c9aa">OUTPUT</div>
+      <div class="io-code">คนที่ 1: มา 4 วิชา → ผ่าน
+คนที่ 2: มา 3 วิชา → ตก
+...
+วิชาที่คนมาน้อยสุด: วิชา 3</div>
+    </div>
+  </div>
+  <button class="hint-toggle" onclick="toggleSection('hint7','htgl7')">
+    <span>💡 Hint — แนวทาง</span><span class="hint-arrow" id="harr7">▾</span>
+  </button>
+  <div class="hint-body" id="hint7">
+    <div class="hint-step"><span class="hint-n">1</span><span>รับค่า nested loop: <span class="hint-code-sm">for i → for j → scanf(&att[i][j])</span></span></div>
+    <div class="hint-step"><span class="hint-n">2</span><span>checkAttend: loop แถว (คน), sum ทีละคอลัมน์ → if sum&gt;=4 "ผ่าน"</span></div>
+    <div class="hint-step"><span class="hint-n">3</span><span>worstSubject: loop คอลัมน์ (วิชา), sum แต่ละคอลัมน์, จำ minIdx</span></div>
+    <div class="hint-step"><span class="hint-n">4</span><span>2D array parameter ต้องระบุขนาดคอลัมน์: <span class="hint-code-sm">int a[][5]</span></span></div>
+  </div>
+  <button class="sol-toggle" onclick="toggleSection('sol7','stgl7')">
+    <span>✅ ดูเฉลย + คำอธิบาย</span><span class="hint-arrow" id="sarr7">▾</span>
+  </button>
+  <div class="sol-body" id="sol7">
+    <pre class="sol-code"><span class="inc">#include &lt;stdio.h&gt;</span>
+<span class="kw">void</span> <span class="fn">checkAttend</span> (<span class="kw">int</span> a[][<span class="nm">5</span>], <span class="kw">int</span> n);
+<span class="kw">int</span>  <span class="fn">worstSubject</span>(<span class="kw">int</span> a[][<span class="nm">5</span>], <span class="kw">int</span> n);
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> att[<span class="nm">5</span>][<span class="nm">5</span>], i, j;
+    <span class="fn">printf</span>(<span class="st">"กรอก (1=มา 0=ขาด):\n"</span>);
+    <span class="kw">for</span> (i=<span class="nm">0</span>; i&lt;<span class="nm">5</span>; i++) {
+        <span class="fn">printf</span>(<span class="st">"คนที่ %d (5 วิชา): "</span>, i+<span class="nm">1</span>);
+        <span class="kw">for</span> (j=<span class="nm">0</span>; j&lt;<span class="nm">5</span>; j++)
+            <span class="fn">scanf</span>(<span class="st">"%d"</span>, &att[i][j]);
+    }
+    <span class="fn">checkAttend</span>(att, <span class="nm">5</span>);
+    <span class="fn">printf</span>(<span class="st">"วิชาที่คนมาน้อยสุด: วิชา %d\n"</span>,
+           <span class="fn">worstSubject</span>(att, <span class="nm">5</span>) + <span class="nm">1</span>);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}
+
+<span class="kw">void</span> <span class="fn">checkAttend</span>(<span class="kw">int</span> a[][<span class="nm">5</span>], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i, j, sum;
+    <span class="kw">for</span> (i=<span class="nm">0</span>; i&lt;n; i++) {
+        sum = <span class="nm">0</span>;
+        <span class="kw">for</span> (j=<span class="nm">0</span>; j&lt;<span class="nm">5</span>; j++) sum += a[i][j];
+        <span class="fn">printf</span>(<span class="st">"คนที่ %d: มา %d วิชา → %s\n"</span>,
+               i+<span class="nm">1</span>, sum, sum>=<span class="nm">4</span> ? <span class="st">"ผ่าน"</span> : <span class="st">"ตก"</span>);
+    }
+}
+
+<span class="kw">int</span> <span class="fn">worstSubject</span>(<span class="kw">int</span> a[][<span class="nm">5</span>], <span class="kw">int</span> n) {
+    <span class="kw">int</span> j, i, sum, minSum=n+<span class="nm">1</span>, minIdx=<span class="nm">0</span>;
+    <span class="kw">for</span> (j=<span class="nm">0</span>; j&lt;<span class="nm">5</span>; j++) {
+        sum = <span class="nm">0</span>;
+        <span class="kw">for</span> (i=<span class="nm">0</span>; i&lt;n; i++) sum += a[i][j];
+        <span class="kw">if</span> (sum &lt; minSum) { minSum=sum; minIdx=j; }
+    }
+    <span class="kw">return</span> minIdx;
+}</pre>
+    <div class="sol-explain"><strong>อธิบาย:</strong> checkAttend วน loop <strong>แถว</strong> (คน) sum คอลัมน์ — worstSubject วน loop <strong>คอลัมน์</strong> (วิชา) sum แถว — 2D array parameter ต้องเขียน [][5] ระบุคอลัมน์เสมอ</div>
+  </div>
+  <div class="done-bar">
+    <label class="done-label"><input type="checkbox" onchange="markDone(7,this)"> เขียนและทดสอบเสร็จแล้ว</label>
+  </div>
+</div>
+  <div class="req-box">
+    <div class="req-label">📋 Requirement</div>
+    <div class="req-text">อาจารย์ต้องการโปรแกรมบันทึกการเข้าเรียน นักเรียน <strong>5 คน × 5 วิชา</strong> เก็บใน <strong>2D array</strong> (1=มา, 0=ขาด) รับข้อมูลจากผู้ใช้ทีละช่อง จากนั้นเรียก function แยก: (1) <strong>นับจำนวนครั้งที่แต่ละคนมาเรียน</strong> และพิมพ์ว่า "ผ่าน" (มา ≥ 4 วิชา) หรือ "ตก", (2) <strong>หาวิชาที่มีคนมาน้อยที่สุด</strong> (บอกหมายเลขวิชา) ทุก function ต้องรับ 2D array เป็น parameter</div>
+  </div>
+  <div class="tech-row">
+    <span class="tech" style="background:#e6f4ee;color:#1a6b4a">int att[5][5]</span>
+    <span class="tech" style="background:#e8f0fa;color:#1a4e8a">nested loop</span>
+    <span class="tech" style="background:#fff0e6;color:#b84c00">function + prototype</span>
+    <span class="tech" style="background:#fce7f3;color:#9b1d6a">2D array param</span>
+  </div>
+  <div class="io-spec">
+    <div class="io-box">
+      <div class="io-label" style="color:#7c6eff">Functions ที่ต้องมี</div>
+      <div class="io-code">void checkAttend(int a[][5], int n)
+int  worstSubject(int a[][5], int n)</div>
+    </div>
+    <div class="io-box">
+      <div class="io-label" style="color:#00c9aa">OUTPUT</div>
+      <div class="io-code">คนที่ 1: มา 4 วิชา → ผ่าน
+คนที่ 2: มา 3 วิชา → ตก
+...
+วิชาที่คนมาน้อยสุด: วิชา 3</div>
+    </div>
+  </div>
+  <button class="hint-toggle" onclick="toggleSection('hint7','htgl7')">
+    <span>💡 Hint — แนวทาง</span><span class="hint-arrow" id="harr7">▾</span>
+  </button>
+  <div class="hint-body" id="hint7">
+    <div class="hint-step"><span class="hint-n">1</span><span>รับค่าด้วย nested loop: <span class="hint-code-sm">for i for j scanf(&att[i][j])</span></span></div>
+    <div class="hint-step"><span class="hint-n">2</span><span>checkAttend: loop นักเรียน, sum แถว i, if sum&gt;=4 "ผ่าน" else "ตก"</span></div>
+    <div class="hint-step"><span class="hint-n">3</span><span>worstSubject: loop คอลัมน์ (วิชา), sum แต่ละคอลัมน์, หา minIdx</span></div>
+    <div class="hint-step"><span class="hint-n">4</span><span>2D array parameter: <span class="hint-code-sm">int a[][5]</span> ต้องระบุขนาดคอลัมน์เสมอ</span></div>
+  </div>
+  <button class="sol-toggle" onclick="toggleSection('sol7','stgl7')">
+    <span>✅ ดูเฉลย + คำอธิบาย</span><span class="hint-arrow" id="sarr7">▾</span>
+  </button>
+  <div class="sol-body" id="sol7">
+    <pre class="sol-code"><span class="inc">#include &lt;stdio.h&gt;</span>
+<span class="kw">void</span> <span class="fn">checkAttend</span> (<span class="kw">int</span> a[][<span class="nm">5</span>], <span class="kw">int</span> n);
+<span class="kw">int</span>  <span class="fn">worstSubject</span>(<span class="kw">int</span> a[][<span class="nm">5</span>], <span class="kw">int</span> n);
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> att[<span class="nm">5</span>][<span class="nm">5</span>], i, j;
+    <span class="fn">printf</span>(<span class="st">"กรอกข้อมูล (1=มา 0=ขาด):\n"</span>);
+    <span class="kw">for</span>(i=<span class="nm">0</span>; i&lt;<span class="nm">5</span>; i++) {
+        <span class="fn">printf</span>(<span class="st">"คนที่ %d (5 วิชา): "</span>, i+<span class="nm">1</span>);
+        <span class="kw">for</span>(j=<span class="nm">0</span>; j&lt;<span class="nm">5</span>; j++) <span class="fn">scanf</span>(<span class="st">"%d"</span>, &att[i][j]);
+    }
+    <span class="fn">checkAttend</span>(att, <span class="nm">5</span>);
+    <span class="fn">printf</span>(<span class="st">"วิชาที่คนมาน้อยสุด: วิชา %d\n"</span>,
+           <span class="fn">worstSubject</span>(att, <span class="nm">5</span>) + <span class="nm">1</span>);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}
+
+<span class="kw">void</span> <span class="fn">checkAttend</span>(<span class="kw">int</span> a[][<span class="nm">5</span>], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i, j, sum;
+    <span class="kw">for</span>(i=<span class="nm">0</span>; i&lt;n; i++) {
+        sum = <span class="nm">0</span>;
+        <span class="kw">for</span>(j=<span class="nm">0</span>; j&lt;<span class="nm">5</span>; j++) sum += a[i][j];
+        <span class="fn">printf</span>(<span class="st">"คนที่ %d: มา %d วิชา → %s\n"</span>,
+               i+<span class="nm">1</span>, sum, sum>=<span class="nm">4</span>?<span class="st">"ผ่าน"</span>:<span class="st">"ตก"</span>);
+    }
+}
+
+<span class="kw">int</span> <span class="fn">worstSubject</span>(<span class="kw">int</span> a[][<span class="nm">5</span>], <span class="kw">int</span> n) {
+    <span class="kw">int</span> j, i, sum, minSum=n+<span class="nm">1</span>, minIdx=<span class="nm">0</span>;
+    <span class="kw">for</span>(j=<span class="nm">0</span>; j&lt;<span class="nm">5</span>; j++) {
+        sum = <span class="nm">0</span>;
+        <span class="kw">for</span>(i=<span class="nm">0</span>; i&lt;n; i++) sum += a[i][j];
+        <span class="kw">if</span>(sum &lt; minSum) { minSum=sum; minIdx=j; }
+    }
+    <span class="kw">return</span> minIdx;
+}</pre>
+    <div class="sol-explain"><strong>อธิบาย:</strong> checkAttend วน loop แถว (นักเรียน) sum คอลัมน์ — worstSubject วน loop คอลัมน์ (วิชา) sum แถว — 2D array parameter ต้องระบุขนาดคอลัมน์ [][5] เสมอ</div>
+  </div>
+  <div class="done-bar">
+    <label class="done-label"><input type="checkbox" onchange="markDone(7,this)"> เขียนและทดสอบเสร็จแล้ว</label>
+  </div>
+</div>
   <div class="req-box">
     <div class="req-label">📋 Requirement</div>
     <div class="req-text">ร้านก๋วยเตี๋ยวต้องการระบบรับออเดอร์ มีเมนู 4 รายการ (ก๋วยเตี๋ยวเรือ 45฿, ต้มยำ 50฿, ข้าวหมูแดง 55฿, น้ำเปล่า 10฿) ผู้ใช้เลือกเมนูและจำนวน <strong>วนซ้ำได้จนกดปุ่ม 0</strong> เพื่อจบออเดอร์ จากนั้นพิมพ์ <strong>ใบเสร็จ</strong> แสดงรายการที่สั่ง ยอดรวม และถ้า <strong>รวมสั่ง 3 ชิ้นขึ้นไปลด 10%</strong> ต้องใช้ array เก็บจำนวนที่สั่งและ function แยกคำนวณส่วนลด</div>
