@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 4 — Array & Function | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="slide.css">
+<style>
+/* Chapter 4 accent — deep rose */
+:root { --ca:#9b1d6a; --cal:#fce7f3; --cam:#d45fa0; }
+
+/* array diagram */
+.arr-diagram {
+  font-family: var(--mono);
+  background: var(--ink); border-radius: 8px;
+  padding: 14px 18px; margin-bottom: 14px; font-size: 12px;
+}
+.arr-row { display: flex; align-items: stretch; gap: 0; margin-bottom: 8px; }
+.arr-label { min-width: 72px; color: #8891a8; font-size: 11px; display: flex; align-items: center; }
+.arr-cells { display: flex; gap: 3px; }
+.arr-cell {
+  width: 54px; height: 42px;
+  background: #1e2538; border: 1px solid #2a3050;
+  border-radius: 5px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1px;
+}
+.ac-val { font-size: 13px; font-weight: 600; color: #9effe3; }
+.ac-idx { font-size: 9px; color: #4a5568; }
+.arr-cell.hi { border-color: var(--cam); background: rgba(212,95,160,.1); }
+.arr-cell.hi .ac-val { color: var(--cam); }
+
+/* function box diagram */
+.fn-box {
+  display: flex; align-items: center; gap: 0;
+  font-family: var(--mono); font-size: 12px;
+  margin-bottom: 14px;
+}
+.fn-io {
+  background: #1e2538; border: 1px solid #2a3050;
+  border-radius: 6px; padding: 8px 12px;
+  color: #8891a8; font-size: 11px; text-align: center;
+  min-width: 80px;
+}
+.fn-arrow { color: var(--cam); font-size: 16px; padding: 0 8px; }
+.fn-core {
+  background: var(--ink); border: 2px solid var(--cam);
+  border-radius: 8px; padding: 10px 16px;
+  color: var(--cam); font-size: 12px; text-align: center;
+  min-width: 120px; font-weight: 600;
+}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════════ SLIDE 0 — COVER ════════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · ภาษา C</div>
+        <div class="cover-title">บทที่ 4<br><em>Array &amp; Function</em></div>
+        <div class="cover-subtitle">เก็บข้อมูลหลายตัวในชื่อเดียว และแยก code เป็น block นำกลับมาใช้ซ้ำได้</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Array — ประกาศ, index, วน loop</div>
+          <div class="topic-row"><div class="topic-dot"></div>Array 2 มิติ</div>
+          <div class="topic-row"><div class="topic-dot"></div>Function — โครงสร้าง, parameter, return</div>
+          <div class="topic-row"><div class="topic-dot"></div>Function Prototype</div>
+          <div class="topic-row"><div class="topic-dot"></div>Pass by Value vs Array in Function</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">04</div>
+        <div class="cover-badge">CHAPTER 4</div>
+        <div class="cover-slides-count">13 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 1 — Array คืออะไร ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Array</div>
+    <div class="slide-h1">Array — <em>"ช่องเก็บของ"</em> หลายช่องในชื่อเดียว</div>
+    <div class="slide-lead">แทนที่จะประกาศ score1, score2, score3... ใช้ <code>int scores[5]</code> เดียว เข้าถึงด้วย index 0–4</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">ประกาศและกำหนดค่า</div>
+        <div class="code"><span class="cm">/* ประกาศพร้อมกำหนดค่า */</span>
+<span class="kw">int</span> scores[<span class="nm">5</span>] = {<span class="nm">85</span>, <span class="nm">90</span>, <span class="nm">72</span>, <span class="nm">88</span>, <span class="nm">95</span>};
+
+<span class="cm">/* ประกาศอย่างเดียว (ค่า garbage!) */</span>
+<span class="kw">int</span> arr[<span class="nm">5</span>];
+
+<span class="cm">/* กำหนดค่า 0 ทั้งหมด */</span>
+<span class="kw">int</span> arr[<span class="nm">5</span>] = {<span class="nm">0</span>};
+
+<span class="cm">/* C นับขนาดให้เอง */</span>
+<span class="kw">int</span> data[] = {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>}; <span class="cm">/* size=3 */</span>
+
+<span class="cm">/* เข้าถึงและแก้ไข */</span>
+scores[<span class="nm">2</span>] = <span class="nm">100</span>;
+<span class="fn">printf</span>(<span class="st">"%d"</span>, scores[<span class="nm">0</span>]); <span class="cm">/* 85 */</span></div>
+      </div>
+      <div class="split-col">
+        <div class="arr-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:10px;letter-spacing:.5px">int scores[5]</div>
+          <div class="arr-row">
+            <div class="arr-label">value</div>
+            <div class="arr-cells">
+              <div class="arr-cell"><div class="ac-val">85</div><div class="ac-idx">[0]</div></div>
+              <div class="arr-cell"><div class="ac-val">90</div><div class="ac-idx">[1]</div></div>
+              <div class="arr-cell hi"><div class="ac-val">72</div><div class="ac-idx">[2]</div></div>
+              <div class="arr-cell"><div class="ac-val">88</div><div class="ac-idx">[3]</div></div>
+              <div class="arr-cell"><div class="ac-val">95</div><div class="ac-idx">[4]</div></div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:#4a5568;margin-top:8px">
+            scores[2] = 72 &nbsp;|&nbsp; index เริ่มที่ 0 เสมอ<br>
+            ช่องสุดท้าย = scores[<strong style="color:#d45fa0">4</strong>] ไม่ใช่ [5]
+          </div>
+        </div>
+        <div class="box red">
+          <div class="box-title">⚠️ Out of Bounds — Bug อันตราย</div>
+          <div class="box-body"><code>int arr[5];</code><br>
+          <code>arr[5] = 10;</code> ← เขียนนอก array!<br>
+          C <strong>ไม่ตรวจ</strong> compile ผ่านแต่ crash หรือ data เสียหายได้</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 2 — Array + Loop ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Array + Loop</div>
+    <div class="slide-h1">Array + Loop — <em>คู่หูที่แยกกันไม่ออก</em></div>
+    <div class="slide-lead">Loop ทำให้เข้าถึง array ทุกช่องโดยไม่ต้องเขียนชื่อซ้ำ — ใช้ i เป็น index</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">Pattern พื้นฐาน — วนทุก element</div>
+        <div class="code"><span class="kw">int</span> scores[] = {<span class="nm">85</span>,<span class="nm">90</span>,<span class="nm">72</span>,<span class="nm">88</span>,<span class="nm">95</span>};
+<span class="kw">int</span> n = <span class="nm">5</span>, i;
+
+<span class="cm">/* พิมพ์ทุกตัว */</span>
+<span class="kw">for</span> (i = <span class="nm">0</span>; i < n; i++)
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, scores[i]);
+
+<span class="cm">/* หาผลรวม */</span>
+<span class="kw">int</span> sum = <span class="nm">0</span>;
+<span class="kw">for</span> (i = <span class="nm">0</span>; i < n; i++)
+    sum += scores[i];
+<span class="fn">printf</span>(<span class="st">"Avg: %.1f"</span>, (<span class="kw">float</span>)sum/n);
+
+<span class="cm">/* หาค่าสูงสุด */</span>
+<span class="kw">int</span> max = scores[<span class="nm">0</span>];
+<span class="kw">for</span> (i = <span class="nm">1</span>; i < n; i++)
+    <span class="kw">if</span> (scores[i] > max) max = scores[i];
+<span class="fn">printf</span>(<span class="st">"Max: %d"</span>, max); <span class="cm">/* 95 */</span></div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">รับค่าเข้า array ด้วย scanf</div>
+        <div class="code"><span class="kw">int</span> arr[<span class="nm">5</span>], i;
+<span class="kw">for</span> (i = <span class="nm">0</span>; i < <span class="nm">5</span>; i++) {
+    <span class="fn">printf</span>(<span class="st">"arr[%d]: "</span>, i);
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, <span class="op">&amp;</span>arr[i]); <span class="cm">/* &arr[i] */</span>
+}</div>
+        <div class="box amber">
+          <div class="box-title">⚠️ sizeof กับ Array</div>
+          <div class="box-body">
+            <code>int arr[5];</code><br>
+            <code>sizeof(arr)</code> = 20 bytes (5×4)<br>
+            <code>sizeof(arr)/sizeof(arr[0])</code> = 5<br><br>
+            วิธีนี้หา size ได้โดยไม่ต้อง hardcode แต่<br>
+            <strong>ใช้ไม่ได้เมื่อส่ง array เข้า function!</strong>
+          </div>
+        </div>
+        <div class="think">
+          <div class="think-q">ถ้า <code>int arr[5] = {0}</code> แล้ว loop วน <code>i = 0; i &lt; 5; i++</code> พิมพ์ <code>arr[i]</code> — output คืออะไร?</div>
+          <div class="think-hint">💡 <code>{0}</code> initialize ทุกช่องเป็น 0 ไม่ใช่แค่ช่องแรก</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 3 — Array 2D ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · 2D Array</div>
+    <div class="slide-h1">Array 2 มิติ — <em>ตารางข้อมูล</em></div>
+    <div class="slide-lead">คิดเหมือนตาราง Excel — แถว (row) × คอลัมน์ (col) เข้าถึงด้วย <code>arr[row][col]</code></div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">ประกาศและเข้าถึง</div>
+        <div class="code"><span class="cm">/* 3 แถว 4 คอลัมน์ */</span>
+<span class="kw">int</span> grid[<span class="nm">3</span>][<span class="nm">4</span>] = {
+    {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>},
+    {<span class="nm">5</span>, <span class="nm">6</span>, <span class="nm">7</span>, <span class="nm">8</span>},
+    {<span class="nm">9</span>,<span class="nm">10</span>,<span class="nm">11</span>,<span class="nm">12</span>}
+};
+
+<span class="fn">printf</span>(<span class="st">"%d"</span>, grid[<span class="nm">1</span>][<span class="nm">2</span>]); <span class="cm">/* 7 */</span>
+
+<span class="cm">/* nested loop วนทั้งตาราง */</span>
+<span class="kw">int</span> r, c;
+<span class="kw">for</span> (r = <span class="nm">0</span>; r < <span class="nm">3</span>; r++) {
+    <span class="kw">for</span> (c = <span class="nm">0</span>; c < <span class="nm">4</span>; c++)
+        <span class="fn">printf</span>(<span class="st">"%3d"</span>, grid[r][c]);
+    <span class="fn">printf</span>(<span class="st">"\n"</span>);
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="arr-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:10px">int grid[3][4]</div>
+          <div class="arr-row" style="margin-bottom:4px">
+            <div class="arr-label" style="font-size:10px">row 0</div>
+            <div class="arr-cells">
+              <div class="arr-cell"><div class="ac-val">1</div><div class="ac-idx">[0][0]</div></div>
+              <div class="arr-cell"><div class="ac-val">2</div><div class="ac-idx">[0][1]</div></div>
+              <div class="arr-cell"><div class="ac-val">3</div><div class="ac-idx">[0][2]</div></div>
+              <div class="arr-cell"><div class="ac-val">4</div><div class="ac-idx">[0][3]</div></div>
+            </div>
+          </div>
+          <div class="arr-row" style="margin-bottom:4px">
+            <div class="arr-label" style="font-size:10px">row 1</div>
+            <div class="arr-cells">
+              <div class="arr-cell"><div class="ac-val">5</div><div class="ac-idx">[1][0]</div></div>
+              <div class="arr-cell"><div class="ac-val">6</div><div class="ac-idx">[1][1]</div></div>
+              <div class="arr-cell hi"><div class="ac-val">7</div><div class="ac-idx">[1][2]</div></div>
+              <div class="arr-cell"><div class="ac-val">8</div><div class="ac-idx">[1][3]</div></div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="arr-label" style="font-size:10px">row 2</div>
+            <div class="arr-cells">
+              <div class="arr-cell"><div class="ac-val">9</div><div class="ac-idx">[2][0]</div></div>
+              <div class="arr-cell"><div class="ac-val">10</div><div class="ac-idx">[2][1]</div></div>
+              <div class="arr-cell"><div class="ac-val">11</div><div class="ac-idx">[2][2]</div></div>
+              <div class="arr-cell"><div class="ac-val">12</div><div class="ac-idx">[2][3]</div></div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:#4a5568;margin-top:8px">grid[1][2] = 7 (แถว 1 คอลัมน์ 2)</div>
+        </div>
+        <div class="usecase">
+          <div class="usecase-label">🏦 Use Case</div>
+          <div class="usecase-title">ยอดขาย 12 เดือน × 5 สาขา</div>
+          <div class="usecase-body"><code>int sales[5][12]</code> — แถวคือสาขา คอลัมน์คือเดือน nested loop คำนวณยอดรวมรายสาขาและรายเดือน</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 4 — Function คืออะไร ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Function</div>
+    <div class="slide-h1">Function — <em>แยก code เป็น block</em></div>
+    <div class="slide-lead">Function คือกลุ่มของ code ที่ทำงานเฉพาะด้าน เรียกใช้ซ้ำได้ ทำให้โปรแกรมสะอาดและแก้ bug ง่าย</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="fn-box">
+          <div class="fn-io">input<br>(parameters)</div>
+          <div class="fn-arrow">→</div>
+          <div class="fn-core">function<br>ทำงาน</div>
+          <div class="fn-arrow">→</div>
+          <div class="fn-io">output<br>(return value)</div>
+        </div>
+        <div class="code-label">3 แบบที่พบบ่อย</div>
+        <div class="code"><span class="cm">/* 1: ไม่รับ ไม่คืน */</span>
+<span class="kw">void</span> <span class="fn">printLine</span>() {
+    <span class="fn">printf</span>(<span class="st">"----------\n"</span>);
+}
+
+<span class="cm">/* 2: รับค่า ไม่คืน */</span>
+<span class="kw">void</span> <span class="fn">printDouble</span>(<span class="kw">int</span> n) {
+    <span class="fn">printf</span>(<span class="st">"%d\n"</span>, n * <span class="nm">2</span>);
+}
+
+<span class="cm">/* 3: รับค่า และคืนค่า */</span>
+<span class="kw">int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
+    <span class="kw">return</span> a + b;
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">เรียกใช้ใน main</div>
+        <div class="code"><span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="fn">printLine</span>();           <span class="cm">/* ① */</span>
+    <span class="fn">printDouble</span>(<span class="nm">7</span>);       <span class="cm">/* ② พิมพ์ 14 */</span>
+    <span class="kw">int</span> r = <span class="fn">add</span>(<span class="nm">3</span>, <span class="nm">4</span>);   <span class="cm">/* ③ r=7 */</span>
+    <span class="fn">printf</span>(<span class="st">"%d\n"</span>, r);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</div>
+        <div class="box green">
+          <div class="box-title">ทำไมต้องใช้ Function?</div>
+          <div class="box-body">
+            ✅ <strong>Reuse</strong> — เขียนครั้งเดียว เรียกหลายครั้ง<br>
+            ✅ <strong>Readable</strong> — ชื่อ function บอกว่าทำอะไร<br>
+            ✅ <strong>Debug ง่าย</strong> — หา bug แยกแต่ละ function<br>
+            ✅ <strong>แก้ที่เดียว</strong> — เปลี่ยน logic แก้ใน function เดียว
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 5 — Function Prototype ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Prototype</div>
+    <div class="slide-h1">Function Prototype — <em>แจ้งให้ C รู้ก่อน</em></div>
+    <div class="slide-lead">C อ่าน code จากบนลงล่าง ถ้า function อยู่หลัง main ต้องประกาศ prototype ก่อน ไม่งั้น compile error</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label bad">❌ ไม่มี prototype — error</div>
+        <div class="code bad"><span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> r = <span class="fn">add</span>(<span class="nm">3</span>, <span class="nm">4</span>); <span class="cm">/* error! */</span>
+    <span class="kw">return</span> <span class="nm">0</span>;
+}
+<span class="kw">int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) { <span class="cm">/* ช้าไป */</span>
+    <span class="kw">return</span> a + b;
+}</span></div>
+
+        <div class="code-label good">✅ มี prototype — ถูกต้อง</div>
+        <div class="code good"><span class="cm">/* prototype ก่อน main */</span>
+<span class="kw">int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b);  <span class="cm">/* แค่ประกาศ */</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> r = <span class="fn">add</span>(<span class="nm">3</span>, <span class="nm">4</span>); <span class="cm">/* ✓ */</span>
+    <span class="kw">return</span> <span class="nm">0</span>;
+}
+
+<span class="kw">int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) { <span class="cm">/* ตัวจริง */</span>
+    <span class="kw">return</span> a + b;
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="box blue">
+          <div class="box-title">ทางเลือก — เขียน function ก่อน main</div>
+          <div class="box-body">อีกวิธีคือเขียน function ทั้งหมดไว้เหนือ main เลย ไม่ต้องมี prototype แต่ถ้า function เยอะอ่านยาก<br><br>
+          ในโปรเจคจริง มักใช้ <code>.h</code> header file เก็บ prototype ทั้งหมด</div>
+        </div>
+        <div class="box amber">
+          <div class="box-title">⚠️ Prototype vs Definition</div>
+          <div class="box-body">
+            <strong>Prototype</strong> — แจ้ง type เท่านั้น ลง ; จบ<br>
+            <code>int add(int a, int b);</code><br><br>
+            <strong>Definition</strong> — ตัว function จริง มี body <code>{}</code><br>
+            <code>int add(int a, int b) { return a+b; }</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 6 — Pass by Value ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Pass by Value</div>
+    <div class="slide-h1">Pass by Value — <em>C ส่งแค่ "สำเนา"</em></div>
+    <div class="slide-lead">เมื่อส่งตัวแปรเข้า function C จะส่งแค่ค่า (copy) ไม่ใช่ตัวแปรจริง แก้ใน function ไม่กระทบตัวแปรนอก</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label bad">❌ คาดว่า x จะเปลี่ยน แต่ไม่เปลี่ยน</div>
+        <div class="code bad"><span class="kw">void</span> <span class="fn">double_it</span>(<span class="kw">int</span> n) {
+    n = n * <span class="nm">2</span>; <span class="cm">/* แก้แค่ copy! */</span>
+}
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> x = <span class="nm">5</span>;
+    <span class="fn">double_it</span>(x);
+    <span class="fn">printf</span>(<span class="st">"%d"</span>, x); <span class="cm">/* ยังเป็น 5! */</span>
+}</div>
+
+        <div class="code-label good">✅ ใช้ return value แทน</div>
+        <div class="code good"><span class="kw">int</span> <span class="fn">double_it</span>(<span class="kw">int</span> n) {
+    <span class="kw">return</span> n * <span class="nm">2</span>; <span class="cm">/* คืนค่ากลับ */</span>
+}
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> x = <span class="nm">5</span>;
+    x = <span class="fn">double_it</span>(x); <span class="cm">/* รับค่ากลับ */</span>
+    <span class="fn">printf</span>(<span class="st">"%d"</span>, x); <span class="cm">/* 10 ✓ */</span>
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">💡 แต่ Array ต่างออกไป!</div>
+          <div class="box-body">เมื่อส่ง <strong>array</strong> เข้า function C ส่ง <strong>address ของช่องแรก</strong> (ไม่ใช่ copy) ทำให้แก้ค่าใน function ได้จริง<br><br>
+          นี่คือเหตุผลว่าทำไม array ถึงแก้ได้ใน function แต่ int ธรรมดาแก้ไม่ได้</div>
+        </div>
+        <div class="think">
+          <div class="think-q">function นี้ swap a กับ b ได้จริงไหม?<br>
+          <code>void swap(int a, int b) {</code><br>
+          <code>&nbsp;&nbsp;int t=a; a=b; b=t;</code><br>
+          <code>}</code><br>
+          ถ้าไม่ได้ — ต้องทำยังไง?</div>
+          <div class="think-hint">💡 Pass by value → ไม่ได้ ต้องใช้ pointer ซึ่งเรียนในบทที่ 5</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 7 — Array in Function ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Array in Function</div>
+    <div class="slide-h1">ส่ง Array เข้า <em>Function</em></div>
+    <div class="slide-lead">Array ส่งแบบพิเศษ — C ส่ง address มาให้ ไม่ copy ทั้ง array function จึงเข้าถึงข้อมูลตัวจริงได้ <strong>ต้องส่ง size มาด้วยเสมอ</strong></div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">รูปแบบการรับ array</div>
+        <div class="code"><span class="cm">/* ทั้งสองแบบนี้เหมือนกัน */</span>
+<span class="kw">void</span> <span class="fn">printArr</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> size)
+<span class="kw">void</span> <span class="fn">printArr</span>(<span class="kw">int</span> *arr, <span class="kw">int</span> size)
+
+<span class="cm">/* ตัวอย่าง */</span>
+<span class="kw">void</span> <span class="fn">printArr</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> size) {
+    <span class="kw">int</span> i;
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i < size; i++)
+        <span class="fn">printf</span>(<span class="st">"%d "</span>, arr[i]);
+    <span class="fn">printf</span>(<span class="st">"\n"</span>);
+}
+
+<span class="kw">float</span> <span class="fn">calcAvg</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> size) {
+    <span class="kw">int</span> i, sum = <span class="nm">0</span>;
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i < size; i++)
+        sum += arr[i];
+    <span class="kw">return</span> (<span class="kw">float</span>)sum / size;
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">เรียกใช้</div>
+        <div class="code"><span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> scores[] = {<span class="nm">85</span>,<span class="nm">90</span>,<span class="nm">72</span>,<span class="nm">88</span>,<span class="nm">95</span>};
+    <span class="kw">int</span> n = <span class="nm">5</span>;
+
+    <span class="fn">printArr</span>(scores, n);
+    <span class="fn">printf</span>(<span class="st">"Avg: %.1f\n"</span>,
+           <span class="fn">calcAvg</span>(scores, n));
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</div>
+        <div class="box red">
+          <div class="box-title">⚠️ ต้องส่ง size เสมอ</div>
+          <div class="box-body">ใน function <code>sizeof(arr)</code> ไม่ให้ขนาด array จริงๆ แล้ว — ให้ขนาดของ pointer แทน (4 หรือ 8 bytes)<br><br>จึงต้องส่ง <code>size</code> เป็น parameter เสมอ</div>
+        </div>
+        <div class="box green">
+          <div class="box-title">✅ Array แก้ค่าใน Function ได้จริง</div>
+          <div class="box-body">เพราะ C ส่ง address มา function จึงเข้าถึงข้อมูลตัวจริง ถ้า function แก้ <code>arr[i]</code> ค่าใน main จะเปลี่ยนด้วย</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 8 — Use Case ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Use Case</div>
+    <div class="slide-h1">🏦 <em>Use Case จริง</em> — ระบบเกรดนักเรียน</div>
+    <div class="slide-lead">รวม Array + Function + Loop ในโปรแกรมเดียว — จำลองระบบคำนวณเกรดที่ใช้ function แยก logic ชัดเจน</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="usecase" style="border-left-color:var(--ca)">
+          <div class="usecase-label" style="color:var(--ca)">โจทย์ระบบเกรด</div>
+          <div class="usecase-title">คำนวณและแสดงเกรดนักเรียน 5 คน</div>
+          <div class="usecase-body">รับคะแนน 5 คน เก็บใน array<br>
+          เรียก function หา: ค่าเฉลี่ย, สูงสุด, ต่ำสุด<br>
+          เรียก function แสดงเกรด A–F ของแต่ละคน</div>
+        </div>
+        <div class="box">
+          <div class="box-title">Functions ที่ต้องเขียน</div>
+          <div class="box-body" style="font-family:var(--mono);font-size:12px;line-height:2">
+            <span style="color:var(--cam)">float</span> calcAvg(int[], int)<br>
+            <span style="color:var(--cam)">int</span>   findMax(int[], int)<br>
+            <span style="color:var(--cam)">int</span>   findMin(int[], int)<br>
+            <span style="color:var(--cam)">char</span>  getGrade(int score)<br>
+            <span style="color:var(--cam)">void</span>  printReport(int[], int)
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">โปรแกรมหลัก</div>
+        <div class="code"><span class="kw">float</span> <span class="fn">calcAvg</span>(<span class="kw">int</span> a[], <span class="kw">int</span> n);
+<span class="kw">int</span>   <span class="fn">findMax</span>(<span class="kw">int</span> a[], <span class="kw">int</span> n);
+<span class="kw">char</span>  <span class="fn">getGrade</span>(<span class="kw">int</span> s);
+<span class="kw">void</span>  <span class="fn">printReport</span>(<span class="kw">int</span> a[], <span class="kw">int</span> n);
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> s[] = {<span class="nm">85</span>,<span class="nm">72</span>,<span class="nm">90</span>,<span class="nm">65</span>,<span class="nm">78</span>};
+    <span class="fn">printf</span>(<span class="st">"Avg: %.1f\n"</span>,<span class="fn">calcAvg</span>(s,<span class="nm">5</span>));
+    <span class="fn">printf</span>(<span class="st">"Max: %d\n"</span>, <span class="fn">findMax</span>(s,<span class="nm">5</span>));
+    <span class="fn">printReport</span>(s, <span class="nm">5</span>);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}
+
+<span class="kw">char</span> <span class="fn">getGrade</span>(<span class="kw">int</span> s) {
+    <span class="kw">if</span>      (s >= <span class="nm">80</span>) <span class="kw">return</span> <span class="st">'A'</span>;
+    <span class="kw">else if</span> (s >= <span class="nm">70</span>) <span class="kw">return</span> <span class="st">'B'</span>;
+    <span class="kw">else if</span> (s >= <span class="nm">60</span>) <span class="kw">return</span> <span class="st">'C'</span>;
+    <span class="kw">else</span>              <span class="kw">return</span> <span class="st">'F'</span>;
+}
+<span class="kw">void</span> <span class="fn">printReport</span>(<span class="kw">int</span> a[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i;
+    <span class="kw">for</span> (i=<span class="nm">0</span>; i&lt;n; i++)
+        <span class="fn">printf</span>(<span class="st">"#%d: %d → %c\n"</span>,
+               i+<span class="nm">1</span>, a[i], <span class="fn">getGrade</span>(a[i]));
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 9 — Scope ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Scope</div>
+    <div class="slide-h1">Variable Scope — <em>ตัวแปรมองเห็นได้แค่ไหน</em></div>
+    <div class="slide-lead">ตัวแปรใน C มองเห็นได้เฉพาะใน block <code>{}</code> ที่ประกาศไว้ — เข้าใจ scope ช่วยหลีกเลี่ยง bug ที่หายากมาก</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">Local vs Global scope</div>
+        <div class="code"><span class="kw">int</span> globalVar = <span class="nm">100</span>; <span class="cm">/* global */</span>
+
+<span class="kw">void</span> <span class="fn">funcA</span>() {
+    <span class="kw">int</span> x = <span class="nm">10</span>;          <span class="cm">/* local */</span>
+    <span class="fn">printf</span>(<span class="st">"%d"</span>, x);      <span class="cm">/* ✓ */</span>
+    <span class="fn">printf</span>(<span class="st">"%d"</span>, globalVar); <span class="cm">/* ✓ */</span>
+}
+
+<span class="kw">void</span> <span class="fn">funcB</span>() {
+    <span class="fn">printf</span>(<span class="st">"%d"</span>, x);      <span class="cm">/* ❌ error! */</span>
+    <span class="fn">printf</span>(<span class="st">"%d"</span>, globalVar); <span class="cm">/* ✓ */</span>
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> i;
+    <span class="kw">for</span> (i=<span class="nm">0</span>; i&lt;<span class="nm">3</span>; i++) {
+        <span class="kw">int</span> temp = i*<span class="nm">2</span>; <span class="cm">/* local to loop */</span>
+    }
+    <span class="cm">/* temp ไม่มีที่นี่แล้ว */</span>
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="box amber">
+          <div class="box-title">⚠️ Global Variable — ระวัง!</div>
+          <div class="box-body">Global variable ใช้ง่ายแต่อันตราย — ทุก function แก้ค่าได้ ทำให้หา bug ยาก<br><br>
+          ควรใช้ local variable + parameter ส่งค่าแทน เว้นแต่จำเป็นจริงๆ</div>
+        </div>
+        <div class="box green">
+          <div class="box-title">✅ Best Practice</div>
+          <div class="box-body">
+            ประกาศตัวแปร <strong>ใกล้ที่ใช้มากที่สุด</strong><br><br>
+            ใช้ function parameter แทน global<br><br>
+            ชื่อตัวแปรใน function ต่างกันได้ ไม่ conflict<br>
+            เพราะแต่ละ function มี scope แยกกัน
+          </div>
+        </div>
+        <div class="think">
+          <div class="think-q">ถ้า 2 function ประกาศ <code>int x;</code> เหมือนกัน จะ conflict กันไหม?</div>
+          <div class="think-hint">💡 Local variable อยู่คนละ scope — ไม่ conflict เลย</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 10 — Think! ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 4 · Think!</div>
+    <div class="slide-h1">คิดก่อน <em>เขียน</em></div>
+    <div class="slide-lead">Trace ในหัว และวิเคราะห์ก่อนตอบ</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">1. <code>int arr[3] = {1, 2, 3};</code><br>
+          <code>arr[3] = 99;</code> — จะเกิดอะไรขึ้น?</div>
+          <div class="think-hint">💡 Index 0–2 เท่านั้น [3] คือนอก array C ไม่ stop แต่ memory เสียหาย</div>
+        </div>
+        <div class="think">
+          <div class="think-q">2. function นี้ทำงานถูกไหม?<br>
+          <code>int sum(int arr[], int n) {</code><br>
+          <code>&nbsp;&nbsp;int i, s=0;</code><br>
+          <code>&nbsp;&nbsp;for(i=0;i&lt;n;i++) s+=arr[i];</code><br>
+          <code>&nbsp;&nbsp;return s;</code><br>
+          <code>}</code></div>
+          <div class="think-hint">💡 ถูกต้อง — รับ array + size คำนวณผลรวม return กลับ</div>
+        </div>
+        <div class="think">
+          <div class="think-q">3. ถ้าเรียก <code>printArr(scores, 5)</code> แล้ว function แก้ <code>arr[0] = 999</code> — ค่า <code>scores[0]</code> ใน main จะเปลี่ยนไหม?</div>
+          <div class="think-hint">💡 Array ส่ง address มา แก้ใน function = แก้ตัวจริง ต่างจาก int ธรรมดา</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">4. prototype ต่อไปนี้ถูกไหม?<br>
+          <code>float calcAvg(int arr[], int size);</code></div>
+          <div class="think-hint">💡 ถูกต้อง — มี return type, ชื่อ function, parameter types และ ;</div>
+        </div>
+        <div class="think">
+          <div class="think-q">5. จะหา index ของค่าสูงสุดใน array ได้ยังไง? (ไม่ใช่แค่ค่า แต่ต้องการ index)</div>
+          <div class="think-hint">💡 เก็บ maxIdx = 0 ด้วย ถ้าเจอค่าใหม่ที่มากกว่า อัปเดตทั้ง maxVal และ maxIdx</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 11 — โจทย์ Trace ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · โจทย์ Trace</div>
+    <div class="slide-h1">โจทย์ <em>อ่าน code</em> ทายผลลัพธ์</div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — Output คืออะไร?</div>
+      <div class="code" style="margin-bottom:10px"><span class="kw">void</span> <span class="fn">mystery</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i;
+    <span class="kw">for</span> (i=<span class="nm">0</span>; i&lt;n; i++) arr[i] *= <span class="nm">2</span>;
+}
+<span class="kw">int</span> a[] = {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>};
+<span class="fn">mystery</span>(a, <span class="nm">3</span>);
+<span class="fn">printf</span>(<span class="st">"%d %d %d"</span>, a[<span class="nm">0</span>], a[<span class="nm">1</span>], a[<span class="nm">2</span>]);</div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" onclick="pickMC('mc1',0,2,'Array ส่ง address → function แก้ตัวจริง ทุก element ×2 → 2 4 6 ✓')"><span class="mc-ltr">A</span> 1 2 3</div>
+        <div class="mc-opt" onclick="pickMC('mc1',1,2,'Array ส่ง address → function แก้ตัวจริง ทุก element ×2 → 2 4 6 ✓')"><span class="mc-ltr">B</span> 1 4 9</div>
+        <div class="mc-opt" onclick="pickMC('mc1',2,2,'Array ส่ง address → function แก้ตัวจริง ทุก element ×2 → 2 4 6 ✓')"><span class="mc-ltr">C</span> 2 4 6</div>
+        <div class="mc-opt" onclick="pickMC('mc1',3,2,'Array ส่ง address → function แก้ตัวจริง ทุก element ×2 → 2 4 6 ✓')"><span class="mc-ltr">D</span> 0 0 0</div>
+      </div>
+      <div class="ex-feedback" id="mc1-fb"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — Output คืออะไร?</div>
+      <div class="code" style="margin-bottom:10px"><span class="kw">int</span> <span class="fn">f</span>(<span class="kw">int</span> x) { x = x + <span class="nm">10</span>; <span class="kw">return</span> x; }
+<span class="kw">int</span> a = <span class="nm">5</span>;
+<span class="kw">int</span> b = <span class="fn">f</span>(a);
+<span class="fn">printf</span>(<span class="st">"%d %d"</span>, a, b);</div>
+      <div class="mc-opts" id="mc2">
+        <div class="mc-opt" onclick="pickMC('mc2',0,1,'Pass by value → a ไม่เปลี่ยน=5, b รับค่า return = 15 ✓')"><span class="mc-ltr">A</span> 15 15</div>
+        <div class="mc-opt" onclick="pickMC('mc2',1,1,'Pass by value → a ไม่เปลี่ยน=5, b รับค่า return = 15 ✓')"><span class="mc-ltr">B</span> 5 15</div>
+        <div class="mc-opt" onclick="pickMC('mc2',2,1,'Pass by value → a ไม่เปลี่ยน=5, b รับค่า return = 15 ✓')"><span class="mc-ltr">C</span> 5 5</div>
+        <div class="mc-opt" onclick="pickMC('mc2',3,1,'Pass by value → a ไม่เปลี่ยน=5, b รับค่า return = 15 ✓')"><span class="mc-ltr">D</span> 15 5</div>
+      </div>
+      <div class="ex-feedback" id="mc2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 12 — โจทย์ Fill-in ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · โจทย์เติมคำ</div>
+    <div class="slide-h1">โจทย์ <em>เติมคำ</em></div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — หา Max ใน Array</div>
+      <div class="ex-q">เติมให้ function หาค่าสูงสุดถูกต้อง<br>
+      <code>int findMax(int arr[], int n) {</code><br>
+      <code>&nbsp;&nbsp;int max = arr[___]; /* ค่าเริ่มต้น */</code><br>
+      <code>&nbsp;&nbsp;...</code><br>
+      <code>}</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in1" placeholder="index เริ่มต้น" type="text">
+        <button class="ex-btn" onclick="checkFill('in1',
+          '0',
+          ['0'],
+          ['1'],
+          'ถูก! เริ่มจาก arr[0] แล้ว loop จาก index 1 เปรียบเทียบที่เหลือ',
+          'ถ้าเริ่ม index 1 จะพลาด arr[0] ซึ่งอาจเป็น max ก็ได้')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — Function Signature</div>
+      <div class="ex-q">เขียน prototype ของ function ที่รับ int array และ size แล้ว return ค่าเฉลี่ยเป็น float</div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in2" placeholder="float funcName(...);" type="text">
+        <button class="ex-btn" onclick="checkFill('in2',
+          'float calcAvg(int arr[], int n);',
+          ['float calcAvg(int arr[], int n)','float calcAvg(int a[], int n);',
+           'float calcAvg(int a[], int size);','float average(int arr[], int n);',
+           'float avg(int arr[], int n);'],
+          ['int calcAvg(int arr[], int n);'],
+          'ถูก! return type เป็น float รับ int array[] และ size เป็น int',
+          'return type ต้องเป็น float เพราะค่าเฉลี่ยมีทศนิยม และต้องส่ง size มาด้วย')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 3 — Array 2D Access</div>
+      <div class="ex-q">เข้าถึงค่าแถวที่ 2 คอลัมน์ที่ 3 ของ <code>int grid[4][5]</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in3" placeholder="grid[?][?]" type="text">
+        <button class="ex-btn" onclick="checkFill('in3',
+          'grid[2][3]',
+          ['grid[2][3]'],
+          ['grid[3][2]','grid[2,3]'],
+          'ถูก! แถวที่ 2 = index 2, คอลัมน์ที่ 3 = index 3',
+          'ระวัง: index เริ่มที่ 0 เสมอ และ C ใช้ [row][col] ไม่ใช่ [row, col]')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 13 — สรุป ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 4 · สรุป</div>
+    <div class="slide-h1">สรุป <em>บทที่ 4</em></div>
+    <div class="slide-lead">ก่อนไปบทที่ 5 (Pointer) ตรวจสอบว่าเข้าใจทุกจุด</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="steps">
+          <div class="step"><div class="step-n ok">✓</div>
+            <div class="step-body">Array index เริ่มที่ <strong>0</strong> เสมอ — ช่องสุดท้ายคือ <code>[n-1]</code><small>เกิน = Out of Bounds C ไม่ตรวจ อันตราย!</small></div>
+          </div>
+          <div class="step"><div class="step-n ok">✓</div>
+            <div class="step-body">Array + for loop คู่หูที่แยกกันไม่ออก<small>Accumulator, Max/Min, Counter — pattern จากบท 3 ใช้ได้เลย</small></div>
+          </div>
+          <div class="step"><div class="step-n ok">✓</div>
+            <div class="step-body">Function: return type, ชื่อ, parameter, body<small>void = ไม่คืนค่า | ต้องมี return ถ้า return type ไม่ใช่ void</small></div>
+          </div>
+          <div class="step"><div class="step-n ok">✓</div>
+            <div class="step-body">Pass by Value — แก้ใน function ไม่กระทบตัวนอก<small>ยกเว้น Array ที่ส่ง address → แก้ได้จริง</small></div>
+          </div>
+          <div class="step"><div class="step-n ok">✓</div>
+            <div class="step-body">ส่ง Array เข้า function ต้องส่ง <strong>size ด้วยเสมอ</strong><small>sizeof(arr) ใน function ไม่ให้ค่าที่ถูกต้อง</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🚀 พร้อมไปบทที่ 5?</div>
+          <div class="box-body">บทที่ 5 — <strong>Pointer</strong><br>
+          ทำไม Array ถึงส่ง address? ทำยังไงให้ function แก้ค่า int ตัวนอกได้? — Pointer ตอบทุกคำถามนี้<br><br>
+          ต้องการ: เข้าใจว่า address คืออะไร และทำไม array ในบทนี้ถึงแก้ค่าได้</div>
+        </div>
+        <div class="exercise">
+          <div class="ex-label">🏆 Challenge โจทย์ปิดบท</div>
+          <div class="ex-q" style="color:#dde3f0">เขียนโปรแกรมรับคะแนนสอบ 5 วิชา เก็บใน array แล้วเรียก function แยกกัน: หาค่าเฉลี่ย, หาสูงสุด/ต่ำสุด, พิมพ์เกรด A–F และบอกว่า "ผ่าน" (avg≥60) หรือ "ตก"<br><br>
+          ต้องมี prototype ทุกตัว และ main เรียกแต่ละ function</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 4 — Array &amp; Function</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover','Array คืออะไร','Array + Loop','Array 2D',
+  'Function คืออะไร','Function Prototype','Pass by Value',
+  'Array in Function','Use Case','Variable Scope',
+  'Think!','โจทย์ Trace','โจทย์เติมคำ','สรุปบทที่ 4'
+];
+</script>
+<script src="slide-engine.js"></script>
+</body>
+</html>

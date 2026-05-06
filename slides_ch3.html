@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 3 — Loop | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="slide.css">
+<style>
+/* Chapter 3 accent — burnt orange */
+:root { --ca:#b84c00; --cal:#fff0e6; --cam:#e8763a; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════════ SLIDE 0 — COVER ════════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · ภาษา C</div>
+        <div class="cover-title">บทที่ 3<br><em>Loop</em></div>
+        <div class="cover-subtitle">ทำซ้ำอัตโนมัติ — แทนที่จะเขียน 100 บรรทัด เขียน loop 3 บรรทัดแทน</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>for loop — วนตามจำนวนที่รู้ล่วงหน้า</div>
+          <div class="topic-row"><div class="topic-dot"></div>while loop — วนจนกว่าเงื่อนไขเป็น false</div>
+          <div class="topic-row"><div class="topic-dot"></div>do-while — ทำก่อน ตรวจทีหลัง</div>
+          <div class="topic-row"><div class="topic-dot"></div>break / continue</div>
+          <div class="topic-row"><div class="topic-dot"></div>Nested loop + Use Case + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">03</div>
+        <div class="cover-badge">CHAPTER 3</div>
+        <div class="cover-slides-count">12 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 1 — ทำไมต้อง Loop ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · แนวคิด</div>
+    <div class="slide-h1">ทำไมต้อง <em>Loop?</em></div>
+    <div class="slide-lead">ถ้าต้องพิมพ์เลข 1–100 เขียน printf 100 ครั้งได้ — แต่ถ้าเปลี่ยนเป็น 1–10000 จะทำยังไง?</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label bad">❌ ไม่มี loop — เขียนซ้ำ</div>
+        <div class="code bad"><span class="fn">printf</span>(<span class="st">"%d\n"</span>, <span class="nm">1</span>);
+<span class="fn">printf</span>(<span class="st">"%d\n"</span>, <span class="nm">2</span>);
+<span class="fn">printf</span>(<span class="st">"%d\n"</span>, <span class="nm">3</span>);
+<span class="cm">/* ... ต้องเขียนอีก 97 บรรทัด */</span></div>
+
+        <div class="code-label">✅ มี loop — เขียนครั้งเดียว</div>
+        <div class="code good"><span class="kw">int</span> i;
+<span class="kw">for</span> (i = <span class="nm">1</span>; i <= <span class="nm">100</span>; i++) {
+    <span class="fn">printf</span>(<span class="st">"%d\n"</span>, i);
+}
+<span class="cm">/* 3 บรรทัด ทำงาน 100 ครั้ง */</span></div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🔑 Loop 3 แบบใน C</div>
+          <div class="box-body">
+            <strong>for</strong> — รู้จำนวนรอบล่วงหน้า<br>
+            เช่น: วน 10 ครั้ง, วนทุก element<br><br>
+            <strong>while</strong> — ไม่รู้จำนวนรอบ ตรวจก่อนทำ<br>
+            เช่น: รับ input จนกว่า user จะพิมพ์ 0<br><br>
+            <strong>do-while</strong> — ทำก่อน 1 ครั้ง แล้วค่อยตรวจ<br>
+            เช่น: แสดง menu อย่างน้อย 1 ครั้งเสมอ
+          </div>
+        </div>
+        <div class="box amber">
+          <div class="box-title">⚠️ Infinite Loop</div>
+          <div class="box-body">ถ้าเงื่อนไขเป็น true ตลอด โปรแกรมจะวนไม่หยุด<br>
+          <code>while (1) { ... }</code> — ต้องมี <code>break</code> ออก<br>
+          มักเกิดจากลืมอัปเดต loop variable</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 2 — for loop ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · for loop</div>
+    <div class="slide-h1"><em>for</em> loop — วนตามจำนวนที่รู้ล่วงหน้า</div>
+    <div class="slide-lead">for loop มี 3 ส่วนใน header: init, condition, update — ทุกส่วนอยู่ที่เดียวทำให้อ่านง่าย</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">โครงสร้าง for loop</div>
+          <div class="box-body">
+            <code>for (init; condition; update)</code><br><br>
+            <strong>init</strong> — กำหนดค่าเริ่มต้น ทำครั้งเดียว<br>
+            <strong>condition</strong> — ตรวจก่อนทุกรอบ ถ้า false หยุด<br>
+            <strong>update</strong> — อัปเดตหลังจบแต่ละรอบ
+          </div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div>
+            <div class="step-body">ทำ init: <code>i = 1</code><small>ทำแค่ครั้งเดียวตอนเริ่ม</small></div>
+          </div>
+          <div class="step"><div class="step-n">2</div>
+            <div class="step-body">ตรวจ condition: <code>i &lt;= 5</code><small>ถ้า false หยุดเลย</small></div>
+          </div>
+          <div class="step"><div class="step-n">3</div>
+            <div class="step-body">ทำ body แล้ว update: <code>i++</code><small>วนกลับไปข้อ 2</small></div>
+          </div>
+        </div>
+        <div class="box red">
+          <div class="box-title">❌ Off-by-one error</div>
+          <div class="box-body">
+            <code>i &lt; 5</code> → รัน i=0,1,2,3,4 (5 รอบ)<br>
+            <code>i &lt;= 5</code> → รัน i=0,1,2,3,4,5 (6 รอบ)<br><br>
+            พิมพ์ 1–10: ใช้ <code>i=1; i&lt;=10</code> ไม่ใช่ <code>i&lt;10</code>
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">ตัวอย่างครบทุกรูปแบบ</div>
+        <div class="code"><span class="cm">/* นับขึ้น 1 ถึง 5 */</span>
+<span class="kw">for</span> (i = <span class="nm">1</span>; i <= <span class="nm">5</span>; i++)
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, i);
+<span class="cm">// 1 2 3 4 5</span>
+
+<span class="cm">/* นับลง 5 ถึง 1 */</span>
+<span class="kw">for</span> (i = <span class="nm">5</span>; i >= <span class="nm">1</span>; i--)
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, i);
+<span class="cm">// 5 4 3 2 1</span>
+
+<span class="cm">/* นับทีละ 2 */</span>
+<span class="kw">for</span> (i = <span class="nm">0</span>; i <= <span class="nm">10</span>; i += <span class="nm">2</span>)
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, i);
+<span class="cm">// 0 2 4 6 8 10</span>
+
+<span class="cm">/* sum 1 ถึง 100 */</span>
+<span class="kw">int</span> sum = <span class="nm">0</span>;
+<span class="kw">for</span> (i = <span class="nm">1</span>; i <= <span class="nm">100</span>; i++)
+    sum += i;
+<span class="fn">printf</span>(<span class="st">"Sum=%d"</span>, sum); <span class="cm">// 5050</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 3 — while loop ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · while loop</div>
+    <div class="slide-h1"><em>while</em> loop — ไม่รู้จำนวนรอบ</div>
+    <div class="slide-lead">ใช้เมื่อไม่รู้ล่วงหน้าว่าจะวนกี่รอบ — วนต่อเรื่อยๆ ตราบที่เงื่อนไขยังเป็น true</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">รูปแบบ while loop</div>
+        <div class="code"><span class="kw">while</span> (condition) {
+    <span class="cm">/* body */</span>
+    <span class="cm">/* ต้องมีอะไรบางอย่างที่ทำให้
+       condition เปลี่ยนเป็น false
+       มิฉะนั้น infinite loop! */</span>
+}</div>
+        <div class="code-label">ตัวอย่าง — รับ input จนถูก</div>
+        <div class="code"><span class="kw">int</span> n;
+<span class="fn">printf</span>(<span class="st">"Enter positive number: "</span>);
+<span class="fn">scanf</span>(<span class="st">"%d"</span>, <span class="op">&amp;</span>n);
+
+<span class="kw">while</span> (n <= <span class="nm">0</span>) {
+    <span class="fn">printf</span>(<span class="st">"Invalid! Try again: "</span>);
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, <span class="op">&amp;</span>n);
+}
+<span class="fn">printf</span>(<span class="st">"Valid: %d\n"</span>, n);</div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">เทียบ for vs while — ผลเหมือนกัน</div>
+        <div class="code note"><span class="cm">/* for — รู้จำนวน */</span>
+<span class="kw">for</span> (i=<span class="nm">1</span>; i<=<span class="nm">5</span>; i++)
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, i);
+
+<span class="cm">/* while — เขียนเทียบเท่า */</span>
+i = <span class="nm">1</span>;             <span class="cm">/* init */</span>
+<span class="kw">while</span> (i <= <span class="nm">5</span>) {  <span class="cm">/* condition */</span>
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, i);
+    i++;            <span class="cm">/* update — ต้องทำเอง! */</span>
+}</div>
+        <div class="box amber">
+          <div class="box-title">⚠️ ลืม update = Infinite Loop</div>
+          <div class="box-body">
+            <code>i = 1;</code><br>
+            <code>while (i &lt;= 5)</code><br>
+            <code>&nbsp;&nbsp;printf("%d", i);</code><br>
+            <code>/* ลืม i++ — วนไม่หยุด! */</code><br><br>
+            for loop ปลอดภัยกว่าเพราะ update อยู่ใน header ลืมยากกว่า
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 4 — do-while ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · do-while</div>
+    <div class="slide-h1"><em>do-while</em> — ทำก่อน ตรวจทีหลัง</div>
+    <div class="slide-lead">ต่างจาก while ตรงที่ body จะถูกทำ <strong>อย่างน้อย 1 ครั้งเสมอ</strong> ก่อนตรวจเงื่อนไข</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">รูปแบบ do-while</div>
+        <div class="code"><span class="kw">do</span> {
+    <span class="cm">/* body ทำก่อน 1 ครั้ง */</span>
+} <span class="kw">while</span> (condition); <span class="cm">/* ; ต้องมี! */</span></div>
+
+        <div class="code-label">Use Case — Menu ที่แสดงก่อนเสมอ</div>
+        <div class="code good"><span class="kw">int</span> choice;
+<span class="kw">do</span> {
+    <span class="fn">printf</span>(<span class="st">"\n1.ฝาก 2.ถอน 3.ออก\n"</span>);
+    <span class="fn">printf</span>(<span class="st">"เลือก: "</span>);
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, <span class="op">&amp;</span>choice);
+
+    <span class="kw">if</span>      (choice == <span class="nm">1</span>) <span class="fn">deposit</span>();
+    <span class="kw">else if</span> (choice == <span class="nm">2</span>) <span class="fn">withdraw</span>();
+} <span class="kw">while</span> (choice != <span class="nm">3</span>);
+<span class="fn">printf</span>(<span class="st">"Goodbye!\n"</span>);</div>
+      </div>
+      <div class="split-col">
+        <div class="box blue">
+          <div class="box-title">เปรียบเทียบ 3 แบบ</div>
+          <div class="box-body">
+            <strong>for</strong><br>
+            ตรวจก่อน | รู้จำนวนล่วงหน้า<br>
+            → พิมพ์เลข, วน array<br><br>
+            <strong>while</strong><br>
+            ตรวจก่อน | ไม่รู้จำนวน<br>
+            → รอ input ที่ถูกต้อง, อ่านไฟล์<br><br>
+            <strong>do-while</strong><br>
+            ทำก่อน ตรวจทีหลัง | ทำ ≥ 1 ครั้ง<br>
+            → Menu system, ถามซ้ำถ้า input ผิด
+          </div>
+        </div>
+        <div class="think">
+          <div class="think-q">ถ้าเงื่อนไขเป็น false ตั้งแต่แรก:<br>
+          <code>while(0) { printf("A"); }</code> พิมพ์อะไร?<br>
+          <code>do { printf("B"); } while(0);</code> พิมพ์อะไร?</div>
+          <div class="think-hint">💡 while ตรวจก่อน — do-while ทำก่อน 1 ครั้งเสมอ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 5 — break / continue ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · break / continue</div>
+    <div class="slide-h1"><em>break</em> หยุด · <em>continue</em> ข้ามรอบ</div>
+    <div class="slide-lead">ควบคุมการทำงาน loop ได้ละเอียดขึ้น — break ออกจาก loop ทันที, continue ข้ามรอบนี้ไปรอบถัดไป</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">break — ออกจาก loop ทันที</div>
+        <div class="code"><span class="cm">/* หาเลขแรกที่หาร 7 ลงตัว */</span>
+<span class="kw">int</span> i;
+<span class="kw">for</span> (i = <span class="nm">1</span>; i <= <span class="nm">100</span>; i++) {
+    <span class="kw">if</span> (i % <span class="nm">7</span> == <span class="nm">0</span>) {
+        <span class="fn">printf</span>(<span class="st">"Found: %d\n"</span>, i);
+        <span class="kw">break</span>;  <span class="cm">/* ออกจาก loop ทันที */</span>
+    }
+}
+<span class="cm">// Found: 7</span></div>
+
+        <div class="code-label">continue — ข้ามรอบนี้</div>
+        <div class="code"><span class="cm">/* พิมพ์เฉพาะเลขคี่ 1-10 */</span>
+<span class="kw">for</span> (i = <span class="nm">1</span>; i <= <span class="nm">10</span>; i++) {
+    <span class="kw">if</span> (i % <span class="nm">2</span> == <span class="nm">0</span>)
+        <span class="kw">continue</span>; <span class="cm">/* ข้ามเลขคู่ */</span>
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, i);
+}
+<span class="cm">// 1 3 5 7 9</span></div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">break ใน nested loop</div>
+          <div class="box-body">
+            <code>break</code> ออกจาก <strong>loop ชั้นในสุดเท่านั้น</strong><br>
+            ถ้าอยากออกทั้งสอง loop ต้องใช้ flag:<br><br>
+            <code>int found = 0;</code><br>
+            <code>for(...) {</code><br>
+            <code>&nbsp;&nbsp;for(...) {</code><br>
+            <code>&nbsp;&nbsp;&nbsp;&nbsp;if(cond) { found=1; break; }</code><br>
+            <code>&nbsp;&nbsp;}</code><br>
+            <code>&nbsp;&nbsp;if(found) break;</code><br>
+            <code>}</code>
+          </div>
+        </div>
+        <div class="usecase">
+          <div class="usecase-label">🏦 Use Case</div>
+          <div class="usecase-title">ค้นหา transaction ผิดปกติ</div>
+          <div class="usecase-body">วน loop ดูทุก transaction ถ้าเจอยอดเกิน limit ให้ <code>break</code> แจ้งเตือนทันที ไม่ต้องวนต่อ — ประหยัดเวลา</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 6 — Nested Loop ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Nested Loop</div>
+    <div class="slide-h1">Nested Loop — <em>loop ซ้อน loop</em></div>
+    <div class="slide-lead">loop ข้างนอกรัน 1 รอบ → loop ข้างในรันครบทุกรอบ — ใช้กับตาราง 2 มิติ, pattern, และ matrix</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="code-label">ตัวอย่าง — ตารางสูตรคูณ</div>
+        <div class="code"><span class="kw">int</span> i, j;
+<span class="kw">for</span> (i = <span class="nm">1</span>; i <= <span class="nm">3</span>; i++) {      <span class="cm">/* แถว */</span>
+    <span class="kw">for</span> (j = <span class="nm">1</span>; j <= <span class="nm">3</span>; j++) {  <span class="cm">/* คอลัมน์ */</span>
+        <span class="fn">printf</span>(<span class="st">"%3d"</span>, i * j);
+    }
+    <span class="fn">printf</span>(<span class="st">"\n"</span>);
+}</div>
+        <div class="code good">  1  2  3
+  2  4  6
+  3  6  9</div>
+
+        <div class="code-label">รูปแบบสามเหลี่ยมดาว</div>
+        <div class="code"><span class="kw">for</span> (i = <span class="nm">1</span>; i <= <span class="nm">4</span>; i++) {
+    <span class="kw">for</span> (j = <span class="nm">1</span>; j <= i; j++)  <span class="cm">/* ← j <= i */</span>
+        <span class="fn">printf</span>(<span class="st">"*"</span>);
+    <span class="fn">printf</span>(<span class="st">"\n"</span>);
+}</div>
+        <div class="code good">*
+**
+***
+****</div>
+      </div>
+      <div class="split-col">
+        <div class="box">
+          <div class="box-title">นับจำนวนรอบทั้งหมด</div>
+          <div class="box-body">
+            loop นอก n รอบ × loop ใน m รอบ<br>
+            = ทำงาน n×m ครั้ง<br><br>
+            เช่น 3×3 = 9 ครั้ง<br>
+            100×100 = 10,000 ครั้ง<br><br>
+            ระวัง nested loop ลึกๆ เพราะ<br>
+            จำนวนรอบโตแบบ exponential
+          </div>
+        </div>
+        <div class="think">
+          <div class="think-q">loop นอกรัน <strong>3 รอบ</strong>, loop ในรัน <strong>i รอบ</strong> (i คือค่า loop นอก) รวมทั้งหมดกี่ครั้ง?</div>
+          <div class="think-hint">💡 1 + 2 + 3 = ? — รูปแบบนี้คือสามเหลี่ยมดาวที่เพิ่งเรียน</div>
+        </div>
+        <div class="usecase">
+          <div class="usecase-label">🏦 Use Case</div>
+          <div class="usecase-title">ประมวลผลข้อมูล 2 มิติ</div>
+          <div class="usecase-body">ระบบธนาคาร: 12 เดือน × หลาย branch — nested loop วนเดือน × branch คำนวณยอดรวมแต่ละ cell</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 7 — Loop Patterns ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Patterns</div>
+    <div class="slide-h1">Pattern ที่ใช้บ่อย — <em>จำไว้ใช้ได้เลย</em></div>
+    <div class="slide-lead">โจทย์ส่วนใหญ่เป็นการประยุกต์ pattern เหล่านี้ เข้าใจแล้วแก้โจทย์ได้ทันที</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">Pattern 1 — Accumulator (สะสม)</div>
+        <div class="code"><span class="kw">int</span> sum = <span class="nm">0</span>;   <span class="cm">/* เริ่มที่ 0 */</span>
+<span class="kw">for</span> (i = <span class="nm">1</span>; i <= n; i++)
+    sum += i;   <span class="cm">/* สะสมทุกรอบ */</span></div>
+
+        <div class="code-label">Pattern 2 — Counter (นับ)</div>
+        <div class="code"><span class="kw">int</span> count = <span class="nm">0</span>; <span class="cm">/* เริ่มที่ 0 */</span>
+<span class="kw">for</span> (i = <span class="nm">1</span>; i <= n; i++)
+    <span class="kw">if</span> (i % <span class="nm">2</span> == <span class="nm">0</span>)
+        count++;  <span class="cm">/* นับเฉพาะที่ผ่านเงื่อนไข */</span></div>
+
+        <div class="code-label">Pattern 3 — Max/Min finder</div>
+        <div class="code"><span class="kw">int</span> max = arr[<span class="nm">0</span>]; <span class="cm">/* เริ่มจากตัวแรก */</span>
+<span class="kw">for</span> (i = <span class="nm">1</span>; i < n; i++)
+    <span class="kw">if</span> (arr[i] > max)
+        max = arr[i]; <span class="cm">/* อัปเดตถ้าเจอมากกว่า */</span></div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">Pattern 4 — Input loop จนกว่าจะถูก</div>
+        <div class="code"><span class="kw">int</span> n;
+<span class="kw">do</span> {
+    <span class="fn">printf</span>(<span class="st">"Enter 1-10: "</span>);
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, <span class="op">&amp;</span>n);
+} <span class="kw">while</span> (n < <span class="nm">1</span> || n > <span class="nm">10</span>);</div>
+
+        <div class="code-label">Pattern 5 — Sentinel (หยุดเมื่อเจอค่าพิเศษ)</div>
+        <div class="code"><span class="kw">int</span> val, sum = <span class="nm">0</span>;
+<span class="fn">printf</span>(<span class="st">"Enter (0 to stop): "</span>);
+<span class="fn">scanf</span>(<span class="st">"%d"</span>, <span class="op">&amp;</span>val);
+<span class="kw">while</span> (val != <span class="nm">0</span>) {     <span class="cm">/* 0 คือ sentinel */</span>
+    sum += val;
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, <span class="op">&amp;</span>val);
+}
+<span class="fn">printf</span>(<span class="st">"Sum=%d\n"</span>, sum);</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 8 — Use Case ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Use Case</div>
+    <div class="slide-h1">🏦 <em>Use Case จริง</em> — ระบบสรุปธุรกรรม</div>
+    <div class="slide-lead">รวม for + while + break + accumulator ในโปรแกรมเดียว — จำลองระบบ mini bank statement</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="usecase" style="border-left-color:var(--ca)">
+          <div class="usecase-label" style="color:var(--ca)">โจทย์ระบบธนาคาร</div>
+          <div class="usecase-title">รับธุรกรรมและสรุปยอด</div>
+          <div class="usecase-body">
+            รับยอดธุรกรรมทีละรายการ (0=จบ)<br>
+            คำนวณ: ยอดรวม, จำนวนรายการ, ค่าเฉลี่ย<br>
+            แจ้งเตือนถ้ายอดใดเกิน 50,000<br><br>
+            Pattern ที่ใช้: Sentinel + Accumulator + Counter + break
+          </div>
+        </div>
+        <div class="box">
+          <div class="box-title">ใช้ทุก concept บทนี้</div>
+          <div class="box-body">
+            <code>while</code> — ไม่รู้จำนวนธุรกรรม<br>
+            <code>accumulator</code> — สะสมยอดรวม<br>
+            <code>counter</code> — นับจำนวนรายการ<br>
+            <code>sentinel (0)</code> — หยุดรับข้อมูล<br>
+            <code>if + break</code> — แจ้งเตือนทันที
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">โปรแกรมสรุปธุรกรรม</div>
+        <div class="code"><span class="inc">#include &lt;stdio.h&gt;</span>
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span>    amount, count = <span class="nm">0</span>;
+    <span class="kw">double</span> total = <span class="nm">0</span>, avg;
+    <span class="kw">int</span>    alert  = <span class="nm">0</span>;
+
+    <span class="fn">printf</span>(<span class="st">"Enter amount (0=done):\n"</span>);
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, <span class="op">&amp;</span>amount);
+
+    <span class="kw">while</span> (amount != <span class="nm">0</span>) {     <span class="cm">/* sentinel */</span>
+        total += amount;       <span class="cm">/* accumulate */</span>
+        count++;               <span class="cm">/* count */</span>
+
+        <span class="kw">if</span> (amount > <span class="nm">50000</span>) {  <span class="cm">/* alert */</span>
+            <span class="fn">printf</span>(<span class="st">"⚠ Large txn: %d\n"</span>,
+                   amount);
+            alert++;
+        }
+        <span class="fn">scanf</span>(<span class="st">"%d"</span>, <span class="op">&amp;</span>amount);
+    }
+
+    <span class="kw">if</span> (count > <span class="nm">0</span>) {
+        avg = total / count;
+        <span class="fn">printf</span>(<span class="st">"\n=== Summary ===\n"</span>);
+        <span class="fn">printf</span>(<span class="st">"Count  : %d\n"</span>, count);
+        <span class="fn">printf</span>(<span class="st">"Total  : %.2f\n"</span>, total);
+        <span class="fn">printf</span>(<span class="st">"Avg    : %.2f\n"</span>, avg);
+        <span class="fn">printf</span>(<span class="st">"Alerts : %d\n"</span>, alert);
+    }
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 9 — Think! ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 3 · Think!</div>
+    <div class="slide-h1">คิดก่อน <em>เขียน</em></div>
+    <div class="slide-lead">Trace ในหัว — คิดให้ได้ก่อนที่จะเขียน code จริง</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">1. loop นี้รันกี่รอบ และ output คืออะไร?<br><code>for (i=2; i&lt;=10; i+=3)</code><br><code>&nbsp;&nbsp;printf("%d ", i);</code></div>
+          <div class="think-hint">💡 i เริ่มที่ 2 เพิ่มทีละ 3 จนเกิน 10 — นับดูว่าผ่านเงื่อนไขกี่ครั้ง</div>
+        </div>
+        <div class="think">
+          <div class="think-q">2. code นี้พิมพ์อะไร?<br><code>for(i=1;i<=5;i++)</code><br><code>&nbsp;&nbsp;if(i==3) continue;</code><br><code>&nbsp;&nbsp;printf("%d ",i);</code></div>
+          <div class="think-hint">💡 continue ข้ามแค่รอบที่ i==3 รอบอื่นทำงานปกติ — แต่ระวัง indentation หลอก!</div>
+        </div>
+        <div class="think">
+          <div class="think-q">3. sum มีค่าเท่าไหร่หลังจบ loop?<br><code>int sum=0, i;</code><br><code>for(i=1;i&lt;=10;i+=2)</code><br><code>&nbsp;&nbsp;sum+=i;</code></div>
+          <div class="think-hint">💡 บวกเฉพาะ i=1,3,5,7,9 — รวมกันได้เท่าไหร่?</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">4. loop นี้จะหยุดเมื่อไหร่?<br><code>int n=1;</code><br><code>while(n&lt;100) n*=2;</code><br><code>printf("%d",n);</code></div>
+          <div class="think-hint">💡 n เริ่มที่ 1 คูณ 2 ทุกรอบ: 1→2→4→8→... จนเกิน 100</div>
+        </div>
+        <div class="think">
+          <div class="think-q">5. nested loop นี้พิมพ์ * กี่ตัว?<br><code>for(i=1;i&lt;=4;i++)</code><br><code>&nbsp;&nbsp;for(j=1;j&lt;=i;j++)</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;printf("*");</code></div>
+          <div class="think-hint">💡 i=1: 1 ดาว, i=2: 2 ดาว... รวมทั้งหมด = 1+2+3+4 = ?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 10 — โจทย์ Trace ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · โจทย์ Trace</div>
+    <div class="slide-h1">โจทย์ <em>อ่าน code</em> ทายผลลัพธ์</div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — Output คืออะไร?</div>
+      <div class="code" style="margin-bottom:10px"><span class="kw">int</span> i, result = <span class="nm">0</span>;
+<span class="kw">for</span> (i = <span class="nm">1</span>; i <= <span class="nm">5</span>; i++) {
+    <span class="kw">if</span> (i == <span class="nm">3</span>) <span class="kw">break</span>;
+    result += i;
+}
+<span class="fn">printf</span>(<span class="st">"%d"</span>, result);</div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" onclick="pickMC('mc1',0,1,'i=1: result=1, i=2: result=3, i=3: break ออก → result=3 ✓')"><span class="mc-ltr">A</span> 1</div>
+        <div class="mc-opt" onclick="pickMC('mc1',1,1,'i=1: result=1, i=2: result=3, i=3: break ออก → result=3 ✓')"><span class="mc-ltr">B</span> 3</div>
+        <div class="mc-opt" onclick="pickMC('mc1',2,1,'i=1: result=1, i=2: result=3, i=3: break ออก → result=3 ✓')"><span class="mc-ltr">C</span> 6</div>
+        <div class="mc-opt" onclick="pickMC('mc1',3,1,'i=1: result=1, i=2: result=3, i=3: break ออก → result=3 ✓')"><span class="mc-ltr">D</span> 15</div>
+      </div>
+      <div class="ex-feedback" id="mc1-fb"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — Output คืออะไร?</div>
+      <div class="code" style="margin-bottom:10px"><span class="kw">int</span> i = <span class="nm">1</span>;
+<span class="kw">while</span> (i <= <span class="nm">16</span>) i *= <span class="nm">2</span>;
+<span class="fn">printf</span>(<span class="st">"%d"</span>, i);</div>
+      <div class="mc-opts" id="mc2">
+        <div class="mc-opt" onclick="pickMC('mc2',0,2,'1→2→4→8→16 (ยังไม่เกิน)→32 (เกิน 16 หยุด) → i=32 ✓')"><span class="mc-ltr">A</span> 16</div>
+        <div class="mc-opt" onclick="pickMC('mc2',1,2,'1→2→4→8→16 (ยังไม่เกิน)→32 (เกิน 16 หยุด) → i=32 ✓')"><span class="mc-ltr">B</span> 8</div>
+        <div class="mc-opt" onclick="pickMC('mc2',2,2,'1→2→4→8→16 (ยังไม่เกิน)→32 (เกิน 16 หยุด) → i=32 ✓')"><span class="mc-ltr">C</span> 32</div>
+        <div class="mc-opt" onclick="pickMC('mc2',3,2,'1→2→4→8→16 (ยังไม่เกิน)→32 (เกิน 16 หยุด) → i=32 ✓')"><span class="mc-ltr">D</span> 64</div>
+      </div>
+      <div class="ex-feedback" id="mc2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 11 — โจทย์ Fill-in ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · โจทย์เติมคำ</div>
+    <div class="slide-h1">โจทย์ <em>เติมคำ</em></div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — FizzBuzz loop</div>
+      <div class="ex-q">เติม loop header ให้วนจาก 1 ถึง 20<br>
+      <code>for (i = ___; i ___; ___)</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in1" placeholder="เช่น 1; i <= 20; i++" type="text">
+        <button class="ex-btn" onclick="checkFill('in1',
+          '1; i <= 20; i++',
+          ['1;i<=20;i++','1; i<=20; i++','1 ; i <= 20 ; i++'],
+          ['0; i <= 20; i++','1; i < 20; i++'],
+          'ถูก! เริ่มที่ 1 ถึง 20 เพิ่มทีละ 1',
+          'ตรวจ: เริ่มที่ 1 เงื่อนไข <= 20 และ update i++')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — Accumulator</div>
+      <div class="ex-q">เติมให้โปรแกรมคำนวณผลรวมเลข 1 ถึง n ได้ถูกต้อง<br>
+      <code>int sum = ___;</code><br>
+      <code>for (i=1; i&lt;=n; i++) ___ += i;</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in2" placeholder="ค่าเริ่มต้นของ sum" type="text">
+        <button class="ex-btn" onclick="checkFill('in2',
+          '0',
+          ['0;','zero'],
+          ['1'],
+          'ถูก! Accumulator ต้องเริ่มที่ 0 เสมอ มิฉะนั้นผลรวมผิด',
+          'ถ้าเริ่มที่ 1 จะได้ผลรวมมากกว่าความเป็นจริง 1 — Accumulator ต้องเริ่มที่ 0')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 3 — Sentinel loop</div>
+      <div class="ex-q">เติมเงื่อนไข while ให้รับค่าไปเรื่อยๆ จนกว่า user จะพิมพ์ -1<br>
+      <code>while (val ___)</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in3" placeholder="เงื่อนไข" type="text">
+        <button class="ex-btn" onclick="checkFill('in3',
+          '!= -1',
+          ['!=-1','! = -1','not -1'],
+          ['> 0','!= 0'],
+          'ถูก! != -1 วนต่อตราบที่ val ไม่ใช่ -1 (sentinel value)',
+          '-1 คือ sentinel ต้องตรวจด้วย != -1 ไม่ใช่ > 0 เพราะ user อาจพิมพ์ค่าลบอื่นได้')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 12 — สรุป ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 3 · สรุป</div>
+    <div class="slide-h1">สรุป <em>บทที่ 3</em></div>
+    <div class="slide-lead">ก่อนไปบทที่ 4 (Array &amp; Function) ตรวจสอบว่าเข้าใจทุกจุด</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="steps">
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body"><strong>for</strong> — รู้จำนวนรอบล่วงหน้า init; condition; update<small>ระวัง off-by-one: &lt; vs &lt;=</small></div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body"><strong>while</strong> — ตรวจก่อน ไม่รู้จำนวนรอบ<small>ต้องมี update ใน body ไม่งั้น infinite loop</small></div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body"><strong>do-while</strong> — ทำก่อน 1 ครั้ง ตรวจทีหลัง<small>เหมาะกับ menu และ input validation</small></div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body"><strong>break</strong> ออก loop ทันที · <strong>continue</strong> ข้ามรอบนี้<small>break ออกแค่ loop ชั้นในสุด</small></div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body">5 Pattern: Accumulator, Counter, Max/Min, Input-loop, Sentinel<small>จำ pattern ไว้ — ใช้ได้กับทุกโจทย์</small></div></div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🚀 พร้อมไปบทที่ 4?</div>
+          <div class="box-body">บทที่ 4 — <strong>Array &amp; Function</strong><br>
+          เก็บข้อมูลหลายตัวใน array + แยก code เป็น function<br><br>
+          ต้องการ: for loop กับ index เข้าถึง array, pattern accumulator/max จากบทนี้</div>
+        </div>
+        <div class="exercise">
+          <div class="ex-label">🏆 Challenge โจทย์ปิดบท</div>
+          <div class="ex-q" style="color:#dde3f0">เขียนโปรแกรมรับตัวเลขจาก user ไปเรื่อยๆ (หยุดเมื่อพิมพ์ 0) แล้วแสดง: จำนวนรายการ, ผลรวม, ค่าเฉลี่ย, ค่าสูงสุด — ถ้ารับค่าลบให้ข้ามด้วย continue<br><br>
+          Pattern ที่ใช้: Sentinel + Accumulator + Counter + Max + continue</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 3 — Loop</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover','ทำไมต้อง Loop','for loop','while loop',
+  'do-while','break / continue','Nested Loop',
+  'Loop Patterns','Use Case','Think!',
+  'โจทย์ Trace','โจทย์เติมคำ','สรุปบทที่ 3'
+];
+</script>
+<script src="slide-engine.js"></script>
+</body>
+</html>

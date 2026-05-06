@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 1.5 — Operator Precedence | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="slide.css">
+<style>
+/* Chapter 1.5 accent — teal */
+:root { --ca:#0e7490; --cal:#e0f7fa; --cam:#26b5c8; }
+
+/* precedence table */
+.prec-table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:14px; }
+.prec-table th { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:1px;
+  color:var(--dim); padding:6px 10px; border-bottom:1.5px solid var(--line);
+  text-transform:uppercase; text-align:left; }
+.prec-table td { padding:8px 10px; border-bottom:1px solid var(--paper3);
+  vertical-align:middle; line-height:1.5; color:var(--body); }
+.prec-table tr:last-child td { border-bottom:none; }
+.prec-table tr:hover td { background:var(--paper2); }
+.prec-num { font-family:var(--mono); font-size:11px; font-weight:700;
+  color:#fff; background:var(--ca); border-radius:4px;
+  padding:2px 7px; display:inline-block; min-width:28px; text-align:center; }
+.prec-num.lo { background:var(--dim); }
+.op-cell { font-family:var(--mono); font-size:13px; color:var(--ca); font-weight:600; }
+.dir-cell { font-size:11px; color:var(--dim); font-family:var(--mono); }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════════ SLIDE 0 — COVER ════════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · ภาษา C</div>
+        <div class="cover-title">บทที่ 1.5<br><em>Operator Precedence</em></div>
+        <div class="cover-subtitle">C คำนวณตามลำดับที่กำหนด — ไม่ใช่แค่ซ้ายไปขวา เข้าใจแล้วไม่มี bug แบบ "ทำไมผลมันผิด?"</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Precedence คืออะไร?</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตารางลำดับ Operators ทั้งหมด</div>
+          <div class="topic-row"><div class="topic-dot"></div>Associativity — ซ้ายหรือขวา?</div>
+          <div class="topic-row"><div class="topic-dot"></div>Bug ที่เจอบ่อยจาก Precedence ผิด</div>
+          <div class="topic-row"><div class="topic-dot"></div>วิธีใช้ () แก้ทุกปัญหา</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">1.5</div>
+        <div class="cover-badge">CHAPTER 1.5</div>
+        <div class="cover-slides-count">8 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 1 — Precedence คืออะไร ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1.5 · แนวคิด</div>
+    <div class="slide-h1">Precedence คืออะไร? <em>ทำอะไรก่อน?</em></div>
+    <div class="slide-lead">เหมือนคณิตศาสตร์ที่ × ÷ มาก่อน + − ภาษา C มีกฎลำดับ operator ของตัวเอง ซับซ้อนกว่าที่คิด</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">คณิตศาสตร์ vs C — ตรงกัน?</div>
+        <div class="code"><span class="cm">/* 2 + 3 * 4 */</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>, <span class="nm">2</span> + <span class="nm">3</span> * <span class="nm">4</span>);
+<span class="cm">// คณิต: 3*4=12 ก่อน → 2+12 = 14 ✓
+// C: เหมือนกัน → 14 ✓</span>
+
+<span class="cm">/* แต่พอมี operator หลายประเภท... */</span>
+<span class="kw">int</span> x = <span class="nm">5</span>;
+<span class="fn">printf</span>(<span class="st">"%d"</span>, x > <span class="nm">3</span> + <span class="nm">1</span>);
+<span class="cm">// + มาก่อน > → 3+1=4 ก่อน
+// แล้ว 5 > 4 = 1 (true)
+// ไม่ใช่ (5>3) + 1 = 2 !</span></div>
+
+        <div class="box red">
+          <div class="box-title">❌ Bug ที่เจอบ่อยที่สุด</div>
+          <div class="box-body">
+            <code>if (x & 0xFF == 0)</code><br>
+            คิดว่า: <code>(x & 0xFF) == 0</code><br>
+            จริงๆ C ทำ: <code>x & (0xFF == 0)</code><br>
+            เพราะ <code>==</code> มี precedence สูงกว่า <code>&</code><br><br>
+            → ใส่วงเล็บ: <code>(x & 0xFF) == 0</code>
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🔑 กฎง่ายๆ จำไว้</div>
+          <div class="box-body">
+            <strong>สูงกว่า = ทำก่อน</strong><br><br>
+            ลำดับคร่าวๆ จากสูงลงต่ำ:<br>
+            <code>() [] .</code> — วงเล็บ, subscript<br>
+            <code>! ++ --</code> — unary<br>
+            <code>* / %</code> — คูณ หาร<br>
+            <code>+ -</code> — บวก ลบ<br>
+            <code>&lt; &gt; &lt;= &gt;=</code> — เปรียบเทียบ<br>
+            <code>== !=</code> — เท่ากัน ไม่เท่ากัน<br>
+            <code>&amp;&amp;</code> — Logical AND<br>
+            <code>||</code> — Logical OR<br>
+            <code>= += -=</code> — assignment<br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 2 — ตาราง Precedence ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1.5 · Precedence Table</div>
+    <div class="slide-h1">ตาราง <em>Operator Precedence</em> ครบทั้งหมด</div>
+    <div class="slide-lead">เลขสูง = ทำก่อน | L→R = ซ้ายไปขวา | R→L = ขวาไปซ้าย</div>
+
+    <table class="prec-table">
+      <thead><tr><th>ลำดับ</th><th>Operator</th><th>ชื่อ / ความหมาย</th><th>Assoc</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="prec-num">15</span></td>
+          <td class="op-cell">() [] . -></td>
+          <td>วงเล็บ, subscript, member access</td>
+          <td class="dir-cell">L→R</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num">14</span></td>
+          <td class="op-cell">! ~ ++ -- + - (type) * &amp; sizeof</td>
+          <td>Unary operators, cast, sizeof</td>
+          <td class="dir-cell">R→L</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num">13</span></td>
+          <td class="op-cell">* / %</td>
+          <td>คูณ, หาร, modulo</td>
+          <td class="dir-cell">L→R</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num">12</span></td>
+          <td class="op-cell">+ -</td>
+          <td>บวก, ลบ</td>
+          <td class="dir-cell">L→R</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num">11</span></td>
+          <td class="op-cell">&lt;&lt; &gt;&gt;</td>
+          <td>Bitwise shift ซ้าย/ขวา</td>
+          <td class="dir-cell">L→R</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num">10</span></td>
+          <td class="op-cell">&lt; &lt;= &gt; &gt;=</td>
+          <td>เปรียบเทียบ</td>
+          <td class="dir-cell">L→R</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num">9</span></td>
+          <td class="op-cell">== !=</td>
+          <td>เท่ากัน, ไม่เท่ากัน</td>
+          <td class="dir-cell">L→R</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num">8</span></td>
+          <td class="op-cell">&amp;</td>
+          <td>Bitwise AND</td>
+          <td class="dir-cell">L→R</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num">7</span></td>
+          <td class="op-cell">^</td>
+          <td>Bitwise XOR</td>
+          <td class="dir-cell">L→R</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num">6</span></td>
+          <td class="op-cell">|</td>
+          <td>Bitwise OR</td>
+          <td class="dir-cell">L→R</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num">5</span></td>
+          <td class="op-cell">&amp;&amp;</td>
+          <td>Logical AND</td>
+          <td class="dir-cell">L→R</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num">4</span></td>
+          <td class="op-cell">||</td>
+          <td>Logical OR</td>
+          <td class="dir-cell">L→R</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num">3</span></td>
+          <td class="op-cell">?:</td>
+          <td>Ternary</td>
+          <td class="dir-cell">R→L</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num">2</span></td>
+          <td class="op-cell">= += -= *= /= %= &amp;= ^= |= &lt;&lt;= &gt;&gt;=</td>
+          <td>Assignment ทุกแบบ</td>
+          <td class="dir-cell">R→L</td>
+        </tr>
+        <tr>
+          <td><span class="prec-num lo">1</span></td>
+          <td class="op-cell">,</td>
+          <td>Comma operator (ต่ำสุด)</td>
+          <td class="dir-cell">L→R</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 3 — Associativity ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1.5 · Associativity</div>
+    <div class="slide-h1">Associativity — <em>ซ้ายหรือขวาก่อน?</em></div>
+    <div class="slide-lead">เมื่อ operator มี precedence เท่ากัน Associativity บอกว่าจะประเมินจากทิศทางไหน</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">L→R (Left-to-Right) — ส่วนใหญ่</div>
+          <div class="box-body">ประเมินจากซ้ายไปขวา ตรงกับสัญชาตญาณ</div>
+        </div>
+        <div class="code-label">ตัวอย่าง L→R — + และ -</div>
+        <div class="code"><span class="cm">/* 10 - 3 - 2 */</span>
+<span class="cm">// L→R: (10-3)-2 = 7-2 = 5 ✓</span>
+<span class="cm">// ไม่ใช่: 10-(3-2) = 10-1 = 9</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>, <span class="nm">10</span> - <span class="nm">3</span> - <span class="nm">2</span>); <span class="cm">// 5</span>
+
+<span class="cm">/* 12 / 4 / 3 */</span>
+<span class="cm">// L→R: (12/4)/3 = 3/3 = 1</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>, <span class="nm">12</span> / <span class="nm">4</span> / <span class="nm">3</span>); <span class="cm">// 1</span></div>
+
+        <div class="box amber">
+          <div class="box-title">R→L (Right-to-Left) — assignment &amp; unary</div>
+          <div class="box-body">assignment และ unary operators ประเมินจากขวาไปซ้าย</div>
+        </div>
+        <div class="code-label">ตัวอย่าง R→L — assignment</div>
+        <div class="code"><span class="cm">/* a = b = c = 5 */</span>
+<span class="cm">// R→L: c=5, b=5, a=5 ✓</span>
+<span class="kw">int</span> a, b, c;
+a = b = c = <span class="nm">5</span>;
+<span class="cm">// a=5, b=5, c=5 ทำแบบนี้ได้!</span>
+
+<span class="cm">/* !!x */</span>
+<span class="cm">// R→L: !(!(x)) — แปลง x เป็น 0/1</span></div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">กรณีที่น่าสนใจ — Chained comparison</div>
+        <div class="code bad"><span class="cm">/* ⚠️ ไม่ทำงานแบบคณิตศาสตร์ */</span>
+<span class="kw">int</span> x = <span class="nm">5</span>;
+<span class="kw">if</span> (<span class="nm">1</span> < x < <span class="nm">10</span>)     <span class="cm">/* ดูเหมือนถูก */</span>
+    <span class="fn">printf</span>(<span class="st">"in range"</span>);
+
+<span class="cm">/* C ทำ: (1 < x) < 10
+   = (1 < 5) < 10
+   = 1 < 10
+   = true เสมอ! แม้ x=100 */</span></div>
+
+        <div class="code good"><span class="cm">/* ✅ วิธีที่ถูกต้อง */</span>
+<span class="kw">if</span> (x > <span class="nm">1</span> <span class="op">&amp;&amp;</span> x < <span class="nm">10</span>)
+    <span class="fn">printf</span>(<span class="st">"in range"</span>);</div>
+
+        <div class="think">
+          <div class="think-q">ผลลัพธ์ของ <code>printf("%d", 2 * 3 + 4 * 5)</code> คืออะไร?<br>และทำไมไม่ใช่ <code>2 * (3+4) * 5</code>?</div>
+          <div class="think-hint">💡 * มี precedence สูงกว่า + ทั้งสองคู่จะคำนวณก่อน แล้วค่อย +</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 4 — Bug Showcase ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1.5 · Bug ที่เจอบ่อย</div>
+    <div class="slide-h1">Bug จริงๆ <em>จาก Precedence ผิด</em></div>
+    <div class="slide-lead">Bug เหล่านี้ compile ผ่านหมด แต่ให้ผลผิด — เพราะ C ทำตามกฎ แต่กฎไม่ตรงกับที่เราคิด</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">Bug 1 — && กับ == ลำดับสับสน</div>
+        <div class="code bad"><span class="cm">/* อยากตรวจ: x==1 หรือ y==2 */</span>
+<span class="kw">if</span> (x == <span class="nm">1</span> || y == <span class="nm">2</span>)  <span class="cm">/* ✅ ถูก */</span>
+
+<span class="cm">/* ❌ พิมพ์ผิด! */</span>
+<span class="kw">if</span> (x == <span class="nm">1</span> | y == <span class="nm">2</span>)
+<span class="cm">/* | คือ Bitwise OR ไม่ใช่ Logical OR
+   ผลอาจไม่ตรงเพราะ short-circuit ไม่ทำงาน */</span></div>
+
+        <div class="code-label">Bug 2 — ++ กับ * สับสน</div>
+        <div class="code bad"><span class="kw">int</span> arr[] = {<span class="nm">10</span>,<span class="nm">20</span>,<span class="nm">30</span>};
+<span class="kw">int</span> *p = arr;
+
+<span class="fn">printf</span>(<span class="st">"%d"</span>, *p++);
+<span class="cm">/* * และ ++ มี precedence เท่ากัน (14)
+   R→L: *(p++) — ใช้ค่า *p แล้วเลื่อน p
+   พิมพ์ 10 แล้ว p ชี้ไปที่ arr[1] */</span>
+
+<span class="fn">printf</span>(<span class="st">"%d"</span>, (*p)++);
+<span class="cm">/* วงเล็บ: เพิ่มค่าที่ p ชี้
+   พิมพ์ 20 แล้ว arr[1]=21 */</span></div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">Bug 3 — ternary กับ assignment</div>
+        <div class="code bad"><span class="cm">/* อยากได้: x = (a>b) ? a : b */</span>
+<span class="kw">int</span> x = <span class="nm">0</span>;
+x = <span class="nm">5</span> > <span class="nm">3</span> ? <span class="nm">10</span> : <span class="nm">20</span>;
+<span class="cm">/* ✅ ทำงานถูก: x = (5>3)?10:20 = 10
+   เพราะ ?: precedence ต่ำกว่า > */</span>
+
+<span class="cm">/* ❌ สับสน nested ternary */</span>
+x = a > b ? a : b > c ? b : c;
+<span class="cm">/* R→L: a > b ? a : (b>c ? b : c)
+   อ่านยากมาก ใส่วงเล็บดีกว่า! */</span></div>
+
+        <div class="box green">
+          <div class="box-title">✅ กฎทองที่ต้องจำ</div>
+          <div class="box-body">
+            <strong>ถ้าไม่แน่ใจ — ใส่วงเล็บ</strong><br><br>
+            <code>(a + b) * c</code> ชัดกว่า<code>a + b * c</code><br>
+            <code>(x &amp; mask) == 0</code> ชัดกว่า <code>x &amp; mask == 0</code><br>
+            <code>(a &gt; 0) &amp;&amp; (b &gt; 0)</code> ชัดกว่า <code>a &gt; 0 &amp;&amp; b &gt; 0</code><br><br>
+            วงเล็บไม่ทำให้ช้าลงเลย แต่ทำให้ code อ่านง่ายขึ้นมาก
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 5 — Parentheses as solution ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1.5 · การใช้วงเล็บ</div>
+    <div class="slide-h1"><em>วงเล็บ</em> — แก้ได้ทุกปัญหา</div>
+    <div class="slide-lead">วงเล็บมี precedence สูงสุด (15) ใส่วงเล็บ = บอก C ให้ทำส่วนนั้นก่อนเสมอ</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">ก่อน-หลัง ใส่วงเล็บ</div>
+        <div class="code"><span class="cm">/* ไม่มีวงเล็บ — ผลอาจเซอร์ไพรส์ */</span>
+<span class="nm">2</span> + <span class="nm">3</span> * <span class="nm">4</span>         <span class="cm">// 14</span>
+<span class="nm">5</span> > <span class="nm">3</span> + <span class="nm">1</span>         <span class="cm">// 5 > 4 = 1 (true)</span>
+x & <span class="nm">0xFF</span> == <span class="nm">0</span>     <span class="cm">// x & (0xFF==0) = x & 0 !</span>
+<span class="nm">1</span> << <span class="nm">2</span> + <span class="nm">1</span>         <span class="cm">// 1 << 3 = 8</span>
+
+<span class="cm">/* ใส่วงเล็บ — ชัดเจน ถูกต้อง */</span>
+(<span class="nm">2</span> + <span class="nm">3</span>) * <span class="nm">4</span>       <span class="cm">// 20</span>
+(<span class="nm">5</span> > <span class="nm">3</span>) + <span class="nm">1</span>       <span class="cm">// 1 + 1 = 2</span>
+(x & <span class="nm">0xFF</span>) == <span class="nm">0</span>  <span class="cm">// ถูกต้อง!</span>
+(<span class="nm">1</span> << <span class="nm">2</span>) + <span class="nm">1</span>     <span class="cm">// 4 + 1 = 5</span></div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">Real code — if ที่ซับซ้อน</div>
+        <div class="code bad"><span class="cm">/* ❌ อ่านยาก ต้องจำ precedence */</span>
+<span class="kw">if</span> (a > <span class="nm">0</span> &amp;&amp; b > <span class="nm">0</span> || c == <span class="nm">0</span>)
+    <span class="fn">printf</span>(<span class="st">"ok"</span>);
+<span class="cm">/* && ก่อน || → (a>0 && b>0) || c==0
+   แต่ผู้อ่านต้องรู้กฎก่อน! */</span></div>
+
+        <div class="code good"><span class="cm">/* ✅ ชัดเจน ไม่ต้องจำ precedence */</span>
+<span class="kw">if</span> ((a > <span class="nm">0</span> <span class="op">&amp;&amp;</span> b > <span class="nm">0</span>) || c == <span class="nm">0</span>)
+    <span class="fn">printf</span>(<span class="st">"ok"</span>);</div>
+
+        <div class="box blue">
+          <div class="box-title">💡 เมื่อไหร่ต้องใส่วงเล็บ?</div>
+          <div class="box-body">
+            1. รวม arithmetic กับ comparison<br>
+            &nbsp;&nbsp;<code>(a + b) &gt; c</code><br><br>
+            2. รวม bitwise กับ logical/comparison<br>
+            &nbsp;&nbsp;<code>(x &amp; mask) == 0</code><br><br>
+            3. ternary ซ้อนกัน<br>
+            &nbsp;&nbsp;<code>a ? b : (c ? d : e)</code><br><br>
+            4. ทุกครั้งที่ไม่แน่ใจ 100%
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 6 — Think! ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 1.5 · Think!</div>
+    <div class="slide-h1">คิดก่อน <em>เขียน</em></div>
+    <div class="slide-lead">Trace ลำดับ operator ในหัว — ดูว่า C จะทำอะไรก่อน</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">1. ผลของ <code>printf("%d", 3 + 4 * 2 - 1)</code> คืออะไร?</div>
+          <div class="think-hint">💡 * ก่อน + และ − ทำตามลำดับ L→R หลังจากนั้น</div>
+        </div>
+        <div class="think">
+          <div class="think-q">2. <code>if (x = 5)</code> กับ <code>if (x == 5)</code> ต่างกันอย่างไร? ทั้งคู่ compile ผ่านไหม?</div>
+          <div class="think-hint">💡 = คือ assignment มีค่าเป็นค่าที่ assign (5 = true) — compile ผ่านแต่ทำงานผิด!</div>
+        </div>
+        <div class="think">
+          <div class="think-q">3. <code>a = b = 10</code> ทำงานยังไง? ค่าของ a และ b คือเท่าไหร่?</div>
+          <div class="think-hint">💡 R→L: b=10 ก่อน แล้ว a = (ผลของ b=10) = 10</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">4. <code>printf("%d", !0 + 1)</code> พิมพ์อะไร?<br>! มี precedence สูงกว่า + ไหม?</div>
+          <div class="think-hint">💡 Unary ! (level 14) สูงกว่า + (level 12) → !0=1 ก่อน แล้ว 1+1</div>
+        </div>
+        <div class="think">
+          <div class="think-q">5. เขียนวงเล็บให้ชัดเจนใน:<br><code>a || b &amp;&amp; c || d</code></div>
+          <div class="think-hint">💡 && (level 5) สูงกว่า || (level 4) → <code>a || (b && c) || d</code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 7 — โจทย์ + สรุป ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1.5 · โจทย์ + สรุป</div>
+    <div class="slide-h1">โจทย์ <em>Trace</em> + สรุป</div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — Output คืออะไร?</div>
+      <div class="code" style="margin-bottom:10px"><span class="fn">printf</span>(<span class="st">"%d"</span>, <span class="nm">6</span> / <span class="nm">2</span> * <span class="nm">3</span>);</div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" onclick="pickMC('mc1',0,1,'L→R: (6/2)*3 = 3*3 = 9 ✓ ไม่ใช่ 6/(2*3)=1 เพราะ * และ / มี precedence เท่ากัน ทำ L→R')"><span class="mc-ltr">A</span> 1</div>
+        <div class="mc-opt" onclick="pickMC('mc1',1,1,'L→R: (6/2)*3 = 3*3 = 9 ✓ ไม่ใช่ 6/(2*3)=1 เพราะ * และ / มี precedence เท่ากัน ทำ L→R')"><span class="mc-ltr">B</span> 9</div>
+        <div class="mc-opt" onclick="pickMC('mc1',2,1,'L→R: (6/2)*3 = 3*3 = 9 ✓ ไม่ใช่ 6/(2*3)=1 เพราะ * และ / มี precedence เท่ากัน ทำ L→R')"><span class="mc-ltr">C</span> 3</div>
+        <div class="mc-opt" onclick="pickMC('mc1',3,1,'L→R: (6/2)*3 = 3*3 = 9 ✓ ไม่ใช่ 6/(2*3)=1 เพราะ * และ / มี precedence เท่ากัน ทำ L→R')"><span class="mc-ltr">D</span> 36</div>
+      </div>
+      <div class="ex-feedback" id="mc1-fb"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — ใส่วงเล็บให้ถูกต้อง</div>
+      <div class="ex-q">ต้องการตรวจว่า <code>x</code> อยู่ระหว่าง 1 ถึง 10 <strong>และ</strong> <code>y</code> เป็นเลขคู่<br>
+      เขียน condition ที่ถูกต้องด้วยวงเล็บชัดเจน</div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in1" placeholder="เช่น (x >= 1 && ...) && ..." type="text">
+        <button class="ex-btn" onclick="checkFill('in1',
+          '(x >= 1 && x <= 10) && (y % 2 == 0)',
+          ['(x>=1&&x<=10)&&(y%2==0)','(x >= 1 && x <= 10) && y % 2 == 0',
+           'x >= 1 && x <= 10 && y % 2 == 0'],
+          ['x >= 1 && x <= 10 && y % 2'],
+          'ถูก! วงเล็บชัดเจน ครอบคลุมทั้ง range check และ even check',
+          'ต้องตรวจทั้ง x อยู่ในช่วง [1,10] และ y % 2 == 0')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="split" style="margin-top:4px">
+      <div class="split-col">
+        <div class="steps">
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body">สูงกว่า = ทำก่อน: <code>() &gt; unary &gt; */% &gt; +- &gt; compare &gt; == &gt; &amp;&amp; &gt; || &gt; =</code></div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body">L→R คือทิศทางส่วนใหญ่ — R→L เฉพาะ assignment และ unary</div></div>
+          <div class="step"><div class="step-n ok">✓</div><div class="step-body">ไม่แน่ใจ = ใส่วงเล็บ — ไม่ช้าลงเลย แต่อ่านง่ายขึ้นมาก</div></div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🚀 พร้อมไปบทที่ 3 (Loop)</div>
+          <div class="box-body">Loop ใช้ operators ทุกประเภทใน condition เช่น <code>i &lt; n &amp;&amp; arr[i] != 0</code> — เข้าใจ precedence แล้วอ่าน condition ซับซ้อนได้ทันที</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 8</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 1.5 — Operator Precedence</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover','Precedence คืออะไร','ตาราง Precedence',
+  'Associativity','Bug ที่เจอบ่อย','การใช้วงเล็บ',
+  'Think!','โจทย์ + สรุป'
+];
+</script>
+<script src="slide-engine.js"></script>
+</body>
+</html>

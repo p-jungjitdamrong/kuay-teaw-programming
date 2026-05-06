@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 5 — Pointer | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="slide.css">
+<style>
+/* Chapter 5 accent — slate teal */
+:root { --ca:#0f6674; --cal:#e0f5f8; --cam:#1ea8bc; }
+
+/* memory diagram */
+.mem-diagram {
+  font-family: var(--mono); font-size: 12px;
+  background: var(--ink); border-radius: 10px;
+  padding: 16px 20px; margin-bottom: 14px; color: #8891a8;
+}
+.mbox-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.mbox-row:last-child { margin-bottom: 0; }
+.mbox-name { min-width: 52px; color: #c9d1e0; font-weight: 600; font-size: 12px; }
+.mbox-addr { min-width: 72px; color: #546e7a; font-size: 10px; }
+.mbox {
+  width: 72px; height: 40px;
+  background: #1e2538; border: 1px solid #2a3050;
+  border-radius: 6px; display: flex; align-items: center;
+  justify-content: center; font-size: 13px; font-weight: 600;
+}
+.mbox.val { color: #9effe3; }
+.mbox.ptr { color: var(--cam); border-color: var(--cam); background: rgba(30,168,188,.1); }
+.mbox-arrow { color: var(--cam); font-size: 18px; }
+.mbox-label { font-size: 10px; color: #546e7a; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════════ SLIDE 0 — COVER ════════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · ภาษา C</div>
+        <div class="cover-title">บทที่ 5<br><em>Pointer</em></div>
+        <div class="cover-subtitle">ตัวแปรที่เก็บ "ตำแหน่ง" แทนค่า — เข้าใจ Pointer คือเข้าใจว่า C ทำงานกับ Memory ยังไงจริงๆ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Memory Address คืออะไร</div>
+          <div class="topic-row"><div class="topic-dot"></div>& (address-of) และ * (dereference)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Pass by Reference</div>
+          <div class="topic-row"><div class="topic-dot"></div>Pointer + Array</div>
+          <div class="topic-row"><div class="topic-dot"></div>Pointer Arithmetic</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">05</div>
+        <div class="cover-badge">CHAPTER 5</div>
+        <div class="cover-slides-count">13 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 1 — Memory Address ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · พื้นฐาน</div>
+    <div class="slide-h1">Memory Address — <em>ทุกตัวแปรมี "บ้านเลขที่"</em></div>
+    <div class="slide-lead">Memory คือแถวบ้านยาวๆ แต่ละบ้านมี address ตัวแปรทุกตัวที่ประกาศจะถูกจัดสรร address ใน memory</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">ดู address ด้วย &amp; และ %p</div>
+        <div class="code"><span class="kw">int</span>   x = <span class="nm">42</span>;
+<span class="kw">float</span> f = <span class="nm">3.14</span>;
+<span class="kw">char</span>  c = <span class="st">'A'</span>;
+
+<span class="cm">/* & คือ address-of operator */</span>
+<span class="fn">printf</span>(<span class="st">"x อยู่ที่: %p\n"</span>, <span class="op">&amp;</span>x);
+<span class="fn">printf</span>(<span class="st">"f อยู่ที่: %p\n"</span>, <span class="op">&amp;</span>f);
+<span class="fn">printf</span>(<span class="st">"c อยู่ที่: %p\n"</span>, <span class="op">&amp;</span>c);
+
+<span class="cm">/* ตัวอย่าง output:
+   x อยู่ที่: 0x7fff1000
+   f อยู่ที่: 0x7fff1004
+   c อยู่ที่: 0x7fff1008 */</span></div>
+        <div class="box green">
+          <div class="box-title">💡 ทำไม scanf ต้องใช้ &amp;</div>
+          <div class="box-body">
+            <code>scanf("%d", &amp;n)</code> — ส่ง address ของ n ให้ scanf รู้ว่าจะเก็บค่าไว้ที่ไหนใน memory<br><br>
+            ถ้าไม่ใส่ <code>&amp;</code> = ส่งค่า n ไปแทน address → crash!
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="mem-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:12px;letter-spacing:.5px">MEMORY</div>
+          <div class="mbox-row">
+            <div class="mbox-name">x</div>
+            <div class="mbox-addr">0x1000</div>
+            <div class="mbox val">42</div>
+            <div class="mbox-label">← int (4 bytes)</div>
+          </div>
+          <div class="mbox-row">
+            <div class="mbox-name">f</div>
+            <div class="mbox-addr">0x1004</div>
+            <div class="mbox val">3.14</div>
+            <div class="mbox-label">← float (4 bytes)</div>
+          </div>
+          <div class="mbox-row">
+            <div class="mbox-name">c</div>
+            <div class="mbox-addr">0x1008</div>
+            <div class="mbox val">'A'</div>
+            <div class="mbox-label">← char (1 byte)</div>
+          </div>
+        </div>
+        <div class="box amber">
+          <div class="box-title">⚠️ Address จะต่างกันทุกครั้ง</div>
+          <div class="box-body">Address จริงๆ ขึ้นอยู่กับ OS และ runtime — ตัวเลขจะต่างกันทุกครั้งที่รันโปรแกรม ไม่ต้องจำตัวเลข</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 2 — Pointer คืออะไร ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Pointer</div>
+    <div class="slide-h1">Pointer — <em>ตัวแปรที่เก็บ Address</em></div>
+    <div class="slide-lead">Pointer ไม่ได้เก็บ "ค่า" แต่เก็บ "ตำแหน่ง" ของตัวแปรอื่น — เหมือนบันทึกบ้านเลขที่ของเพื่อน</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">ประกาศ Pointer</div>
+        <div class="code"><span class="kw">int</span>  x = <span class="nm">42</span>;
+<span class="kw">int</span> <span class="op">*</span>p;       <span class="cm">/* p คือ pointer ชี้ไปที่ int */</span>
+
+p = <span class="op">&amp;</span>x;       <span class="cm">/* p เก็บ address ของ x */</span>
+
+<span class="fn">printf</span>(<span class="st">"%p"</span>, p);   <span class="cm">/* address เช่น 0x1000 */</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>, <span class="op">*</span>p); <span class="cm">/* 42 — ค่าที่ p ชี้ */</span>
+
+<span class="op">*</span>p = <span class="nm">100</span>;      <span class="cm">/* แก้ค่าผ่าน pointer */</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>, x); <span class="cm">/* 100 — x เปลี่ยนด้วย! */</span></div>
+
+        <div class="box">
+          <div class="box-title">* มีความหมาย 2 แบบ</div>
+          <div class="box-body">
+            <strong>ตอนประกาศ</strong> <code>int *p;</code><br>
+            หมายว่า "p เป็น pointer" — แค่บอก type<br><br>
+            <strong>ตอนใช้งาน</strong> <code>*p</code><br>
+            หมายว่า "dereference" — เข้าไปดูค่าที่ p ชี้อยู่
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="mem-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:12px;letter-spacing:.5px">MEMORY — p ชี้ไปที่ x</div>
+          <div class="mbox-row">
+            <div class="mbox-name">x</div>
+            <div class="mbox-addr">0x1000</div>
+            <div class="mbox val">42</div>
+          </div>
+          <div style="margin:2px 0 2px 62px;color:var(--cam);font-size:20px">↑</div>
+          <div class="mbox-row">
+            <div class="mbox-name">p</div>
+            <div class="mbox-addr">0x1008</div>
+            <div class="mbox ptr">0x1000</div>
+            <div class="mbox-label">p เก็บ address ของ x</div>
+          </div>
+          <div style="margin-top:12px;font-size:11px;color:#546e7a;line-height:1.9">
+            &amp;x = 0x1000 (address ของ x)<br>
+            p  = 0x1000 (p เก็บ address นี้)<br>
+            *p = 42     (ค่าที่ address 0x1000)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 3 — & และ * ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Operators</div>
+    <div class="slide-h1"><em>&amp;</em> address-of · <em>*</em> dereference</div>
+    <div class="slide-lead">สอง operator นี้เป็นหัวใจของ Pointer — ต้องแยกให้ออกทุกครั้งว่าใช้ในบริบทไหน</div>
+
+    <div class="split">
+      <div class="split-col">
+        <table class="kv-table">
+          <thead><tr><th>Operator</th><th>ชื่อ</th><th>ทำอะไร</th></tr></thead>
+          <tbody>
+            <tr><td>&amp;x</td><td>Address-of</td><td>ให้ address ของตัวแปร x</td></tr>
+            <tr><td>*p</td><td>Dereference</td><td>เข้าไปดู/แก้ค่าที่ p ชี้อยู่</td></tr>
+            <tr><td>int *p</td><td>Declaration</td><td>ประกาศว่า p เป็น pointer ชี้ไปที่ int</td></tr>
+          </tbody>
+        </table>
+        <div class="code-label">ตัวอย่างครบ</div>
+        <div class="code"><span class="kw">int</span>  a = <span class="nm">10</span>, b = <span class="nm">20</span>;
+<span class="kw">int</span> <span class="op">*</span>p = <span class="op">&amp;</span>a;  <span class="cm">/* p ชี้ที่ a */</span>
+
+<span class="fn">printf</span>(<span class="st">"%d\n"</span>, <span class="op">*</span>p);  <span class="cm">/* 10  */</span>
+<span class="op">*</span>p = <span class="nm">99</span>;
+<span class="fn">printf</span>(<span class="st">"%d\n"</span>, a);   <span class="cm">/* 99  */</span>
+
+p = <span class="op">&amp;</span>b;              <span class="cm">/* เปลี่ยน p ให้ชี้ที่ b */</span>
+<span class="fn">printf</span>(<span class="st">"%d\n"</span>, <span class="op">*</span>p);  <span class="cm">/* 20  */</span>
+<span class="op">*</span>p = <span class="nm">55</span>;
+<span class="fn">printf</span>(<span class="st">"%d\n"</span>, b);   <span class="cm">/* 55  */</span></div>
+      </div>
+      <div class="split-col">
+        <div class="box red">
+          <div class="box-title">❌ Dangling Pointer — อันตรายมาก</div>
+          <div class="box-body">
+            <code>int *p;</code><br>
+            <code>*p = 10;</code> ← p ยังไม่ชี้ที่ไหน!<br><br>
+            pointer ที่ไม่ได้ initialize จะชี้ที่ memory สุ่ม — เขียนทับข้อมูลสำคัญ crash หรือ security bug<br><br>
+            ✅ แก้: <code>int *p = NULL;</code> แล้วค่อย assign
+          </div>
+        </div>
+        <div class="box amber">
+          <div class="box-title">⚠️ NULL pointer check</div>
+          <div class="box-body">
+            ก่อน dereference ตรวจก่อนเสมอ:<br><br>
+            <code>if (p != NULL) {</code><br>
+            <code>&nbsp;&nbsp;printf("%d", *p);</code><br>
+            <code>}</code><br><br>
+            dereference NULL = crash ทันที (segfault)
+          </div>
+        </div>
+        <div class="think">
+          <div class="think-q">ถ้า <code>int *p = &amp;x</code> แล้ว <code>p++</code> — p จะชี้ไปที่ไหน?</div>
+          <div class="think-hint">💡 p++ ไม่ได้บวก 1 byte แต่บวก sizeof(int) = 4 bytes → ชี้ไปที่ตำแหน่งถัดไปใน memory</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 4 — Pass by Reference ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Pass by Reference</div>
+    <div class="slide-h1">Pass by Reference — <em>แก้ตัวแปรนอก Function ได้</em></div>
+    <div class="slide-lead">จากบทที่ 4 — pass by value แก้ข้างนอกไม่ได้ แต่ถ้าส่ง <strong>pointer (address)</strong> แทน function จะเข้าถึงตัวแปรจริงได้เลย</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label bad">❌ Pass by Value — แก้ไม่ได้</div>
+        <div class="code bad"><span class="kw">void</span> <span class="fn">addTen</span>(<span class="kw">int</span> n) {
+    n += <span class="nm">10</span>;   <span class="cm">/* แก้แค่ copy */</span>
+}
+<span class="kw">int</span> x = <span class="nm">5</span>;
+<span class="fn">addTen</span>(x);
+<span class="fn">printf</span>(<span class="st">"%d"</span>, x); <span class="cm">/* ยังเป็น 5 */</span></div>
+
+        <div class="code-label good">✅ Pass by Reference — แก้ได้</div>
+        <div class="code good"><span class="kw">void</span> <span class="fn">addTen</span>(<span class="kw">int</span> <span class="op">*</span>p) {
+    <span class="op">*</span>p += <span class="nm">10</span>;  <span class="cm">/* แก้ตัวจริงผ่าน pointer */</span>
+}
+<span class="kw">int</span> x = <span class="nm">5</span>;
+<span class="fn">addTen</span>(<span class="op">&amp;</span>x);   <span class="cm">/* ส่ง address ของ x */</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>, x); <span class="cm">/* 15 ✓ */</span></div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">Use Case — swap สองตัวแปร</div>
+        <div class="code good"><span class="kw">void</span> <span class="fn">swap</span>(<span class="kw">int</span> <span class="op">*</span>a, <span class="kw">int</span> <span class="op">*</span>b) {
+    <span class="kw">int</span> temp = <span class="op">*</span>a;
+    <span class="op">*</span>a = <span class="op">*</span>b;
+    <span class="op">*</span>b = temp;
+}
+<span class="kw">int</span> x = <span class="nm">10</span>, y = <span class="nm">20</span>;
+<span class="fn">swap</span>(<span class="op">&amp;</span>x, <span class="op">&amp;</span>y);
+<span class="fn">printf</span>(<span class="st">"%d %d"</span>, x, y); <span class="cm">/* 20 10 ✓ */</span></div>
+
+        <div class="code-label">คืนค่าหลายตัวจาก Function</div>
+        <div class="code good"><span class="kw">void</span> <span class="fn">minMax</span>(<span class="kw">int</span> a[], <span class="kw">int</span> n,
+             <span class="kw">int</span> <span class="op">*</span>mn, <span class="kw">int</span> <span class="op">*</span>mx) {
+    <span class="kw">int</span> i;
+    <span class="op">*</span>mn = <span class="op">*</span>mx = a[<span class="nm">0</span>];
+    <span class="kw">for</span> (i=<span class="nm">1</span>; i&lt;n; i++) {
+        <span class="kw">if</span> (a[i] &lt; <span class="op">*</span>mn) <span class="op">*</span>mn = a[i];
+        <span class="kw">if</span> (a[i] &gt; <span class="op">*</span>mx) <span class="op">*</span>mx = a[i];
+    }
+}
+<span class="kw">int</span> lo, hi;
+<span class="fn">minMax</span>(arr, <span class="nm">5</span>, <span class="op">&amp;</span>lo, <span class="op">&amp;</span>hi);</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 5 — Pointer + Array ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Pointer + Array</div>
+    <div class="slide-h1">Pointer กับ Array — <em>ความสัมพันธ์ที่ลึกมาก</em></div>
+    <div class="slide-lead">ชื่อ Array ใน C คือ pointer ที่ชี้ไปยังช่องแรก — นี่คือเหตุผลที่ Array ส่งเข้า function แล้วแก้ค่าได้จริง</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">Array name = pointer ชี้ช่องแรก</div>
+        <div class="code"><span class="kw">int</span> arr[] = {<span class="nm">10</span>, <span class="nm">20</span>, <span class="nm">30</span>};
+<span class="kw">int</span> <span class="op">*</span>p = arr; <span class="cm">/* ไม่ต้องใช้ & */</span>
+
+<span class="cm">/* เข้าถึงแบบ array */</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>, arr[<span class="nm">1</span>]);  <span class="cm">/* 20 */</span>
+
+<span class="cm">/* เข้าถึงแบบ pointer */</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>, <span class="op">*</span>(p+<span class="nm">1</span>));  <span class="cm">/* 20 */</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>, p[<span class="nm">1</span>]);    <span class="cm">/* 20 — ใช้ [] กับ pointer ได้! */</span>
+
+<span class="cm">/* ทั้งสามแบบให้ผลเหมือนกัน */</span>
+<span class="cm">/* arr[i] == *(arr+i) == *(p+i) == p[i] */</span></div>
+      </div>
+      <div class="split-col">
+        <div class="mem-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:12px">int arr[] = {10, 20, 30}</div>
+          <svg viewBox="0 0 300 110" width="100%" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Mono',monospace">
+            <!-- boxes -->
+            <rect x="60" y="20" width="60" height="36" rx="5" fill="#1e2538" stroke="#2a3050" stroke-width="1.2"/>
+            <rect x="130" y="20" width="60" height="36" rx="5" fill="#1e2538" stroke="#2a3050" stroke-width="1.2"/>
+            <rect x="200" y="20" width="60" height="36" rx="5" fill="#1e2538" stroke="#2a3050" stroke-width="1.2"/>
+            <!-- values -->
+            <text x="90"  y="44" font-size="14" fill="#9effe3" text-anchor="middle" font-weight="600">10</text>
+            <text x="160" y="44" font-size="14" fill="#9effe3" text-anchor="middle" font-weight="600">20</text>
+            <text x="230" y="44" font-size="14" fill="#9effe3" text-anchor="middle" font-weight="600">30</text>
+            <!-- index labels -->
+            <text x="90"  y="70" font-size="10" fill="#1ea8bc" text-anchor="middle">[0]</text>
+            <text x="160" y="70" font-size="10" fill="#1ea8bc" text-anchor="middle">[1]</text>
+            <text x="230" y="70" font-size="10" fill="#1ea8bc" text-anchor="middle">[2]</text>
+            <!-- p labels -->
+            <text x="90"  y="86" font-size="10" fill="#546e7a" text-anchor="middle">p+0</text>
+            <text x="160" y="86" font-size="10" fill="#546e7a" text-anchor="middle">p+1</text>
+            <text x="230" y="86" font-size="10" fill="#546e7a" text-anchor="middle">p+2</text>
+            <!-- p arrow -->
+            <text x="10" y="42" font-size="12" fill="#c9d1e0" font-weight="600">p</text>
+            <line x1="28" y1="38" x2="58" y2="38" stroke="#1ea8bc" stroke-width="1.5" marker-end="url(#arr5)"/>
+            <!-- addr labels -->
+            <text x="90"  y="103" font-size="9" fill="#374151" text-anchor="middle">0x1000</text>
+            <text x="160" y="103" font-size="9" fill="#374151" text-anchor="middle">0x1004</text>
+            <text x="230" y="103" font-size="9" fill="#374151" text-anchor="middle">0x1008</text>
+            <defs>
+              <marker id="arr5" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                <path d="M0,0 L6,3 L0,6 Z" fill="#1ea8bc"/>
+              </marker>
+            </defs>
+          </svg>
+        </div>
+        <div class="box green">
+          <div class="box-title">💡 arr[i] กับ *(arr+i) เหมือนกันทุกอย่าง</div>
+          <div class="box-body">C แปลง <code>arr[i]</code> เป็น <code>*(arr+i)</code> โดยอัตโนมัติ ทั้งสองแบบ compile เป็น machine code เดียวกัน</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 6 — Pointer Arithmetic ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Pointer Arithmetic</div>
+    <div class="slide-h1">Pointer Arithmetic — <em>บวกลบ address</em></div>
+    <div class="slide-lead">การบวกลบ pointer ไม่ได้บวก byte ธรรมดา — บวกตาม <strong>ขนาดของ type</strong> ที่ pointer ชี้อยู่</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">p++ เลื่อนกี่ byte?</div>
+        <div class="code"><span class="kw">int</span>   <span class="op">*</span>pi; <span class="cm">/* pi++ = +4 bytes */</span>
+<span class="kw">char</span>  <span class="op">*</span>pc; <span class="cm">/* pc++ = +1 byte  */</span>
+<span class="kw">double</span><span class="op">*</span>pd; <span class="cm">/* pd++ = +8 bytes */</span>
+
+<span class="kw">int</span> arr[] = {<span class="nm">10</span>,<span class="nm">20</span>,<span class="nm">30</span>,<span class="nm">40</span>,<span class="nm">50</span>};
+<span class="kw">int</span> <span class="op">*</span>p = arr;
+
+<span class="fn">printf</span>(<span class="st">"%d\n"</span>, <span class="op">*</span>p);    <span class="cm">/* 10 */</span>
+p++;
+<span class="fn">printf</span>(<span class="st">"%d\n"</span>, <span class="op">*</span>p);    <span class="cm">/* 20 */</span>
+p += <span class="nm">2</span>;
+<span class="fn">printf</span>(<span class="st">"%d\n"</span>, <span class="op">*</span>p);    <span class="cm">/* 40 */</span></div>
+
+        <div class="code-label">วน loop ด้วย pointer</div>
+        <div class="code"><span class="kw">int</span> arr[] = {<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>,<span class="nm">5</span>};
+<span class="kw">int</span> <span class="op">*</span>p;
+<span class="kw">for</span> (p = arr; p < arr+<span class="nm">5</span>; p++)
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, <span class="op">*</span>p);
+<span class="cm">// 1 2 3 4 5</span></div>
+      </div>
+      <div class="split-col">
+        <div class="box amber">
+          <div class="box-title">⚠️ Pointer ลบกัน</div>
+          <div class="box-body">
+            <code>int *p1 = &arr[0];</code><br>
+            <code>int *p2 = &arr[3];</code><br>
+            <code>p2 - p1 = 3</code> (ห่างกัน 3 elements)<br><br>
+            ลบ pointer สองตัวจะได้จำนวน elements ไม่ใช่จำนวน byte
+          </div>
+        </div>
+        <div class="box red">
+          <div class="box-title">❌ อย่าทำ Pointer Out of Bounds</div>
+          <div class="box-body">
+            <code>int arr[3]; int *p = arr;</code><br>
+            <code>p += 10;</code> ← ชี้นอก array!<br>
+            <code>*p = 5;</code> ← เขียนทับ memory สุ่ม<br><br>
+            C ไม่มี bounds check — ระวัง!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 7 — Pointer to Pointer ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Advanced</div>
+    <div class="slide-h1">Pointer ชนิดอื่น — <em>const และ void</em></div>
+    <div class="slide-lead">Pointer มีรูปแบบพิเศษที่ใช้บ่อยในโปรแกรมจริง — <code>const</code> pointer ป้องกันการแก้ค่า, <code>void*</code> รับได้ทุก type</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">const pointer — ป้องกันการแก้</div>
+        <div class="code"><span class="cm">/* ห้ามแก้ค่าที่ชี้อยู่ */</span>
+<span class="kw">const</span> <span class="kw">int</span> <span class="op">*</span>p = <span class="op">&amp;</span>x;
+<span class="op">*</span>p = <span class="nm">10</span>;    <span class="cm">/* ❌ error */</span>
+p = <span class="op">&amp;</span>y;      <span class="cm">/* ✅ เปลี่ยนชี้ได้ */</span>
+
+<span class="cm">/* ห้ามเปลี่ยนที่ชี้ */</span>
+<span class="kw">int</span> <span class="op">*</span><span class="kw">const</span> q = <span class="op">&amp;</span>x;
+<span class="op">*</span>q = <span class="nm">10</span>;    <span class="cm">/* ✅ แก้ค่าได้ */</span>
+q = <span class="op">&amp;</span>y;      <span class="cm">/* ❌ error */</span>
+
+<span class="cm">/* ใช้บ่อยใน function parameter */</span>
+<span class="kw">void</span> <span class="fn">print</span>(<span class="kw">const</span> <span class="kw">int</span> <span class="op">*</span>arr, <span class="kw">int</span> n) {
+    <span class="cm">/* guarantee ว่าไม่แก้ arr */</span>
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">NULL pointer — กรณีไม่มีค่า</div>
+        <div class="code"><span class="kw">int</span> <span class="op">*</span>p = <span class="nm">NULL</span>; <span class="cm">/* ยังไม่ชี้ที่ไหน */</span>
+
+<span class="cm">/* ตรวจก่อน dereference เสมอ */</span>
+<span class="kw">if</span> (p != <span class="nm">NULL</span>) {
+    <span class="fn">printf</span>(<span class="st">"%d"</span>, <span class="op">*</span>p);
+} <span class="kw">else</span> {
+    <span class="fn">printf</span>(<span class="st">"pointer is NULL\n"</span>);
+}</div>
+
+        <div class="box blue">
+          <div class="box-title">💡 เชื่อมกับ scanf</div>
+          <div class="box-body">
+            <code>scanf("%d", &amp;n)</code><br><br>
+            <code>&amp;n</code> = pointer ชี้ไปที่ n<br>
+            scanf รับ pointer แล้วใช้ dereference เขียนค่าลงไปที่ address นั้น<br><br>
+            นี่คือเหตุผลที่ต้องใส่ <code>&amp;</code> ใน scanf เสมอ
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 8 — Use Case ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Use Case</div>
+    <div class="slide-h1">🏦 <em>Use Case จริง</em> — ระบบแลกเปลี่ยนเงิน</div>
+    <div class="slide-lead">รวม Pointer + Pass by Reference + Array ในโปรแกรมเดียว — function คืนหลายค่าพร้อมกันผ่าน pointer</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="usecase" style="border-left-color:var(--ca)">
+          <div class="usecase-label" style="color:var(--ca)">โจทย์ระบบธนาคาร</div>
+          <div class="usecase-title">แปลงเงินบาทเป็นหลายสกุล</div>
+          <div class="usecase-body">รับยอดเงินบาท แปลงเป็น USD, EUR, JPY พร้อมกันใน function เดียว คืนค่าผ่าน pointer 3 ตัว</div>
+        </div>
+        <div class="box">
+          <div class="box-title">ทำไมต้องใช้ Pointer</div>
+          <div class="box-body">
+            return ได้แค่ 1 ค่า<br>
+            แต่ต้องการ 3 ค่า (USD, EUR, JPY)<br>
+            → ส่ง pointer 3 ตัวเข้า function<br>
+            → function เขียนค่าผ่าน *p โดยตรง
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">โปรแกรมแลกเงิน</div>
+        <div class="code"><span class="inc">#include &lt;stdio.h&gt;</span>
+
+<span class="kw">void</span> <span class="fn">convert</span>(<span class="kw">double</span> thb,
+             <span class="kw">double</span> <span class="op">*</span>usd,
+             <span class="kw">double</span> <span class="op">*</span>eur,
+             <span class="kw">double</span> <span class="op">*</span>jpy) {
+    <span class="op">*</span>usd = thb / <span class="nm">35.5</span>;
+    <span class="op">*</span>eur = thb / <span class="nm">38.2</span>;
+    <span class="op">*</span>jpy = thb * <span class="nm">4.2</span>;
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">double</span> thb = <span class="nm">1000.0</span>;
+    <span class="kw">double</span> usd, eur, jpy;
+
+    <span class="fn">convert</span>(thb, <span class="op">&amp;</span>usd, <span class="op">&amp;</span>eur, <span class="op">&amp;</span>jpy);
+
+    <span class="fn">printf</span>(<span class="st">"THB %.2f =\n"</span>, thb);
+    <span class="fn">printf</span>(<span class="st">"  USD %.2f\n"</span>, usd);
+    <span class="fn">printf</span>(<span class="st">"  EUR %.2f\n"</span>, eur);
+    <span class="fn">printf</span>(<span class="st">"  JPY %.2f\n"</span>, jpy);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 9 — เชื่อมทุก Concept ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · ภาพรวม</div>
+    <div class="slide-h1">Array + Function + Pointer — <em>ครบทุก Concept</em></div>
+    <div class="slide-lead">โปรแกรมนี้ใช้ทุกอย่างที่เรียนมา — Array เก็บข้อมูล, Function แยก logic, Pointer คืนหลายค่า</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">Pattern: Array + Function + Pointer</div>
+          <div class="box-body" style="font-family:var(--mono);font-size:12px;line-height:2.1;color:var(--dim)">
+            <span style="color:var(--cam)">void</span> analyze(<br>
+            &nbsp;&nbsp;<span style="color:#9effe3">int arr[]</span>, <span style="color:#9effe3">int n</span>,  <span style="color:#546e7a">// Array input</span><br>
+            &nbsp;&nbsp;<span style="color:var(--cam)">int *min</span>, <span style="color:var(--cam)">int *max</span>   <span style="color:#546e7a">// Pointer output</span><br>
+            )<br><br>
+            เรียก: <code>analyze(data, 5, &lo, &hi)</code>
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">โปรแกรมวิเคราะห์อุณหภูมิ</div>
+        <div class="code"><span class="kw">void</span> <span class="fn">analyze</span>(<span class="kw">float</span> arr[], <span class="kw">int</span> n,
+             <span class="kw">float</span> <span class="op">*</span>mn, <span class="kw">float</span> <span class="op">*</span>mx,
+             <span class="kw">float</span> <span class="op">*</span>avg) {
+    <span class="kw">float</span> sum = <span class="nm">0</span>; <span class="kw">int</span> i;
+    <span class="op">*</span>mn = <span class="op">*</span>mx = arr[<span class="nm">0</span>];
+    <span class="kw">for</span> (i=<span class="nm">0</span>; i&lt;n; i++) {
+        sum += arr[i];
+        <span class="kw">if</span> (arr[i] &lt; <span class="op">*</span>mn) <span class="op">*</span>mn = arr[i];
+        <span class="kw">if</span> (arr[i] &gt; <span class="op">*</span>mx) <span class="op">*</span>mx = arr[i];
+    }
+    <span class="op">*</span>avg = sum / n;
+}
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">float</span> temp[] = {<span class="nm">32.5</span>,<span class="nm">35.1</span>,<span class="nm">29.8</span>,
+                     <span class="nm">38.2</span>,<span class="nm">31.0</span>};
+    <span class="kw">float</span> lo, hi, av;
+    <span class="fn">analyze</span>(temp, <span class="nm">5</span>, <span class="op">&amp;</span>lo, <span class="op">&amp;</span>hi, <span class="op">&amp;</span>av);
+    <span class="fn">printf</span>(<span class="st">"Min:%.1f Max:%.1f Avg:%.1f"</span>,
+           lo, hi, av);
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 10 — Think! ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 5 · Think!</div>
+    <div class="slide-h1">คิดก่อน <em>เขียน</em></div>
+    <div class="slide-lead">Trace ในหัว — pointer เป็น concept ที่ต้องคิดเป็นภาพ</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">1. ผลลัพธ์คืออะไร?<br>
+          <code>int x=5; int *p=&amp;x; *p=10; printf("%d",x);</code></div>
+          <div class="think-hint">💡 *p=10 แก้ค่าที่ p ชี้อยู่ คือ x นั่นเอง</div>
+        </div>
+        <div class="think">
+          <div class="think-q">2. <code>int *p = NULL; *p = 5;</code> จะเกิดอะไร?</div>
+          <div class="think-hint">💡 NULL = address 0 — dereference NULL คือ segfault crash ทันที</div>
+        </div>
+        <div class="think">
+          <div class="think-q">3. <code>int arr[]={1,2,3}; int *p=arr; p++;</code> ตอนนี้ <code>*p</code> คือ?</div>
+          <div class="think-hint">💡 p เริ่มชี้ arr[0] พอ p++ จะชี้ arr[1] = 2</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">4. function swap ด้านล่างทำงานได้จริงไหม?<br>
+          <code>void swap(int *a, int *b) {</code><br>
+          <code>&nbsp;&nbsp;int t=*a; *a=*b; *b=t;</code><br>
+          <code>}</code><br>
+          แล้ว <code>swap(&x, &y)</code> จะ swap x กับ y ได้ไหม?</div>
+          <div class="think-hint">💡 ได้จริง! *a และ *b เข้าถึงตัวแปร x, y จริงๆ ผ่าน pointer</div>
+        </div>
+        <div class="think">
+          <div class="think-q">5. ทำไม <code>scanf("%d", n)</code> (ไม่มี &amp;) ถึง crash?</div>
+          <div class="think-hint">💡 ส่งค่า n ไปแทน address — scanf จะพยายาม dereference ค่า n เหมือน address → crash</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 11 — โจทย์ Trace ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · โจทย์ Trace</div>
+    <div class="slide-h1">โจทย์ <em>อ่าน code</em> ทายผลลัพธ์</div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — Output คืออะไร?</div>
+      <div class="code" style="margin-bottom:10px"><span class="kw">int</span> a=<span class="nm">1</span>, b=<span class="nm">2</span>;
+<span class="kw">int</span> <span class="op">*</span>p = <span class="op">&amp;</span>a;
+<span class="op">*</span>p = <span class="nm">10</span>;
+p = <span class="op">&amp;</span>b;
+<span class="op">*</span>p = <span class="nm">20</span>;
+<span class="fn">printf</span>(<span class="st">"%d %d"</span>, a, b);</div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" onclick="pickMC('mc1',0,2,'*p=10 แก้ a→10, p=&b แล้ว *p=20 แก้ b→20 ดังนั้น a=10 b=20 ✓')"><span class="mc-ltr">A</span> 1 2</div>
+        <div class="mc-opt" onclick="pickMC('mc1',1,2,'*p=10 แก้ a→10, p=&b แล้ว *p=20 แก้ b→20 ดังนั้น a=10 b=20 ✓')"><span class="mc-ltr">B</span> 10 2</div>
+        <div class="mc-opt" onclick="pickMC('mc1',2,2,'*p=10 แก้ a→10, p=&b แล้ว *p=20 แก้ b→20 ดังนั้น a=10 b=20 ✓')"><span class="mc-ltr">C</span> 10 20</div>
+        <div class="mc-opt" onclick="pickMC('mc1',3,2,'*p=10 แก้ a→10, p=&b แล้ว *p=20 แก้ b→20 ดังนั้น a=10 b=20 ✓')"><span class="mc-ltr">D</span> 1 20</div>
+      </div>
+      <div class="ex-feedback" id="mc1-fb"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — Output คืออะไร?</div>
+      <div class="code" style="margin-bottom:10px"><span class="kw">int</span> arr[]={<span class="nm">5</span>,<span class="nm">10</span>,<span class="nm">15</span>};
+<span class="kw">int</span> <span class="op">*</span>p = arr;
+<span class="fn">printf</span>(<span class="st">"%d "</span>, <span class="op">*</span>p);
+p++;
+<span class="fn">printf</span>(<span class="st">"%d "</span>, <span class="op">*</span>p);
+<span class="fn">printf</span>(<span class="st">"%d"</span>, <span class="op">*</span>(p+<span class="nm">1</span>));</div>
+      <div class="mc-opts" id="mc2">
+        <div class="mc-opt" onclick="pickMC('mc2',0,1,'p=arr[0]=5, p++ → arr[1]=10, *(p+1)=arr[2]=15 → "5 10 15" ✓')"><span class="mc-ltr">A</span> 5 5 10</div>
+        <div class="mc-opt" onclick="pickMC('mc2',1,1,'p=arr[0]=5, p++ → arr[1]=10, *(p+1)=arr[2]=15 → "5 10 15" ✓')"><span class="mc-ltr">B</span> 5 10 15</div>
+        <div class="mc-opt" onclick="pickMC('mc2',2,1,'p=arr[0]=5, p++ → arr[1]=10, *(p+1)=arr[2]=15 → "5 10 15" ✓')"><span class="mc-ltr">C</span> 10 15 20</div>
+        <div class="mc-opt" onclick="pickMC('mc2',3,1,'p=arr[0]=5, p++ → arr[1]=10, *(p+1)=arr[2]=15 → "5 10 15" ✓')"><span class="mc-ltr">D</span> 5 15 10</div>
+      </div>
+      <div class="ex-feedback" id="mc2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 12 — โจทย์ Fill-in ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · โจทย์เติมคำ</div>
+    <div class="slide-h1">โจทย์ <em>เติมคำ</em></div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — ประกาศ Pointer</div>
+      <div class="ex-q">ประกาศ pointer ชื่อ <code>ptr</code> ที่ชี้ไปที่ int และให้ชี้ที่ตัวแปร <code>num</code><br>
+      เติมในบรรทัดเดียว</div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in1" placeholder="int *ptr = ..." type="text">
+        <button class="ex-btn" onclick="checkFill('in1',
+          'int *ptr = &num;',
+          ['int *ptr = &num','int* ptr = &num;','int* ptr = &num'],
+          ['int ptr = &num;','int *ptr = num;'],
+          'ถูก! int *ptr ประกาศ pointer, = &num ให้ชี้ที่ num',
+          'ต้องมี * ในการประกาศ และใช้ & เพื่อเอา address ของ num')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — Pass by Reference</div>
+      <div class="ex-q">เติม function signature ให้ function <code>triple</code> คูณ 3 ค่าตัวแปรภายนอกได้จริง<br>
+      <code>void triple(___ n) { *n *= 3; }</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in2" placeholder="parameter type" type="text">
+        <button class="ex-btn" onclick="checkFill('in2',
+          'int *',
+          ['int*','int * '],
+          ['int'],
+          'ถูก! int * หมายถึง pointer ชี้ไปที่ int — function รับ address แล้วแก้ค่าผ่าน *n',
+          'ต้องเป็น pointer type (int *) ไม่ใช่ int ธรรมดา มิฉะนั้นแก้แค่ copy')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 3 — Pointer Arithmetic</div>
+      <div class="ex-q"><code>int arr[]={10,20,30}; int *p=arr;</code><br>
+      เติมให้พิมพ์ค่า 30 (element สุดท้าย) โดยใช้ pointer arithmetic<br>
+      <code>printf("%d", ___);</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in3" placeholder="*(p+?)" type="text">
+        <button class="ex-btn" onclick="checkFill('in3',
+          '*(p+2)',
+          ['*(p+2)','p[2]','arr[2]','*(arr+2)'],
+          ['*(p+3)','p[3]'],
+          'ถูก! *(p+2) หรือ p[2] หรือ arr[2] ทุกแบบให้ค่า arr[2]=30',
+          'p ชี้ที่ arr[0]=10 ดังนั้น p+2 ชี้ที่ arr[2]=30')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 13 — สรุปจบ Course ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 5 · สรุปจบ Course</div>
+    <div class="slide-h1">🎉 จบ Course <em>ภาษา C แล้ว!</em></div>
+    <div class="slide-lead">ทบทวน concept ทั้งหมดที่เรียนมา — ทุกอย่างเชื่อมกัน</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="steps">
+          <div class="step"><div class="step-n ok">1</div><div class="step-body"><strong>พื้นฐาน C</strong> — Variables, Types, I/O, Operators<small>รากฐานทุกอย่างอยู่ที่นี่</small></div></div>
+          <div class="step"><div class="step-n ok">1.5</div><div class="step-body"><strong>Operator Precedence</strong> — ลำดับและวงเล็บ<small>เข้าใจแล้วไม่มี bug แปลกๆ</small></div></div>
+          <div class="step"><div class="step-n ok">2</div><div class="step-body"><strong>Control Flow</strong> — if/else, switch, ternary<small>ควบคุมทิศทางโปรแกรม</small></div></div>
+          <div class="step"><div class="step-n ok">3</div><div class="step-body"><strong>Loop</strong> — for, while, do-while, pattern 5 แบบ<small>ทำซ้ำอัตโนมัติ</small></div></div>
+          <div class="step"><div class="step-n ok">4</div><div class="step-body"><strong>Array &amp; Function</strong> — เก็บหลายตัว แยก logic<small>โปรแกรมเป็นระเบียบ reuse ได้</small></div></div>
+          <div class="step"><div class="step-n ok">5</div><div class="step-body"><strong>Pointer</strong> — address, &amp; *, pass by reference<small>เข้าใจ C ระดับ memory แล้ว</small></div></div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🚀 ขั้นต่อไป</div>
+          <div class="box-body">
+            <strong>String</strong> — char array + string.h functions<br>
+            <strong>Struct</strong> — รวมหลาย type ไว้ในชื่อเดียว<br>
+            <strong>File I/O</strong> — อ่าน/เขียนไฟล์<br>
+            <strong>Dynamic Memory</strong> — malloc, free<br>
+            <strong>Data Structures</strong> — Linked List, Stack, Queue
+          </div>
+        </div>
+        <div class="exercise">
+          <div class="ex-label">🏆 Final Challenge</div>
+          <div class="ex-q" style="color:#dde3f0">เขียนโปรแกรมรับคะแนนสอบ n วิชา (n รับจาก user) เก็บใน array แล้วเรียก function:<br>
+          1. คำนวณค่าเฉลี่ย<br>
+          2. หาสูงสุด+ต่ำสุด (คืนผ่าน pointer)<br>
+          3. แสดงเกรด A–F ทุกวิชา<br>
+          4. บอกว่า "ผ่าน" หรือ "ตก"<br><br>
+          ใช้ครบ: Array + Function + Pointer + Loop + if-else</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 5 — Pointer</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover','Memory Address','Pointer คืออะไร','& และ *',
+  'Pass by Reference','Pointer + Array','Pointer Arithmetic',
+  'const และ NULL','Use Case แลกเงิน','Array+Function+Pointer',
+  'Think!','โจทย์ Trace','โจทย์เติมคำ','สรุปจบ Course'
+];
+</script>
+<script src="slide-engine.js"></script>
+</body>
+</html>
