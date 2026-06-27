@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 3 — Stack | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+/* Chapter 3 accent — crimson */
+:root { --ca:#a01d3a; --cal:#fce7ec; --cam:#d45f7a; }
+
+.stack-diagram {
+  font-family: var(--mono); font-size: 12px;
+  background: var(--ink); border-radius: 10px;
+  padding: 16px 20px; margin-bottom: 14px; color: #8891a8;
+}
+.stack-tower { display:flex; flex-direction:column-reverse; gap:6px; width:140px; }
+.stack-cell {
+  height:38px; background:#1e2538; border:1px solid #2a3050; border-radius:6px;
+  display:flex; align-items:center; justify-content:center; font-size:13px;
+  font-weight:600; color:#9effe3;
+}
+.stack-cell.top { border-color:var(--cam); color:var(--cam); background:rgba(212,95,122,.12); }
+.stack-top-label { font-size:10px; color:var(--cam); margin-bottom:4px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════════ SLIDE 0 — COVER ════════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Data Structures</div>
+        <div class="cover-title">บทที่ 3<br><em>Stack</em></div>
+        <div class="cover-subtitle">โครงสร้างแบบ LIFO (Last In First Out) — เข้าทีหลังออกก่อน เหมือนกองจานในร้านก๋วยเตี๋ยว ใบบนสุดถูกหยิบใช้ก่อนเสมอ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>LIFO — Last In First Out</div>
+          <div class="topic-row"><div class="topic-dot"></div>push / pop / peek</div>
+          <div class="topic-row"><div class="topic-dot"></div>Implementation ด้วย Array</div>
+          <div class="topic-row"><div class="topic-dot"></div>Implementation ด้วย Linked List</div>
+          <div class="topic-row"><div class="topic-dot"></div>Application: เช็ควงเล็บ + คำนวณ Postfix</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">03</div>
+        <div class="cover-badge">CHAPTER 3</div>
+        <div class="cover-slides-count">11 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 1 — LIFO คืออะไร ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · เกริ่นนำ</div>
+    <div class="slide-h1">LIFO — <em>Last In, First Out</em></div>
+    <div class="slide-lead">Stack เข้าออกได้ที่ปลายเดียว เรียกว่า "top" — ของที่ใส่ทีหลังจะถูกหยิบออกก่อนเสมอ เหมือนกองหนังสือบนโต๊ะ</div>
+
+    <div class="split">
+      <div class="split-col">
+        <table class="kv-table">
+          <thead><tr><th>Operation</th><th>ทำอะไร</th></tr></thead>
+          <tbody>
+            <tr><td>push(x)</td><td>ใส่ x ไว้บนสุด (top)</td></tr>
+            <tr><td>pop()</td><td>เอาตัวบนสุดออก และคืนค่ามัน</td></tr>
+            <tr><td>peek() / top()</td><td>ดูค่าบนสุด แต่ไม่เอาออก</td></tr>
+            <tr><td>isEmpty()</td><td>เช็คว่า stack ว่างไหม</td></tr>
+          </tbody>
+        </table>
+        <div class="box green">
+          <div class="box-title">💡 ตัวอย่างในชีวิตจริง</div>
+          <div class="box-body">กองจานในร้านก๋วยเตี๋ยว — ล้างจานวางซ้อนกัน หยิบใช้จากบนสุดก่อนเสมอ, ปุ่ม Undo (Ctrl+Z) ในโปรแกรม, ปุ่ม Back ของเบราว์เซอร์</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="stack-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:10px;letter-spacing:.5px">STACK หลัง push(10), push(20), push(30)</div>
+          <div class="stack-top-label">← top</div>
+          <div class="stack-tower">
+            <div class="stack-cell">10</div>
+            <div class="stack-cell">20</div>
+            <div class="stack-cell top">30</div>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:#546e7a">pop() จะได้ 30 ก่อน (ตัวที่เข้าหลังสุด)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 2 — Stack ด้วย Array ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Implementation</div>
+    <div class="slide-h1">Stack ด้วย <em>Array</em> — ง่ายและเร็ว</div>
+    <div class="slide-lead">ใช้ array + ตัวแปร top เก็บ index บนสุด — push/pop แค่ขยับ top แล้วอ่าน/เขียนค่าที่ index นั้น เร็ว O(1) ทุก operation</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">นิยาม Stack ด้วย Array</div>
+        <div class="code"><span class="kw">#define</span> MAXSIZE <span class="nm">100</span>
+<span class="kw">int</span> stack[MAXSIZE];
+<span class="kw">int</span> top = <span class="op">-</span><span class="nm">1</span>;   <span class="cm">/* -1 หมายถึง stack ว่าง */</span>
+
+<span class="kw">void</span> <span class="fn">push</span>(<span class="kw">int</span> val) {
+    <span class="kw">if</span> (top == MAXSIZE <span class="op">-</span> <span class="nm">1</span>) {
+        <span class="fn">printf</span>(<span class="st">"Stack overflow!\n"</span>);
+        <span class="kw">return</span>;
+    }
+    top++;
+    stack[top] = val;
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">pop และ peek</div>
+        <div class="code"><span class="kw">int</span> <span class="fn">pop</span>() {
+    <span class="kw">if</span> (top == <span class="op">-</span><span class="nm">1</span>) {
+        <span class="fn">printf</span>(<span class="st">"Stack underflow!\n"</span>);
+        <span class="kw">return</span> <span class="op">-</span><span class="nm">1</span>;
+    }
+    <span class="kw">return</span> stack[top<span class="op">--</span>];  <span class="cm">/* อ่านค่าก่อน แล้วลด top */</span>
+}
+
+<span class="kw">int</span> <span class="fn">peek</span>() {
+    <span class="kw">if</span> (top == <span class="op">-</span><span class="nm">1</span>) <span class="kw">return</span> <span class="op">-</span><span class="nm">1</span>;
+    <span class="kw">return</span> stack[top];      <span class="cm">/* อ่านอย่างเดียว ไม่ลด top */</span>
+}
+
+<span class="kw">int</span> <span class="fn">isEmpty</span>() { <span class="kw">return</span> top == <span class="op">-</span><span class="nm">1</span>; }</div>
+        <div class="box amber">
+          <div class="box-title">⚠️ Stack Overflow / Underflow</div>
+          <div class="box-body">push เกิน MAXSIZE = overflow, pop ตอน stack ว่าง = underflow ต้องเช็คทุกครั้งก่อนทำ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 3 — Stack ด้วย Linked List ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Implementation</div>
+    <div class="slide-h1">Stack ด้วย <em>Linked List</em> — ไม่จำกัดขนาด</div>
+    <div class="slide-lead">push ที่หัวลิสต์ (insertHead) คือ push ของ stack, pop ที่หัวลิสต์คือ pop ของ stack — ใช้ pattern จากบทที่ 1 ตรงๆ</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">push = insertHead</div>
+        <div class="code"><span class="kw">struct</span> Node { <span class="kw">int</span> data; <span class="kw">struct</span> Node <span class="op">*</span>next; };
+<span class="kw">struct</span> Node <span class="op">*</span>top = <span class="nm">NULL</span>;
+
+<span class="kw">void</span> <span class="fn">push</span>(<span class="kw">int</span> val) {
+    <span class="kw">struct</span> Node <span class="op">*</span>n =
+        (<span class="kw">struct</span> Node <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> Node));
+    n<span class="op">-&gt;</span>data = val;
+    n<span class="op">-&gt;</span>next = top;   <span class="cm">/* ชี้ไปที่ top เดิม */</span>
+    top = n;          <span class="cm">/* top ใหม่คือโหนดนี้ */</span>
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">pop = deleteHead + free</div>
+        <div class="code"><span class="kw">int</span> <span class="fn">pop</span>() {
+    <span class="kw">if</span> (top == <span class="nm">NULL</span>) {
+        <span class="fn">printf</span>(<span class="st">"Stack underflow!\n"</span>);
+        <span class="kw">return</span> <span class="op">-</span><span class="nm">1</span>;
+    }
+    <span class="kw">struct</span> Node <span class="op">*</span>tmp = top;
+    <span class="kw">int</span> val = tmp<span class="op">-&gt;</span>data;
+    top = top<span class="op">-&gt;</span>next;   <span class="cm">/* ขยับ top ไปตัวถัดไป */</span>
+    <span class="fn">free</span>(tmp);         <span class="cm">/* คืน memory โหนดเดิม */</span>
+    <span class="kw">return</span> val;
+}</div>
+        <div class="box green">
+          <div class="box-title">💡 เทียบกับ Array</div>
+          <div class="box-body">Array เร็วกว่าเล็กน้อยแต่ขนาด fixed, Linked List ไม่จำกัดขนาดแต่ต้อง malloc/free ทุกครั้ง — เลือกตามสถานการณ์</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 4 — เช็ควงเล็บ ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Application</div>
+    <div class="slide-h1">เช็ควงเล็บถูกคู่ไหม — <em>Balanced Parentheses</em></div>
+    <div class="slide-lead">โจทย์คลาสสิกที่สุดของ Stack — เจอวงเล็บเปิด push เข้า stack, เจอวงเล็บปิด pop ออกมาเทียบว่าคู่กันไหม</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">isBalanced — เช็คด้วย Stack</div>
+        <div class="code"><span class="kw">int</span> <span class="fn">isBalanced</span>(<span class="kw">char</span> <span class="op">*</span>expr) {
+    <span class="kw">int</span> i;
+    top = <span class="op">-</span><span class="nm">1</span>;  <span class="cm">/* reset stack */</span>
+    <span class="kw">for</span> (i = <span class="nm">0</span>; expr[i] != <span class="st">'\0'</span>; i++) {
+        <span class="kw">if</span> (expr[i] == <span class="st">'('</span> || expr[i] == <span class="st">'{'</span>)
+            <span class="fn">push</span>(expr[i]);
+        <span class="kw">else</span> <span class="kw">if</span> (expr[i] == <span class="st">')'</span> || expr[i] == <span class="st">'}'</span>) {
+            <span class="kw">if</span> (<span class="fn">isEmpty</span>()) <span class="kw">return</span> <span class="nm">0</span>;  <span class="cm">/* ปิดเกิน */</span>
+            <span class="fn">pop</span>();
+        }
+    }
+    <span class="kw">return</span> <span class="fn">isEmpty</span>();  <span class="cm">/* ต้องว่างพอดี = คู่ครบ */</span>
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="stack-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:10px">Trace: "{(a+b)}"</div>
+          <div style="font-size:11px;color:#8891a8;line-height:2.2">
+            เจอ <span style="color:var(--cam)">{</span> → push → stack: [ { ]<br>
+            เจอ <span style="color:var(--cam)">(</span> → push → stack: [ { ( ]<br>
+            a, +, b → ไม่ทำอะไร<br>
+            เจอ <span style="color:var(--cam)">)</span> → pop → stack: [ { ]<br>
+            เจอ <span style="color:var(--cam)">}</span> → pop → stack: [ ]<br>
+            จบ string, stack ว่าง → <span style="color:#6fcf97">balanced ✓</span>
+          </div>
+        </div>
+        <div class="box red">
+          <div class="box-title">❌ กรณีที่ stack ไม่ว่างตอนจบ</div>
+          <div class="box-body">เช่น "((a)" — มี ( เหลือใน stack ตอนจบ string แปลว่าวงเล็บเปิดเกิน ไม่ balanced</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 5 — Postfix Evaluation ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Application</div>
+    <div class="slide-h1">คำนวณ Postfix — <em>เครื่องคิดเลขแบบ Stack</em></div>
+    <div class="slide-lead">Postfix (Reverse Polish) เขียน operator ไว้หลังเลข เช่น "3 4 +" คำนวณง่ายมากด้วย Stack — เจอเลข push, เจอ operator pop 2 ตัวมาคำนวณแล้ว push ผลลัพธ์กลับ</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">evalPostfix — "3 4 + 2 *" = 14</div>
+        <div class="code"><span class="kw">int</span> <span class="fn">evalPostfix</span>(<span class="kw">char</span> tokens[][<span class="nm">5</span>], <span class="kw">int</span> n) {
+    top = <span class="op">-</span><span class="nm">1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+        <span class="kw">if</span> (<span class="fn">isdigit</span>(tokens[i][<span class="nm">0</span>]))
+            <span class="fn">push</span>(<span class="fn">atoi</span>(tokens[i]));
+        <span class="kw">else</span> {
+            <span class="kw">int</span> b = <span class="fn">pop</span>();  <span class="cm">/* ตัวขวา pop ออกก่อน */</span>
+            <span class="kw">int</span> a = <span class="fn">pop</span>();  <span class="cm">/* ตัวซ้าย pop ทีหลัง */</span>
+            <span class="kw">if</span> (tokens[i][<span class="nm">0</span>]==<span class="st">'+'</span>) <span class="fn">push</span>(a+b);
+            <span class="kw">if</span> (tokens[i][<span class="nm">0</span>]==<span class="st">'*'</span>) <span class="fn">push</span>(a<span class="op">*</span>b);
+        }
+    }
+    <span class="kw">return</span> <span class="fn">pop</span>();   <span class="cm">/* ผลลัพธ์สุดท้ายอยู่บน stack */</span>
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="stack-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:10px">Trace: "3 4 + 2 *"</div>
+          <div style="font-size:11px;color:#8891a8;line-height:2.2">
+            push 3 → stack: [3]<br>
+            push 4 → stack: [3, 4]<br>
+            เจอ + → pop 4, pop 3, push 3+4=7 → stack: [7]<br>
+            push 2 → stack: [7, 2]<br>
+            เจอ * → pop 2, pop 7, push 7*2=14 → stack: [14]<br>
+            จบ → ผลลัพธ์ = <span style="color:#6fcf97">14</span>
+          </div>
+        </div>
+        <div class="box amber">
+          <div class="box-title">⚠️ ลำดับ pop สำคัญมากกับ - และ /</div>
+          <div class="box-body">pop ตัวแรกได้ b (ตัวขวา/ตัวหลัง), pop ตัวสองได้ a (ตัวซ้าย/ตัวก่อน) ต้องคำนวณ <code>a - b</code> ไม่ใช่ <code>b - a</code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 6 — Use Case ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Use Case</div>
+    <div class="slide-h1">🏦 <em>Use Case จริง</em> — Undo การโอนเงิน</div>
+    <div class="slide-lead">แอปธนาคารต้องยกเลิกธุรกรรมล่าสุดได้ — เก็บประวัติเป็น Stack เพื่อให้ "ตัวล่าสุด" อยู่บนสุดเสมอ แล้ว pop ออกเมื่อกด undo</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="usecase" style="border-left-color:var(--ca)">
+          <div class="usecase-label" style="color:var(--ca)">โจทย์ระบบธนาคาร</div>
+          <div class="usecase-title">Undo ธุรกรรมล่าสุดด้วย Stack</div>
+          <div class="usecase-body">ทุกธุรกรรม push เข้า stack — กดปุ่ม Undo คือ pop ธุรกรรมล่าสุดออกมาแล้วย้อนผลของมัน</div>
+        </div>
+        <div class="box">
+          <div class="box-title">ทำไมต้องเป็น Stack ไม่ใช่ Queue</div>
+          <div class="box-body">Undo ต้องยกเลิก "รายการล่าสุดก่อนเสมอ" — ตรงกับ LIFO ของ Stack พอดี ถ้าใช้ Queue จะ undo รายการแรกสุดซึ่งผิดความหมาย</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">ระบบ Undo ธุรกรรม</div>
+        <div class="code"><span class="kw">struct</span> Txn { <span class="kw">char</span> type[<span class="nm">10</span>]; <span class="kw">double</span> amount; };
+<span class="kw">struct</span> Txn stack[<span class="nm">100</span>];
+<span class="kw">int</span> top = <span class="op">-</span><span class="nm">1</span>;
+
+<span class="kw">void</span> <span class="fn">doTransfer</span>(<span class="kw">double</span> amt) {
+    top++;
+    <span class="fn">strcpy</span>(stack[top].type, <span class="st">"transfer"</span>);
+    stack[top].amount = amt;
+    <span class="fn">printf</span>(<span class="st">"โอนเงิน %.2f บาท\n"</span>, amt);
+}
+
+<span class="kw">void</span> <span class="fn">undo</span>() {
+    <span class="kw">if</span> (top == <span class="op">-</span><span class="nm">1</span>) {
+        <span class="fn">printf</span>(<span class="st">"ไม่มีรายการให้ undo\n"</span>);
+        <span class="kw">return</span>;
+    }
+    <span class="fn">printf</span>(<span class="st">"ยกเลิก %s %.2f บาท\n"</span>,
+           stack[top].type, stack[top].amount);
+    top--;  <span class="cm">/* pop ออกจาก stack */</span>
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 7 — Think! ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 3 · Think!</div>
+    <div class="slide-h1">คิดก่อน <em>เขียน</em></div>
+    <div class="slide-lead">Stack เข้าใจง่ายแต่พลาดบ่อยตรง edge case (overflow/underflow) — ฝึก trace ให้คล่อง</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">1. push(1), push(2), push(3), pop(), pop() — เหลืออะไรบน stack?</div>
+          <div class="think-hint">💡 pop เอา 3 ออกก่อน แล้ว pop เอา 2 ออก เหลือแค่ 1 บน stack</div>
+        </div>
+        <div class="think">
+          <div class="think-q">2. ทำไม isBalanced ต้องเช็ค <code>isEmpty()</code> ทั้งตอนเจอวงเล็บปิด และตอนจบ string?</div>
+          <div class="think-hint">💡 เช็คตอนเจอ ) ป้องกันปิดเกิน (pop จาก stack ว่าง), เช็คตอนจบป้องกันเปิดเกิน (มีของเหลือใน stack)</div>
+        </div>
+        <div class="think">
+          <div class="think-q">3. evalPostfix ของ "5 1 2 + 4 * + 3 -" ผลลัพธ์คือเท่าไหร่?</div>
+          <div class="think-hint">💡 1+2=3, 3*4=12, 5+12=17, 17-3=14 — ลอง trace ทีละ token จะได้ 14</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">4. Stack ด้วย Array push เกิน MAXSIZE จะเกิดอะไร?</div>
+          <div class="think-hint">💡 Stack overflow — ถ้าไม่เช็คเงื่อนไขก่อน จะเขียนทับ memory นอก array (undefined behavior)</div>
+        </div>
+        <div class="think">
+          <div class="think-q">5. ทำไม push ของ Stack แบบ Linked List ใช้ pattern เดียวกับ insertHead ของบทที่ 1?</div>
+          <div class="think-hint">💡 เพราะ "top" ของ Stack ก็คือ "head" ของ Linked List นั่นเอง — push คือเพิ่มที่หัว, pop คือลบที่หัว</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 8 — โจทย์ Trace ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · โจทย์ Trace</div>
+    <div class="slide-h1">โจทย์ <em>อ่าน code</em> ทายผลลัพธ์</div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — ผลลัพธ์ของลำดับ operation นี้คือ?</div>
+      <div class="code" style="margin-bottom:10px"><span class="fn">push</span>(<span class="nm">5</span>); <span class="fn">push</span>(<span class="nm">10</span>); <span class="fn">push</span>(<span class="nm">15</span>);
+<span class="fn">printf</span>(<span class="st">"%d "</span>, <span class="fn">pop</span>());
+<span class="fn">printf</span>(<span class="st">"%d "</span>, <span class="fn">peek</span>());</div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" onclick="pickMC('mc1',0,2,'pop() เอา 15 ออก (ตัวบนสุด) แล้ว peek() ดูตัวบนสุดที่เหลือคือ 10 โดยไม่เอาออก ผลคือ 15 10 ✓')"><span class="mc-ltr">A</span> 5 10</div>
+        <div class="mc-opt" onclick="pickMC('mc1',1,2,'pop() เอา 15 ออก (ตัวบนสุด) แล้ว peek() ดูตัวบนสุดที่เหลือคือ 10 โดยไม่เอาออก ผลคือ 15 10 ✓')"><span class="mc-ltr">B</span> 15 15</div>
+        <div class="mc-opt" onclick="pickMC('mc1',2,2,'pop() เอา 15 ออก (ตัวบนสุด) แล้ว peek() ดูตัวบนสุดที่เหลือคือ 10 โดยไม่เอาออก ผลคือ 15 10 ✓')"><span class="mc-ltr">C</span> 15 10</div>
+        <div class="mc-opt" onclick="pickMC('mc1',3,2,'pop() เอา 15 ออก (ตัวบนสุด) แล้ว peek() ดูตัวบนสุดที่เหลือคือ 10 โดยไม่เอาออก ผลคือ 15 10 ✓')"><span class="mc-ltr">D</span> 5 5</div>
+      </div>
+      <div class="ex-feedback" id="mc1-fb"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — isBalanced("(a+[b*c])") คืนค่าอะไร?</div>
+      <div class="code" style="margin-bottom:10px"><span class="cm">/* วงเล็บ: ( [ ] ) — เปิด-ปิดครบคู่ตามลำดับ */</span>
+<span class="fn">isBalanced</span>(<span class="st">"(a+[b*c])"</span>);</div>
+      <div class="mc-opts" id="mc2">
+        <div class="mc-opt" onclick="pickMC('mc2',0,1,'( เปิด, [ เปิด, ] ปิดคู่กับ [ ล่าสุด, ) ปิดคู่กับ ( ที่เหลือ stack ว่างพอดีตอนจบ = balanced (คืนค่าจริง/1) ✓')"><span class="mc-ltr">A</span> 1 (balanced)</div>
+        <div class="mc-opt" onclick="pickMC('mc2',1,1,'( เปิด, [ เปิด, ] ปิดคู่กับ [ ล่าสุด, ) ปิดคู่กับ ( ที่เหลือ stack ว่างพอดีตอนจบ = balanced (คืนค่าจริง/1) ✓')"><span class="mc-ltr">B</span> 0 (ไม่ balanced)</div>
+        <div class="mc-opt" onclick="pickMC('mc2',2,1,'( เปิด, [ เปิด, ] ปิดคู่กับ [ ล่าสุด, ) ปิดคู่กับ ( ที่เหลือ stack ว่างพอดีตอนจบ = balanced (คืนค่าจริง/1) ✓')"><span class="mc-ltr">C</span> -1 (error)</div>
+        <div class="mc-opt" onclick="pickMC('mc2',3,1,'( เปิด, [ เปิด, ] ปิดคู่กับ [ ล่าสุด, ) ปิดคู่กับ ( ที่เหลือ stack ว่างพอดีตอนจบ = balanced (คืนค่าจริง/1) ✓')"><span class="mc-ltr">D</span> วนไม่จบ</div>
+      </div>
+      <div class="ex-feedback" id="mc2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 9 — โจทย์ Fill-in ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · โจทย์เติมคำ</div>
+    <div class="slide-h1">โจทย์ <em>เติมคำ</em></div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — push ด้วย Array</div>
+      <div class="ex-q">เติมบรรทัดที่ขาดไปของ push (Array-based) ก่อนจะใส่ค่าลงที่ stack[top]<br>
+      <code>void push(int val) { ___; stack[top] = val; }</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in1" placeholder="top..." type="text">
+        <button class="ex-btn" onclick="checkFill('in1',
+          'top++',
+          ['top++;','top += 1','top = top + 1'],
+          ['top--','top--;'],
+          'ถูก! ต้องขยับ top ขึ้นก่อนใส่ค่าใหม่ลงไปที่ตำแหน่งนั้น',
+          'ต้องเพิ่ม top ก่อน (top++) ไม่ใช่ลด — ลดจะเป็น pop ไม่ใช่ push')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — เช็ค Stack ว่าง</div>
+      <div class="ex-q">เติมเงื่อนไขเช็คว่า stack ว่างหรือไม่ (แบบ array, top เริ่มที่ -1)<br>
+      <code>int isEmpty() { return ___; }</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in2" placeholder="top == ..." type="text">
+        <button class="ex-btn" onclick="checkFill('in2',
+          'top == -1',
+          ['top==-1'],
+          ['top == 0','top > 0'],
+          'ถูก! top เริ่มต้นที่ -1 หมายถึง ยังไม่มีของใน stack เลย',
+          'top เริ่มต้นที่ -1 ไม่ใช่ 0 — top==0 หมายถึงมี 1 ตัวอยู่ใน stack (ตำแหน่ง index 0)')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 3 — Postfix Evaluation</div>
+      <div class="ex-q">ตอนเจอ operator ใน evalPostfix ต้อง pop 2 ค่ามาคำนวณ เติมลำดับการ pop ที่ถูกต้อง (ตัวไหน pop ก่อน)<br>
+      ถ้า stack คือ [..., a, b] (b อยู่บนสุด) แล้ว <code>int b = pop(); int a = ___;</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in3" placeholder="pop()" type="text">
+        <button class="ex-btn" onclick="checkFill('in3',
+          'pop()',
+          ['pop();'],
+          ['peek()','b'],
+          'ถูก! pop ตัวที่สองได้ a (ตัวที่ถูก push ก่อน b)',
+          'ต้อง pop() อีกครั้งเพื่อเอาค่า a ออกจาก stack ไม่ใช่ peek (เพราะต้องเอาออกจริง)')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 10 — Summary ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 3 · สรุป</div>
+    <div class="slide-h1">เก่ง Stack <em>แล้ว!</em></div>
+    <div class="slide-lead">เข้าใจ LIFO, implementation 2 แบบ และ application จริง — ขั้นต่อไปคือ Queue ซึ่งตรงข้ามกับ Stack</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="steps">
+          <div class="step"><div class="step-n ok">1</div><div class="step-body"><strong>LIFO</strong> — เข้าทีหลังออกก่อน<small>push/pop/peek ที่ปลายเดียว (top)</small></div></div>
+          <div class="step"><div class="step-n ok">2</div><div class="step-body"><strong>Array implementation</strong> — top index<small>เร็ว แต่ขนาด fixed</small></div></div>
+          <div class="step"><div class="step-n ok">3</div><div class="step-body"><strong>Linked List implementation</strong> — push=insertHead<small>ไม่จำกัดขนาด</small></div></div>
+          <div class="step"><div class="step-n ok">4</div><div class="step-body"><strong>Application</strong> — เช็ควงเล็บ, คำนวณ Postfix<small>ใช้จริงใน compiler/parser</small></div></div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🚀 บทต่อไป</div>
+          <div class="box-body">
+            <strong>บทที่ 4 — Queue</strong><br>
+            โครงสร้างแบบ FIFO (First In First Out) — เข้าก่อนออกก่อน ตรงข้ามกับ Stack
+          </div>
+        </div>
+        <div class="exercise">
+          <div class="ex-label">🏆 Challenge ก่อนไปบทหน้า</div>
+          <div class="ex-q" style="color:#dde3f0">เขียนโปรแกรมรับนิพจน์ postfix จาก user (คั่นด้วย space เช่น "3 4 + 2 *") แล้วคำนวณผลลัพธ์ด้วย Stack รองรับ + - * / ครบ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 3 — Stack</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover','LIFO คืออะไร','Stack ด้วย Array','Stack ด้วย Linked List',
+  'เช็ควงเล็บ','คำนวณ Postfix','Use Case Undo',
+  'Think!','โจทย์ Trace','โจทย์เติมคำ','สรุป'
+];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

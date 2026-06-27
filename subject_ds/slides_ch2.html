@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 2 — Doubly / Circular Linked List | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+/* Chapter 2 accent — violet */
+:root { --ca:#5b3aa0; --cal:#f0eafc; --cam:#9272d4; }
+
+.mem-diagram {
+  font-family: var(--mono); font-size: 12px;
+  background: var(--ink); border-radius: 10px;
+  padding: 16px 20px; margin-bottom: 14px; color: #8891a8;
+  overflow-x: auto;
+}
+.node-row { display:flex; align-items:center; gap:0; flex-wrap:wrap; }
+.node-box3 {
+  display:flex; border:1px solid #2a3050; border-radius:6px; overflow:hidden;
+  flex-shrink:0;
+}
+.node-prev, .node-data, .node-next {
+  display:flex; align-items:center; justify-content:center;
+  width:40px; height:38px; font-size:12px; font-weight:600;
+}
+.node-prev { background:#161b2c; color:var(--cam); font-size:10px; }
+.node-data { background:#1e2538; color:#9effe3; }
+.node-next { background:#161b2c; color:var(--cam); font-size:10px; }
+.node-arrow2 { color:var(--cam); font-size:15px; margin:0 5px; display:flex; flex-direction:column; align-items:center; line-height:1.1; }
+.node-null { font-family:var(--mono); font-size:11px; color:#546e7a; margin-left:6px; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════════ SLIDE 0 — COVER ════════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Data Structures</div>
+        <div class="cover-title">บทที่ 2<br><em>Doubly / Circular List</em></div>
+        <div class="cover-subtitle">เพิ่ม pointer prev ให้เดินถอยหลังได้ และเชื่อมหัว-ท้ายให้เป็นวงกลม — ใช้จริงในระบบ undo/redo และ playlist เพลง</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Doubly Linked List — prev + next</div>
+          <div class="topic-row"><div class="topic-dot"></div>Insert/Delete แบบสองทิศทาง</div>
+          <div class="topic-row"><div class="topic-dot"></div>เดินถอยหลังจาก tail</div>
+          <div class="topic-row"><div class="topic-dot"></div>Circular Linked List</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">02</div>
+        <div class="cover-badge">CHAPTER 2</div>
+        <div class="cover-slides-count">11 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 1 — ทำไมต้องมี prev ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · เกริ่นนำ</div>
+    <div class="slide-h1">ทำไมต้องมี <em>prev pointer</em></div>
+    <div class="slide-lead">Singly Linked List เดินได้ทางเดียว (ไปข้างหน้าเท่านั้น) ถ้าอยากเดินถอยหลังต้องเริ่มจาก head ใหม่ทุกครั้ง — Doubly List เก็บ pointer ย้อนกลับไว้เลย</div>
+
+    <div class="split">
+      <div class="split-col">
+        <table class="kv-table">
+          <thead><tr><th></th><th>Singly</th><th>Doubly</th></tr></thead>
+          <tbody>
+            <tr><td>เดินหน้า</td><td>✅ next</td><td>✅ next</td></tr>
+            <tr><td>เดินถอยหลัง</td><td>❌ ทำไม่ได้ตรง</td><td>✅ prev</td></tr>
+            <tr><td>ลบโหนดตัวเอง</td><td>ต้องรู้ prev ก่อน (เดินหา)</td><td>รู้ prev ทันที</td></tr>
+            <tr><td>memory ต่อโหนด</td><td>1 pointer (next)</td><td>2 pointer (prev+next)</td></tr>
+          </tbody>
+        </table>
+        <div class="box green">
+          <div class="box-title">💡 Trade-off</div>
+          <div class="box-body">Doubly List ใช้ memory มากกว่าเล็กน้อย (pointer เพิ่ม 1 ตัวต่อโหนด) แต่แลกกับความสะดวกเดินสองทาง — คุ้มมากเวลาต้อง undo/redo หรือเลื่อนซ้าย-ขวา</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="mem-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:14px">DOUBLY: NULL ⟷ 10 ⟷ 20 ⟷ 30 ⟷ NULL</div>
+          <div class="node-row">
+            <div class="node-null">NULL ⟷</div>
+            <div class="node-box3"><div class="node-prev">●</div><div class="node-data">10</div><div class="node-next">●</div></div>
+            <div class="node-arrow2">⟷</div>
+            <div class="node-box3"><div class="node-prev">●</div><div class="node-data">20</div><div class="node-next">●</div></div>
+            <div class="node-arrow2">⟷</div>
+            <div class="node-box3"><div class="node-prev">●</div><div class="node-data">30</div><div class="node-next">●</div></div>
+            <div class="node-null">⟷ NULL</div>
+          </div>
+          <div style="margin-top:12px;font-size:11px;color:#546e7a">แต่ละโหนดมี prev (ชี้ก่อนหน้า) และ next (ชี้ถัดไป)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 2 — นิยาม struct ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · พื้นฐาน</div>
+    <div class="slide-h1">นิยาม Node — <em>เพิ่ม field prev</em></div>
+    <div class="slide-lead">ต่างจากบทที่ 1 แค่เพิ่ม pointer หนึ่งตัว — ทุก operation ต้องดูแล 2 pointer พร้อมกันเสมอ</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">นิยาม struct DNode</div>
+        <div class="code"><span class="kw">struct</span> DNode {
+    <span class="kw">int</span> data;
+    <span class="kw">struct</span> DNode <span class="op">*</span>prev;  <span class="cm">/* ชี้โหนดก่อนหน้า */</span>
+    <span class="kw">struct</span> DNode <span class="op">*</span>next;  <span class="cm">/* ชี้โหนดถัดไป */</span>
+};
+
+<span class="kw">struct</span> DNode <span class="op">*</span>head = <span class="nm">NULL</span>;
+<span class="kw">struct</span> DNode <span class="op">*</span>tail = <span class="nm">NULL</span>;  <span class="cm">/* เก็บ tail ไว้เดินถอยหลังเร็ว */</span></div>
+        <div class="box amber">
+          <div class="box-title">⚠️ ทำไมต้องเก็บ tail ด้วย</div>
+          <div class="box-body">ถ้าไม่เก็บ tail ต้อง traverse จาก head ไปจนสุดทุกครั้งที่จะ insertTail หรือเดินถอยหลังจากท้ายลิสต์ — เก็บ tail ไว้ทำให้ insertTail เป็น O(1)</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">สร้างโหนดแรกด้วยมือ</div>
+        <div class="code"><span class="kw">struct</span> DNode <span class="op">*</span>n1 =
+    (<span class="kw">struct</span> DNode <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> DNode));
+n1<span class="op">-&gt;</span>data = <span class="nm">10</span>;
+n1<span class="op">-&gt;</span>prev = <span class="nm">NULL</span>;   <span class="cm">/* โหนดแรก ไม่มีก่อนหน้า */</span>
+n1<span class="op">-&gt;</span>next = <span class="nm">NULL</span>;   <span class="cm">/* ยังไม่มีโหนดถัดไป */</span>
+
+head = n1;
+tail = n1;          <span class="cm">/* มีโหนดเดียว head กับ tail คือตัวเดียวกัน */</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 3 — Insert at Tail ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Insert</div>
+    <div class="slide-h1">Insert at Tail — <em>O(1) เพราะมี tail</em></div>
+    <div class="slide-lead">มี tail แล้ว ไม่ต้อง traverse — ต่อโหนดใหม่ที่ tail ตรงๆ แล้วขยับ tail มาที่โหนดใหม่</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">insertTail — เชื่อม 2 ทิศทางให้ครบ</div>
+        <div class="code"><span class="kw">void</span> <span class="fn">insertTail</span>(<span class="kw">int</span> val) {
+    <span class="kw">struct</span> DNode <span class="op">*</span>n =
+        (<span class="kw">struct</span> DNode <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> DNode));
+    n<span class="op">-&gt;</span>data = val;
+    n<span class="op">-&gt;</span>next = <span class="nm">NULL</span>;
+
+    <span class="kw">if</span> (tail == <span class="nm">NULL</span>) {       <span class="cm">/* ลิสต์ว่าง */</span>
+        n<span class="op">-&gt;</span>prev = <span class="nm">NULL</span>;
+        head = tail = n;
+        <span class="kw">return</span>;
+    }
+    n<span class="op">-&gt;</span>prev = tail;       <span class="cm">/* 1. ใหม่ชี้กลับไปที่ tail เดิม */</span>
+    tail<span class="op">-&gt;</span>next = n;       <span class="cm">/* 2. tail เดิมชี้ไปข้างหน้าที่ใหม่ */</span>
+    tail = n;              <span class="cm">/* 3. ขยับ tail */</span>
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="mem-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:14px">insertTail(30) — ก่อน: head→10⟷20←tail</div>
+          <div class="node-row" style="margin-bottom:10px">
+            <div class="node-box3"><div class="node-prev">●</div><div class="node-data">10</div><div class="node-next">●</div></div>
+            <div class="node-arrow2">⟷</div>
+            <div class="node-box3"><div class="node-prev">●</div><div class="node-data">20</div><div class="node-next">●</div></div>
+            <div class="node-arrow2">⟷</div>
+            <div class="node-box3" style="border-color:var(--cam)"><div class="node-prev">●</div><div class="node-data">30</div><div class="node-next">✕</div></div>
+          </div>
+          <div style="font-size:11px;color:var(--cam)">↑ tail ใหม่ ชี้ที่โหนด 30</div>
+          <div style="margin-top:10px;font-size:11px;color:#546e7a">หลัง: head→10⟷20⟷30←tail</div>
+        </div>
+        <div class="box red">
+          <div class="box-title">❌ ลืมอัปเดต prev ของโหนดใหม่</div>
+          <div class="box-body">ถ้าทำ <code>tail-&gt;next = n</code> แล้วลืม <code>n-&gt;prev = tail</code> — เดินถอยหลังจากโหนดใหม่จะชี้ผิดหรือเป็นค่าสุ่ม</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 4 — เดินถอยหลัง + Delete ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Traverse & Delete</div>
+    <div class="slide-h1">เดินถอยหลัง และ <em>Delete</em></div>
+    <div class="slide-lead">เดินถอยหลังเริ่มจาก tail ใช้ prev แทน next — ส่วน Delete สะดวกขึ้นมาก เพราะรู้ prev ของโหนดทันทีไม่ต้องเดินหา</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">printReverse — เดินจาก tail ถอยไป head</div>
+        <div class="code"><span class="kw">void</span> <span class="fn">printReverse</span>() {
+    <span class="kw">struct</span> DNode <span class="op">*</span>cur = tail;
+    <span class="kw">while</span> (cur != <span class="nm">NULL</span>) {
+        <span class="fn">printf</span>(<span class="st">"%d "</span>, cur<span class="op">-&gt;</span>data);
+        cur = cur<span class="op">-&gt;</span>prev;   <span class="cm">/* ใช้ prev แทน next */</span>
+    }
+}</div>
+        <div class="box green">
+          <div class="box-title">💡 สมมาตรกับ Singly List</div>
+          <div class="box-body">เดินหน้า: cur = head, ใช้ next<br>เดินถอยหลัง: cur = tail, ใช้ prev<br>โครงสร้างเหมือนกันทุกอย่าง สลับแค่ทิศทาง</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">deleteNode — ไม่ต้องเดินหา prev เอง</div>
+        <div class="code"><span class="kw">void</span> <span class="fn">deleteNode</span>(<span class="kw">struct</span> DNode <span class="op">*</span>n) {
+    <span class="kw">if</span> (n<span class="op">-&gt;</span>prev != <span class="nm">NULL</span>)
+        n<span class="op">-&gt;</span>prev<span class="op">-&gt;</span>next = n<span class="op">-&gt;</span>next;
+    <span class="kw">else</span>
+        head = n<span class="op">-&gt;</span>next;        <span class="cm">/* n คือ head */</span>
+
+    <span class="kw">if</span> (n<span class="op">-&gt;</span>next != <span class="nm">NULL</span>)
+        n<span class="op">-&gt;</span>next<span class="op">-&gt;</span>prev = n<span class="op">-&gt;</span>prev;
+    <span class="kw">else</span>
+        tail = n<span class="op">-&gt;</span>prev;        <span class="cm">/* n คือ tail */</span>
+
+    <span class="fn">free</span>(n);
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 5 — Circular Linked List ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Circular List</div>
+    <div class="slide-h1">Circular Linked List — <em>ลิสต์ที่ไม่มีจุดสิ้นสุด</em></div>
+    <div class="slide-lead">โหนดสุดท้ายไม่ชี้ NULL แต่ชี้กลับไปที่โหนดแรก — เดินวนได้ไม่จบ ใช้ทำ playlist เพลงที่เล่นวนซ้ำ หรือ round-robin scheduling</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">insertCircular — ต่อท้ายแบบวงกลม</div>
+        <div class="code"><span class="kw">struct</span> Node <span class="op">*</span>last = <span class="nm">NULL</span>;  <span class="cm">/* เก็บโหนดสุดท้าย */</span>
+
+<span class="kw">void</span> <span class="fn">insertCircular</span>(<span class="kw">int</span> val) {
+    <span class="kw">struct</span> Node <span class="op">*</span>n =
+        (<span class="kw">struct</span> Node <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> Node));
+    n<span class="op">-&gt;</span>data = val;
+
+    <span class="kw">if</span> (last == <span class="nm">NULL</span>) {
+        n<span class="op">-&gt;</span>next = n;     <span class="cm">/* โหนดแรก ชี้ตัวเอง */</span>
+        last = n;
+        <span class="kw">return</span>;
+    }
+    n<span class="op">-&gt;</span>next = last<span class="op">-&gt;</span>next;  <span class="cm">/* ชี้ไปที่หัวเดิม (last->next) */</span>
+    last<span class="op">-&gt;</span>next = n;
+    last = n;
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="mem-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:14px">CIRCULAR: 10 → 20 → 30 → (กลับไป 10)</div>
+          <div class="node-row">
+            <div class="node-box3" style="grid-template-columns:none"><div class="node-data" style="width:46px">10</div><div class="node-next" style="width:30px">●</div></div>
+            <div class="node-arrow2">→</div>
+            <div class="node-box3"><div class="node-data" style="width:46px">20</div><div class="node-next" style="width:30px">●</div></div>
+            <div class="node-arrow2">→</div>
+            <div class="node-box3"><div class="node-data" style="width:46px">30</div><div class="node-next" style="width:30px">●</div></div>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:var(--cam)">โหนด 30 ชี้กลับไปที่โหนด 10 (ไม่มี NULL)</div>
+        </div>
+        <div class="box red">
+          <div class="box-title">❌ Infinite Loop ถ้าเช็คเงื่อนไขผิด</div>
+          <div class="box-body">
+            <code>while (cur != NULL)</code> จะวนไม่จบเพราะไม่มี NULL เลย ใน Circular List ต้องเช็คแบบ:<br>
+            <code>do { ... cur = cur-&gt;next; } while (cur != head);</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 6 — Use Case ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Use Case</div>
+    <div class="slide-h1">🏦 <em>Use Case จริง</em> — Undo ธุรกรรมล่าสุด</div>
+    <div class="slide-lead">ระบบธนาคารต้อง undo รายการล่าสุดได้ (ยกเลิกการโอนผิด) — Doubly List ทำให้เดินถอยหลังไปดูรายการก่อนหน้าได้ทันที</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="usecase" style="border-left-color:var(--ca)">
+          <div class="usecase-label" style="color:var(--ca)">โจทย์ระบบธนาคาร</div>
+          <div class="usecase-title">เลื่อนดูประวัติย้อนกลับและไปข้างหน้า</div>
+          <div class="usecase-body">พนักงานธนาคารเลื่อนดูรายการธุรกรรมไปข้างหน้า-ถอยหลังได้ เหมือนปุ่ม back/forward ในเบราว์เซอร์</div>
+        </div>
+        <div class="box">
+          <div class="box-title">ทำไมต้องเป็น Doubly</div>
+          <div class="box-body">Singly List เดินถอยหลังไม่ได้โดยตรง ต้องวน loop จาก head ใหม่ทุกครั้ง — ช้าและไม่สะดวก ส่วน Doubly เดินถอยหลังได้ทันทีด้วย prev</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">Cursor เลื่อนดูประวัติ</div>
+        <div class="code"><span class="kw">struct</span> DNode <span class="op">*</span>cursor = tail; <span class="cm">/* เริ่มที่รายการล่าสุด */</span>
+
+<span class="kw">void</span> <span class="fn">viewPrevious</span>() {
+    <span class="kw">if</span> (cursor<span class="op">-&gt;</span>prev != <span class="nm">NULL</span>) {
+        cursor = cursor<span class="op">-&gt;</span>prev;
+        <span class="fn">printf</span>(<span class="st">"ดูรายการ: %d\n"</span>, cursor<span class="op">-&gt;</span>data);
+    } <span class="kw">else</span> {
+        <span class="fn">printf</span>(<span class="st">"ไม่มีรายการก่อนหน้า\n"</span>);
+    }
+}
+
+<span class="kw">void</span> <span class="fn">viewNext</span>() {
+    <span class="kw">if</span> (cursor<span class="op">-&gt;</span>next != <span class="nm">NULL</span>) {
+        cursor = cursor<span class="op">-&gt;</span>next;
+        <span class="fn">printf</span>(<span class="st">"ดูรายการ: %d\n"</span>, cursor<span class="op">-&gt;</span>data);
+    }
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 7 — Think! ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 2 · Think!</div>
+    <div class="slide-h1">คิดก่อน <em>เขียน</em></div>
+    <div class="slide-lead">Doubly List ต้องดูแล 2 pointer พร้อมกันเสมอ — ฝึก trace ให้คล่อง</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">1. ทำไม insertTail ของ Doubly List เป็น O(1) แต่ของ Singly List (ไม่เก็บ tail) เป็น O(n)?</div>
+          <div class="think-hint">💡 Doubly List เก็บ tail pointer ไว้เลย ไม่ต้อง traverse หาโหนดสุดท้าย ส่วน Singly ต้องเดินจาก head จนสุดทุกครั้ง</div>
+        </div>
+        <div class="think">
+          <div class="think-q">2. ลบโหนดที่เป็น head ของ Doubly List ต้องอัปเดตอะไรเป็นพิเศษ?</div>
+          <div class="think-hint">💡 ต้องเช็คว่า n->prev == NULL แล้วขยับ head = n->next และตั้ง head ใหม่ prev = NULL</div>
+        </div>
+        <div class="think">
+          <div class="think-q">3. Circular List เช็คจบลิสต์ด้วย NULL ได้ไหม?</div>
+          <div class="think-hint">💡 ไม่ได้ — ไม่มี NULL เลยในวงกลม ต้องเช็คว่า cur กลับมาที่ head/last หรือยัง</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">4. ถ้า insertTail แล้วลืม <code>n-&gt;prev = tail</code> จะส่งผลยังไงตอนเดินถอยหลัง?</div>
+          <div class="think-hint">💡 n->prev จะเป็นค่าสุ่ม — printReverse จะ crash หรือพิมพ์ค่าผิด เพราะ dereference pointer ที่ไม่ได้ตั้งค่า</div>
+        </div>
+        <div class="think">
+          <div class="think-q">5. ทำไมต้องเก็บตัวแปร <code>last</code> ใน Circular List แทนการเก็บ head?</div>
+          <div class="think-hint">💡 last->next คือ head เสมอ — เก็บ last ทำให้ insertTail แบบวงกลมเป็น O(1) ได้เหมือน Doubly List</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 8 — โจทย์ Trace ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · โจทย์ Trace</div>
+    <div class="slide-h1">โจทย์ <em>อ่าน code</em> ทายผลลัพธ์</div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — printReverse จะพิมพ์อะไร?</div>
+      <div class="code" style="margin-bottom:10px">head → 10 ⟷ 20 ⟷ 30 ← tail
+<span class="fn">printReverse</span>();  <span class="cm">/* เริ่มจาก tail ใช้ prev */</span></div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" onclick="pickMC('mc1',0,2,'printReverse เริ่มที่ tail (30) แล้วเดินถอยหลังด้วย prev ไปจนถึง head ผลคือ 30 20 10 ✓')"><span class="mc-ltr">A</span> 10 20 30</div>
+        <div class="mc-opt" onclick="pickMC('mc1',1,2,'printReverse เริ่มที่ tail (30) แล้วเดินถอยหลังด้วย prev ไปจนถึง head ผลคือ 30 20 10 ✓')"><span class="mc-ltr">B</span> 30 20 10</div>
+        <div class="mc-opt" onclick="pickMC('mc1',2,2,'printReverse เริ่มที่ tail (30) แล้วเดินถอยหลังด้วย prev ไปจนถึง head ผลคือ 30 20 10 ✓')"><span class="mc-ltr">C</span> 30 10 20</div>
+        <div class="mc-opt" onclick="pickMC('mc1',3,2,'printReverse เริ่มที่ tail (30) แล้วเดินถอยหลังด้วย prev ไปจนถึง head ผลคือ 30 20 10 ✓')"><span class="mc-ltr">D</span> 10 30 20</div>
+      </div>
+      <div class="ex-feedback" id="mc1-fb"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — Circular List นี้พิมพ์กี่รอบก่อนจบ loop ด้านล่าง?</div>
+      <div class="code" style="margin-bottom:10px">10 → 20 → 30 → (กลับไป 10)
+<span class="kw">struct</span> Node <span class="op">*</span>cur = head;
+<span class="kw">do</span> { <span class="fn">printf</span>(<span class="st">"%d "</span>, cur<span class="op">-&gt;</span>data); cur=cur<span class="op">-&gt;</span>next; }
+<span class="kw">while</span> (cur != head);</div>
+      <div class="mc-opts" id="mc2">
+        <div class="mc-opt" onclick="pickMC('mc2',0,1,'do-while พิมพ์ก่อนเช็คเงื่อนไข วนจน cur กลับมาเท่ากับ head พอดี 1 รอบเต็ม คือ 3 ครั้ง (10 20 30) ✓')"><span class="mc-ltr">A</span> 3 ครั้ง</div>
+        <div class="mc-opt" onclick="pickMC('mc2',1,1,'do-while พิมพ์ก่อนเช็คเงื่อนไข วนจน cur กลับมาเท่ากับ head พอดี 1 รอบเต็ม คือ 3 ครั้ง (10 20 30) ✓')"><span class="mc-ltr">B</span> วนไม่จบ (infinite loop)</div>
+        <div class="mc-opt" onclick="pickMC('mc2',2,1,'do-while พิมพ์ก่อนเช็คเงื่อนไข วนจน cur กลับมาเท่ากับ head พอดี 1 รอบเต็ม คือ 3 ครั้ง (10 20 30) ✓')"><span class="mc-ltr">C</span> 1 ครั้ง</div>
+        <div class="mc-opt" onclick="pickMC('mc2',3,1,'do-while พิมพ์ก่อนเช็คเงื่อนไข วนจน cur กลับมาเท่ากับ head พอดี 1 รอบเต็ม คือ 3 ครั้ง (10 20 30) ✓')"><span class="mc-ltr">D</span> 0 ครั้ง</div>
+      </div>
+      <div class="ex-feedback" id="mc2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 9 — โจทย์ Fill-in ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · โจทย์เติมคำ</div>
+    <div class="slide-h1">โจทย์ <em>เติมคำ</em></div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — นิยาม struct DNode</div>
+      <div class="ex-q">เติม field ที่ขาดไปในนิยาม struct ของ Doubly Linked List<br>
+      <code>struct DNode { int data; ___; struct DNode *next; };</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in1" placeholder="struct DNode *..." type="text">
+        <button class="ex-btn" onclick="checkFill('in1',
+          'struct DNode *prev',
+          ['struct DNode* prev','struct DNode * prev'],
+          ['struct Node *prev','int *prev'],
+          'ถูก! ต้องเป็น struct DNode *prev ชี้กลับไปที่โหนดก่อนหน้าชนิดเดียวกัน',
+          'pointer ต้องชี้ไปที่ struct DNode (ชนิดเดียวกับตัวเอง) ไม่ใช่ struct Node ธรรมดา')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — เดินถอยหลัง</div>
+      <div class="ex-q">เริ่ม cursor ที่ tail แล้วเติมคำสั่งเดินไปยังโหนดก่อนหน้า<br>
+      <code>cursor = ___;</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in2" placeholder="cursor->..." type="text">
+        <button class="ex-btn" onclick="checkFill('in2',
+          'cursor->prev',
+          ['cursor -> prev'],
+          ['cursor->next','cursor.prev'],
+          'ถูก! cursor->prev เดินไปยังโหนดก่อนหน้า (ทิศตรงข้ามกับ next)',
+          'ต้องใช้ prev เพื่อเดินถอยหลัง ใช้ next จะเดินหน้าซึ่งตรงข้ามกับที่ต้องการ')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 3 — Circular List เช็คจบลิสต์</div>
+      <div class="ex-q">เติมเงื่อนไขของ while loop ใน do-while เพื่อให้วนจนกลับมาที่ head<br>
+      <code>do {...; cur = cur->next;} while (___);</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in3" placeholder="cur != ..." type="text">
+        <button class="ex-btn" onclick="checkFill('in3',
+          'cur != head',
+          ['cur!=head'],
+          ['cur != NULL','cur == head'],
+          'ถูก! วนต่อไปตราบที่ cur ยังไม่กลับมาที่ head — Circular List ไม่มี NULL ให้เช็ค',
+          'ห้ามใช้ cur != NULL เพราะ Circular List ไม่มี NULL เลย ต้องเช็คกับ head แทน')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 10 — Summary ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 2 · สรุป</div>
+    <div class="slide-h1">เก่ง Doubly / Circular List <em>แล้ว!</em></div>
+    <div class="slide-lead">เข้าใจการเดินสองทิศทางและลิสต์วงกลม — ขั้นต่อไปคือ Stack ที่ใช้ Linked List เป็นฐาน</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="steps">
+          <div class="step"><div class="step-n ok">1</div><div class="step-body"><strong>Doubly List</strong> — เพิ่ม prev เดินสองทาง<small>เก็บ tail ทำให้ insertTail เป็น O(1)</small></div></div>
+          <div class="step"><div class="step-n ok">2</div><div class="step-body"><strong>Delete</strong> — รู้ prev ทันที ไม่ต้องเดินหา<small>สะดวกกว่า Singly List</small></div></div>
+          <div class="step"><div class="step-n ok">3</div><div class="step-body"><strong>Circular List</strong> — โหนดสุดท้ายชี้กลับไปแรก<small>เช็คจบด้วย head ไม่ใช่ NULL</small></div></div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🚀 บทต่อไป</div>
+          <div class="box-body">
+            <strong>บทที่ 3 — Stack</strong><br>
+            โครงสร้างแบบ LIFO (Last In First Out) — push/pop ที่ปลายเดียว ใช้ insertHead/deleteHead ของ Linked List เป็นฐาน
+          </div>
+        </div>
+        <div class="exercise">
+          <div class="ex-label">🏆 Challenge ก่อนไปบทหน้า</div>
+          <div class="ex-q" style="color:#dde3f0">เขียนโปรแกรม Doubly Linked List เก็บชื่อเพลง รับชื่อจาก user ใส่ทีละชื่อ (insertTail) จากนั้นให้ผู้ใช้เลือกเล่นเพลง "ถัดไป" หรือ "ก่อนหน้า" ได้โดยใช้ cursor + next/prev</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 2 — Doubly/Circular List</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover','ทำไมต้องมี prev','นิยาม Node','Insert at Tail',
+  'เดินถอยหลัง & Delete','Circular Linked List','Use Case Undo',
+  'Think!','โจทย์ Trace','โจทย์เติมคำ','สรุป'
+];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

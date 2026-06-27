@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 1 — Linked List | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+/* Chapter 1 accent — amber */
+:root { --ca:#a86a00; --cal:#fff4e0; --cam:#d99a3a; }
+
+.mem-diagram {
+  font-family: var(--mono); font-size: 12px;
+  background: var(--ink); border-radius: 10px;
+  padding: 16px 20px; margin-bottom: 14px; color: #8891a8;
+  overflow-x: auto;
+}
+.node-row { display:flex; align-items:center; gap:0; }
+.node-box {
+  display:flex; border:1px solid #2a3050; border-radius:6px; overflow:hidden;
+  flex-shrink:0;
+}
+.node-data, .node-next {
+  display:flex; align-items:center; justify-content:center;
+  width:46px; height:38px; font-size:13px; font-weight:600;
+}
+.node-data { background:#1e2538; color:#9effe3; }
+.node-next { background:#161b2c; color:var(--cam); font-size:11px; }
+.node-arrow { color:var(--cam); font-size:18px; margin:0 6px; }
+.node-null { font-family:var(--mono); font-size:11px; color:#546e7a; margin-left:6px; }
+.node-label { font-size:10px; color:#546e7a; text-align:center; margin-top:4px; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════════ SLIDE 0 — COVER ════════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Data Structures</div>
+        <div class="cover-title">บทที่ 1<br><em>Linked List</em></div>
+        <div class="cover-subtitle">โครงสร้างข้อมูลที่ขนาดไม่ fixed — แทรกและลบได้เร็วโดยไม่ต้องขยับข้อมูลทั้งแถวแบบ Array</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Node และ head pointer</div>
+          <div class="topic-row"><div class="topic-dot"></div>สร้าง Node ใหม่ด้วย malloc</div>
+          <div class="topic-row"><div class="topic-dot"></div>Traverse ทั้งลิสต์</div>
+          <div class="topic-row"><div class="topic-dot"></div>Insert หัว/กลาง/ท้าย</div>
+          <div class="topic-row"><div class="topic-dot"></div>Delete + free</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">01</div>
+        <div class="cover-badge">CHAPTER 1</div>
+        <div class="cover-slides-count">13 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 1 — ทำไมต้องมี Linked List ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · เกริ่นนำ</div>
+    <div class="slide-h1">ทำไมต้องมี <em>Linked List</em></div>
+    <div class="slide-lead">Array เร็วตอนเข้าถึง index แต่ขนาด fixed และแทรก/ลบกลางแถวต้องขยับข้อมูลทุกตัว — Linked List แก้ปัญหานี้</div>
+
+    <div class="split">
+      <div class="split-col">
+        <table class="kv-table">
+          <thead><tr><th></th><th>Array</th><th>Linked List</th></tr></thead>
+          <tbody>
+            <tr><td>ขนาด</td><td>fixed ตั้งแต่แรก</td><td>ขยายได้เรื่อยๆ</td></tr>
+            <tr><td>เข้าถึง index</td><td>O(1) เร็ว</td><td>O(n) ต้องเดินตามลิงก์</td></tr>
+            <tr><td>แทรก/ลบกลาง</td><td>O(n) ต้องขยับ</td><td>O(1) แค่เปลี่ยน pointer</td></tr>
+            <tr><td>memory</td><td>ต่อกันเป็นแถว</td><td>กระจายตามที่ malloc ให้</td></tr>
+          </tbody>
+        </table>
+        <div class="box green">
+          <div class="box-title">💡 หลักการ Linked List</div>
+          <div class="box-body">แต่ละ "โหนด" เก็บค่า + pointer ชี้ไปโหนดถัดไป ไม่ได้อยู่ติดกันใน memory แต่ "เชื่อม" กันด้วย pointer</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="mem-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:14px;letter-spacing:.5px">LINKED LIST: head → 10 → 20 → 30 → NULL</div>
+          <div class="node-row">
+            <div>
+              <div class="node-box"><div class="node-data">10</div><div class="node-next">●</div></div>
+              <div class="node-label">node 1</div>
+            </div>
+            <div class="node-arrow">→</div>
+            <div>
+              <div class="node-box"><div class="node-data">20</div><div class="node-next">●</div></div>
+              <div class="node-label">node 2</div>
+            </div>
+            <div class="node-arrow">→</div>
+            <div>
+              <div class="node-box"><div class="node-data">30</div><div class="node-next">●</div></div>
+              <div class="node-label">node 3</div>
+            </div>
+            <div class="node-null">→ NULL</div>
+          </div>
+          <div style="margin-top:12px;font-size:11px;color:#546e7a">head ชี้ไปที่ node 1 เสมอ — ถ้า head เป็น NULL คือลิสต์ว่าง</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 2 — นิยาม Node + head ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · พื้นฐาน</div>
+    <div class="slide-h1">Node และ <em>head pointer</em></div>
+    <div class="slide-lead">เริ่มจากนิยาม struct Node แล้วประกาศ head เป็นจุดเริ่มต้นของลิสต์ — ทั้งลิสต์เข้าถึงได้จาก head ตัวเดียว</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">นิยาม struct Node</div>
+        <div class="code"><span class="kw">struct</span> Node {
+    <span class="kw">int</span> data;
+    <span class="kw">struct</span> Node <span class="op">*</span>next;
+};
+
+<span class="cm">/* head ชี้โหนดแรกของลิสต์ */</span>
+<span class="kw">struct</span> Node <span class="op">*</span>head = <span class="nm">NULL</span>;  <span class="cm">/* เริ่มต้นลิสต์ว่าง */</span></div>
+        <div class="box">
+          <div class="box-title">head ไม่ใช่ "ลิสต์" head คือ pointer ตัวแรก</div>
+          <div class="box-body">head เก็บ address ของโหนดแรกเท่านั้น ตัวลิสต์จริงๆ คือโหนดที่เชื่อมกันด้วย <code>next</code> — ถ้าทำ head หาย จะเข้าถึงลิสต์ไม่ได้เลย (memory leak ทั้งลิสต์)</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">สร้างโหนดแรกด้วยมือ (ก่อนเขียน function)</div>
+        <div class="code"><span class="kw">struct</span> Node <span class="op">*</span>n1 =
+    (<span class="kw">struct</span> Node <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> Node));
+n1<span class="op">-&gt;</span>data = <span class="nm">10</span>;
+n1<span class="op">-&gt;</span>next = <span class="nm">NULL</span>;   <span class="cm">/* ยังไม่มีโหนดถัดไป */</span>
+
+head = n1;          <span class="cm">/* head ชี้โหนดแรก */</span>
+
+<span class="fn">printf</span>(<span class="st">"%d"</span>, head<span class="op">-&gt;</span>data); <span class="cm">/* 10 */</span></div>
+        <div class="box amber">
+          <div class="box-title">⚠️ ลำดับสำคัญ</div>
+          <div class="box-body">ต้อง malloc ก่อนใส่ค่า <code>n1-&gt;data</code> เสมอ — ถ้า n1 ยังไม่ malloc แล้ว dereference จะ crash</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 3 — Traverse ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Traverse</div>
+    <div class="slide-h1">เดินลิสต์ทั้งสาย — <em>Traverse</em></div>
+    <div class="slide-lead">ใช้ pointer ตัวช่วย (เช่น cur) เดินจาก head ไปทีละโหนดจนชน NULL — pattern นี้ใช้ซ้ำในทุก operation ของ Linked List</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">Pattern Traverse — ท่องจำให้ขึ้นใจ</div>
+        <div class="code"><span class="kw">void</span> <span class="fn">printList</span>(<span class="kw">struct</span> Node <span class="op">*</span>head) {
+    <span class="kw">struct</span> Node <span class="op">*</span>cur = head;  <span class="cm">/* ตัวช่วยเดิน ไม่แก้ head */</span>
+    <span class="kw">while</span> (cur != <span class="nm">NULL</span>) {
+        <span class="fn">printf</span>(<span class="st">"%d -&gt; "</span>, cur<span class="op">-&gt;</span>data);
+        cur = cur<span class="op">-&gt;</span>next;        <span class="cm">/* เลื่อนไปโหนดถัดไป */</span>
+    }
+    <span class="fn">printf</span>(<span class="st">"NULL\n"</span>);
+}</div>
+        <div class="box green">
+          <div class="box-title">💡 ทำไมต้องใช้ cur ไม่ใช้ head ตรงๆ</div>
+          <div class="box-body">ถ้าเดินด้วย <code>head = head-&gt;next</code> โดยตรง จะทำ head หายไปเรื่อยๆ จนสุดท้ายเข้าถึงลิสต์ไม่ได้อีก ต้อง copy ไปไว้ในตัวแปรใหม่ (cur) เสมอ</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="mem-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:14px">cur เดินทีละโหนด</div>
+          <div class="node-row">
+            <div class="node-box" style="border-color:var(--cam)"><div class="node-data">10</div><div class="node-next">●</div></div>
+            <div class="node-arrow">→</div>
+            <div class="node-box"><div class="node-data">20</div><div class="node-next">●</div></div>
+            <div class="node-arrow">→</div>
+            <div class="node-box"><div class="node-data">30</div><div class="node-next">●</div></div>
+            <div class="node-null">→ NULL</div>
+          </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--cam)">↑ cur (รอบที่ 1)</div>
+          <div style="margin-top:10px;font-size:11px;color:#546e7a;line-height:1.9">
+            รอบ 1: cur = head (โหนด 10)<br>
+            รอบ 2: cur = cur-&gt;next (โหนด 20)<br>
+            รอบ 3: cur = cur-&gt;next (โหนด 30)<br>
+            รอบ 4: cur = NULL → จบ loop
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 4 — Insert at Head ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Insert</div>
+    <div class="slide-h1">แทรกที่หัวลิสต์ — <em>Insert at Head</em></div>
+    <div class="slide-lead">แทรกหัวลิสต์เร็วที่สุด O(1) — สร้างโหนดใหม่ ให้ชี้ไปที่โหนดเดิม แล้วขยับ head มาที่โหนดใหม่</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">insertHead — 3 ขั้นตอนคงที่</div>
+        <div class="code"><span class="kw">void</span> <span class="fn">insertHead</span>(<span class="kw">struct</span> Node <span class="op">**</span>head, <span class="kw">int</span> val) {
+    <span class="kw">struct</span> Node <span class="op">*</span>n =
+        (<span class="kw">struct</span> Node <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> Node));
+    n<span class="op">-&gt;</span>data = val;       <span class="cm">/* 1. ใส่ค่า */</span>
+    n<span class="op">-&gt;</span>next = <span class="op">*</span>head;     <span class="cm">/* 2. ชี้ไปที่หัวเดิม */</span>
+    <span class="op">*</span>head = n;          <span class="cm">/* 3. หัวใหม่คือ n */</span>
+}
+
+<span class="cm">/* เรียกใช้ */</span>
+<span class="fn">insertHead</span>(<span class="op">&amp;</span>head, <span class="nm">5</span>);</div>
+        <div class="box amber">
+          <div class="box-title">⚠️ ทำไมต้องใช้ struct Node **head</div>
+          <div class="box-body">เราต้องการ "แก้ค่า head ของตัวเรียก" ไม่ใช่แค่ copy — ต้องส่ง pointer ไปที่ head (pointer to pointer) เหมือนหลักการ pass by reference ในบทที่ 0</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="mem-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:14px">insertHead(5) — ก่อน: head→10→20→NULL</div>
+          <div class="node-row" style="margin-bottom:14px">
+            <div class="node-box" style="border-color:var(--cam)"><div class="node-data">5</div><div class="node-next">●</div></div>
+            <div class="node-arrow">→</div>
+            <div class="node-box"><div class="node-data">10</div><div class="node-next">●</div></div>
+            <div class="node-arrow">→</div>
+            <div class="node-box"><div class="node-data">20</div><div class="node-next">●</div></div>
+            <div class="node-null">→ NULL</div>
+          </div>
+          <div style="font-size:11px;color:var(--cam)">↑ head ใหม่ ชี้ที่โหนด 5</div>
+          <div style="margin-top:10px;font-size:11px;color:#546e7a">หลัง: head→5→10→20→NULL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 5 — Insert at Tail / Middle ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Insert</div>
+    <div class="slide-h1">แทรกท้ายลิสต์และกลางลิสต์</div>
+    <div class="slide-lead">แทรกท้าย/กลาง ต้อง traverse หาตำแหน่งก่อนเสมอ — O(n) เพราะต้องเดินไปหาโหนดก่อนจะเชื่อม pointer</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">insertTail — เดินจนสุดแล้วต่อท้าย</div>
+        <div class="code"><span class="kw">void</span> <span class="fn">insertTail</span>(<span class="kw">struct</span> Node <span class="op">**</span>head, <span class="kw">int</span> val) {
+    <span class="kw">struct</span> Node <span class="op">*</span>n =
+        (<span class="kw">struct</span> Node <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> Node));
+    n<span class="op">-&gt;</span>data = val; n<span class="op">-&gt;</span>next = <span class="nm">NULL</span>;
+
+    <span class="kw">if</span> (<span class="op">*</span>head == <span class="nm">NULL</span>) { <span class="op">*</span>head = n; <span class="kw">return</span>; }
+
+    <span class="kw">struct</span> Node <span class="op">*</span>cur = <span class="op">*</span>head;
+    <span class="kw">while</span> (cur<span class="op">-&gt;</span>next != <span class="nm">NULL</span>)  <span class="cm">/* เดินจนถึงโหนดสุดท้าย */</span>
+        cur = cur<span class="op">-&gt;</span>next;
+    cur<span class="op">-&gt;</span>next = n;             <span class="cm">/* ต่อท้าย */</span>
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">insertAfter — แทรกหลังโหนดที่มีค่า target</div>
+        <div class="code"><span class="kw">void</span> <span class="fn">insertAfter</span>(<span class="kw">struct</span> Node <span class="op">*</span>head,
+                 <span class="kw">int</span> target, <span class="kw">int</span> val) {
+    <span class="kw">struct</span> Node <span class="op">*</span>cur = head;
+    <span class="kw">while</span> (cur != <span class="nm">NULL</span> &amp;&amp; cur<span class="op">-&gt;</span>data != target)
+        cur = cur<span class="op">-&gt;</span>next;
+    <span class="kw">if</span> (cur == <span class="nm">NULL</span>) <span class="kw">return</span>;  <span class="cm">/* ไม่เจอ target */</span>
+
+    <span class="kw">struct</span> Node <span class="op">*</span>n =
+        (<span class="kw">struct</span> Node <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> Node));
+    n<span class="op">-&gt;</span>data = val;
+    n<span class="op">-&gt;</span>next = cur<span class="op">-&gt;</span>next;   <span class="cm">/* 1. ชี้ของใหม่ไปที่ตัวถัดไปเดิม */</span>
+    cur<span class="op">-&gt;</span>next = n;          <span class="cm">/* 2. แล้วค่อยให้ cur ชี้มาที่ใหม่ */</span>
+}</div>
+        <div class="box red">
+          <div class="box-title">❌ สลับลำดับ 2 ขั้นตอนนี้ไม่ได้</div>
+          <div class="box-body">ถ้าทำ <code>cur-&gt;next = n</code> ก่อน จะ"หลุด"ไม่รู้ว่าตัวถัดไปเดิมคือใคร เพราะ <code>cur-&gt;next</code> ถูกเขียนทับไปแล้ว ต้อง <code>n-&gt;next = cur-&gt;next</code> ก่อนเสมอ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 6 — Delete ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Delete</div>
+    <div class="slide-h1">ลบโหนด — <em>Delete + free</em></div>
+    <div class="slide-lead">ลบโหนดต้องหาโหนด "ก่อนหน้า" ก่อน เพื่อข้ามโหนดที่จะลบ แล้ว free โหนดนั้นทิ้งเสมอ ไม่งั้น memory leak</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">deleteValue — ลบโหนดแรกที่มีค่า target</div>
+        <div class="code"><span class="kw">void</span> <span class="fn">deleteValue</span>(<span class="kw">struct</span> Node <span class="op">**</span>head, <span class="kw">int</span> target) {
+    <span class="kw">struct</span> Node <span class="op">*</span>cur = <span class="op">*</span>head, <span class="op">*</span>prev = <span class="nm">NULL</span>;
+
+    <span class="kw">while</span> (cur != <span class="nm">NULL</span> &amp;&amp; cur<span class="op">-&gt;</span>data != target) {
+        prev = cur;
+        cur = cur<span class="op">-&gt;</span>next;
+    }
+    <span class="kw">if</span> (cur == <span class="nm">NULL</span>) <span class="kw">return</span>;     <span class="cm">/* ไม่เจอ */</span>
+
+    <span class="kw">if</span> (prev == <span class="nm">NULL</span>)             <span class="cm">/* ลบโหนดแรก */</span>
+        <span class="op">*</span>head = cur<span class="op">-&gt;</span>next;
+    <span class="kw">else</span>                          <span class="cm">/* ลบกลาง/ท้าย */</span>
+        prev<span class="op">-&gt;</span>next = cur<span class="op">-&gt;</span>next;
+
+    <span class="fn">free</span>(cur);                 <span class="cm">/* คืน memory เสมอ */</span>
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="mem-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:14px">ลบโหนด 20 — head→10→20→30→NULL</div>
+          <div class="node-row" style="margin-bottom:10px">
+            <div class="node-box"><div class="node-data">10</div><div class="node-next">●</div></div>
+            <div class="node-arrow" style="opacity:.3">→</div>
+            <div class="node-box" style="border-color:#a01d3a;opacity:.5"><div class="node-data" style="color:#d45f7a">20</div><div class="node-next">✕</div></div>
+            <div class="node-arrow">→</div>
+            <div class="node-box"><div class="node-data">30</div><div class="node-next">●</div></div>
+            <div class="node-null">→ NULL</div>
+          </div>
+          <div style="font-size:11px;color:var(--cam);margin-bottom:6px">prev(10)-&gt;next ข้ามไปชี้ที่ 30 โดยตรง</div>
+          <div style="font-size:11px;color:#546e7a">หลัง: head→10→30→NULL แล้ว free(โหนด 20)</div>
+        </div>
+        <div class="box amber">
+          <div class="box-title">⚠️ กรณีพิเศษ: ลบโหนดแรก (head)</div>
+          <div class="box-body">ถ้า prev เป็น NULL แปลว่ากำลังลบโหนดแรก ต้องขยับ <code>*head</code> ไปที่ <code>cur-&gt;next</code> เอง เพราะไม่มี prev ให้ข้าม</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 7 — Search & Count ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Operations อื่นๆ</div>
+    <div class="slide-h1">Search และ Count — <em>operation ที่ใช้บ่อย</em></div>
+    <div class="slide-lead">ทั้งสอง function ใช้ pattern traverse เดิม — ต่างกันแค่เงื่อนไขที่ทำในแต่ละโหนด</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">search — หาว่ามีค่านี้ในลิสต์ไหม</div>
+        <div class="code"><span class="kw">int</span> <span class="fn">search</span>(<span class="kw">struct</span> Node <span class="op">*</span>head, <span class="kw">int</span> target) {
+    <span class="kw">struct</span> Node <span class="op">*</span>cur = head;
+    <span class="kw">int</span> pos = <span class="nm">0</span>;
+    <span class="kw">while</span> (cur != <span class="nm">NULL</span>) {
+        <span class="kw">if</span> (cur<span class="op">-&gt;</span>data == target) <span class="kw">return</span> pos;
+        cur = cur<span class="op">-&gt;</span>next;
+        pos++;
+    }
+    <span class="kw">return</span> <span class="op">-</span><span class="nm">1</span>;  <span class="cm">/* ไม่เจอ */</span>
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">countNodes — นับจำนวนโหนดทั้งหมด</div>
+        <div class="code"><span class="kw">int</span> <span class="fn">countNodes</span>(<span class="kw">struct</span> Node <span class="op">*</span>head) {
+    <span class="kw">int</span> count = <span class="nm">0</span>;
+    <span class="kw">struct</span> Node <span class="op">*</span>cur = head;
+    <span class="kw">while</span> (cur != <span class="nm">NULL</span>) {
+        count++;
+        cur = cur<span class="op">-&gt;</span>next;
+    }
+    <span class="kw">return</span> count;
+}</div>
+        <div class="box green">
+          <div class="box-title">💡 Pattern ทุก function ของ Linked List</div>
+          <div class="box-body">เกือบทุก function = "เริ่มที่ cur = head" + "while (cur != NULL)" + "ทำอะไรบางอย่าง" + "cur = cur-&gt;next" — จำ pattern นี้แล้วเขียน Linked List ได้ทุกแบบ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 8 — Use Case ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Use Case</div>
+    <div class="slide-h1">🏦 <em>Use Case จริง</em> — ประวัติธุรกรรมลูกค้า</div>
+    <div class="slide-lead">ลูกค้าฝาก/ถอนกี่ครั้งก็ได้ — แต่ละธุรกรรมคือโหนดใหม่ที่ต่อเข้าไปในลิสต์ ไม่ต้องรู้จำนวนล่วงหน้า</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="usecase" style="border-left-color:var(--ca)">
+          <div class="usecase-label" style="color:var(--ca)">โจทย์ระบบธนาคาร</div>
+          <div class="usecase-title">บันทึกประวัติธุรกรรมแบบ Linked List</div>
+          <div class="usecase-body">ทุกครั้งที่ลูกค้าฝาก/ถอน ระบบสร้างโหนดใหม่ต่อท้ายประวัติ — แสดงรายการทั้งหมดด้วย traverse</div>
+        </div>
+        <div class="box">
+          <div class="box-title">ทำไมใช้ Linked List ไม่ใช่ Array</div>
+          <div class="box-body">ไม่รู้ว่าลูกค้าจะทำธุรกรรมกี่ครั้งในชีวิต — Array ต้องเดากำหนดขนาด แต่ Linked List โตได้ไม่จำกัด (จนกว่า memory เต็ม)</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">ระบบบันทึกธุรกรรมแบบ Linked List</div>
+        <div class="code"><span class="kw">struct</span> Txn {
+    <span class="kw">char</span> type[<span class="nm">10</span>];
+    <span class="kw">double</span> amount;
+    <span class="kw">struct</span> Txn <span class="op">*</span>next;
+};
+<span class="kw">struct</span> Txn <span class="op">*</span>history = <span class="nm">NULL</span>;
+
+<span class="kw">void</span> <span class="fn">addTxn</span>(<span class="kw">char</span> <span class="op">*</span>t, <span class="kw">double</span> amt) {
+    <span class="kw">struct</span> Txn <span class="op">*</span>n =
+        (<span class="kw">struct</span> Txn <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> Txn));
+    <span class="fn">strcpy</span>(n<span class="op">-&gt;</span>type, t);
+    n<span class="op">-&gt;</span>amount = amt;
+    n<span class="op">-&gt;</span>next = history;  <span class="cm">/* insert head — ล่าสุดอยู่บนสุด */</span>
+    history = n;
+}
+
+<span class="kw">void</span> <span class="fn">printHistory</span>() {
+    <span class="kw">struct</span> Txn <span class="op">*</span>cur = history;
+    <span class="kw">while</span> (cur != <span class="nm">NULL</span>) {
+        <span class="fn">printf</span>(<span class="st">"%s %.2f\n"</span>, cur<span class="op">-&gt;</span>type, cur<span class="op">-&gt;</span>amount);
+        cur = cur<span class="op">-&gt;</span>next;
+    }
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 9 — Think! ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 1 · Think!</div>
+    <div class="slide-h1">คิดก่อน <em>เขียน</em></div>
+    <div class="slide-lead">Linked List ต้อง trace ทีละ pointer ในหัว — ฝึกตรงนี้ให้คล่อง</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">1. ทำไม insertHead ใช้ <code>struct Node **head</code> แต่ printList ใช้แค่ <code>struct Node *head</code>?</div>
+          <div class="think-hint">💡 insertHead ต้องแก้ค่า head จริงของผู้เรียก ส่วน printList แค่อ่านอย่างเดียวไม่ต้องแก้</div>
+        </div>
+        <div class="think">
+          <div class="think-q">2. ถ้าลืม <code>n-&gt;next = NULL;</code> ตอนสร้างโหนดสุดท้าย จะเกิดอะไร?</div>
+          <div class="think-hint">💡 next จะเป็นค่าสุ่ม (garbage) — traverse จะวิ่งต่อไปเรื่อยๆ จนเข้าถึง memory ที่ไม่ใช่ของเรา → crash</div>
+        </div>
+        <div class="think">
+          <div class="think-q">3. delete โหนดแล้วไม่ free จะเกิดผลอะไรในระยะยาว?</div>
+          <div class="think-hint">💡 Memory leak — โหนดยังอยู่ใน memory แต่ไม่มีใครเข้าถึงได้ ลบไปเรื่อยๆ memory จะเต็ม</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">4. <code>head→10→20→30→NULL</code> ทำ <code>head = head-&gt;next</code> สองครั้ง head จะชี้โหนดไหน?</div>
+          <div class="think-hint">💡 ครั้งแรกชี้ 20 ครั้งที่สองชี้ 30 — แต่ระวัง โหนด 10 จะ "หลุด" ไม่มีใครเข้าถึงได้แล้ว (ไม่ได้ free)</div>
+        </div>
+        <div class="think">
+          <div class="think-q">5. insertAfter ทำไมต้องเขียน <code>n-&gt;next = cur-&gt;next</code> ก่อน <code>cur-&gt;next = n</code>?</div>
+          <div class="think-hint">💡 ถ้าสลับลำดับ cur->next จะถูกเขียนทับเป็น n ก่อน ทำให้ไม่รู้ว่าโหนดถัดไปเดิมคือใครอีกแล้ว</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 10 — โจทย์ Trace ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · โจทย์ Trace</div>
+    <div class="slide-h1">โจทย์ <em>อ่าน code</em> ทายผลลัพธ์</div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — printList จะพิมพ์อะไร?</div>
+      <div class="code" style="margin-bottom:10px">head → 1 → 2 → 3 → NULL
+<span class="fn">insertHead</span>(<span class="op">&amp;</span>head, <span class="nm">0</span>);
+<span class="fn">printList</span>(head);</div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" onclick="pickMC('mc1',0,2,'insertHead เพิ่มโหนดใหม่ที่หัว ทำให้ head ใหม่คือ 0 แล้วต่อด้วยลิสต์เดิม → 0 1 2 3 NULL ✓')"><span class="mc-ltr">A</span> 1 2 3 NULL</div>
+        <div class="mc-opt" onclick="pickMC('mc1',1,2,'insertHead เพิ่มโหนดใหม่ที่หัว ทำให้ head ใหม่คือ 0 แล้วต่อด้วยลิสต์เดิม → 0 1 2 3 NULL ✓')"><span class="mc-ltr">B</span> 1 2 3 0 NULL</div>
+        <div class="mc-opt" onclick="pickMC('mc1',2,2,'insertHead เพิ่มโหนดใหม่ที่หัว ทำให้ head ใหม่คือ 0 แล้วต่อด้วยลิสต์เดิม → 0 1 2 3 NULL ✓')"><span class="mc-ltr">C</span> 0 1 2 3 NULL</div>
+        <div class="mc-opt" onclick="pickMC('mc1',3,2,'insertHead เพิ่มโหนดใหม่ที่หัว ทำให้ head ใหม่คือ 0 แล้วต่อด้วยลิสต์เดิม → 0 1 2 3 NULL ✓')"><span class="mc-ltr">D</span> 0 NULL</div>
+      </div>
+      <div class="ex-feedback" id="mc1-fb"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — หลัง deleteValue(&head, 20) ลิสต์จะเป็นอย่างไร?</div>
+      <div class="code" style="margin-bottom:10px">head → 10 → 20 → 30 → NULL
+<span class="fn">deleteValue</span>(<span class="op">&amp;</span>head, <span class="nm">20</span>);</div>
+      <div class="mc-opts" id="mc2">
+        <div class="mc-opt" onclick="pickMC('mc2',0,1,'prev(10)->next ข้ามไปชี้ที่ 30 ตรง แล้ว free โหนด 20 ผลคือ 10 -> 30 -> NULL ✓')"><span class="mc-ltr">A</span> 10 → 30 → NULL</div>
+        <div class="mc-opt" onclick="pickMC('mc2',1,1,'prev(10)->next ข้ามไปชี้ที่ 30 ตรง แล้ว free โหนด 20 ผลคือ 10 -> 30 -> NULL ✓')"><span class="mc-ltr">B</span> 10 → 20 → 30 → NULL</div>
+        <div class="mc-opt" onclick="pickMC('mc2',2,1,'prev(10)->next ข้ามไปชี้ที่ 30 ตรง แล้ว free โหนด 20 ผลคือ 10 -> 30 -> NULL ✓')"><span class="mc-ltr">C</span> 10 → NULL</div>
+        <div class="mc-opt" onclick="pickMC('mc2',3,1,'prev(10)->next ข้ามไปชี้ที่ 30 ตรง แล้ว free โหนด 20 ผลคือ 10 -> 30 -> NULL ✓')"><span class="mc-ltr">D</span> 30 → 10 → NULL</div>
+      </div>
+      <div class="ex-feedback" id="mc2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 11 — โจทย์ Fill-in ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · โจทย์เติมคำ</div>
+    <div class="slide-h1">โจทย์ <em>เติมคำ</em></div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — เริ่มลิสต์ว่าง</div>
+      <div class="ex-q">ประกาศ <code>head</code> เป็น pointer ของ <code>struct Node</code> และให้ลิสต์เริ่มต้นว่างเปล่า</div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in1" placeholder="struct Node *head = ..." type="text">
+        <button class="ex-btn" onclick="checkFill('in1',
+          'struct Node *head = NULL;',
+          ['struct Node* head = NULL;','struct Node *head = NULL','struct Node * head = NULL;'],
+          ['struct Node *head;','struct Node head = NULL;'],
+          'ถูก! head = NULL หมายถึงลิสต์ยังไม่มีโหนดเลย',
+          'ต้อง initialize เป็น NULL เสมอ ไม่ใช่แค่ประกาศตัวแปรเฉยๆ (ค่าจะสุ่ม)')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — Traverse</div>
+      <div class="ex-q">เติมเงื่อนไข while loop เพื่อเดินจนสุดลิสต์ (cur เป็นตัวแปรเดิน)<br>
+      <code>while (___) { cur = cur->next; }</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in2" placeholder="cur != ..." type="text">
+        <button class="ex-btn" onclick="checkFill('in2',
+          'cur != NULL',
+          ['cur!=NULL','cur != NULL '],
+          ['cur == NULL','cur = NULL'],
+          'ถูก! เดินต่อไปเรื่อยๆ ตราบใดที่ cur ยังไม่ใช่ NULL (ยังไม่สุดลิสต์)',
+          'ต้องใช้ != ไม่ใช่ == เพราะ loop ควรทำงานต่อไปตราบที่ cur ยังไม่ NULL')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 3 — insertHead</div>
+      <div class="ex-q">เติมบรรทัดที่ขาดไปใน insertHead เพื่อให้โหนดใหม่ <code>n</code> ชี้ไปที่โหนดหัวเดิมก่อนขยับ head<br>
+      <code>n->data = val; ___; *head = n;</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in3" placeholder="n->next = ..." type="text">
+        <button class="ex-btn" onclick="checkFill('in3',
+          'n->next = *head',
+          ['n->next=*head','n -> next = *head'],
+          ['n->next = head','*head = n->next'],
+          'ถูก! n->next = *head ทำให้โหนดใหม่ชี้ไปที่หัวลิสต์เดิม ก่อนที่ *head จะถูกเปลี่ยนเป็น n',
+          'ต้องใช้ *head (ค่า pointer ที่ head ชี้อยู่จริง) ไม่ใช่ head เฉยๆ เพราะ head เป็น pointer-to-pointer')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 12 — Summary ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 1 · สรุป</div>
+    <div class="slide-h1">เก่ง Linked List <em>แล้ว!</em></div>
+    <div class="slide-lead">สร้าง traverse insert delete ได้ครบ — ขั้นต่อไปคือ Linked List แบบสองทิศทาง</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="steps">
+          <div class="step"><div class="step-n ok">1</div><div class="step-body"><strong>Node + head</strong> — struct เก็บค่า, head ชี้โหนดแรก<small>ลิสต์ว่าง = head เป็น NULL</small></div></div>
+          <div class="step"><div class="step-n ok">2</div><div class="step-body"><strong>Traverse</strong> — cur = head, while(cur!=NULL), cur=cur-&gt;next<small>pattern หลักของทุก operation</small></div></div>
+          <div class="step"><div class="step-n ok">3</div><div class="step-body"><strong>Insert</strong> — head O(1), tail/middle O(n)<small>ต้องระวังลำดับการเชื่อม pointer</small></div></div>
+          <div class="step"><div class="step-n ok">4</div><div class="step-body"><strong>Delete</strong> — หา prev ก่อน ข้าม cur แล้ว free<small>ลืม free = memory leak</small></div></div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🚀 บทต่อไป</div>
+          <div class="box-body">
+            <strong>บทที่ 2 — Doubly / Circular Linked List</strong><br>
+            เพิ่ม pointer <code>prev</code> ให้เดินถอยหลังได้ และทำลิสต์ให้เป็นวงกลม
+          </div>
+        </div>
+        <div class="exercise">
+          <div class="ex-label">🏆 Challenge ก่อนไปบทหน้า</div>
+          <div class="ex-q" style="color:#dde3f0">เขียนโปรแกรม Linked List เก็บคะแนนสอบ รับค่าจาก user ใส่ทีละค่า (insertTail) จนกว่าจะพิมพ์ -1 จากนั้นคำนวณค่าเฉลี่ยโดย traverse ทั้งลิสต์ แล้ว free ทุกโหนดก่อนจบโปรแกรม</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 1 — Linked List</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover','ทำไมต้องมี Linked List','Node และ head','Traverse',
+  'Insert at Head','Insert Tail/Middle','Delete + free',
+  'Search & Count','Use Case ธุรกรรม','Think!',
+  'โจทย์ Trace','โจทย์เติมคำ','สรุป'
+];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 4 — Queue | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+/* Chapter 4 accent — steel blue */
+:root { --ca:#1d5a8a; --cal:#e6f0f9; --cam:#5b9fd4; }
+
+.queue-diagram {
+  font-family: var(--mono); font-size: 12px;
+  background: var(--ink); border-radius: 10px;
+  padding: 16px 20px; margin-bottom: 14px; color: #8891a8;
+  overflow-x:auto;
+}
+.queue-row { display:flex; gap:6px; }
+.queue-cell {
+  width:48px; height:38px; flex-shrink:0; background:#1e2538; border:1px solid #2a3050; border-radius:6px;
+  display:flex; align-items:center; justify-content:center; font-size:13px;
+  font-weight:600; color:#9effe3;
+}
+.queue-cell.front { border-color:var(--cam); color:var(--cam); background:rgba(91,159,212,.12); }
+.queue-cell.empty { border-style:dashed; color:#3a4156; }
+.queue-labels { display:flex; gap:6px; margin-top:4px; }
+.queue-label { width:48px; flex-shrink:0; text-align:center; font-size:10px; color:#546e7a; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════════ SLIDE 0 — COVER ════════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Data Structures</div>
+        <div class="cover-title">บทที่ 4<br><em>Queue</em></div>
+        <div class="cover-subtitle">โครงสร้างแบบ FIFO (First In First Out) — เข้าก่อนออกก่อน เหมือนแถวต่อซื้อก๋วยเตี๋ยว มาก่อนได้กินก่อน</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>FIFO — First In First Out</div>
+          <div class="topic-row"><div class="topic-dot"></div>enqueue / dequeue</div>
+          <div class="topic-row"><div class="topic-dot"></div>Implementation ด้วย Array</div>
+          <div class="topic-row"><div class="topic-dot"></div>Circular Queue — แก้ปัญหาที่ว่างเปลือง</div>
+          <div class="topic-row"><div class="topic-dot"></div>Deque — เข้าออกได้ 2 ทาง</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">04</div>
+        <div class="cover-badge">CHAPTER 4</div>
+        <div class="cover-slides-count">11 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 1 — FIFO คืออะไร ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · เกริ่นนำ</div>
+    <div class="slide-h1">FIFO — <em>First In, First Out</em></div>
+    <div class="slide-lead">Queue เข้าทางหนึ่ง (rear/back) ออกอีกทาง (front) — ของที่เข้าก่อนจะถูกเอาออกก่อนเสมอ ตรงข้ามกับ Stack</div>
+
+    <div class="split">
+      <div class="split-col">
+        <table class="kv-table">
+          <thead><tr><th>Operation</th><th>ทำอะไร</th></tr></thead>
+          <tbody>
+            <tr><td>enqueue(x)</td><td>ใส่ x เข้าทางท้าย (rear)</td></tr>
+            <tr><td>dequeue()</td><td>เอาตัวหน้าสุด (front) ออก</td></tr>
+            <tr><td>peek/front()</td><td>ดูตัวหน้าสุด แต่ไม่เอาออก</td></tr>
+            <tr><td>isEmpty()</td><td>เช็คว่า queue ว่างไหม</td></tr>
+          </tbody>
+        </table>
+        <div class="box green">
+          <div class="box-title">💡 ตัวอย่างในชีวิตจริง</div>
+          <div class="box-body">แถวต่อซื้อก๋วยเตี๋ยว — มาก่อนได้กินก่อน, คิวงานพิมพ์ (print queue), คิวรอประมวลผลคำสั่งในระบบคอมพิวเตอร์</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="queue-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:10px;letter-spacing:.5px">QUEUE หลัง enqueue(10), enqueue(20), enqueue(30)</div>
+          <div class="queue-row">
+            <div class="queue-cell front">10</div>
+            <div class="queue-cell">20</div>
+            <div class="queue-cell">30</div>
+          </div>
+          <div class="queue-labels">
+            <div class="queue-label">front</div>
+            <div class="queue-label"></div>
+            <div class="queue-label">rear</div>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:#546e7a">dequeue() จะได้ 10 ก่อน (ตัวที่เข้าก่อนสุด)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 2 — Queue ด้วย Array ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Implementation</div>
+    <div class="slide-h1">Queue ด้วย <em>Array</em> — ใช้ 2 ตัวแปร front/rear</div>
+    <div class="slide-lead">ต่างจาก Stack ที่ใช้ index เดียว (top) — Queue ต้องเก็บ 2 ตำแหน่ง เพราะเข้า-ออกคนละด้าน</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">นิยาม Queue ด้วย Array</div>
+        <div class="code"><span class="kw">#define</span> MAXSIZE <span class="nm">100</span>
+<span class="kw">int</span> queue[MAXSIZE];
+<span class="kw">int</span> front = <span class="nm">0</span>, rear = <span class="op">-</span><span class="nm">1</span>, count = <span class="nm">0</span>;
+
+<span class="kw">void</span> <span class="fn">enqueue</span>(<span class="kw">int</span> val) {
+    <span class="kw">if</span> (count == MAXSIZE) {
+        <span class="fn">printf</span>(<span class="st">"Queue full!\n"</span>);
+        <span class="kw">return</span>;
+    }
+    rear++;
+    queue[rear] = val;
+    count++;
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">dequeue</div>
+        <div class="code"><span class="kw">int</span> <span class="fn">dequeue</span>() {
+    <span class="kw">if</span> (count == <span class="nm">0</span>) {
+        <span class="fn">printf</span>(<span class="st">"Queue empty!\n"</span>);
+        <span class="kw">return</span> <span class="op">-</span><span class="nm">1</span>;
+    }
+    <span class="kw">int</span> val = queue[front];
+    front++;     <span class="cm">/* เลื่อน front ไปข้างหน้า */</span>
+    count--;
+    <span class="kw">return</span> val;
+}</div>
+        <div class="box red">
+          <div class="box-title">❌ ปัญหา: Array แบบนี้ "เปลือง" memory</div>
+          <div class="box-body">ทุกครั้งที่ dequeue, front เลื่อนไปข้างหน้าเรื่อยๆ ไม่กลับมาใช้ index เดิม — สุดท้าย rear ชนขอบ array ทั้งที่ของจริงในคิวอาจมีไม่มาก</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 3 — Circular Queue ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Circular Queue</div>
+    <div class="slide-h1">Circular Queue — <em>วน index กลับมาใช้ใหม่</em></div>
+    <div class="slide-lead">ใช้ modulo (%) ให้ index วนกลับมาที่ 0 เมื่อถึงขอบ array — ไม่เปลืองช่องที่ dequeue ไปแล้ว</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">enqueue / dequeue แบบวน (modulo)</div>
+        <div class="code"><span class="kw">int</span> queue[MAXSIZE];
+<span class="kw">int</span> front = <span class="nm">0</span>, rear = <span class="op">-</span><span class="nm">1</span>, count = <span class="nm">0</span>;
+
+<span class="kw">void</span> <span class="fn">enqueue</span>(<span class="kw">int</span> val) {
+    <span class="kw">if</span> (count == MAXSIZE) <span class="kw">return</span>;
+    rear = (rear + <span class="nm">1</span>) % MAXSIZE;  <span class="cm">/* วนกลับ 0 ถ้าเกินขอบ */</span>
+    queue[rear] = val;
+    count++;
+}
+
+<span class="kw">int</span> <span class="fn">dequeue</span>() {
+    <span class="kw">if</span> (count == <span class="nm">0</span>) <span class="kw">return</span> <span class="op">-</span><span class="nm">1</span>;
+    <span class="kw">int</span> val = queue[front];
+    front = (front + <span class="nm">1</span>) % MAXSIZE; <span class="cm">/* วนกลับ 0 เช่นกัน */</span>
+    count--;
+    <span class="kw">return</span> val;
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="queue-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:10px">MAXSIZE=5, rear ชน 4 แล้ววนกลับ 0</div>
+          <div class="queue-row">
+            <div class="queue-cell empty">·</div>
+            <div class="queue-cell front">30</div>
+            <div class="queue-cell">40</div>
+            <div class="queue-cell">50</div>
+            <div class="queue-cell" style="border-color:var(--cam)">60</div>
+          </div>
+          <div class="queue-labels">
+            <div class="queue-label">[0]</div>
+            <div class="queue-label">[1] front</div>
+            <div class="queue-label">[2]</div>
+            <div class="queue-label">[3]</div>
+            <div class="queue-label">[4] rear</div>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:#546e7a">enqueue ตัวถัดไป → rear = (4+1)%5 = 0 → วนไปใส่ที่ index 0</div>
+        </div>
+        <div class="box green">
+          <div class="box-title">💡 ทำไมต้องเก็บ count ด้วย</div>
+          <div class="box-body">ใน Circular Queue, front==rear เกิดได้ทั้งตอน "ว่าง" และตอน "เต็ม" — ต้องใช้ count แยกแยะสองกรณีนี้</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 4 — Queue ด้วย Linked List ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Implementation</div>
+    <div class="slide-h1">Queue ด้วย <em>Linked List</em> — ไม่จำกัดขนาด</div>
+    <div class="slide-lead">เก็บ front กับ rear pointer — enqueue ต่อท้าย (เหมือน insertTail), dequeue เอาหัวออก (เหมือน deleteHead)</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">enqueue = insertTail</div>
+        <div class="code"><span class="kw">struct</span> Node { <span class="kw">int</span> data; <span class="kw">struct</span> Node <span class="op">*</span>next; };
+<span class="kw">struct</span> Node <span class="op">*</span>front = <span class="nm">NULL</span>, <span class="op">*</span>rear = <span class="nm">NULL</span>;
+
+<span class="kw">void</span> <span class="fn">enqueue</span>(<span class="kw">int</span> val) {
+    <span class="kw">struct</span> Node <span class="op">*</span>n =
+        (<span class="kw">struct</span> Node <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> Node));
+    n<span class="op">-&gt;</span>data = val; n<span class="op">-&gt;</span>next = <span class="nm">NULL</span>;
+    <span class="kw">if</span> (rear == <span class="nm">NULL</span>) { front = rear = n; <span class="kw">return</span>; }
+    rear<span class="op">-&gt;</span>next = n;
+    rear = n;
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">dequeue = deleteHead + free</div>
+        <div class="code"><span class="kw">int</span> <span class="fn">dequeue</span>() {
+    <span class="kw">if</span> (front == <span class="nm">NULL</span>) {
+        <span class="fn">printf</span>(<span class="st">"Queue empty!\n"</span>);
+        <span class="kw">return</span> <span class="op">-</span><span class="nm">1</span>;
+    }
+    <span class="kw">struct</span> Node <span class="op">*</span>tmp = front;
+    <span class="kw">int</span> val = tmp<span class="op">-&gt;</span>data;
+    front = front<span class="op">-&gt;</span>next;
+    <span class="kw">if</span> (front == <span class="nm">NULL</span>) rear = <span class="nm">NULL</span>;  <span class="cm">/* คิวว่างแล้ว */</span>
+    <span class="fn">free</span>(tmp);
+    <span class="kw">return</span> val;
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 5 — Deque ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Deque</div>
+    <div class="slide-h1">Deque — <em>Double-Ended Queue</em></div>
+    <div class="slide-lead">Deque เข้า-ออกได้ทั้ง 2 ฝั่ง (หน้าและท้าย) — รวมความสามารถของ Stack และ Queue ไว้ในตัวเดียว สร้างจาก Doubly Linked List ของบทที่ 2</div>
+
+    <div class="split">
+      <div class="split-col">
+        <table class="kv-table">
+          <thead><tr><th>Operation</th><th>ทำอะไร</th></tr></thead>
+          <tbody>
+            <tr><td>pushFront(x)</td><td>ใส่ x ที่หน้า</td></tr>
+            <tr><td>pushBack(x)</td><td>ใส่ x ที่ท้าย</td></tr>
+            <tr><td>popFront()</td><td>เอาตัวหน้าออก</td></tr>
+            <tr><td>popBack()</td><td>เอาตัวท้ายออก</td></tr>
+          </tbody>
+        </table>
+        <div class="box green">
+          <div class="box-title">💡 Deque = Doubly List ที่เก็บ head + tail</div>
+          <div class="box-body">pushFront/popFront ใช้ pattern เดียวกับ insertHead/deleteHead ของบทที่ 1, pushBack/popBack ใช้ pattern เดียวกับ insertTail ของบทที่ 2</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">pushFront / pushBack ด้วย Doubly List</div>
+        <div class="code"><span class="kw">struct</span> DNode <span class="op">*</span>head=<span class="nm">NULL</span>, <span class="op">*</span>tail=<span class="nm">NULL</span>;
+
+<span class="kw">void</span> <span class="fn">pushBack</span>(<span class="kw">int</span> val) {
+    <span class="kw">struct</span> DNode <span class="op">*</span>n =
+        (<span class="kw">struct</span> DNode <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> DNode));
+    n<span class="op">-&gt;</span>data = val; n<span class="op">-&gt;</span>next = <span class="nm">NULL</span>;
+    <span class="kw">if</span> (tail == <span class="nm">NULL</span>) { n<span class="op">-&gt;</span>prev=<span class="nm">NULL</span>; head=tail=n; <span class="kw">return</span>; }
+    n<span class="op">-&gt;</span>prev = tail;
+    tail<span class="op">-&gt;</span>next = n;
+    tail = n;
+}
+<span class="cm">/* pushFront ก็คือ insertHead ของบทที่ 2 นั่นเอง */</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 6 — Use Case ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Use Case</div>
+    <div class="slide-h1">🏦 <em>Use Case จริง</em> — คิวรอคิวที่ตู้ ATM</div>
+    <div class="slide-lead">ลูกค้าต่อแถวรอใช้ ATM — มาก่อนได้ใช้ก่อนเสมอ ตรงกับหลัก FIFO ของ Queue พอดี</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="usecase" style="border-left-color:var(--ca)">
+          <div class="usecase-label" style="color:var(--ca)">โจทย์ระบบธนาคาร</div>
+          <div class="usecase-title">จัดคิวลูกค้ารอใช้ ATM</div>
+          <div class="usecase-body">ลูกค้าต่อแถว enqueue เข้าคิว ระบบเรียกคิวถัดไปด้วย dequeue — รับประกันว่ามาก่อนได้ใช้ก่อน</div>
+        </div>
+        <div class="box">
+          <div class="box-title">ทำไมต้องเป็น Queue ไม่ใช่ Stack</div>
+          <div class="box-body">ถ้าใช้ Stack คนที่มาคิวล่าสุดจะได้ใช้ก่อน (LIFO) ซึ่งไม่ fair — ต้องใช้ Queue (FIFO) เพื่อความเป็นธรรมตามลำดับมาก่อน-หลัง</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">ระบบคิว ATM</div>
+        <div class="code"><span class="kw">struct</span> Customer { <span class="kw">char</span> name[<span class="nm">30</span>]; <span class="kw">struct</span> Customer <span class="op">*</span>next; };
+<span class="kw">struct</span> Customer <span class="op">*</span>front=<span class="nm">NULL</span>, <span class="op">*</span>rear=<span class="nm">NULL</span>;
+
+<span class="kw">void</span> <span class="fn">joinQueue</span>(<span class="kw">char</span> <span class="op">*</span>name) {
+    <span class="kw">struct</span> Customer <span class="op">*</span>n =
+        (<span class="kw">struct</span> Customer <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> Customer));
+    <span class="fn">strcpy</span>(n<span class="op">-&gt;</span>name, name); n<span class="op">-&gt;</span>next = <span class="nm">NULL</span>;
+    <span class="kw">if</span> (rear == <span class="nm">NULL</span>) front = rear = n;
+    <span class="kw">else</span> { rear<span class="op">-&gt;</span>next = n; rear = n; }
+    <span class="fn">printf</span>(<span class="st">"%s เข้าคิวแล้ว\n"</span>, name);
+}
+
+<span class="kw">void</span> <span class="fn">serveNext</span>() {
+    <span class="kw">if</span> (front == <span class="nm">NULL</span>) { <span class="fn">printf</span>(<span class="st">"ไม่มีคิว\n"</span>); <span class="kw">return</span>; }
+    <span class="fn">printf</span>(<span class="st">"เรียก: %s\n"</span>, front<span class="op">-&gt;</span>name);
+    <span class="kw">struct</span> Customer <span class="op">*</span>tmp = front;
+    front = front<span class="op">-&gt;</span>next;
+    <span class="kw">if</span> (front == <span class="nm">NULL</span>) rear = <span class="nm">NULL</span>;
+    <span class="fn">free</span>(tmp);
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 7 — Think! ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 4 · Think!</div>
+    <div class="slide-h1">คิดก่อน <em>เขียน</em></div>
+    <div class="slide-lead">เทียบ Stack กับ Queue บ่อยๆ จะช่วยให้เข้าใจทั้งสองแน่นขึ้น</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">1. enqueue(1), enqueue(2), enqueue(3), dequeue() — ได้ค่าอะไร?</div>
+          <div class="think-hint">💡 1 — เพราะ Queue เป็น FIFO ตัวที่เข้าก่อนสุด (1) จะออกก่อนสุด</div>
+        </div>
+        <div class="think">
+          <div class="think-q">2. ทำไม Queue ด้วย Array แบบไม่วน (ไม่ใช้ modulo) จึง "เปลือง" memory?</div>
+          <div class="think-hint">💡 front เลื่อนไปข้างหน้าเรื่อยๆ ไม่ย้อนกลับมาใช้ index เดิม สุดท้าย rear ชนขอบ array ทั้งที่ช่องด้านหน้ายังว่างอยู่</div>
+        </div>
+        <div class="think">
+          <div class="think-q">3. ใน Circular Queue ทำไม front==rear เพียงอย่างเดียวบอกไม่ได้ว่า queue ว่างหรือเต็ม?</div>
+          <div class="think-hint">💡 ทั้งสองกรณีทำให้ front กับ rear เท่ากันได้ ต้องใช้ตัวแปร count แยกแยะ</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">4. Deque ต่างจาก Queue ปกติยังไง?</div>
+          <div class="think-hint">💡 Queue ปกติเข้าทางเดียว (rear) ออกทางเดียว (front) แต่ Deque เข้า-ออกได้ทั้งสองฝั่ง</div>
+        </div>
+        <div class="think">
+          <div class="think-q">5. ทำไม dequeue ของ Linked List ต้องเช็ค <code>if (front==NULL) rear=NULL;</code>?</div>
+          <div class="think-hint">💡 ถ้า dequeue โหนดสุดท้ายออก front จะเป็น NULL แต่ rear ยังชี้ไปที่โหนดที่ free ไปแล้ว (dangling pointer) ต้องเคลียร์ rear ด้วย</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 8 — โจทย์ Trace ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · โจทย์ Trace</div>
+    <div class="slide-h1">โจทย์ <em>อ่าน code</em> ทายผลลัพธ์</div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — ผลลัพธ์ของลำดับ operation นี้คือ?</div>
+      <div class="code" style="margin-bottom:10px"><span class="fn">enqueue</span>(<span class="nm">5</span>); <span class="fn">enqueue</span>(<span class="nm">10</span>); <span class="fn">enqueue</span>(<span class="nm">15</span>);
+<span class="fn">printf</span>(<span class="st">"%d "</span>, <span class="fn">dequeue</span>());
+<span class="fn">printf</span>(<span class="st">"%d "</span>, <span class="fn">dequeue</span>());</div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" onclick="pickMC('mc1',0,1,'FIFO — dequeue ครั้งแรกได้ 5 (เข้าก่อนสุด) ครั้งที่สองได้ 10 ผลคือ 5 10 ✓')"><span class="mc-ltr">A</span> 5 10</div>
+        <div class="mc-opt" onclick="pickMC('mc1',1,1,'FIFO — dequeue ครั้งแรกได้ 5 (เข้าก่อนสุด) ครั้งที่สองได้ 10 ผลคือ 5 10 ✓')"><span class="mc-ltr">B</span> 15 10</div>
+        <div class="mc-opt" onclick="pickMC('mc1',2,1,'FIFO — dequeue ครั้งแรกได้ 5 (เข้าก่อนสุด) ครั้งที่สองได้ 10 ผลคือ 5 10 ✓')"><span class="mc-ltr">C</span> 15 5</div>
+        <div class="mc-opt" onclick="pickMC('mc1',3,1,'FIFO — dequeue ครั้งแรกได้ 5 (เข้าก่อนสุด) ครั้งที่สองได้ 10 ผลคือ 5 10 ✓')"><span class="mc-ltr">D</span> 5 5</div>
+      </div>
+      <div class="ex-feedback" id="mc1-fb"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — Circular Queue, MAXSIZE=5, rear=4 ปัจจุบัน enqueue ต่อ rear จะเป็นเท่าไหร่?</div>
+      <div class="code" style="margin-bottom:10px"><span class="cm">/* rear = (rear + 1) % MAXSIZE */</span>
+<span class="kw">int</span> rear = <span class="nm">4</span>, MAXSIZE = <span class="nm">5</span>;
+rear = (rear + <span class="nm">1</span>) % MAXSIZE;</div>
+      <div class="mc-opts" id="mc2">
+        <div class="mc-opt" onclick="pickMC('mc2',0,2,'(4+1)%5 = 5%5 = 0 — index วนกลับไปที่ 0 พอดี นี่คือหลักการ Circular Queue ✓')"><span class="mc-ltr">A</span> 5</div>
+        <div class="mc-opt" onclick="pickMC('mc2',1,2,'(4+1)%5 = 5%5 = 0 — index วนกลับไปที่ 0 พอดี นี่คือหลักการ Circular Queue ✓')"><span class="mc-ltr">B</span> Error (index out of bound)</div>
+        <div class="mc-opt" onclick="pickMC('mc2',2,2,'(4+1)%5 = 5%5 = 0 — index วนกลับไปที่ 0 พอดี นี่คือหลักการ Circular Queue ✓')"><span class="mc-ltr">C</span> 0</div>
+        <div class="mc-opt" onclick="pickMC('mc2',3,2,'(4+1)%5 = 5%5 = 0 — index วนกลับไปที่ 0 พอดี นี่คือหลักการ Circular Queue ✓')"><span class="mc-ltr">D</span> 4</div>
+      </div>
+      <div class="ex-feedback" id="mc2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 9 — โจทย์ Fill-in ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · โจทย์เติมคำ</div>
+    <div class="slide-h1">โจทย์ <em>เติมคำ</em></div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — เช็ค Queue ว่าง</div>
+      <div class="ex-q">เติมเงื่อนไขเช็คว่า queue (แบบ array ที่ใช้ count) ว่างหรือไม่<br>
+      <code>int isEmpty() { return ___; }</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in1" placeholder="count == ..." type="text">
+        <button class="ex-btn" onclick="checkFill('in1',
+          'count == 0',
+          ['count==0'],
+          ['count == 1','front == rear'],
+          'ถูก! count == 0 หมายความว่าไม่มีของในคิวเลย',
+          'ใน Circular Queue ใช้ count แยกแยะว่าง/เต็ม ไม่ใช่เทียบ front กับ rear โดยตรง')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — Circular Queue เลื่อน front</div>
+      <div class="ex-q">เติมสูตรเลื่อน front แบบวน (modulo) ใน dequeue<br>
+      <code>front = ___;</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in2" placeholder="(front + 1) % ..." type="text">
+        <button class="ex-btn" onclick="checkFill('in2',
+          '(front + 1) % MAXSIZE',
+          ['(front+1)%MAXSIZE'],
+          ['front + 1','(front - 1) % MAXSIZE'],
+          'ถูก! ใช้ modulo เพื่อให้ index วนกลับไปที่ 0 เมื่อเกินขอบ array',
+          'ต้องมี % MAXSIZE ด้วย ไม่ใช่แค่ +1 เฉยๆ มิฉะนั้น index จะเกิน array ตอนวน')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 3 — dequeue ด้วย Linked List</div>
+      <div class="ex-q">หลัง dequeue โหนดสุดท้ายออกจนคิวว่าง ต้องเติมอะไรเพื่อป้องกัน rear เป็น dangling pointer<br>
+      <code>front = front->next; if (front == NULL) ___;</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in3" placeholder="rear = ..." type="text">
+        <button class="ex-btn" onclick="checkFill('in3',
+          'rear = NULL',
+          ['rear=NULL','rear = NULL;'],
+          ['front = NULL','rear = front'],
+          'ถูก! ต้องเคลียร์ rear เป็น NULL ด้วยเมื่อคิวว่างสนิท ไม่งั้น rear จะชี้ไปที่ memory ที่ free ไปแล้ว',
+          'ต้องเซต rear = NULL ไม่ใช่ front (front เป็น NULL อยู่แล้วจาก statement ก่อนหน้า)')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 10 — Summary ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 4 · สรุป</div>
+    <div class="slide-h1">เก่ง Queue <em>แล้ว!</em></div>
+    <div class="slide-lead">เข้าใจ FIFO, Circular Queue และ Deque — ขั้นต่อไปคือ Binary Tree ที่ไม่ใช่โครงสร้างเชิงเส้นแล้ว</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="steps">
+          <div class="step"><div class="step-n ok">1</div><div class="step-body"><strong>FIFO</strong> — เข้าก่อนออกก่อน<small>enqueue ที่ rear, dequeue ที่ front</small></div></div>
+          <div class="step"><div class="step-n ok">2</div><div class="step-body"><strong>Circular Queue</strong> — ใช้ modulo วน index<small>ไม่เปลือง memory เหมือน array ตรงๆ</small></div></div>
+          <div class="step"><div class="step-n ok">3</div><div class="step-body"><strong>Linked List Queue</strong> — enqueue=insertTail<small>ไม่จำกัดขนาด</small></div></div>
+          <div class="step"><div class="step-n ok">4</div><div class="step-body"><strong>Deque</strong> — เข้าออกได้ 2 ฝั่ง<small>รวม Stack+Queue ในตัวเดียว</small></div></div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🚀 บทต่อไป</div>
+          <div class="box-body">
+            <strong>บทที่ 5 — Binary Tree / BST</strong><br>
+            โครงสร้างแบบไม่เชิงเส้น (non-linear) ครั้งแรก — แต่ละโหนดมีลูกได้ 2 ตัว (left/right)
+          </div>
+        </div>
+        <div class="exercise">
+          <div class="ex-label">🏆 Challenge ก่อนไปบทหน้า</div>
+          <div class="ex-q" style="color:#dde3f0">เขียนโปรแกรมจำลองคิว ATM รับชื่อลูกค้าจาก user ใส่เข้าคิวทีละคน (enqueue) จากนั้นให้พิมพ์ "เรียกคิวถัดไป" เพื่อ dequeue ออกมาทีละคน จนคิวว่าง</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 4 — Queue</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover','FIFO คืออะไร','Queue ด้วย Array','Circular Queue',
+  'Queue ด้วย Linked List','Deque','Use Case คิว ATM',
+  'Think!','โจทย์ Trace','โจทย์เติมคำ','สรุป'
+];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
