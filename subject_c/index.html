@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C Language — ก๋วยเตี๋ยวเรือ Programming</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f14;--paper:#f5f2eb;--paper2:#ede9df;--paper3:#e4dfd3;
+  --line:#ccc6b8;--dim:#8a8276;--body:#2e2b25;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans Thai',sans-serif;
+  --s-slid:#7c3aed;--s-slidl:#f0ebff;--s-slidm:#a87ef5;
+  --s-test:#1a4e8a;--s-testl:#e8f0fa;--s-testm:#5b7fd4;
+  --s-prac:#1a6b4a;--s-pracl:#e6f4ee;--s-pracm:#4caf84;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--body);min-height:100vh}
+.hero{background:var(--ink);padding:44px 24px 36px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 100%,rgba(124,58,237,.15),transparent);pointer-events:none}
+.hero-bowl{font-size:52px;line-height:1;display:block;margin-bottom:12px;animation:float 3s ease-in-out infinite;position:relative}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.hero-brand{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.3px;margin-bottom:4px;position:relative}
+.hero-tagline{font-family:var(--mono);font-size:11px;color:#546e7a;letter-spacing:1px;margin-bottom:18px;position:relative}
+.hero-stats{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;position:relative}
+.stat{text-align:center}
+.stat-n{font-family:var(--mono);font-size:19px;font-weight:600;color:#fff;line-height:1}
+.stat-l{font-family:var(--mono);font-size:10px;color:#546e7a;margin-top:2px;letter-spacing:.5px}
+.main{max-width:960px;margin:0 auto;padding:0 20px 60px}
+.section{padding-top:32px}
+.sec-hd{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sec-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.sec-icon.s{background:var(--s-slidl)}.sec-icon.t{background:var(--s-testl)}.sec-icon.p{background:var(--s-pracl)}
+.sec-info{flex:1}
+.sec-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:1px}
+.sec-desc{font-size:12px;color:var(--dim)}
+.sec-line{flex:1;height:1px;background:var(--line)}
+.grid{display:grid;gap:11px;grid-template-columns:1fr}
+@media(min-width:520px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:820px){.grid.three{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1080px){.grid.four{grid-template-columns:repeat(4,1fr)}}
+.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px 18px;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s;position:relative;overflow:hidden}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:13px 13px 0 0;opacity:.5;transition:opacity .18s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.08)}
+.card:hover::after{opacity:1}
+.card:hover .arr{transform:translateX(3px);color:var(--body)}
+.sec-s .card::after{background:linear-gradient(90deg,var(--s-slid),var(--s-slidm))}
+.sec-t .card::after{background:linear-gradient(90deg,var(--s-test),var(--s-testm))}
+.sec-p .card::after{background:linear-gradient(90deg,var(--s-prac),var(--s-pracm))}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.em{font-size:24px;line-height:1}
+.arr{font-size:13px;color:var(--dim);transition:transform .18s,color .18s;margin-top:2px}
+.badge{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;margin-bottom:5px;display:inline-block}
+.sec-s .badge{background:var(--s-slidl);color:var(--s-slid)}
+.sec-t .badge{background:var(--s-testl);color:var(--s-test)}
+.sec-p .badge{background:var(--s-pracl);color:var(--s-prac)}
+.card-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.3}
+.card-desc{font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:10px;flex:1}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+.chip{font-family:var(--mono);font-size:10px;color:var(--dim);background:var(--paper2);border:1px solid var(--line);border-radius:4px;padding:2px 6px}
+.card.soon{opacity:.42;border-style:dashed;cursor:default;pointer-events:none}
+.card.soon::after{display:none}
+.footer{text-align:center;padding:18px 20px 32px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<div class="hero" style="position:relative">
+  <a href="../index.html" style="position:absolute;top:14px;left:16px;font-family:var(--mono);font-size:11px;color:#9ba3ad;text-decoration:none">← วิชาทั้งหมด</a>
+  <span class="hero-bowl">🍜</span>
+  <div class="hero-brand">C Language</div>
+  <div class="hero-tagline">// เส้นดี · น้ำข้น · โค้ดลื่น · ชีวิตมีรสชาติ</div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-n">30</div><div class="stat-l">pretest</div></div>
+    <div class="stat"><div class="stat-n">20</div><div class="stat-l">exercises</div></div>
+    <div class="stat"><div class="stat-n">10</div><div class="stat-l">challenges</div></div>
+    <div class="stat"><div class="stat-n">6</div><div class="stat-l">chapters</div></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ══ SLIDES ══ -->
+  <div class="section sec-s">
+    <div class="sec-hd">
+      <div class="sec-icon s">📽️</div>
+      <div class="sec-info">
+        <div class="sec-title">สไลด์บทเรียน</div>
+        <div class="sec-desc">อ่านเองได้ที่บ้าน — เนื้อหา ตัวอย่าง Use Case Think! และโจทย์ในสไลด์เดียว</div>
+      </div>
+      <div class="sec-line"></div>
+    </div>
+    <div class="grid four">
+
+      <a class="card" href="slides_ch1.html">
+        <div class="card-top"><span class="em">📽️</span><span class="arr">→</span></div>
+        <span class="badge">บทที่ 1</span>
+        <div class="card-title">พื้นฐาน C</div>
+        <div class="card-desc">Variables, Data Types, printf/scanf, Operators, Constants, Type Conversion</div>
+        <div class="chips"><span class="chip">12 slides</span><span class="chip">Think! + โจทย์</span></div>
+      </a>
+
+      <a class="card" href="slides_ch1_5.html">
+        <div class="card-top"><span class="em">📽️</span><span class="arr">→</span></div>
+        <span class="badge">บทที่ 1.5</span>
+        <div class="card-title">Operator Precedence</div>
+        <div class="card-desc">ลำดับความสำคัญ operator, Associativity, Bug ที่เจอบ่อย และการใช้วงเล็บ</div>
+        <div class="chips"><span class="chip">8 slides</span><span class="chip">Think! + โจทย์</span></div>
+      </a>
+
+      <a class="card" href="slides_ch2.html">
+        <div class="card-top"><span class="em">📽️</span><span class="arr">→</span></div>
+        <span class="badge">บทที่ 2</span>
+        <div class="card-title">Control Flow</div>
+        <div class="card-desc">if / else if / else, Nested conditions, switch/case, Ternary operator</div>
+        <div class="chips"><span class="chip">12 slides</span><span class="chip">Think! + โจทย์</span></div>
+      </a>
+
+      <a class="card" href="slides_ch3.html">
+        <div class="card-top"><span class="em">📽️</span><span class="arr">→</span></div>
+        <span class="badge">บทที่ 3</span>
+        <div class="card-title">Loop</div>
+        <div class="card-desc">for / while / do-while, break/continue, Nested loop พร้อม 5 Pattern จำไว้ใช้ได้เลย</div>
+        <div class="chips"><span class="chip">13 slides</span><span class="chip">Think! + โจทย์</span></div>
+      </a>
+
+      <a class="card" href="slides_ch4.html">
+        <div class="card-top"><span class="em">📽️</span><span class="arr">→</span></div>
+        <span class="badge">บทที่ 4</span>
+        <div class="card-title">Array &amp; Function</div>
+        <div class="card-desc">Array 1D/2D, Array+Loop, Function Prototype, Pass by Value และ Array in Function</div>
+        <div class="chips"><span class="chip">14 slides</span><span class="chip">Think! + โจทย์</span></div>
+      </a>
+
+      <a class="card" href="slides_ch5.html">
+        <div class="card-top"><span class="em">📽️</span><span class="arr">→</span></div>
+        <span class="badge">บทที่ 5</span>
+        <div class="card-title">Pointer</div>
+        <div class="card-desc">Address, &amp; *, Pass by Reference, Pointer+Array, Pointer Arithmetic</div>
+        <div class="chips"><span class="chip">14 slides</span><span class="chip">Think! + โจทย์</span></div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ══ ทดสอบ ══ -->
+  <div class="section sec-t">
+    <div class="sec-hd">
+      <div class="sec-icon t">📋</div>
+      <div class="sec-info">
+        <div class="sec-title">ทดสอบความรู้</div>
+        <div class="sec-desc">วัดระดับและฝึก logic การอ่าน code</div>
+      </div>
+      <div class="sec-line"></div>
+    </div>
+    <div class="grid">
+      <a class="card" href="pretest.html">
+        <div class="card-top"><span class="em">📋</span><span class="arr">→</span></div>
+        <span class="badge">Pretest</span>
+        <div class="card-title">C Language Pretest</div>
+        <div class="card-desc">ทดสอบความรู้พื้นฐาน C ก่อนเรียน ครอบคลุม Variables, Operators, Control Flow, Functions และ Arrays พร้อมเฉลยภาษาไทย</div>
+        <div class="chips"><span class="chip">30 questions</span><span class="chip">MCQ</span><span class="chip">Pass: 80%</span></div>
+      </a>
+      <a class="card" href="exercises.html">
+        <div class="card-top"><span class="em">🧠</span><span class="arr">→</span></div>
+        <span class="badge">Exercises</span>
+        <div class="card-title">C Logic Exercises</div>
+        <div class="card-desc">ฝึก Logic 3 รูปแบบ ตั้งแต่ Easy → Hard อ่านโค้ด เติมโค้ด และเขียนโค้ดเอง</div>
+        <div class="chips"><span class="chip">20 exercises</span><span class="chip">Trace · Fill · Write</span><span class="chip">3 levels</span></div>
+      </a>
+
+      <a class="card" href="quiz_array_pointer.html">
+        <div class="card-top"><span class="em">🎯</span><span class="arr">→</span></div>
+        <span class="badge">Quiz</span>
+        <div class="card-title">ตะลุยโจทย์ Array &amp; Pointer</div>
+        <div class="card-desc">30 ข้อ MCQ เฉพาะ Array และ Pointer — โจทย์ใหม่ไม่ซ้ำบทเรียน พร้อมเฉลยทุกข้อ</div>
+        <div class="chips"><span class="chip">30 questions</span><span class="chip">Array · Pointer · Mix</span><span class="chip">เฉลยทันที</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ ฝึกเขียน ══ -->
+  <div class="section sec-p">
+    <div class="sec-hd">
+      <div class="sec-icon p">🏋️</div>
+      <div class="sec-info">
+        <div class="sec-title">ฝึกเขียนโปรแกรม</div>
+        <div class="sec-desc">โจทย์จริง — เขียนให้ได้ output ตามตัวอย่าง พร้อมเฉลยอธิบาย</div>
+      </div>
+      <div class="sec-line"></div>
+    </div>
+    <div class="grid">
+      <a class="card" href="challenges.html">
+        <div class="card-top"><span class="em">🏆</span><span class="arr">→</span></div>
+        <span class="badge">Challenges</span>
+        <div class="card-title">C Challenges</div>
+        <div class="card-desc">โจทย์เขียนโปรแกรมให้ได้ผลลัพธ์ตามตัวอย่าง ฝึก if-else และ loop ตั้งแต่พิมพ์ดาวจนถึงระบบร้านก๋วยเตี๋ยว</div>
+        <div class="chips"><span class="chip">10 challenges</span><span class="chip">Easy → Hard</span><span class="chip">Hint included</span></div>
+      </a>
+      <a class="card" href="challenges_answers.html">
+        <div class="card-top"><span class="em">📖</span><span class="arr">→</span></div>
+        <span class="badge">Answers</span>
+        <div class="card-title">เฉลย C Challenges</div>
+        <div class="card-desc">เฉลยพร้อมอธิบาย code ทีละบรรทัด syntax highlight และ Key Concept — เปิดหลังลองเองแล้ว</div>
+        <div class="chips"><span class="chip">10 solutions</span><span class="chip">Thai explanation</span><span class="chip">TOC jump</span></div>
+      </a>
+
+      <a class="card" href="projects.html">
+        <div class="card-top"><span class="em">🛠️</span><span class="arr">→</span></div>
+        <span class="badge">Projects</span>
+        <div class="card-title">โจทย์ฝึกเขียนโค้ด</div>
+        <div class="card-desc">10 โจทย์ Paragraph Requirement ใช้ความรู้ทุกบท Easy→Hard พร้อม Hint และเฉลยพร้อมอธิบาย</div>
+        <div class="chips"><span class="chip">10 projects</span><span class="chip">Easy → Hard</span><span class="chip">ทุกบท</span><span class="chip">Hint + เฉลย</span></div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">made with ♥ by ก๋วยเตี๋ยวเรือ Programming</div>
+</body>
+</html>
