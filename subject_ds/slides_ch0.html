@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 0 — ทบทวนพื้นฐาน | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+/* Chapter 0 accent — warm sand (review chapter) */
+:root { --ca:#7a5a33; --cal:#f5eee0; --cam:#b08a4e; }
+
+.mem-diagram {
+  font-family: var(--mono); font-size: 12px;
+  background: var(--ink); border-radius: 10px;
+  padding: 16px 20px; margin-bottom: 14px; color: #8891a8;
+}
+.mbox-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.mbox-row:last-child { margin-bottom: 0; }
+.mbox-name { min-width: 52px; color: #c9d1e0; font-weight: 600; font-size: 12px; }
+.mbox-addr { min-width: 72px; color: #546e7a; font-size: 10px; }
+.mbox {
+  width: 72px; height: 40px;
+  background: #1e2538; border: 1px solid #2a3050;
+  border-radius: 6px; display: flex; align-items: center;
+  justify-content: center; font-size: 13px; font-weight: 600;
+}
+.mbox.val { color: #9effe3; }
+.mbox.ptr { color: var(--cam); border-color: var(--cam); background: rgba(176,138,78,.12); }
+.mbox-label { font-size: 10px; color: #546e7a; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════════ SLIDE 0 — COVER ════════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Data Structures</div>
+        <div class="cover-title">บทที่ 0<br><em>ทบทวนพื้นฐาน</em></div>
+        <div class="cover-subtitle">ก่อนเรียน Data Structures ต้องแม่น Array, Pointer, Struct และ Dynamic Memory — ทุก Data Structure สร้างจาก 4 อย่างนี้</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Array ทบทวน (1D/2D)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Pointer ทบทวน (&, *, arithmetic)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Struct — รวมหลาย field ไว้ในชื่อเดียว</div>
+          <div class="topic-row"><div class="topic-dot"></div>Dynamic Memory — malloc / free</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">00</div>
+        <div class="cover-badge">CHAPTER 0 · REVIEW</div>
+        <div class="cover-slides-count">11 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 1 — Array ทบทวน ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · ทบทวน</div>
+    <div class="slide-h1">Array — <em>เก็บข้อมูลชุดเดียวกันต่อกัน</em></div>
+    <div class="slide-lead">Array คือช่องความจำต่อกันเป็นแถว เข้าถึงด้วย index — ใน Data Structures เราจะใช้ Array เป็นทางเลือกแข่งกับ Linked List เสมอ</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">Array 1D และ 2D</div>
+        <div class="code"><span class="kw">int</span> score[<span class="nm">5</span>] = {<span class="nm">80</span>,<span class="nm">75</span>,<span class="nm">90</span>,<span class="nm">60</span>,<span class="nm">88</span>};
+<span class="fn">printf</span>(<span class="st">"%d"</span>, score[<span class="nm">2</span>]); <span class="cm">/* 90 */</span>
+
+<span class="cm">/* 2D = ตาราง แถว x คอลัมน์ */</span>
+<span class="kw">int</span> grid[<span class="nm">2</span>][<span class="nm">3</span>] = {{<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>},{<span class="nm">4</span>,<span class="nm">5</span>,<span class="nm">6</span>}};
+<span class="fn">printf</span>(<span class="st">"%d"</span>, grid[<span class="nm">1</span>][<span class="nm">2</span>]); <span class="cm">/* 6 */</span></div>
+        <div class="box amber">
+          <div class="box-title">⚠️ ข้อจำกัดของ Array</div>
+          <div class="box-body">
+            ขนาดต้องกำหนดตั้งแต่แรก (fixed size)<br>
+            แทรก/ลบกลางแถว ต้องขยับสมาชิกทุกตัว → ช้า O(n)<br><br>
+            นี่คือเหตุผลที่ Linked List เกิดขึ้น — แทรก/ลบได้เร็วกว่า
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="mem-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:12px;letter-spacing:.5px">MEMORY — score[5] ต่อกันเป็นแถว</div>
+          <div class="mbox-row">
+            <div class="mbox-name">[0]</div><div class="mbox-addr">0x1000</div><div class="mbox val">80</div>
+          </div>
+          <div class="mbox-row">
+            <div class="mbox-name">[1]</div><div class="mbox-addr">0x1004</div><div class="mbox val">75</div>
+          </div>
+          <div class="mbox-row">
+            <div class="mbox-name">[2]</div><div class="mbox-addr">0x1008</div><div class="mbox val">90</div>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:#546e7a">ทุกช่องชิดกัน → เข้าถึง index ไหนก็ได้ทันที O(1)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 2 — Pointer ทบทวน ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · ทบทวน</div>
+    <div class="slide-h1">Pointer — <em>ตัวแปรที่เก็บ Address</em></div>
+    <div class="slide-lead">Data Structures ทุกตัวเชื่อมกันด้วย Pointer — โหนดหนึ่งชี้ไปยังโหนดถัดไป ถ้า & และ * ไม่แม่น จะงงตอนเรียน Linked List ทันที</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">& และ * ทบทวนไว ๆ</div>
+        <div class="code"><span class="kw">int</span>  x = <span class="nm">10</span>;
+<span class="kw">int</span> <span class="op">*</span>p = <span class="op">&amp;</span>x;   <span class="cm">/* p เก็บ address ของ x */</span>
+
+<span class="fn">printf</span>(<span class="st">"%d"</span>, <span class="op">*</span>p);  <span class="cm">/* 10 — dereference อ่านค่า */</span>
+<span class="op">*</span>p = <span class="nm">99</span>;          <span class="cm">/* แก้ค่า x ผ่าน pointer */</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>, x);   <span class="cm">/* 99 */</span></div>
+        <table class="kv-table">
+          <thead><tr><th>Operator</th><th>ความหมาย</th></tr></thead>
+          <tbody>
+            <tr><td>&amp;x</td><td>address ของ x</td></tr>
+            <tr><td>*p</td><td>ค่าที่ p ชี้อยู่</td></tr>
+            <tr><td>p = NULL</td><td>p ยังไม่ชี้ที่ไหน</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="split-col">
+        <div class="mem-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:12px;letter-spacing:.5px">MEMORY — p ชี้ไปที่ x</div>
+          <div class="mbox-row">
+            <div class="mbox-name">x</div><div class="mbox-addr">0x1000</div><div class="mbox val">10</div>
+          </div>
+          <div style="margin:2px 0 2px 62px;color:var(--cam);font-size:20px">↑</div>
+          <div class="mbox-row">
+            <div class="mbox-name">p</div><div class="mbox-addr">0x1008</div><div class="mbox ptr">0x1000</div>
+            <div class="mbox-label">p เก็บ address ของ x</div>
+          </div>
+        </div>
+        <div class="box red">
+          <div class="box-title">❌ ลืม check NULL = Crash</div>
+          <div class="box-body">
+            ใน Linked List/Tree เราจะวน loop ด้วย pointer ตลอด<br>
+            ถ้า dereference pointer ที่เป็น <code>NULL</code> → segfault ทันที<br><br>
+            ต้องเช็ค <code>if (p != NULL)</code> ก่อน <code>*p</code> เสมอ
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 3 — Struct ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Struct</div>
+    <div class="slide-h1">Struct — <em>รวมหลาย Field ไว้ในชื่อเดียว</em></div>
+    <div class="slide-lead">Array เก็บข้อมูล "ชนิดเดียวกัน" เท่านั้น แต่ข้อมูลจริงมีหลาย field ต่าง type — Struct คือคำตอบ และเป็นหัวใจของทุก Data Structure</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">นิยาม Struct</div>
+        <div class="code"><span class="kw">struct</span> Student {
+    <span class="kw">char</span> name[<span class="nm">30</span>];
+    <span class="kw">int</span>  age;
+    <span class="kw">float</span> gpa;
+};
+
+<span class="kw">struct</span> Student s1;
+<span class="fn">strcpy</span>(s1.name, <span class="st">"Som"</span>);
+s1.age = <span class="nm">20</span>;
+s1.gpa = <span class="nm">3.5</span>;
+
+<span class="fn">printf</span>(<span class="st">"%s age %d"</span>, s1.name, s1.age);</div>
+        <div class="box">
+          <div class="box-title">. กับ -&gt; ต่างกันยังไง</div>
+          <div class="box-body">
+            ตัวแปร struct ปกติ → ใช้ <code>.</code><br>
+            <code>s1.age</code><br><br>
+            ตัวแปรเป็น <strong>pointer</strong> ไปที่ struct → ใช้ <code>-&gt;</code><br>
+            <code>struct Student *p = &amp;s1;</code><br>
+            <code>p-&gt;age</code> เท่ากับ <code>(*p).age</code>
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">เข้าถึงผ่าน Pointer — ใช้บ่อยใน Data Structure</div>
+        <div class="code"><span class="kw">struct</span> Student s1 = {<span class="st">"Som"</span>, <span class="nm">20</span>, <span class="nm">3.5</span>};
+<span class="kw">struct</span> Student <span class="op">*</span>p = <span class="op">&amp;</span>s1;
+
+<span class="fn">printf</span>(<span class="st">"%s"</span>, p<span class="op">-&gt;</span>name);  <span class="cm">/* Som */</span>
+p<span class="op">-&gt;</span>age = <span class="nm">21</span>;            <span class="cm">/* แก้ผ่าน pointer */</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>, s1.age);   <span class="cm">/* 21 */</span></div>
+        <div class="box green">
+          <div class="box-title">💡 ทำไมบทนี้สำคัญ</div>
+          <div class="box-body">Linked List node = struct ที่มี field "ค่า" + field "pointer ชี้โหนดถัดไป" — ถ้า struct + pointer ไม่แม่น จะอ่าน code Linked List ไม่ออกเลย</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 4 — Dynamic Memory ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Dynamic Memory</div>
+    <div class="slide-h1">malloc &amp; free — <em>ขอ/คืน Memory ตอนรันโปรแกรม</em></div>
+    <div class="slide-lead">Array ต้องกำหนดขนาดตั้งแต่ compile แต่ Data Structures ต้องขยายขนาดได้ตอนรันจริง — <code>malloc</code> คือคำตอบ</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">malloc สร้าง 1 ช่อง</div>
+        <div class="code"><span class="inc">#include &lt;stdlib.h&gt;</span>
+
+<span class="kw">int</span> <span class="op">*</span>p = (<span class="kw">int</span> <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">int</span>));
+<span class="kw">if</span> (p == <span class="nm">NULL</span>) {           <span class="cm">/* memory เต็ม */</span>
+    <span class="fn">printf</span>(<span class="st">"malloc failed"</span>);
+    <span class="kw">return</span> <span class="nm">1</span>;
+}
+<span class="op">*</span>p = <span class="nm">42</span>;
+<span class="fn">printf</span>(<span class="st">"%d"</span>, <span class="op">*</span>p);  <span class="cm">/* 42 */</span>
+
+<span class="fn">free</span>(p);                <span class="cm">/* คืน memory ทุกครั้งที่เลิกใช้ */</span>
+p = <span class="nm">NULL</span>;               <span class="cm">/* ป้องกัน dangling pointer */</span></div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">malloc สร้าง struct — Pattern ที่ใช้ตลอดวิชานี้</div>
+        <div class="code"><span class="kw">struct</span> Student <span class="op">*</span>p =
+    (<span class="kw">struct</span> Student <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> Student));
+
+p<span class="op">-&gt;</span>age = <span class="nm">20</span>;
+<span class="fn">strcpy</span>(p<span class="op">-&gt;</span>name, <span class="st">"Som"</span>);
+
+<span class="cm">/* ใช้งานเสร็จแล้ว ต้อง free เสมอ */</span>
+<span class="fn">free</span>(p);</div>
+        <div class="box red">
+          <div class="box-title">❌ Memory Leak</div>
+          <div class="box-body">
+            <code>malloc</code> แล้วไม่ <code>free</code> = memory leak<br>
+            สร้าง node ของ Linked List/Tree ทุกครั้งต้องคิดคู่กับการ <code>free</code> ตอนลบ — มิฉะนั้นโปรแกรมกิน memory เพิ่มเรื่อยๆ จนพัง
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 5 — รวม 3 อย่างเป็น Node ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · ภาพรวม</div>
+    <div class="slide-h1">Struct + Pointer + malloc = <em>"Node"</em></div>
+    <div class="slide-lead">ทุก Data Structure ที่จะเรียนต่อไป (Linked List, Tree, Graph) สร้างจาก pattern เดียวกันนี้ — จำ pattern นี้ให้ขึ้นใจ</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="code-label">นิยาม Node ของ Linked List (พรีวิวบทที่ 1)</div>
+        <div class="code"><span class="kw">struct</span> Node {
+    <span class="kw">int</span> data;            <span class="cm">/* เก็บค่า */</span>
+    <span class="kw">struct</span> Node <span class="op">*</span>next; <span class="cm">/* ชี้โหนดถัดไป */</span>
+};
+
+<span class="kw">struct</span> Node <span class="op">*</span>n1 =
+    (<span class="kw">struct</span> Node <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> Node));
+n1<span class="op">-&gt;</span>data = <span class="nm">10</span>;
+n1<span class="op">-&gt;</span>next = <span class="nm">NULL</span>;   <span class="cm">/* ยังไม่มีโหนดถัดไป */</span></div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">💡 สังเกต pattern</div>
+          <div class="box-body">
+            <strong>struct</strong> → ห่อค่า + pointer ไว้ด้วยกัน<br>
+            <strong>malloc</strong> → ขอที่เก็บ node ตอนรันจริง (ไม่รู้ล่วงหน้าว่าจะมีกี่โหนด)<br>
+            <strong>pointer (next)</strong> → เชื่อมโหนดนี้กับโหนดถัดไป<br><br>
+            สามอย่างนี้รวมกันแก้ข้อจำกัดของ Array ได้ทั้งหมด — ขนาดไม่ fixed และแทรก/ลบไม่ต้องขยับข้อมูล
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 6 — Use Case ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Use Case</div>
+    <div class="slide-h1">🏦 <em>Use Case จริง</em> — บันทึกธุรกรรมลูกค้า</div>
+    <div class="slide-lead">ธนาคารต้องเก็บประวัติธุรกรรมที่ "ไม่รู้ล่วงหน้าว่าจะมีกี่รายการ" — Array fixed size ใช้ไม่ได้ ต้องใช้ struct + malloc</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="usecase" style="border-left-color:var(--ca)">
+          <div class="usecase-label" style="color:var(--ca)">โจทย์ระบบธนาคาร</div>
+          <div class="usecase-title">สร้างรายการธุรกรรมทีละรายการ</div>
+          <div class="usecase-body">ลูกค้าฝาก/ถอนกี่ครั้งก็ได้ในหนึ่งวัน — โปรแกรมต้องขอ memory ใหม่ทุกครั้งที่มีธุรกรรมเกิดขึ้น ไม่ใช่จองไว้ล่วงหน้าแบบ Array</div>
+        </div>
+        <div class="box">
+          <div class="box-title">ทำไมไม่ใช้ Array</div>
+          <div class="box-body">
+            Array ต้องบอกขนาดล่วงหน้า เช่น <code>txn[100]</code><br>
+            ถ้าลูกค้าทำธุรกรรมเกิน 100 ครั้ง → array ล้น<br>
+            ถ้าทำแค่ 2 ครั้ง → เปลือง memory 98 ช่อง
+          </div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">สร้าง Transaction ด้วย struct + malloc</div>
+        <div class="code"><span class="kw">struct</span> Transaction {
+    <span class="kw">char</span> type[<span class="nm">10</span>];   <span class="cm">/* "deposit"/"withdraw" */</span>
+    <span class="kw">double</span> amount;
+};
+
+<span class="kw">struct</span> Transaction <span class="op">*</span><span class="fn">newTxn</span>(<span class="kw">char</span> <span class="op">*</span>t, <span class="kw">double</span> amt) {
+    <span class="kw">struct</span> Transaction <span class="op">*</span>tx =
+        (<span class="kw">struct</span> Transaction <span class="op">*</span>)
+        <span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> Transaction));
+    <span class="fn">strcpy</span>(tx<span class="op">-&gt;</span>type, t);
+    tx<span class="op">-&gt;</span>amount = amt;
+    <span class="kw">return</span> tx;
+}
+
+<span class="kw">struct</span> Transaction <span class="op">*</span>t1 = <span class="fn">newTxn</span>(<span class="st">"deposit"</span>, <span class="nm">500.0</span>);
+<span class="fn">printf</span>(<span class="st">"%s %.2f"</span>, t1<span class="op">-&gt;</span>type, t1<span class="op">-&gt;</span>amount);
+<span class="fn">free</span>(t1);</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 7 — Think! ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 0 · Think!</div>
+    <div class="slide-h1">คิดก่อน <em>เขียน</em></div>
+    <div class="slide-lead">ถ้าตอบข้อเหล่านี้ได้ครบ แปลว่าพร้อมเรียน Linked List แล้ว</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">1. <code>struct Node *p; p->data = 5;</code> ทำได้ไหมถ้า p ยังไม่ malloc?</div>
+          <div class="think-hint">💡 ไม่ได้ — p ยังไม่ชี้ที่ไหน (ค่าสุ่ม) dereference จะ crash ต้อง malloc ก่อนเสมอ</div>
+        </div>
+        <div class="think">
+          <div class="think-q">2. ทำไม Linked List ใช้ struct + pointer แทน Array?</div>
+          <div class="think-hint">💡 เพราะไม่รู้ล่วงหน้าว่าจะมีกี่โหนด และต้องแทรก/ลบกลางลิสต์ได้เร็วโดยไม่ขยับข้อมูล</div>
+        </div>
+        <div class="think">
+          <div class="think-q">3. <code>p->next</code> เท่ากับนิพจน์ไหนถ้าเขียนแบบไม่ใช้ -&gt;?</div>
+          <div class="think-hint">💡 (*p).next — -&gt; คือ shortcut ของ (*p).field</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">4. ถ้า malloc node แล้วลืม free ทุกครั้งที่ลบโหนด จะเกิดอะไร?</div>
+          <div class="think-hint">💡 Memory leak — โปรแกรมที่รันนาน ๆ จะกิน memory เพิ่มขึ้นเรื่อย ๆ จนเครื่องช้าหรือพัง</div>
+        </div>
+        <div class="think">
+          <div class="think-q">5. <code>struct Node *head = NULL;</code> หมายความว่าอะไร?</div>
+          <div class="think-hint">💡 ลิสต์ยังว่างเปล่า — ยังไม่มีโหนดแรก นี่คือจุดเริ่มต้นของ Linked List ทุกอัน</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 8 — โจทย์ Trace ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · โจทย์ Trace</div>
+    <div class="slide-h1">โจทย์ <em>อ่าน code</em> ทายผลลัพธ์</div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — Output คืออะไร?</div>
+      <div class="code" style="margin-bottom:10px"><span class="kw">struct</span> Point { <span class="kw">int</span> x, y; };
+<span class="kw">struct</span> Point p1 = {<span class="nm">3</span>, <span class="nm">4</span>};
+<span class="kw">struct</span> Point <span class="op">*</span>ptr = <span class="op">&amp;</span>p1;
+ptr<span class="op">-&gt;</span>x = <span class="nm">10</span>;
+<span class="fn">printf</span>(<span class="st">"%d %d"</span>, p1.x, p1.y);</div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" onclick="pickMC('mc1',0,2,'ptr->x = 10 แก้ผ่าน pointer ไปที่ p1.x จริง ส่วน y ไม่ถูกแก้ ดังนั้น 10 4 ✓')"><span class="mc-ltr">A</span> 3 4</div>
+        <div class="mc-opt" onclick="pickMC('mc1',1,2,'ptr->x = 10 แก้ผ่าน pointer ไปที่ p1.x จริง ส่วน y ไม่ถูกแก้ ดังนั้น 10 4 ✓')"><span class="mc-ltr">B</span> 10 0</div>
+        <div class="mc-opt" onclick="pickMC('mc1',2,2,'ptr->x = 10 แก้ผ่าน pointer ไปที่ p1.x จริง ส่วน y ไม่ถูกแก้ ดังนั้น 10 4 ✓')"><span class="mc-ltr">C</span> 10 4</div>
+        <div class="mc-opt" onclick="pickMC('mc1',3,2,'ptr->x = 10 แก้ผ่าน pointer ไปที่ p1.x จริง ส่วน y ไม่ถูกแก้ ดังนั้น 10 4 ✓')"><span class="mc-ltr">D</span> 3 10</div>
+      </div>
+      <div class="ex-feedback" id="mc1-fb"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — โค้ดนี้มีปัญหาอะไร?</div>
+      <div class="code" style="margin-bottom:10px"><span class="kw">struct</span> Node <span class="op">*</span>p;
+p<span class="op">-&gt;</span>data = <span class="nm">5</span>;
+<span class="fn">printf</span>(<span class="st">"%d"</span>, p<span class="op">-&gt;</span>data);</div>
+      <div class="mc-opts" id="mc2">
+        <div class="mc-opt" onclick="pickMC('mc2',0,2,'p ไม่ได้ malloc และไม่ได้ initialize เลย — เป็น pointer สุ่ม dereference แล้ว crash')"><span class="mc-ltr">A</span> ไม่มีปัญหา รันได้ปกติ</div>
+        <div class="mc-opt" onclick="pickMC('mc2',1,2,'p ไม่ได้ malloc และไม่ได้ initialize เลย — เป็น pointer สุ่ม dereference แล้ว crash')"><span class="mc-ltr">B</span> data เป็น float ไม่ใช่ int</div>
+        <div class="mc-opt" onclick="pickMC('mc2',2,2,'p ไม่ได้ malloc และไม่ได้ initialize เลย — เป็น pointer สุ่ม dereference แล้ว crash')"><span class="mc-ltr">C</span> p ไม่ได้ malloc มาก่อน ใช้ pointer สุ่ม → crash</div>
+        <div class="mc-opt" onclick="pickMC('mc2',3,2,'p ไม่ได้ malloc และไม่ได้ initialize เลย — เป็น pointer สุ่ม dereference แล้ว crash')"><span class="mc-ltr">D</span> ต้องใช้ . แทน -&gt;</div>
+      </div>
+      <div class="ex-feedback" id="mc2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 9 — โจทย์ Fill-in ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · โจทย์เติมคำ</div>
+    <div class="slide-h1">โจทย์ <em>เติมคำ</em></div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — สร้าง Node ด้วย malloc</div>
+      <div class="ex-q">เติมให้สร้าง pointer ชื่อ <code>n</code> ชนิด <code>struct Node *</code> และขอ memory ด้วย malloc<br>
+      <code>struct Node *n = ___;</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in1" placeholder="malloc(...)" type="text">
+        <button class="ex-btn" onclick="checkFill('in1',
+          '(struct Node *)malloc(sizeof(struct Node))',
+          ['(struct Node*)malloc(sizeof(struct Node))','malloc(sizeof(struct Node))','(struct Node *) malloc(sizeof(struct Node))'],
+          ['malloc(sizeof(int))','(struct Node *)malloc(4)'],
+          'ถูก! malloc(sizeof(struct Node)) ขอ memory ขนาดเท่ากับ struct Node พอดี',
+          'ต้องใช้ sizeof(struct Node) เพื่อขอ memory ขนาดที่พอดีกับ struct ไม่ใช่ int หรือเลขคงที่')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — เข้าถึง field ผ่าน pointer</div>
+      <div class="ex-q"><code>struct Node *p;</code> เติมวิธีเข้าถึง field <code>data</code> ผ่าน pointer p (ใช้ -&gt;)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in2" placeholder="p?data" type="text">
+        <button class="ex-btn" onclick="checkFill('in2',
+          'p->data',
+          ['p -> data','p->data '],
+          ['p.data','(*p)data'],
+          'ถูก! p->data คือ shortcut ของ (*p).data',
+          'ต้องใช้ -> เพราะ p เป็น pointer ไม่ใช่ตัวแปร struct ตรง ๆ')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 3 — คืน Memory</div>
+      <div class="ex-q">ใช้งาน <code>p</code> ที่ malloc มาเสร็จแล้ว เติมคำสั่งคืน memory ให้ระบบ</div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in3" placeholder="..." type="text">
+        <button class="ex-btn" onclick="checkFill('in3',
+          'free(p);',
+          ['free(p)','free (p);','free (p)'],
+          ['delete p;','malloc(p);'],
+          'ถูก! free(p) คืน memory ที่ malloc ไว้ ป้องกัน memory leak',
+          'C ใช้ free() ไม่ใช่ delete (นั่นคือ C++) และต้อง free ตัวที่ malloc ไว้เท่านั้น')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 10 — Summary ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 0 · สรุป</div>
+    <div class="slide-h1">พร้อมแล้ว <em>ลุย Linked List!</em></div>
+    <div class="slide-lead">ทบทวนครบ 4 อย่างที่ต้องแม่นก่อนเรียน Data Structures</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="steps">
+          <div class="step"><div class="step-n ok">1</div><div class="step-body"><strong>Array</strong> — เก็บข้อมูลต่อกัน เข้าถึงไว แต่ขนาด fixed<small>ใช้เทียบกับ Linked List ตลอด</small></div></div>
+          <div class="step"><div class="step-n ok">2</div><div class="step-body"><strong>Pointer</strong> — &amp; address-of, * dereference<small>หัวใจของการเชื่อมโหนด</small></div></div>
+          <div class="step"><div class="step-n ok">3</div><div class="step-body"><strong>Struct</strong> — รวมหลาย field, . กับ -&gt;<small>คือรูปร่างของ "Node"</small></div></div>
+          <div class="step"><div class="step-n ok">4</div><div class="step-body"><strong>malloc/free</strong> — ขอ/คืน memory ตอนรันจริง<small>ทำให้ขนาดไม่ fixed อีกต่อไป</small></div></div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🚀 บทต่อไป</div>
+          <div class="box-body">
+            <strong>บทที่ 1 — Linked List</strong><br>
+            สร้าง node, insert/delete หัว-กลาง-ท้าย, traverse ทั้งลิสต์<br><br>
+            ใช้ทุกอย่างจากบทนี้ทันที: struct Node + pointer next + malloc สร้าง + free ลบ
+          </div>
+        </div>
+        <div class="exercise">
+          <div class="ex-label">🏆 Challenge ก่อนไปบทหน้า</div>
+          <div class="ex-q" style="color:#dde3f0">เขียนโปรแกรมสร้าง struct Account (เลขบัญชี + ยอดเงิน) ด้วย malloc 1 ตัว ใส่ค่าผ่าน pointer แล้วพิมพ์ออกมา จากนั้น free ทิ้ง<br><br>
+          ถ้าทำได้ครบ แปลว่าพร้อมเรียน Linked List แล้ว 100%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 0 — ทบทวนพื้นฐาน</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover','Array ทบทวน','Pointer ทบทวน','Struct',
+  'malloc & free','Struct+Pointer+malloc = Node','Use Case ธุรกรรม',
+  'Think!','โจทย์ Trace','โจทย์เติมคำ','สรุป'
+];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
