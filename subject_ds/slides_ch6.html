@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 6 — Graph | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+/* Chapter 6 accent — charcoal cyan */
+:root { --ca:#1a4f5a; --cal:#e0f0f2; --cam:#4ca0ac; }
+
+.graph-diagram {
+  font-family: var(--mono); font-size: 12px;
+  background: var(--ink); border-radius: 10px;
+  padding: 16px 20px; margin-bottom: 14px; color: #8891a8;
+  overflow-x:auto;
+}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════════ SLIDE 0 — COVER ════════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Data Structures</div>
+        <div class="cover-title">บทที่ 6<br><em>Graph</em></div>
+        <div class="cover-subtitle">โครงสร้างทั่วไปที่สุด — โหนด (vertex) เชื่อมกันได้หลายทิศทาง ไม่จำกัดแค่ 2 ลูกแบบ Tree เหมือนเครือข่ายสาขาธนาคารหรือเส้นทางการบิน</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Vertex, Edge, Directed/Undirected</div>
+          <div class="topic-row"><div class="topic-dot"></div>Adjacency Matrix vs Adjacency List</div>
+          <div class="topic-row"><div class="topic-dot"></div>BFS — Breadth-First Search</div>
+          <div class="topic-row"><div class="topic-dot"></div>DFS — Depth-First Search</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+          <div class="topic-row"><div class="topic-dot"></div>สรุปจบ Course Data Structures</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">06</div>
+        <div class="cover-badge">CHAPTER 6 · FINAL</div>
+        <div class="cover-slides-count">11 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 1 — Graph คืออะไร ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · เกริ่นนำ</div>
+    <div class="slide-h1">Graph — <em>โหนดเชื่อมกันได้อิสระ</em></div>
+    <div class="slide-lead">Tree คือ Graph ชนิดพิเศษที่ห้ามมีวงวน (cycle) และแต่ละโหนดมีพ่อได้แค่ 1 คน — Graph ทั่วไปไม่มีกฎนี้ เชื่อมกันได้ตามใจ</div>
+
+    <div class="split">
+      <div class="split-col">
+        <table class="kv-table">
+          <thead><tr><th>คำศัพท์</th><th>ความหมาย</th></tr></thead>
+          <tbody>
+            <tr><td>Vertex (node)</td><td>จุดในกราฟ</td></tr>
+            <tr><td>Edge</td><td>เส้นเชื่อมระหว่าง 2 vertex</td></tr>
+            <tr><td>Directed</td><td>edge มีทิศทาง (A→B ไม่ใช่ B→A)</td></tr>
+            <tr><td>Undirected</td><td>edge ไม่มีทิศทาง (A-B ไปมาได้)</td></tr>
+            <tr><td>Weighted</td><td>edge มีค่าน้ำหนัก (เช่น ระยะทาง)</td></tr>
+          </tbody>
+        </table>
+        <div class="box green">
+          <div class="box-title">💡 ตัวอย่างในชีวิตจริง</div>
+          <div class="box-body">เครือข่ายสาขาธนาคาร, เส้นทางการบิน, เพื่อนใน Facebook (ใครเชื่อมกับใคร), แผนที่ถนน — ทุกอย่างที่ "เชื่อมกันแบบไม่เป็นลำดับชั้น" คือ Graph</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="graph-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:10px;letter-spacing:.5px">UNDIRECTED GRAPH ตัวอย่าง</div>
+          <svg viewBox="0 0 280 180" width="100%" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Mono',monospace">
+            <line x1="60" y1="40" x2="180" y2="40" stroke="#2a3050" stroke-width="1.5"/>
+            <line x1="60" y1="40" x2="60" y2="140" stroke="#2a3050" stroke-width="1.5"/>
+            <line x1="180" y1="40" x2="220" y2="100" stroke="#2a3050" stroke-width="1.5"/>
+            <line x1="60" y1="140" x2="220" y2="100" stroke="#2a3050" stroke-width="1.5"/>
+            <line x1="60" y1="40" x2="220" y2="100" stroke="#2a3050" stroke-width="1.5"/>
+            <circle cx="60" cy="40" r="18" fill="#1e2538" stroke="var(--cam)" stroke-width="1.5"/>
+            <text x="60" y="45" font-size="13" fill="#9effe3" text-anchor="middle" font-weight="600">A</text>
+            <circle cx="180" cy="40" r="18" fill="#1e2538" stroke="#2a3050" stroke-width="1.5"/>
+            <text x="180" y="45" font-size="13" fill="#9effe3" text-anchor="middle" font-weight="600">B</text>
+            <circle cx="60" cy="140" r="18" fill="#1e2538" stroke="#2a3050" stroke-width="1.5"/>
+            <text x="60" y="145" font-size="13" fill="#9effe3" text-anchor="middle" font-weight="600">C</text>
+            <circle cx="220" cy="100" r="18" fill="#1e2538" stroke="#2a3050" stroke-width="1.5"/>
+            <text x="220" y="105" font-size="13" fill="#9effe3" text-anchor="middle" font-weight="600">D</text>
+          </svg>
+          <div style="font-size:10px;color:#546e7a;text-align:center;margin-top:4px">vertex: A,B,C,D — edge: A-B, A-C, A-D, B-D, C-D</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 2 — Adjacency Matrix ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Representation</div>
+    <div class="slide-h1">Adjacency Matrix — <em>ตาราง 2 มิติ</em></div>
+    <div class="slide-lead">ใช้ตาราง n×n เก็บว่า vertex ไหนเชื่อมกับ vertex ไหน — เช็คว่าเชื่อมกันไหมเร็ว O(1) แต่เปลือง memory ถ้า vertex มาก</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">นิยามด้วย 2D Array</div>
+        <div class="code"><span class="cm">/* 4 vertex: A=0, B=1, C=2, D=3 */</span>
+<span class="kw">int</span> adj[<span class="nm">4</span>][<span class="nm">4</span>] = {<span class="nm">0</span>};
+
+<span class="kw">void</span> <span class="fn">addEdge</span>(<span class="kw">int</span> u, <span class="kw">int</span> v) {
+    adj[u][v] = <span class="nm">1</span>;
+    adj[v][u] = <span class="nm">1</span>;   <span class="cm">/* undirected ต้องเซ็ตทั้งคู่ */</span>
+}
+
+<span class="fn">addEdge</span>(<span class="nm">0</span>,<span class="nm">1</span>); <span class="fn">addEdge</span>(<span class="nm">0</span>,<span class="nm">2</span>); <span class="fn">addEdge</span>(<span class="nm">0</span>,<span class="nm">3</span>); <span class="fn">addEdge</span>(<span class="nm">1</span>,<span class="nm">3</span>); <span class="fn">addEdge</span>(<span class="nm">2</span>,<span class="nm">3</span>);
+
+<span class="cm">/* เช็คว่า A เชื่อมกับ B ไหม — เร็ว O(1) */</span>
+<span class="kw">if</span> (adj[<span class="nm">0</span>][<span class="nm">1</span>]) <span class="fn">printf</span>(<span class="st">"A-B เชื่อมกัน\n"</span>);</div>
+      </div>
+      <div class="split-col">
+        <div class="graph-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:10px">Adjacency Matrix — A,B,C,D</div>
+          <table class="kv-table" style="margin:0">
+            <thead><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr></thead>
+            <tbody>
+              <tr><td>A</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+              <tr><td>B</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+              <tr><td>C</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+              <tr><td>D</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="box amber">
+          <div class="box-title">⚠️ เปลือง memory ถ้า edge น้อย</div>
+          <div class="box-body">vertex 1000 ตัว แต่เชื่อมกันแค่ 10 เส้น — Matrix ยังใช้ 1000×1000 = 1,000,000 ช่อง ทั้งที่ของจริงมีแค่ 20 ช่องที่เป็น 1 (เปลืองมาก)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 3 — Adjacency List ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Representation</div>
+    <div class="slide-h1">Adjacency List — <em>Linked List ของแต่ละ vertex</em></div>
+    <div class="slide-lead">แต่ละ vertex เก็บ Linked List ของเพื่อนบ้านที่เชื่อมด้วย — ประหยัด memory กว่า Matrix มาก ถ้า edge ไม่หนาแน่น (ใช้ Linked List จากบทที่ 1 ตรงๆ)</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">นิยามด้วย array of Linked List</div>
+        <div class="code"><span class="kw">struct</span> AdjNode { <span class="kw">int</span> vertex; <span class="kw">struct</span> AdjNode <span class="op">*</span>next; };
+<span class="kw">struct</span> AdjNode <span class="op">*</span>adjList[<span class="nm">4</span>] = {<span class="nm">NULL</span>};  <span class="cm">/* 4 vertex */</span>
+
+<span class="kw">void</span> <span class="fn">addEdge</span>(<span class="kw">int</span> u, <span class="kw">int</span> v) {
+    <span class="kw">struct</span> AdjNode <span class="op">*</span>n1 =
+        (<span class="kw">struct</span> AdjNode <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> AdjNode));
+    n1<span class="op">-&gt;</span>vertex = v; n1<span class="op">-&gt;</span>next = adjList[u];
+    adjList[u] = n1;     <span class="cm">/* insertHead ของบทที่ 1 */</span>
+
+    <span class="kw">struct</span> AdjNode <span class="op">*</span>n2 =
+        (<span class="kw">struct</span> AdjNode <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> AdjNode));
+    n2<span class="op">-&gt;</span>vertex = u; n2<span class="op">-&gt;</span>next = adjList[v];
+    adjList[v] = n2;     <span class="cm">/* undirected ต้องเพิ่มทั้งสองทาง */</span>
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="graph-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:10px">Adjacency List ของ graph เดิม</div>
+          <div style="font-size:11px;color:#8891a8;line-height:2.1">
+            adjList[A] → D → C → B → NULL<br>
+            adjList[B] → D → A → NULL<br>
+            adjList[C] → D → A → NULL<br>
+            adjList[D] → C → B → A → NULL
+          </div>
+        </div>
+        <div class="box green">
+          <div class="box-title">💡 เมื่อไหร่ใช้ Matrix vs List</div>
+          <div class="box-body">Matrix: เช็คว่าเชื่อมกันไหมบ่อยๆ, vertex น้อย<br>List: vertex มาก แต่ edge น้อย (sparse graph) — ใช้บ่อยกว่าในงานจริง</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 4 — BFS ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · BFS</div>
+    <div class="slide-h1">BFS — <em>Breadth-First Search</em></div>
+    <div class="slide-lead">เดินทีละ "ชั้น" ก่อน เยี่ยมเพื่อนบ้านตรงทั้งหมดก่อนไปชั้นถัดไป — ใช้ Queue จากบทที่ 4 เป็นเครื่องมือหลัก</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">BFS ด้วย Queue + visited array</div>
+        <div class="code"><span class="kw">void</span> <span class="fn">bfs</span>(<span class="kw">int</span> start, <span class="kw">int</span> n) {
+    <span class="kw">int</span> visited[<span class="nm">100</span>] = {<span class="nm">0</span>};
+    <span class="kw">int</span> queue[<span class="nm">100</span>], front=<span class="nm">0</span>, rear=<span class="op">-</span><span class="nm">1</span>;
+
+    visited[start] = <span class="nm">1</span>;
+    queue[++rear] = start;       <span class="cm">/* enqueue */</span>
+
+    <span class="kw">while</span> (front &lt;= rear) {
+        <span class="kw">int</span> cur = queue[front++]; <span class="cm">/* dequeue */</span>
+        <span class="fn">printf</span>(<span class="st">"%d "</span>, cur);
+
+        <span class="kw">struct</span> AdjNode <span class="op">*</span>p = adjList[cur];
+        <span class="kw">while</span> (p != <span class="nm">NULL</span>) {
+            <span class="kw">if</span> (!visited[p<span class="op">-&gt;</span>vertex]) {
+                visited[p<span class="op">-&gt;</span>vertex] = <span class="nm">1</span>;
+                queue[++rear] = p<span class="op">-&gt;</span>vertex;  <span class="cm">/* enqueue */</span>
+            }
+            p = p<span class="op">-&gt;</span>next;
+        }
+    }
+}</div>
+      </div>
+      <div class="split-col">
+        <div class="box amber">
+          <div class="box-title">⚠️ ทำไมต้องมี visited array</div>
+          <div class="box-body">Graph มี cycle (วงวน) ได้ — ถ้าไม่จำว่าเยี่ยมโหนดไหนไปแล้ว จะวนซ้ำไม่จบ (infinite loop) ต่างจาก Tree ที่ไม่มี cycle เลยไม่ต้องกัน</div>
+        </div>
+        <div class="box green">
+          <div class="box-title">💡 ใช้ BFS ตอนไหน</div>
+          <div class="box-body">หาทางที่ "สั้นที่สุด" เมื่อทุก edge มีน้ำหนักเท่ากัน เช่น หาจำนวนสาขาขั้นต่ำที่ต้องผ่านจากสาขา A ไปสาขา B</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 5 — DFS ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · DFS</div>
+    <div class="slide-h1">DFS — <em>Depth-First Search</em></div>
+    <div class="slide-lead">เดินลงไปให้ลึกที่สุดก่อน แล้วค่อยถอยมาลองทางอื่น — ใช้ recursion (หรือ Stack จากบทที่ 3) เป็นเครื่องมือหลัก</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">DFS แบบ recursive</div>
+        <div class="code"><span class="kw">int</span> visited[<span class="nm">100</span>] = {<span class="nm">0</span>};
+
+<span class="kw">void</span> <span class="fn">dfs</span>(<span class="kw">int</span> v) {
+    visited[v] = <span class="nm">1</span>;
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, v);
+
+    <span class="kw">struct</span> AdjNode <span class="op">*</span>p = adjList[v];
+    <span class="kw">while</span> (p != <span class="nm">NULL</span>) {
+        <span class="kw">if</span> (!visited[p<span class="op">-&gt;</span>vertex])
+            <span class="fn">dfs</span>(p<span class="op">-&gt;</span>vertex);   <span class="cm">/* เดินลงไปให้ลึกก่อน */</span>
+        p = p<span class="op">-&gt;</span>next;
+    }
+}
+
+<span class="cm">/* เรียกใช้ */</span>
+<span class="fn">dfs</span>(<span class="nm">0</span>);  <span class="cm">/* เริ่มจาก vertex A */</span></div>
+      </div>
+      <div class="split-col">
+        <table class="kv-table">
+          <thead><tr><th></th><th>BFS</th><th>DFS</th></tr></thead>
+          <tbody>
+            <tr><td>เครื่องมือ</td><td>Queue</td><td>Stack / Recursion</td></tr>
+            <tr><td>เดินแบบ</td><td>กว้างก่อน (ทีละชั้น)</td><td>ลึกก่อน (จนสุดทาง)</td></tr>
+            <tr><td>ใช้หา</td><td>ทางสั้นที่สุด (unweighted)</td><td>เช็คว่ามี cycle, เดินครบทุก vertex</td></tr>
+          </tbody>
+        </table>
+        <div class="box green">
+          <div class="box-title">💡 DFS แบบ recursive = DFS แบบ Stack</div>
+          <div class="box-body">เวลาเรียก function ตัวเอง (recursion) ระบบใช้ "call stack" จัดการให้อัตโนมัติ — DFS ใช้หลักการเดียวกับ Stack บทที่ 3 เป๊ะ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 6 — Use Case ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Use Case</div>
+    <div class="slide-h1">🏦 <em>Use Case จริง</em> — เครือข่ายสาขาธนาคาร</div>
+    <div class="slide-lead">ธนาคารมีสาขาเชื่อมต่อกันผ่านระบบโอนเงินภายใน — หาว่าสาขา A โอนเงินไปสาขา B ได้ผ่านกี่สาขา (ทางสั้นที่สุด) ด้วย BFS</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="usecase" style="border-left-color:var(--ca)">
+          <div class="usecase-label" style="color:var(--ca)">โจทย์ระบบธนาคาร</div>
+          <div class="usecase-title">หาเส้นทางสั้นที่สุดระหว่างสาขา</div>
+          <div class="usecase-body">สาขาเชื่อมกันเป็น Graph (มีระบบเชื่อมข้อมูลตรงกัน) — BFS หาว่าต้องผ่านกี่สาขาถึงจะเชื่อมจาก A ไป B</div>
+        </div>
+        <div class="box">
+          <div class="box-title">ทำไมใช้ BFS ไม่ใช่ DFS</div>
+          <div class="box-body">BFS เดินทีละชั้น การันตีว่าเจอ B ครั้งแรกคือทางที่สั้นที่สุดเสมอ (เมื่อทุก edge น้ำหนักเท่ากัน) ส่วน DFS อาจเดินทางยาวก่อนเจอ</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">หาระยะทางสั้นที่สุดระหว่างสาขา</div>
+        <div class="code"><span class="kw">int</span> <span class="fn">shortestPath</span>(<span class="kw">int</span> start, <span class="kw">int</span> target, <span class="kw">int</span> n) {
+    <span class="kw">int</span> visited[<span class="nm">100</span>] = {<span class="nm">0</span>}, dist[<span class="nm">100</span>] = {<span class="nm">0</span>};
+    <span class="kw">int</span> queue[<span class="nm">100</span>], front=<span class="nm">0</span>, rear=<span class="op">-</span><span class="nm">1</span>;
+
+    visited[start] = <span class="nm">1</span>;
+    queue[++rear] = start;
+
+    <span class="kw">while</span> (front &lt;= rear) {
+        <span class="kw">int</span> cur = queue[front++];
+        <span class="kw">if</span> (cur == target) <span class="kw">return</span> dist[cur];
+
+        <span class="kw">struct</span> AdjNode <span class="op">*</span>p = adjList[cur];
+        <span class="kw">while</span> (p != <span class="nm">NULL</span>) {
+            <span class="kw">if</span> (!visited[p<span class="op">-&gt;</span>vertex]) {
+                visited[p<span class="op">-&gt;</span>vertex] = <span class="nm">1</span>;
+                dist[p<span class="op">-&gt;</span>vertex] = dist[cur] + <span class="nm">1</span>;
+                queue[++rear] = p<span class="op">-&gt;</span>vertex;
+            }
+            p = p<span class="op">-&gt;</span>next;
+        }
+    }
+    <span class="kw">return</span> <span class="op">-</span><span class="nm">1</span>;  <span class="cm">/* ไม่เชื่อมกันเลย */</span>
+}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 7 — Think! ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 6 · Think!</div>
+    <div class="slide-h1">คิดก่อน <em>เขียน</em></div>
+    <div class="slide-lead">Graph รวมทุกอย่างที่เรียนมา — Queue, Stack, recursion ใช้พร้อมกันได้</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">1. Tree คือ Graph แบบไหนเป็นพิเศษ?</div>
+          <div class="think-hint">💡 Tree คือ Graph ที่ไม่มี cycle และทุกโหนด (ยกเว้น root) มีพ่อได้แค่ 1 คน</div>
+        </div>
+        <div class="think">
+          <div class="think-q">2. ถ้าลืมเช็ค visited ใน BFS/DFS ของ graph ที่มี cycle จะเกิดอะไร?</div>
+          <div class="think-hint">💡 วนซ้ำไม่จบ (infinite loop) เพราะเดินกลับไปที่ vertex เดิมได้ตลอด</div>
+        </div>
+        <div class="think">
+          <div class="think-q">3. graph: A-B, A-C, B-D, C-D — BFS จาก A จะเยี่ยมตามลำดับไหน?</div>
+          <div class="think-hint">💡 A ก่อน (เริ่ม) แล้วเพื่อนบ้านตรงของ A คือ B, C แล้วค่อยไป D (เพื่อนของ B/C) → A B C D</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">4. ทำไม Adjacency List ประหยัด memory กว่า Matrix เมื่อ edge น้อย?</div>
+          <div class="think-hint">💡 List เก็บแค่ edge ที่มีจริงเป็น node ใน Linked List ส่วน Matrix ต้องเก็บทุกคู่ vertex แม้ไม่เชื่อมกัน (ส่วนใหญ่เป็น 0)</div>
+        </div>
+        <div class="think">
+          <div class="think-q">5. BFS การันตีทางสั้นที่สุดได้เมื่อไหร่ ถ้า edge มีน้ำหนักไม่เท่ากันยังใช้ได้ไหม?</div>
+          <div class="think-hint">💡 BFS การันตีทางสั้นที่สุดเฉพาะตอน edge ทุกเส้นน้ำหนักเท่ากัน ถ้าน้ำหนักต่างกันต้องใช้ algorithm อื่น เช่น Dijkstra (เรื่องขั้นสูงกว่านี้)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 8 — โจทย์ Trace ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · โจทย์ Trace</div>
+    <div class="slide-h1">โจทย์ <em>อ่าน code</em> ทายผลลัพธ์</div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — graph: A-B, A-C, B-D, C-D — bfs(A) จะพิมพ์ลำดับไหน?</div>
+      <div class="code" style="margin-bottom:10px"><span class="fn">bfs</span>(A);  <span class="cm">/* เดินทีละชั้น ใช้ Queue */</span></div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" onclick="pickMC('mc1',0,2,'BFS เริ่ม A แล้วเยี่ยมเพื่อนบ้านตรงของ A คือ B, C ก่อน ค่อยไป D (เพื่อนของ B และ C) → A B C D ✓')"><span class="mc-ltr">A</span> A C B D</div>
+        <div class="mc-opt" onclick="pickMC('mc1',1,2,'BFS เริ่ม A แล้วเยี่ยมเพื่อนบ้านตรงของ A คือ B, C ก่อน ค่อยไป D (เพื่อนของ B และ C) → A B C D ✓')"><span class="mc-ltr">B</span> A B D C</div>
+        <div class="mc-opt" onclick="pickMC('mc1',2,2,'BFS เริ่ม A แล้วเยี่ยมเพื่อนบ้านตรงของ A คือ B, C ก่อน ค่อยไป D (เพื่อนของ B และ C) → A B C D ✓')"><span class="mc-ltr">C</span> A B C D</div>
+        <div class="mc-opt" onclick="pickMC('mc1',3,2,'BFS เริ่ม A แล้วเยี่ยมเพื่อนบ้านตรงของ A คือ B, C ก่อน ค่อยไป D (เพื่อนของ B และ C) → A B C D ✓')"><span class="mc-ltr">D</span> D C B A</div>
+      </div>
+      <div class="ex-feedback" id="mc1-fb"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — โค้ดนี้ขาดอะไรไปจะทำให้ infinite loop ได้?</div>
+      <div class="code" style="margin-bottom:10px"><span class="kw">void</span> <span class="fn">dfs</span>(<span class="kw">int</span> v) {
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, v);
+    <span class="kw">struct</span> AdjNode <span class="op">*</span>p = adjList[v];
+    <span class="kw">while</span> (p != <span class="nm">NULL</span>) { <span class="fn">dfs</span>(p<span class="op">-&gt;</span>vertex); p=p<span class="op">-&gt;</span>next; }
+}</div>
+      <div class="mc-opts" id="mc2">
+        <div class="mc-opt" onclick="pickMC('mc2',0,2,'ไม่มี visited array เลย — ถ้า graph มี cycle จะเรียก dfs ย้อนกลับไปที่ vertex เดิมไม่จบ (stack overflow)')"><span class="mc-ltr">A</span> ไม่มี visited array เช็คก่อนเรียก dfs ซ้ำ</div>
+        <div class="mc-opt" onclick="pickMC('mc2',1,2,'ไม่มี visited array เลย — ถ้า graph มี cycle จะเรียก dfs ย้อนกลับไปที่ vertex เดิมไม่จบ (stack overflow)')"><span class="mc-ltr">B</span> ใช้ while ผิด ต้องใช้ for</div>
+        <div class="mc-opt" onclick="pickMC('mc2',2,2,'ไม่มี visited array เลย — ถ้า graph มี cycle จะเรียก dfs ย้อนกลับไปที่ vertex เดิมไม่จบ (stack overflow)')"><span class="mc-ltr">C</span> printf อยู่ผิดตำแหน่ง</div>
+        <div class="mc-opt" onclick="pickMC('mc2',3,2,'ไม่มี visited array เลย — ถ้า graph มี cycle จะเรียก dfs ย้อนกลับไปที่ vertex เดิมไม่จบ (stack overflow)')"><span class="mc-ltr">D</span> ไม่มีปัญหาอะไร</div>
+      </div>
+      <div class="ex-feedback" id="mc2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 9 — โจทย์ Fill-in ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · โจทย์เติมคำ</div>
+    <div class="slide-h1">โจทย์ <em>เติมคำ</em></div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — เพิ่ม Edge แบบ undirected ด้วย Matrix</div>
+      <div class="ex-q">เติมบรรทัดที่ขาดไปเพื่อให้ edge เป็น undirected (เชื่อมได้ทั้งสองทาง)<br>
+      <code>void addEdge(int u, int v) { adj[u][v] = 1; ___; }</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in1" placeholder="adj[v][u] = ..." type="text">
+        <button class="ex-btn" onclick="checkFill('in1',
+          'adj[v][u] = 1',
+          ['adj[v][u]=1','adj[v][u] = 1;'],
+          ['adj[u][v] = 0','adj[u][u] = 1'],
+          'ถูก! Undirected ต้องเซ็ตทั้งสองทาง u→v และ v→u',
+          'ต้องเซ็ต adj[v][u] ด้วย ไม่ใช่แค่ adj[u][v] มิฉะนั้นจะเป็น directed (ทางเดียว) โดยไม่ตั้งใจ')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — visited array ใน BFS</div>
+      <div class="ex-q">เติมเงื่อนไขเช็คก่อนจะ enqueue vertex ใหม่ เพื่อไม่ให้เยี่ยมซ้ำ<br>
+      <code>if (___) { visited[p->vertex]=1; queue[++rear]=p->vertex; }</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in2" placeholder="!visited[...]" type="text">
+        <button class="ex-btn" onclick="checkFill('in2',
+          '!visited[p->vertex]',
+          ['!visited[p->vertex]'],
+          ['visited[p->vertex]','visited[p->vertex]==1'],
+          'ถูก! ต้องเช็คว่า "ยังไม่เคยเยี่ยม" (! หมายถึง not) ก่อนจะเพิ่มเข้าคิว',
+          'ต้องใช้ ! (not) เพื่อเช็คว่ายังไม่ได้เยี่ยม — ไม่ใส่ ! จะกลายเป็นเช็คว่าเยี่ยมไปแล้ว ซึ่งตรงข้ามกับที่ต้องการ')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 3 — DFS recursive</div>
+      <div class="ex-q">เติมเงื่อนไขก่อนเรียก dfs ซ้ำ เพื่อไม่ให้เยี่ยม vertex ที่เยี่ยมไปแล้ว<br>
+      <code>if (___) dfs(p->vertex);</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in3" placeholder="!visited[...]" type="text">
+        <button class="ex-btn" onclick="checkFill('in3',
+          '!visited[p->vertex]',
+          ['!visited[p->vertex]'],
+          ['visited[p->vertex]'],
+          'ถูก! เช็คว่ายังไม่เยี่ยม vertex นี้ก่อนเรียก dfs ต่อ ป้องกัน infinite recursion',
+          'ต้องใส่ ! (not) เหมือนกับ BFS — ป้องกันการเรียก dfs ซ้ำที่ vertex เดิมจน stack overflow')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 10 — Summary จบ Course ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 6 · สรุปจบ Course</div>
+    <div class="slide-h1">🎉 จบ Course <em>Data Structures แล้ว!</em></div>
+    <div class="slide-lead">ทบทวน Data Structure ทั้งหมดที่เรียนมา — ทุกอย่างต่อยอดมาจาก struct + pointer + malloc ของบทที่ 0</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="steps">
+          <div class="step"><div class="step-n ok">0</div><div class="step-body"><strong>ทบทวนพื้นฐาน</strong> — Array, Pointer, Struct, malloc/free<small>รากฐานของทุก Data Structure</small></div></div>
+          <div class="step"><div class="step-n ok">1</div><div class="step-body"><strong>Linked List</strong> — node เชื่อมกันด้วย next<small>ขนาดไม่ fixed แทรก/ลบเร็ว</small></div></div>
+          <div class="step"><div class="step-n ok">2</div><div class="step-body"><strong>Doubly / Circular List</strong> — prev เดินถอยหลังได้<small>วงกลม = ไม่มีจุดสิ้นสุด</small></div></div>
+          <div class="step"><div class="step-n ok">3</div><div class="step-body"><strong>Stack</strong> — LIFO push/pop ที่ปลายเดียว<small>เช็ควงเล็บ, คำนวณ postfix</small></div></div>
+          <div class="step"><div class="step-n ok">4</div><div class="step-body"><strong>Queue</strong> — FIFO เข้าก่อนออกก่อน<small>Circular Queue, Deque</small></div></div>
+          <div class="step"><div class="step-n ok">5</div><div class="step-body"><strong>Binary Tree / BST</strong> — โครงสร้างไม่เชิงเส้น<small>traversal + search เร็ว O(log n)</small></div></div>
+          <div class="step"><div class="step-n ok">6</div><div class="step-body"><strong>Graph</strong> — เชื่อมกันได้อิสระ<small>BFS/DFS หาเส้นทางและสำรวจ</small></div></div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🚀 ขั้นต่อไป</div>
+          <div class="box-body">
+            <strong>OOP (Object-Oriented Programming)</strong> — Class, Inheritance, Polymorphism<br>
+            <strong>Algorithm Complexity</strong> — Big-O analysis แบบลงรายละเอียด<br>
+            <strong>Balanced Tree</strong> — AVL, Red-Black Tree<br>
+            <strong>Advanced Graph</strong> — Dijkstra, Minimum Spanning Tree
+          </div>
+        </div>
+        <div class="exercise">
+          <div class="ex-label">🏆 Final Challenge</div>
+          <div class="ex-q" style="color:#dde3f0">เขียนโปรแกรมระบบเครือข่ายสาขาธนาคารแบบ Graph (Adjacency List) รับจำนวนสาขาและการเชื่อมต่อจาก user แล้ว:<br>
+          1. แสดง Adjacency List ของทุกสาขา<br>
+          2. ใช้ BFS หาจำนวนสาขาขั้นต่ำที่ต้องผ่านจากสาขา A ไปสาขา B<br>
+          3. ใช้ DFS แสดงลำดับการสำรวจทุกสาขาที่เชื่อมถึงกัน<br><br>
+          ใช้ครบ: Struct + Pointer + Linked List + Queue + Recursion</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 6 — Graph</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover','Graph คืออะไร','Adjacency Matrix','Adjacency List',
+  'BFS','DFS','Use Case เครือข่ายสาขา',
+  'Think!','โจทย์ Trace','โจทย์เติมคำ','สรุปจบ Course'
+];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

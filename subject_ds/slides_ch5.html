@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 5 — Binary Tree / BST | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+/* Chapter 5 accent — olive */
+:root { --ca:#5a6b1a; --cal:#f0f4e0; --cam:#9ab84c; }
+
+.tree-diagram {
+  font-family: var(--mono); font-size: 12px;
+  background: var(--ink); border-radius: 10px;
+  padding: 16px 20px; margin-bottom: 14px; color: #8891a8;
+  overflow-x:auto;
+}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════════ SLIDE 0 — COVER ════════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Data Structures</div>
+        <div class="cover-title">บทที่ 5<br><em>Binary Tree / BST</em></div>
+        <div class="cover-subtitle">โครงสร้างแบบไม่เชิงเส้นครั้งแรก — แต่ละโหนดแยกเป็น 2 กิ่ง (left/right) ทำให้ค้นหาข้อมูลเร็วกว่า Linked List มาก</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Binary Tree — โครงสร้างพื้นฐาน</div>
+          <div class="topic-row"><div class="topic-dot"></div>Traversal: Inorder / Preorder / Postorder</div>
+          <div class="topic-row"><div class="topic-dot"></div>Binary Search Tree (BST)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Insert และ Search ใน BST</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">05</div>
+        <div class="cover-badge">CHAPTER 5</div>
+        <div class="cover-slides-count">11 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 1 — Binary Tree คืออะไร ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · เกริ่นนำ</div>
+    <div class="slide-h1">Binary Tree — <em>โครงสร้างแบบไม่เชิงเส้น</em></div>
+    <div class="slide-lead">Linked List/Stack/Queue เดินทางเดียวเป็นเส้นตรง แต่ Tree แตกกิ่งได้ — แต่ละโหนดมีลูกได้สูงสุด 2 ตัว เรียก left และ right</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">นิยาม struct TreeNode</div>
+        <div class="code"><span class="kw">struct</span> TreeNode {
+    <span class="kw">int</span> data;
+    <span class="kw">struct</span> TreeNode <span class="op">*</span>left;
+    <span class="kw">struct</span> TreeNode <span class="op">*</span>right;
+};
+
+<span class="kw">struct</span> TreeNode <span class="op">*</span>root = <span class="nm">NULL</span>;  <span class="cm">/* จุดเริ่มต้นของต้นไม้ */</span></div>
+        <table class="kv-table">
+          <thead><tr><th>คำศัพท์</th><th>ความหมาย</th></tr></thead>
+          <tbody>
+            <tr><td>root</td><td>โหนดบนสุด จุดเริ่มต้น</td></tr>
+            <tr><td>leaf</td><td>โหนดที่ไม่มีลูกเลย</td></tr>
+            <tr><td>parent/child</td><td>โหนดแม่ / โหนดลูก</td></tr>
+            <tr><td>height</td><td>ความสูงจาก root ถึง leaf ลึกสุด</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="split-col">
+        <div class="tree-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:10px;letter-spacing:.5px">BINARY TREE ตัวอย่าง</div>
+          <svg viewBox="0 0 280 160" width="100%" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Mono',monospace">
+            <line x1="140" y1="30" x2="80" y2="80" stroke="#2a3050" stroke-width="1.5"/>
+            <line x1="140" y1="30" x2="200" y2="80" stroke="#2a3050" stroke-width="1.5"/>
+            <line x1="80" y1="80" x2="50" y2="130" stroke="#2a3050" stroke-width="1.5"/>
+            <line x1="80" y1="80" x2="110" y2="130" stroke="#2a3050" stroke-width="1.5"/>
+            <line x1="200" y1="80" x2="230" y2="130" stroke="#2a3050" stroke-width="1.5"/>
+            <circle cx="140" cy="30" r="18" fill="#1e2538" stroke="var(--cam)" stroke-width="1.5"/>
+            <text x="140" y="35" font-size="13" fill="#9effe3" text-anchor="middle" font-weight="600">50</text>
+            <circle cx="80" cy="80" r="18" fill="#1e2538" stroke="#2a3050" stroke-width="1.5"/>
+            <text x="80" y="85" font-size="13" fill="#9effe3" text-anchor="middle" font-weight="600">30</text>
+            <circle cx="200" cy="80" r="18" fill="#1e2538" stroke="#2a3050" stroke-width="1.5"/>
+            <text x="200" y="85" font-size="13" fill="#9effe3" text-anchor="middle" font-weight="600">70</text>
+            <circle cx="50" cy="130" r="16" fill="#1e2538" stroke="#2a3050" stroke-width="1.5"/>
+            <text x="50" y="135" font-size="12" fill="#9effe3" text-anchor="middle" font-weight="600">20</text>
+            <circle cx="110" cy="130" r="16" fill="#1e2538" stroke="#2a3050" stroke-width="1.5"/>
+            <text x="110" y="135" font-size="12" fill="#9effe3" text-anchor="middle" font-weight="600">40</text>
+            <circle cx="230" cy="130" r="16" fill="#1e2538" stroke="#2a3050" stroke-width="1.5"/>
+            <text x="230" y="135" font-size="12" fill="#9effe3" text-anchor="middle" font-weight="600">80</text>
+          </svg>
+          <div style="font-size:10px;color:#546e7a;text-align:center;margin-top:4px">root=50, leaf=20,40,80</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 2 — Inorder Traversal ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Traversal</div>
+    <div class="slide-h1">Inorder — <em>left → node → right</em></div>
+    <div class="slide-lead">Traversal คือการเดินเยี่ยมทุกโหนดในต้นไม้ — Inorder ของ BST จะได้ค่าเรียงจากน้อยไปมากเสมอ ใช้ recursion เป็นหัวใจหลัก</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">inorder — recursive</div>
+        <div class="code"><span class="kw">void</span> <span class="fn">inorder</span>(<span class="kw">struct</span> TreeNode <span class="op">*</span>node) {
+    <span class="kw">if</span> (node == <span class="nm">NULL</span>) <span class="kw">return</span>;  <span class="cm">/* base case */</span>
+    <span class="fn">inorder</span>(node<span class="op">-&gt;</span>left);    <span class="cm">/* 1. ซ้ายก่อน */</span>
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, node<span class="op">-&gt;</span>data); <span class="cm">/* 2. ตัวเอง */</span>
+    <span class="fn">inorder</span>(node<span class="op">-&gt;</span>right);   <span class="cm">/* 3. ขวาสุดท้าย */</span>
+}
+
+<span class="cm">/* tree: 50 มีลูก 30,70 ; 30 มีลูก 20,40 ; 70 มีลูก 80 */</span>
+<span class="fn">inorder</span>(root);
+<span class="cm">// 20 30 40 50 70 80 — เรียงน้อยไปมาก!</span></div>
+        <div class="box green">
+          <div class="box-title">💡 ทำไม Inorder ของ BST เรียงเสมอ</div>
+          <div class="box-body">เพราะ BST การันตีว่า left &lt; node &lt; right ทุกโหนด — เดิน left-node-right จึงได้ลำดับน้อยไปมากโดยอัตโนมัติ</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box amber">
+          <div class="box-title">⚠️ Recursion คือหัวใจของ Tree</div>
+          <div class="box-body">
+            ทุก function ของ Tree เกือบทั้งหมดเขียนแบบ recursive: <br>
+            1. เช็ค base case (<code>node == NULL</code>) ก่อนเสมอ<br>
+            2. เรียกตัวเองกับ left/right<br>
+            3. ทำงานกับ node ปัจจุบัน
+          </div>
+        </div>
+        <div class="box red">
+          <div class="box-title">❌ ลืม base case = Stack Overflow</div>
+          <div class="box-body">ถ้าไม่เช็ค <code>node == NULL</code> ก่อน function จะเรียกตัวเองไม่จบ (infinite recursion) จนโปรแกรม crash</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 3 — Preorder / Postorder ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Traversal</div>
+    <div class="slide-h1">Preorder &amp; Postorder — <em>ลำดับอื่นที่ใช้บ่อย</em></div>
+    <div class="slide-lead">ต่างกันแค่ "เมื่อไหร่จะพิมพ์ตัวเอง" เทียบกับการเดิน left/right — จำง่ายจากชื่อ: Pre=ก่อนลูก, Post=หลังลูก</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">preorder — node → left → right</div>
+        <div class="code"><span class="kw">void</span> <span class="fn">preorder</span>(<span class="kw">struct</span> TreeNode <span class="op">*</span>node) {
+    <span class="kw">if</span> (node == <span class="nm">NULL</span>) <span class="kw">return</span>;
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, node<span class="op">-&gt;</span>data); <span class="cm">/* 1. ตัวเองก่อน */</span>
+    <span class="fn">preorder</span>(node<span class="op">-&gt;</span>left);
+    <span class="fn">preorder</span>(node<span class="op">-&gt;</span>right);
+}
+<span class="cm">// tree เดิม: 50 30 20 40 70 80</span></div>
+        <div class="box">
+          <div class="box-title">ใช้ทำอะไร</div>
+          <div class="box-body">Preorder ใช้ copy ต้นไม้ทั้งใบ (สร้างโครงสร้างใหม่ตามลำดับเดิม) เพราะพิมพ์ root ก่อนลูกเสมอ</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">postorder — left → right → node</div>
+        <div class="code"><span class="kw">void</span> <span class="fn">postorder</span>(<span class="kw">struct</span> TreeNode <span class="op">*</span>node) {
+    <span class="kw">if</span> (node == <span class="nm">NULL</span>) <span class="kw">return</span>;
+    <span class="fn">postorder</span>(node<span class="op">-&gt;</span>left);
+    <span class="fn">postorder</span>(node<span class="op">-&gt;</span>right);
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, node<span class="op">-&gt;</span>data); <span class="cm">/* 3. ตัวเองสุดท้าย */</span>
+}
+<span class="cm">// tree เดิม: 20 40 30 80 70 50</span></div>
+        <div class="box">
+          <div class="box-title">ใช้ทำอะไร</div>
+          <div class="box-body">Postorder ใช้ตอนลบต้นไม้ทั้งใบ (free ทุกโหนด) เพราะต้อง free ลูกก่อนแม่เสมอ ไม่งั้นจะเข้าถึงลูกไม่ได้</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 4 — Binary Search Tree (BST) ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · BST</div>
+    <div class="slide-h1">Binary Search Tree — <em>Tree ที่ค้นหาเร็ว</em></div>
+    <div class="slide-lead">กฎทอง BST: ทุกโหนด — ค่าทาง left ต้องน้อยกว่า, ค่าทาง right ต้องมากกว่า กฎนี้ทำให้ search/insert เร็วกว่า Linked List มาก</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">insert — เปรียบเทียบแล้วเลือกทาง</div>
+        <div class="code"><span class="kw">struct</span> TreeNode <span class="op">*</span><span class="fn">insert</span>(<span class="kw">struct</span> TreeNode <span class="op">*</span>node, <span class="kw">int</span> val) {
+    <span class="kw">if</span> (node == <span class="nm">NULL</span>) {        <span class="cm">/* เจอที่ว่าง สร้างโหนดใหม่ */</span>
+        <span class="kw">struct</span> TreeNode <span class="op">*</span>n =
+            (<span class="kw">struct</span> TreeNode <span class="op">*</span>)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> TreeNode));
+        n<span class="op">-&gt;</span>data = val; n<span class="op">-&gt;</span>left = n<span class="op">-&gt;</span>right = <span class="nm">NULL</span>;
+        <span class="kw">return</span> n;
+    }
+    <span class="kw">if</span> (val &lt; node<span class="op">-&gt;</span>data)
+        node<span class="op">-&gt;</span>left = <span class="fn">insert</span>(node<span class="op">-&gt;</span>left, val);
+    <span class="kw">else</span>
+        node<span class="op">-&gt;</span>right = <span class="fn">insert</span>(node<span class="op">-&gt;</span>right, val);
+    <span class="kw">return</span> node;
+}
+<span class="cm">/* เรียกใช้: root = insert(root, 50); */</span></div>
+      </div>
+      <div class="split-col">
+        <div class="tree-diagram">
+          <div style="font-size:10px;color:#4a5568;margin-bottom:10px">insert(50,30,70,20,40,80) ทีละค่า</div>
+          <div style="font-size:11px;color:#8891a8;line-height:2">
+            insert(50) → root ว่าง → 50 เป็น root<br>
+            insert(30) → 30&lt;50 → ไปทาง left ของ 50<br>
+            insert(70) → 70&gt;50 → ไปทาง right ของ 50<br>
+            insert(20) → 20&lt;50→left, 20&lt;30→left ของ 30<br>
+            insert(40) → 40&lt;50→left, 40&gt;30→right ของ 30<br>
+            insert(80) → 80&gt;50→right, 80&gt;70→right ของ 70
+          </div>
+        </div>
+        <div class="box green">
+          <div class="box-title">💡 BST = Binary Search ในรูป Tree</div>
+          <div class="box-body">เทียบกับ Binary Search ใน Array — แต่ละจุดเทียบแล้วตัดครึ่งซ้าย/ขวา ทำให้ search เร็ว O(log n) ถ้า tree สมดุล</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 5 — Search ใน BST ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · BST</div>
+    <div class="slide-h1">Search ใน BST — <em>เร็วกว่า Linked List</em></div>
+    <div class="slide-lead">ใช้กฎเดียวกับ insert — เทียบค่าแล้วเลือกว่าจะไปทาง left หรือ right ไม่ต้องเช็คทุกโหนดแบบ Linked List</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="code-label">search — recursive</div>
+        <div class="code"><span class="kw">struct</span> TreeNode <span class="op">*</span><span class="fn">search</span>(<span class="kw">struct</span> TreeNode <span class="op">*</span>node, <span class="kw">int</span> target) {
+    <span class="kw">if</span> (node == <span class="nm">NULL</span> || node<span class="op">-&gt;</span>data == target)
+        <span class="kw">return</span> node;       <span class="cm">/* เจอ หรือ ไม่เจอ (NULL) */</span>
+    <span class="kw">if</span> (target &lt; node<span class="op">-&gt;</span>data)
+        <span class="kw">return</span> <span class="fn">search</span>(node<span class="op">-&gt;</span>left, target);
+    <span class="kw">else</span>
+        <span class="kw">return</span> <span class="fn">search</span>(node<span class="op">-&gt;</span>right, target);
+}
+
+<span class="cm">/* ใช้งาน */</span>
+<span class="kw">struct</span> TreeNode <span class="op">*</span>found = <span class="fn">search</span>(root, <span class="nm">40</span>);
+<span class="kw">if</span> (found != <span class="nm">NULL</span>) <span class="fn">printf</span>(<span class="st">"เจอ %d\n"</span>, found<span class="op">-&gt;</span>data);</div>
+      </div>
+      <div class="split-col">
+        <table class="kv-table">
+          <thead><tr><th></th><th>Linked List</th><th>BST (สมดุล)</th></tr></thead>
+          <tbody>
+            <tr><td>Search</td><td>O(n) เช็คทุกโหนด</td><td>O(log n) ตัดครึ่งทุกครั้ง</td></tr>
+            <tr><td>Insert</td><td>O(1) ที่หัว</td><td>O(log n) ต้องหาที่วาง</td></tr>
+          </tbody>
+        </table>
+        <div class="box amber">
+          <div class="box-title">⚠️ "สมดุล" คือเงื่อนไขสำคัญ</div>
+          <div class="box-body">ถ้า insert ค่าเรียงๆ ติดกัน (เช่น 1,2,3,4,5) BST จะเอียงเป็นเส้นตรงเหมือน Linked List ทำให้ search กลับมาเป็น O(n) — ปัญหานี้แก้ด้วย Balanced Tree (AVL, Red-Black) ซึ่งเป็นเรื่องขั้นสูงกว่านี้</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 6 — Use Case ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Use Case</div>
+    <div class="slide-h1">🏦 <em>Use Case จริง</em> — ค้นหาบัญชีลูกค้าด้วยเลขบัญชี</div>
+    <div class="slide-lead">ธนาคารมีลูกค้าเป็นล้านคน ค้นหาด้วย Linked List (O(n)) จะช้ามาก — เก็บเป็น BST ตามเลขบัญชี ทำให้ search เร็วขึ้นมาก</div>
+
+    <div class="split w40">
+      <div class="split-col">
+        <div class="usecase" style="border-left-color:var(--ca)">
+          <div class="usecase-label" style="color:var(--ca)">โจทย์ระบบธนาคาร</div>
+          <div class="usecase-title">ค้นหาบัญชีด้วย BST ตามเลขบัญชี</div>
+          <div class="usecase-body">เก็บบัญชีลูกค้าเป็น BST โดยใช้เลขบัญชีเป็นเกณฑ์เปรียบเทียบ — ค้นหาบัญชีจากล้านรายการได้เร็วกว่าไล่ทีละตัว</div>
+        </div>
+        <div class="box">
+          <div class="box-title">ทำไมไม่ใช้ Linked List</div>
+          <div class="box-body">ลูกค้า 1 ล้านคน, Linked List ต้องไล่เฉลี่ย 500,000 ครั้งถึงจะเจอ แต่ BST ที่สมดุลใช้แค่ประมาณ 20 ครั้ง (log₂ 1,000,000 ≈ 20)</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="code-label">ระบบค้นหาบัญชีด้วย BST</div>
+        <div class="code"><span class="kw">struct</span> Account {
+    <span class="kw">int</span> accNo;
+    <span class="kw">double</span> balance;
+    <span class="kw">struct</span> Account <span class="op">*</span>left, <span class="op">*</span>right;
+};
+<span class="kw">struct</span> Account <span class="op">*</span>root = <span class="nm">NULL</span>;
+
+<span class="kw">struct</span> Account <span class="op">*</span><span class="fn">findAccount</span>(<span class="kw">struct</span> Account <span class="op">*</span>node, <span class="kw">int</span> accNo) {
+    <span class="kw">if</span> (node == <span class="nm">NULL</span> || node<span class="op">-&gt;</span>accNo == accNo)
+        <span class="kw">return</span> node;
+    <span class="kw">if</span> (accNo &lt; node<span class="op">-&gt;</span>accNo)
+        <span class="kw">return</span> <span class="fn">findAccount</span>(node<span class="op">-&gt;</span>left, accNo);
+    <span class="kw">return</span> <span class="fn">findAccount</span>(node<span class="op">-&gt;</span>right, accNo);
+}
+
+<span class="kw">struct</span> Account <span class="op">*</span>acc = <span class="fn">findAccount</span>(root, <span class="nm">10025</span>);
+<span class="kw">if</span> (acc) <span class="fn">printf</span>(<span class="st">"ยอดเงิน: %.2f\n"</span>, acc<span class="op">-&gt;</span>balance);</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 7 — Think! ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 5 · Think!</div>
+    <div class="slide-h1">คิดก่อน <em>เขียน</em></div>
+    <div class="slide-lead">Tree ต้องคิดเป็น recursion — ลองนึกภาพต้นไม้ในหัวเวลา trace</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">1. tree: root=50, left=30, right=70 — inorder จะพิมพ์อะไร?</div>
+          <div class="think-hint">💡 left ก่อน (30), node (50), right (70) → "30 50 70"</div>
+        </div>
+        <div class="think">
+          <div class="think-q">2. ทำไม inorder ของ BST ได้ค่าเรียงน้อยไปมากเสมอ แต่ของ Binary Tree ทั่วไปไม่ใช่?</div>
+          <div class="think-hint">💡 เพราะ BST การันตี left&lt;node&lt;right ทุกโหนด ส่วน Binary Tree ทั่วไปไม่มีกฎนี้ ลำดับค่าจึงไม่แน่นอน</div>
+        </div>
+        <div class="think">
+          <div class="think-q">3. insert(60) เข้าไปใน tree (50,30,70,20,40,80) จะไปอยู่ตำแหน่งไหน?</div>
+          <div class="think-hint">💡 60&gt;50→right(70), 60&lt;70→left ของ 70 — กลายเป็นลูกซ้ายของโหนด 70</div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="think">
+          <div class="think-q">4. ทำไมต้อง free ลูกก่อนแม่ (postorder) ตอนลบต้นไม้ทั้งใบ ทำสลับลำดับได้ไหม?</div>
+          <div class="think-hint">💡 ไม่ได้ — ถ้า free แม่ก่อน จะไม่มี pointer ไปหาลูกอีกแล้ว (memory leak) ต้อง free ลูกให้ครบก่อนเสมอ</div>
+        </div>
+        <div class="think">
+          <div class="think-q">5. ถ้า insert ค่า 10,20,30,40,50 เรียงกันลงไป tree จะมีรูปร่างหน้าตายังไง?</div>
+          <div class="think-hint">💡 จะเอียงไปทาง right ทั้งหมด กลายเป็นเส้นตรงเหมือน Linked List — search กลับไปเป็น O(n) ไม่เร็วเหมือน BST สมดุล</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 8 — โจทย์ Trace ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · โจทย์ Trace</div>
+    <div class="slide-h1">โจทย์ <em>อ่าน code</em> ทายผลลัพธ์</div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — tree: root=50 (left=30, right=70) — preorder จะพิมพ์อะไร?</div>
+      <div class="code" style="margin-bottom:10px"><span class="fn">preorder</span>(root); <span class="cm">/* node -&gt; left -&gt; right */</span></div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" onclick="pickMC('mc1',0,2,'Preorder พิมพ์ตัวเองก่อนเสมอ แล้วค่อย left แล้วค่อย right ผลคือ 50 30 70 ✓')"><span class="mc-ltr">A</span> 30 50 70</div>
+        <div class="mc-opt" onclick="pickMC('mc1',1,2,'Preorder พิมพ์ตัวเองก่อนเสมอ แล้วค่อย left แล้วค่อย right ผลคือ 50 30 70 ✓')"><span class="mc-ltr">B</span> 50 30 70</div>
+        <div class="mc-opt" onclick="pickMC('mc1',2,2,'Preorder พิมพ์ตัวเองก่อนเสมอ แล้วค่อย left แล้วค่อย right ผลคือ 50 30 70 ✓')"><span class="mc-ltr">C</span> 30 70 50</div>
+        <div class="mc-opt" onclick="pickMC('mc1',3,2,'Preorder พิมพ์ตัวเองก่อนเสมอ แล้วค่อย left แล้วค่อย right ผลคือ 50 30 70 ✓')"><span class="mc-ltr">D</span> 70 30 50</div>
+      </div>
+      <div class="ex-feedback" id="mc1-fb"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — BST นี้ search(25) จะเดินทางไหน?</div>
+      <div class="code" style="margin-bottom:10px"><span class="cm">/* tree: root=50, left=30(left=20,right=40), right=70 */</span>
+<span class="fn">search</span>(root, <span class="nm">25</span>);</div>
+      <div class="mc-opts" id="mc2">
+        <div class="mc-opt" onclick="pickMC('mc2',0,1,'25<50→left(30), 25<30→left(20), 25>20→right ของ 20 (ไม่มี, NULL) → ไม่เจอ ✓')"><span class="mc-ltr">A</span> 50 → 30 → 20 → ไม่เจอ (NULL)</div>
+        <div class="mc-opt" onclick="pickMC('mc2',1,1,'25<50→left(30), 25<30→left(20), 25>20→right ของ 20 (ไม่มี, NULL) → ไม่เจอ ✓')"><span class="mc-ltr">B</span> 50 → 70 → เจอ</div>
+        <div class="mc-opt" onclick="pickMC('mc2',2,1,'25<50→left(30), 25<30→left(20), 25>20→right ของ 20 (ไม่มี, NULL) → ไม่เจอ ✓')"><span class="mc-ltr">C</span> 50 → 30 → 40 → เจอ</div>
+        <div class="mc-opt" onclick="pickMC('mc2',3,1,'25<50→left(30), 25<30→left(20), 25>20→right ของ 20 (ไม่มี, NULL) → ไม่เจอ ✓')"><span class="mc-ltr">D</span> 50 → 30 → เจอ</div>
+      </div>
+      <div class="ex-feedback" id="mc2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 9 — โจทย์ Fill-in ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · โจทย์เติมคำ</div>
+    <div class="slide-h1">โจทย์ <em>เติมคำ</em></div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 1 — Base case ของ recursion</div>
+      <div class="ex-q">เติมเงื่อนไข base case ของ inorder traversal เพื่อหยุด recursion<br>
+      <code>void inorder(struct TreeNode *node) { if (___) return; ... }</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in1" placeholder="node == ..." type="text">
+        <button class="ex-btn" onclick="checkFill('in1',
+          'node == NULL',
+          ['node==NULL'],
+          ['node = NULL','node != NULL'],
+          'ถูก! ต้องหยุดเมื่อ node เป็น NULL (ไม่มีโหนดให้เดินต่อ) ไม่งั้นจะ infinite recursion',
+          'ต้องใช้ == ไม่ใช่ != เพราะต้อง return ตอนที่ node เป็น NULL (หมดทางเดิน)')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 2 — BST insert เลือกทาง</div>
+      <div class="ex-q">เติมเงื่อนไขเพื่อเลือกว่าจะ insert ทาง left หรือ right<br>
+      <code>if (___) node->left = insert(node->left, val); else node->right = insert(node->right, val);</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in2" placeholder="val ... node->data" type="text">
+        <button class="ex-btn" onclick="checkFill('in2',
+          'val < node->data',
+          ['val<node->data','val < node-&gt;data'],
+          ['val > node->data','val == node->data'],
+          'ถูก! ค่าน้อยกว่าไปทาง left ตามกฎของ BST',
+          'กฎ BST คือค่าน้อยกว่าไปทาง left ต้องใช้ < ไม่ใช่ >')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-label">โจทย์ 3 — Postorder ลำดับ</div>
+      <div class="ex-q">เรียง 3 คำสั่งให้ถูกต้องตามหลัก Postorder (left → right → node) โดยเติมแค่บรรทัดสุดท้าย<br>
+      <code>postorder(node->left); postorder(node->right); ___;</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" id="in3" placeholder="printf(...)" type="text">
+        <button class="ex-btn" onclick="checkFill('in3',
+          'printf(\"%d \", node->data)',
+          ['printf(\"%d\", node->data)','printf (\"%d \", node->data)'],
+          ['printf(\"%d\", node->left)'],
+          'ถูก! Postorder พิมพ์ตัวเองหลังจากเดิน left และ right ครบแล้ว',
+          'ต้องพิมพ์ node->data (ค่าของตัวเอง) ไม่ใช่ node->left')">Check</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SLIDE 10 — Summary ════════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="slide-eyebrow">บทที่ 5 · สรุป</div>
+    <div class="slide-h1">เก่ง Binary Tree / BST <em>แล้ว!</em></div>
+    <div class="slide-lead">เข้าใจโครงสร้างไม่เชิงเส้น, recursion, และการค้นหาแบบ BST — ขั้นต่อไปคือ Graph ที่ทั่วไปกว่า Tree อีกขั้น</div>
+
+    <div class="split">
+      <div class="split-col">
+        <div class="steps">
+          <div class="step"><div class="step-n ok">1</div><div class="step-body"><strong>Binary Tree</strong> — โหนดมีลูกได้สูงสุด 2 (left/right)<small>โครงสร้างไม่เชิงเส้นตัวแรก</small></div></div>
+          <div class="step"><div class="step-n ok">2</div><div class="step-body"><strong>Traversal</strong> — Inorder/Preorder/Postorder<small>ต่างกันแค่ลำดับพิมพ์ตัวเอง</small></div></div>
+          <div class="step"><div class="step-n ok">3</div><div class="step-body"><strong>BST</strong> — left&lt;node&lt;right ทุกโหนด<small>search/insert เร็วกว่า Linked List</small></div></div>
+        </div>
+      </div>
+      <div class="split-col">
+        <div class="box green">
+          <div class="box-title">🚀 บทต่อไป</div>
+          <div class="box-body">
+            <strong>บทที่ 6 — Graph</strong><br>
+            โครงสร้างทั่วไปที่สุด — โหนดเชื่อมกันได้หลายทิศทาง ไม่จำกัดแค่ 2 ลูกแบบ Tree
+          </div>
+        </div>
+        <div class="exercise">
+          <div class="ex-label">🏆 Challenge ก่อนไปบทหน้า</div>
+          <div class="ex-q" style="color:#dde3f0">เขียนโปรแกรม BST รับเลขจาก user ใส่ทีละตัวด้วย insert จนกว่าจะพิมพ์ -1 จากนั้นพิมพ์ inorder traversal ออกมา (ควรได้ค่าเรียงจากน้อยไปมาก)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 5 — Binary Tree / BST</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover','Binary Tree คืออะไร','Inorder Traversal','Preorder/Postorder',
+  'Binary Search Tree','Search ใน BST','Use Case ค้นหาบัญชี',
+  'Think!','โจทย์ Trace','โจทย์เติมคำ','สรุป'
+];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
