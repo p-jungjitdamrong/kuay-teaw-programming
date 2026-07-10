@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 0 — ทำไมต้อง Python? | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root { --ca:#b84c00; --cal:#fff3ec; --cam:#d98a5a; }
+.cmp-table { width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px; margin-bottom:14px; }
+.cmp-table th { background:var(--ca); color:#fff; padding:7px 10px; text-align:left; }
+.cmp-table td { padding:6px 10px; border-bottom:1px solid var(--line); }
+.cmp-table tr:nth-child(even) td { background:var(--cal); }
+.cmp-table td:first-child { color:var(--ca); font-weight:600; }
+.zen-list { list-style:none; padding:0; margin:0 0 14px; }
+.zen-list li { padding:7px 0 7px 28px; border-bottom:1px solid var(--line); font-size:13px; position:relative; line-height:1.5; }
+.zen-list li::before { content:'🐍'; position:absolute; left:0; font-size:12px; top:8px; }
+.zen-list li span { font-family:var(--mono); color:var(--ca); font-size:11px; display:block; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════ SLIDE 0 — COVER ════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Python</div>
+        <div class="cover-title">บทที่ 0<br><em>ทำไมต้อง Python?</em></div>
+        <div class="cover-subtitle">ก่อนเรียน Python ต้องเข้าใจ Philosophy ก่อน — ทำไม Python ถึงกระชับ อ่านง่าย และใช้ได้ทุกงาน</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Python คืออะไร — Interpreted, Dynamic, High-level</div>
+          <div class="topic-row"><div class="topic-dot"></div>เทียบกับ C — 10 บรรทัด vs 1 บรรทัด</div>
+          <div class="topic-row"><div class="topic-dot"></div>The Zen of Python — PEP 20</div>
+          <div class="topic-row"><div class="topic-dot"></div>PEP 8 — ข้อตกลงการเขียนโค้ด</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case จริง + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">00</div>
+        <div class="cover-badge">CHAPTER 0 · WHY PYTHON</div>
+        <div class="cover-slides-count">11 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 1 — Python คืออะไร ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · ภาพรวม</div>
+    <h2 class="slide-title">Python คืออะไร?</h2>
+    <p class="slide-lead">ภาษาโปรแกรมที่ออกแบบมาให้ <strong>อ่านง่ายเหมือนภาษาอังกฤษ</strong> — สร้างโดย Guido van Rossum ปี 1991</p>
+    <table class="cmp-table">
+      <thead><tr><th>คุณสมบัติ</th><th>Python</th><th>C</th></tr></thead>
+      <tbody>
+        <tr><td>ประเภท</td><td>Interpreted / Dynamic</td><td>Compiled / Static</td></tr>
+        <tr><td>Type</td><td>ไม่ต้อง declare — Python รู้เอง</td><td>ต้อง int, float, char ทุกตัว</td></tr>
+        <tr><td>Memory</td><td>Garbage Collector จัดการให้</td><td>malloc/free เอง</td></tr>
+        <tr><td>ความเร็ว (run)</td><td>ช้ากว่า C ~10-100x</td><td>เร็วที่สุด</td></tr>
+        <tr><td>ความเร็ว (dev)</td><td>เร็วกว่ามาก — โค้ดสั้น</td><td>เขียนนาน</td></tr>
+        <tr><td>ใช้ทำอะไร</td><td>AI/ML, Web, Script, Data</td><td>OS, Embedded, Game Engine</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">Python ไม่ได้แทน C — แต่ถ้างานไม่ต้องการความเร็ว Python ทำได้ <strong>เร็วกว่ามากในแง่การพัฒนา</strong></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 2 — เทียบ Hello World ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · เปรียบเทียบ</div>
+    <h2 class="slide-title">C vs Python — เทียบบรรทัดต่อบรรทัด</h2>
+    <p class="slide-lead">งานเดียวกัน โค้ดต่างกันมาก — อ่านเทียบกันเลย</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">C — อ่านยอดในอาร์เรย์</div>
+        <pre class="code-block"><span class="inc">#include &lt;stdio.h&gt;</span>
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> nums[] = {<span class="nm">10</span>, <span class="nm">20</span>, <span class="nm">30</span>};
+    <span class="kw">int</span> total = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; <span class="nm">3</span>; i++) {
+        total += nums[i];
+    }
+    <span class="fn">printf</span>(<span class="st">"%d\n"</span>, total);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">Python — งานเดียวกัน</div>
+        <pre class="code-block"><span class="nm">nums</span> = [<span class="nm">10</span>, <span class="nm">20</span>, <span class="nm">30</span>]
+<span class="fn">print</span>(<span class="fn">sum</span>(nums))  <span class="cm"># 60</span></pre>
+        <div class="callout" style="margin-top:12px">10 บรรทัด → <strong>2 บรรทัด</strong><br>ไม่มี #include ไม่มี main()<br>ไม่มี type declaration ไม่มี return</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 3 — The Zen of Python ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Philosophy</div>
+    <h2 class="slide-title">The Zen of Python — PEP 20</h2>
+    <p class="slide-lead">พิมพ์ <code class="inline-code">import this</code> ใน Python จะได้หลักการ 19 ข้อ — นี่คือข้อสำคัญที่สุด</p>
+    <ul class="zen-list">
+      <li>Beautiful is better than ugly.
+        <span>โค้ดสวยงาม อ่านได้ ดีกว่าโค้ดที่ทำงานได้แต่อ่านไม่รู้เรื่อง</span>
+      </li>
+      <li>Explicit is better than implicit.
+        <span>บอกชัดเจนว่าทำอะไร ดีกว่าให้คนอ่านเดา</span>
+      </li>
+      <li>Simple is better than complex.
+        <span>เขียนง่ายๆ ก่อน — ซับซ้อนได้เมื่อจำเป็นเท่านั้น</span>
+      </li>
+      <li>Readability counts.
+        <span>โค้ดอ่านได้ = maintainable = ทีมทำงานร่วมกันได้</span>
+      </li>
+      <li>There should be one — and preferably only one — obvious way to do it.
+        <span>Python มีวิธี "Pythonic" เดียวสำหรับแต่ละงาน ไม่ใช่ 10 วิธี</span>
+      </li>
+    </ul>
+    <div class="callout">ใน C มีหลายวิธีทำงานเดียวกัน — Python ชี้ทาง "ถูก" ไว้แล้ว เรียกว่า <strong>Pythonic</strong></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 4 — PEP 8 ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Style Guide</div>
+    <h2 class="slide-title">PEP 8 — ข้อตกลงการเขียนโค้ด Python</h2>
+    <p class="slide-lead">PEP = Python Enhancement Proposal — PEP 8 คือ Style Guide ที่ทุกคนใช้ร่วมกัน</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">✅ Pythonic (PEP 8)</div>
+        <pre class="code-block"><span class="cm"># ชื่อตัวแปร: snake_case</span>
+<span class="nm">account_balance</span> = <span class="nm">1000</span>
+<span class="nm">user_name</span> = <span class="st">"somchai"</span>
+
+<span class="cm"># ชื่อ class: PascalCase</span>
+<span class="kw">class</span> <span class="fn">BankAccount</span>:
+    <span class="kw">pass</span>
+
+<span class="cm"># ชื่อ constant: UPPER_SNAKE</span>
+<span class="nm">MAX_RETRY</span> = <span class="nm">3</span>
+
+<span class="cm"># เว้นวรรค 2 บรรทัดระหว่าง function</span>
+<span class="kw">def</span> <span class="fn">deposit</span>(amount):
+    <span class="kw">pass</span>
+
+
+<span class="kw">def</span> <span class="fn">withdraw</span>(amount):
+    <span class="kw">pass</span></pre>
+      </div>
+      <div>
+        <div class="code-label">❌ ไม่ Pythonic</div>
+        <pre class="code-block"><span class="cm"># camelCase ใช้ใน C/Java ไม่ใช่ Python</span>
+<span class="nm">accountBalance</span> = <span class="nm">1000</span>
+<span class="nm">userName</span> = <span class="st">"somchai"</span>
+
+<span class="cm"># ชื่อ class ตัวเล็ก</span>
+<span class="kw">class</span> <span class="fn">bankaccount</span>:
+    <span class="kw">pass</span>
+
+<span class="cm"># ไม่เว้นบรรทัด</span>
+<span class="kw">def</span> <span class="fn">deposit</span>(amount):
+    <span class="kw">pass</span>
+<span class="kw">def</span> <span class="fn">withdraw</span>(amount):
+    <span class="kw">pass</span></pre>
+      </div>
+    </div>
+    <div class="callout">Indent ใน Python ใช้ <strong>4 spaces</strong> (ไม่ใช่ tab) — indentation ไม่ใช่แค่สวยงาม แต่เป็น <strong>syntax จริงๆ</strong></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 5 — Indentation is Syntax ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Syntax</div>
+    <h2 class="slide-title">Indentation คือ Syntax — ไม่มี { } ใน Python</h2>
+    <p class="slide-lead">ใน C ใช้ <code class="inline-code">{ }</code> บอก block — Python ใช้ <strong>การย่อหน้า (indent) 4 spaces</strong> แทน</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">C — ใช้ { }</div>
+        <pre class="code-block"><span class="kw">if</span> (score >= <span class="nm">50</span>) {
+    <span class="fn">printf</span>(<span class="st">"ผ่าน\n"</span>);
+    grade = <span class="st">'C'</span>;
+} <span class="kw">else</span> {
+    <span class="fn">printf</span>(<span class="st">"ไม่ผ่าน\n"</span>);
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">Python — ใช้ indent</div>
+        <pre class="code-block"><span class="kw">if</span> score >= <span class="nm">50</span>:
+    <span class="fn">print</span>(<span class="st">"ผ่าน"</span>)
+    grade = <span class="st">"C"</span>
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"ไม่ผ่าน"</span>)</pre>
+      </div>
+    </div>
+    <div class="callout" style="background:#fce7ec;border-color:#d45f7a;color:#a01d3a">⚠️ IndentationError คือ error ที่เจอบ่อยที่สุดสำหรับคนมาจาก C — ถ้า indent ผิดโปรแกรม error ทันที</div>
+    <div class="callout" style="margin-top:10px">ข้อดี: บังคับให้โค้ดสวยงามตลอด — ไม่มีโค้ดที่ indent ยุ่งเหยิงแต่ยังรันได้</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 6 — Dynamic Typing ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Type System</div>
+    <h2 class="slide-title">Dynamic Typing — Python รู้ type เองตอน runtime</h2>
+    <p class="slide-lead">ใน C ต้อง declare type ก่อนใช้เสมอ — Python ดูค่าที่ assign แล้วรู้เองว่า type อะไร</p>
+    <pre class="code-block"><span class="cm"># Python — ไม่ต้อง declare type</span>
+<span class="nm">x</span> = <span class="nm">42</span>          <span class="cm"># x เป็น int</span>
+<span class="nm">x</span> = <span class="st">"hello"</span>     <span class="cm"># x เปลี่ยนเป็น str ได้เลย!</span>
+<span class="nm">x</span> = <span class="nm">3.14</span>        <span class="cm"># x เปลี่ยนเป็น float</span>
+
+<span class="cm"># ตรวจ type ได้ด้วย type()</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="nm">42</span>))       <span class="cm"># &lt;class 'int'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="st">"hello"</span>))  <span class="cm"># &lt;class 'str'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="nm">3.14</span>))     <span class="cm"># &lt;class 'float'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="kw">True</span>))     <span class="cm"># &lt;class 'bool'&gt;</span>
+
+<span class="cm"># Python 3.9+ มี Type Hints (optional)</span>
+<span class="nm">balance</span>: <span class="kw">float</span> = <span class="nm">1000.0</span>  <span class="cm"># แค่ hint ไม่บังคับ</span></pre>
+    <div class="callout">Dynamic Typing ทำให้เขียนเร็ว — แต่ต้องระวัง type error ตอน runtime เพราะ compiler ไม่จับให้</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 7 — 🏦 Banking Use Case ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 KTB ใช้ Python ทำอะไรบ้าง?</h2>
+    <p class="slide-lead">ธนาคารขนาดใหญ่ใช้ Python สำหรับงานที่ต้องการ <strong>เขียนเร็ว วิเคราะห์ข้อมูล</strong> — ไม่ใช่งานที่ต้องการความเร็วสูงสุด</p>
+    <table class="cmp-table">
+      <thead><tr><th>งาน</th><th>Python ทำอะไร</th><th>ทำไมไม่ใช้ C</th></tr></thead>
+      <tbody>
+        <tr><td>Credit Scoring</td><td>ML model วิเคราะห์ความเสี่ยงลูกค้า</td><td>Library ML ส่วนใหญ่เป็น Python</td></tr>
+        <tr><td>Transaction Report</td><td>อ่าน CSV → วิเคราะห์ → ส่ง email</td><td>10 บรรทัด Python ทำได้เลย</td></tr>
+        <tr><td>Fraud Detection</td><td>วิเคราะห์ pattern ธุรกรรมผิดปกติ</td><td>pandas/numpy เร็วมากสำหรับ data</td></tr>
+        <tr><td>API Backend</td><td>Flask/FastAPI สร้าง REST API</td><td>deploy ง่าย maintain ง่ายกว่า</td></tr>
+        <tr><td>Automation</td><td>script กรอกฟอร์ม reconcile ยอด</td><td>C ต้องเขียนนานมาก</td></tr>
+      </tbody>
+    </table>
+    <pre class="code-block"><span class="cm"># อ่านยอดธุรกรรม 3 บรรทัด</span>
+<span class="kw">import</span> csv
+<span class="nm">transactions</span> = [<span class="fn">float</span>(r[<span class="st">'amount'</span>]) <span class="kw">for</span> r <span class="kw">in</span> csv.<span class="fn">DictReader</span>(<span class="fn">open</span>(<span class="st">'txn.csv'</span>))]
+<span class="fn">print</span>(<span class="st">f"ยอดรวม: {<span class="fn">sum</span>(transactions):,.2f} บาท"</span>)</pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 8 — Think! ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">ถ้า Python ช้ากว่า C ทำไมธนาคารถึงยังใช้ Python?<br><br>คิดถึงบริบทนี้: โปรแกรม Credit Score ทำงาน <strong>ครั้งละ 1 ลูกค้า</strong> — ใช้เวลา 0.05 วินาที (Python) vs 0.001 วินาที (C)<br><br>แต่ถ้าต้องเพิ่มฟีเจอร์ใหม่ Python แก้ <strong>2 ชั่วโมง</strong>, C แก้ <strong>2 วัน</strong><br><br><em>Speed of development สำคัญกว่า speed of execution เมื่อไหร่?</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 9 — Trace MCQ ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Trace</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
+    <pre class="code-block"><span class="nm">x</span> = <span class="nm">10</span>
+<span class="nm">x</span> = <span class="nm">x</span> * <span class="nm">2</span>
+<span class="nm">x</span> = <span class="st">f"ยอด: {<span class="nm">x</span>} บาท"</span>
+<span class="fn">print</span>(<span class="nm">x</span>)</pre>
+    <div id="mc-trace0" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-trace0','A','B','❌ x ยังเป็น int 20 — แต่บรรทัดที่ 3 assign string ใหม่แล้ว')">A) 20</button>
+      <button class="mc-btn" onclick="pickMC('mc-trace0','B','B','✅ x เปลี่ยน type ได้ตลอด — Python Dynamic Typing!')">B) ยอด: 20 บาท</button>
+      <button class="mc-btn" onclick="pickMC('mc-trace0','C','B','❌ TypeError เกิดถ้าบวก int+str แต่ที่นี่ใช้ f-string ซึ่ง ok')">C) TypeError</button>
+      <button class="mc-btn" onclick="pickMC('mc-trace0','D','B','❌ f-string ใส่ค่า x ลงไปใน string ได้เลย ไม่ต้องแปลง')">D) ยอด: {x} บาท</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 10 — Fill-in ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Fill-in</div>
+    <h2 class="slide-title">เติมคำให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① ตรวจสอบ type ของตัวแปรใน Python ใช้ built-in function ชื่อว่า?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f0a" placeholder="ชื่อ function">
+      <button class="fill-btn" onclick="checkFill('f0a','type',[],[],'✅ type() — เช่น type(42) คือ &lt;class int&gt;','❌ ลองใหม่')">ตรวจ</button>
+    </div>
+    <div id="f0a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② ใน Python Indentation ใช้กี่ spaces ตาม PEP 8?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f0b" placeholder="ตัวเลข">
+      <button class="fill-btn" onclick="checkFill('f0b','4',['four'],[],  '✅ 4 spaces ตาม PEP 8','❌ ลองนับดู')">ตรวจ</button>
+    </div>
+    <div id="f0b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ ชื่อตัวแปรแบบ Pythonic (PEP 8) สำหรับ "ยอดเงินในบัญชี" เขียนว่า?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f0c" placeholder="ชื่อตัวแปร">
+      <button class="fill-btn" onclick="checkFill('f0c','account_balance',['account balance','accountbalance'],[],  '✅ snake_case — account_balance คือ Pythonic','❌ PEP 8 ใช้ snake_case — คั่นด้วย _ ตัวเล็กทั้งหมด')">ตรวจ</button>
+    </div>
+    <div id="f0c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 11 — Summary ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🎯</div>
+      <div class="summary-title">สรุปบทที่ 0</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Python คืออะไร</div><div class="sum-body">Interpreted · Dynamic · High-level — เขียนน้อย ทำได้มาก</div></div>
+        <div class="sum-card"><div class="sum-head">เทียบกับ C</div><div class="sum-body">Python ช้ากว่า แต่ dev เร็วกว่ามาก — เลือกตาม use case</div></div>
+        <div class="sum-card"><div class="sum-head">Zen of Python</div><div class="sum-body">Beautiful · Explicit · Simple · Readable — Pythonic</div></div>
+        <div class="sum-card"><div class="sum-head">PEP 8</div><div class="sum-body">snake_case · PascalCase · 4 spaces indent · 2 blank lines ระหว่าง function</div></div>
+        <div class="sum-card"><div class="sum-head">Indentation = Syntax</div><div class="sum-body">ไม่มี { } — indent 4 spaces บอก block — ผิด indent = error</div></div>
+        <div class="sum-card"><div class="sum-head">Dynamic Typing</div><div class="sum-body">ไม่ต้อง declare type — Python รู้เองจากค่าที่ assign</div></div>
+      </div>
+      <a href="index.html" class="summary-next">→ กลับหน้าหลัก Python</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<nav class="nav-bar">
+  <button class="nav-btn" id="prev-btn" onclick="go(-1)">← ก่อนหน้า</button>
+  <span class="nav-counter"><span id="cur-num">1</span> / <span id="tot-num">11</span></span>
+  <button class="nav-btn" id="next-btn" onclick="go(1)">ถัดไป →</button>
+</nav>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

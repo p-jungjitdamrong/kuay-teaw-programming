@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 5 — OOP พื้นฐาน | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root { --ca:#b84c00; --cal:#fff3ec; --cam:#d98a5a; }
+.class-diagram {
+  font-family: var(--mono); font-size: 12px;
+  background: var(--ink); border-radius: 10px;
+  padding: 16px 20px; margin-bottom: 14px; color: #8891a8;
+  display: inline-block; min-width: 240px;
+}
+.cd-title { color: #fff; font-weight: 600; font-size: 13px; text-align: center;
+  border-bottom: 1px solid #2a3050; padding-bottom: 8px; margin-bottom: 8px; }
+.cd-section { border-bottom: 1px solid #2a3050; padding: 6px 0; margin-bottom: 6px; }
+.cd-section:last-child { border-bottom: none; margin-bottom: 0; }
+.cd-row { padding: 2px 0; }
+.cd-attr { color: #9effe3; }
+.cd-method { color: var(--cam); }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════ SLIDE 0 — COVER ════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Python</div>
+        <div class="cover-title">บทที่ 5<br><em>OOP พื้นฐาน</em></div>
+        <div class="cover-subtitle">class, __init__, self, @property, Encapsulation — ทำไม self ไม่ใช่ this และทำไม Python OOP อ่านง่ายกว่า Java</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>class และ __init__ — constructor</div>
+          <div class="topic-row"><div class="topic-dot"></div>self — explicit instance reference</div>
+          <div class="topic-row"><div class="topic-dot"></div>Encapsulation — _ และ __ convention</div>
+          <div class="topic-row"><div class="topic-dot"></div>@property — getter/setter แบบ Pythonic</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">05</div>
+        <div class="cover-badge">CHAPTER 5 · OOP BASICS</div>
+        <div class="cover-slides-count">11 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 1 — class คืออะไร ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · class</div>
+    <h2 class="slide-title">class คืออะไร — Blueprint ของ Object</h2>
+    <p class="slide-lead">class คือแม่แบบ — Object คือสิ่งที่สร้างจากแม่แบบนั้น เช่น class <em>BankAccount</em> → object <em>บัญชีของสมชาย</em></p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">C — struct (ไม่มี method)</div>
+        <pre class="code-block"><span class="kw">struct</span> BankAccount {
+    <span class="kw">char</span> owner[<span class="nm">50</span>];
+    <span class="kw">double</span> balance;
+};
+<span class="cm">/* ต้องแยก function ออกมา */</span>
+<span class="kw">void</span> <span class="fn">deposit</span>(<span class="kw">struct</span> BankAccount *a,
+             <span class="kw">double</span> amt) {
+    a->balance += amt;
+}</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Python — class (data + method รวมกัน)</div>
+        <pre class="code-block"><span class="kw">class</span> <span class="fn">BankAccount</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, owner):
+        self.owner = owner
+        self.balance = <span class="nm">0</span>
+
+    <span class="kw">def</span> <span class="fn">deposit</span>(self, amount):
+        self.balance += amount
+
+<span class="cm"># สร้าง object</span>
+acc = <span class="fn">BankAccount</span>(<span class="st">"สมชาย"</span>)
+acc.<span class="fn">deposit</span>(<span class="nm">50_000</span>)</pre>
+      </div>
+    </div>
+    <div class="callout">class รวม <strong>data</strong> (attributes) และ <strong>function</strong> (methods) ไว้ด้วยกัน — ทำให้โค้ดจัดระเบียบง่ายขึ้น</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 2 — __init__ และ self ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · __init__ &amp; self</div>
+    <h2 class="slide-title">__init__ และ self — Constructor ของ Python</h2>
+    <p class="slide-lead"><code class="inline-code">__init__</code> ถูกเรียกอัตโนมัติตอน create object — <code class="inline-code">self</code> คือ reference ถึง object ตัวเอง (เหมือน <code>this</code> ใน Java แต่ต้องเขียนชัดเจน)</p>
+    <pre class="code-block"><span class="kw">class</span> <span class="fn">BankAccount</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, owner, initial_balance=<span class="nm">0</span>):
+        <span class="cm"># self.xxx คือ instance attribute</span>
+        self.owner = owner
+        self.balance = initial_balance
+        self.transactions = []   <span class="cm"># แต่ละ object มี list ของตัวเอง</span>
+
+    <span class="kw">def</span> <span class="fn">deposit</span>(self, amount):
+        self.balance += amount
+        self.transactions.<span class="fn">append</span>((+amount, <span class="st">"ฝาก"</span>))
+
+    <span class="kw">def</span> <span class="fn">get_balance</span>(self):
+        <span class="kw">return</span> self.balance
+
+<span class="cm"># self ถูกส่งอัตโนมัติเมื่อเรียกผ่าน object</span>
+<span class="nm">acc1</span> = <span class="fn">BankAccount</span>(<span class="st">"สมชาย"</span>)
+<span class="nm">acc2</span> = <span class="fn">BankAccount</span>(<span class="st">"สมหญิง"</span>, <span class="nm">10_000</span>)
+
+<span class="nm">acc1</span>.<span class="fn">deposit</span>(<span class="nm">5_000</span>)   <span class="cm"># Python แปลเป็น BankAccount.deposit(acc1, 5000)</span>
+<span class="nm">acc2</span>.<span class="fn">deposit</span>(<span class="nm">3_000</span>)   <span class="cm"># acc1 และ acc2 เก็บ transaction แยกกัน</span></pre>
+    <div class="callout">ทำไม Python ต้องเขียน <strong>self</strong> ชัดเจน? — เพราะ <em>Explicit is better than implicit</em> (Zen of Python)</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 3 — Encapsulation ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Encapsulation</div>
+    <h2 class="slide-title">Encapsulation — _ และ __ Convention</h2>
+    <p class="slide-lead">Python ไม่มี private/public keyword เหมือน Java — ใช้ naming convention แทน</p>
+    <pre class="code-block"><span class="kw">class</span> <span class="fn">BankAccount</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, owner):
+        self.owner = owner         <span class="cm"># public — เข้าถึงได้จากนอก</span>
+        self._pin = <span class="st">"1234"</span>       <span class="cm"># _single: "please don't touch" convention</span>
+        self.__balance = <span class="nm">0</span>       <span class="cm"># __double: name mangling — ซ่อนแน่นกว่า</span>
+
+    <span class="kw">def</span> <span class="fn">deposit</span>(self, amount):
+        <span class="kw">if</span> amount > <span class="nm">0</span>:
+            self.__balance += amount   <span class="cm"># เข้าถึง __balance ได้ใน class</span>
+
+    <span class="kw">def</span> <span class="fn">get_balance</span>(self):
+        <span class="kw">return</span> self.__balance
+
+<span class="nm">acc</span> = <span class="fn">BankAccount</span>(<span class="st">"สมชาย"</span>)
+<span class="fn">print</span>(acc.owner)          <span class="cm"># ✅ "สมชาย"</span>
+<span class="fn">print</span>(acc._pin)           <span class="cm"># ⚠️ ทำได้แต่ไม่ควร</span>
+<span class="cm"># print(acc.__balance)   # ❌ AttributeError</span>
+<span class="fn">print</span>(acc._BankAccount__balance)  <span class="cm"># ✅ name mangling — เข้าถึงได้แต่ ugly</span>
+<span class="fn">print</span>(acc.<span class="fn">get_balance</span>())  <span class="cm"># ✅ วิธีที่ถูกต้อง</span></pre>
+    <div class="callout">Python เชื่อใจ developer — ไม่บังคับ private แต่ใช้ convention บอกว่า "อย่าแตะ"</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 4 — @property ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · @property</div>
+    <h2 class="slide-title">@property — Getter/Setter แบบ Pythonic</h2>
+    <p class="slide-lead">ใน Java ต้องเขียน getBalance(), setBalance() — Python ใช้ <code class="inline-code">@property</code> ทำให้ method เรียกได้เหมือน attribute</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Java style (ไม่ Pythonic)</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">get_balance</span>(self):
+    <span class="kw">return</span> self.__balance
+
+<span class="kw">def</span> <span class="fn">set_balance</span>(self, v):
+    <span class="kw">if</span> v >= <span class="nm">0</span>:
+        self.__balance = v
+
+<span class="cm"># เรียก</span>
+acc.<span class="fn">get_balance</span>()
+acc.<span class="fn">set_balance</span>(<span class="nm">1000</span>)</pre>
+      </div>
+      <div>
+        <div class="code-label">Pythonic — @property</div>
+        <pre class="code-block"><span class="op">@property</span>
+<span class="kw">def</span> <span class="fn">balance</span>(self):
+    <span class="kw">return</span> self.__balance
+
+<span class="op">@balance.setter</span>
+<span class="kw">def</span> <span class="fn">balance</span>(self, v):
+    <span class="kw">if</span> v >= <span class="nm">0</span>:
+        self.__balance = v
+
+<span class="cm"># เรียกเหมือน attribute!</span>
+acc.balance       <span class="cm"># getter</span>
+acc.balance = <span class="nm">1000</span>  <span class="cm"># setter</span></pre>
+      </div>
+    </div>
+    <pre class="code-block"><span class="cm"># @property ใช้เพิ่ม validation และ computed attribute</span>
+<span class="op">@property</span>
+<span class="kw">def</span> <span class="fn">tier</span>(self):   <span class="cm"># computed จาก balance</span>
+    <span class="kw">if</span> self.__balance >= <span class="nm">500_000</span>: <span class="kw">return</span> <span class="st">"Platinum"</span>
+    <span class="kw">if</span> self.__balance >= <span class="nm">100_000</span>: <span class="kw">return</span> <span class="st">"Gold"</span>
+    <span class="kw">return</span> <span class="st">"Silver"</span>
+
+<span class="fn">print</span>(acc.tier)   <span class="cm"># เรียกเหมือน attribute แต่ compute ทุกครั้ง</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 5 — Class vs Instance Attributes ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Attributes</div>
+    <h2 class="slide-title">Class Attribute vs Instance Attribute</h2>
+    <p class="slide-lead">Class attribute ใช้ร่วมกันทุก object — Instance attribute เป็นของแต่ละ object</p>
+    <pre class="code-block"><span class="kw">class</span> <span class="fn">BankAccount</span>:
+    <span class="cm"># Class attribute — ทุก object ใช้ร่วมกัน</span>
+    bank_name = <span class="st">"KTB"</span>
+    interest_rate = <span class="nm">0.025</span>
+    _total_accounts = <span class="nm">0</span>   <span class="cm"># นับบัญชีทั้งหมด</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, owner):
+        <span class="cm"># Instance attributes — แต่ละ object มีของตัวเอง</span>
+        self.owner = owner
+        self.__balance = <span class="nm">0</span>
+        BankAccount._total_accounts += <span class="nm">1</span>
+
+    <span class="op">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">get_total</span>(cls):
+        <span class="kw">return</span> cls._total_accounts   <span class="cm"># cls คือ class เอง</span>
+
+    <span class="op">@staticmethod</span>
+    <span class="kw">def</span> <span class="fn">validate_amount</span>(amount):
+        <span class="kw">return</span> amount > <span class="nm">0</span>   <span class="cm"># ไม่ต้องการ self หรือ cls</span>
+
+<span class="nm">a1</span> = <span class="fn">BankAccount</span>(<span class="st">"สมชาย"</span>)
+<span class="nm">a2</span> = <span class="fn">BankAccount</span>(<span class="st">"สมหญิง"</span>)
+<span class="fn">print</span>(BankAccount.<span class="fn">get_total</span>())        <span class="cm"># 2</span>
+<span class="fn">print</span>(BankAccount.<span class="fn">validate_amount</span>(-<span class="nm">5</span>))  <span class="cm"># False</span>
+<span class="fn">print</span>(a1.bank_name)                   <span class="cm"># "KTB" — อ่าน class attr ผ่าน instance</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 6 — __str__ __repr__ ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Dunder Methods</div>
+    <h2 class="slide-title">__str__ และ __repr__ — แสดง Object เป็น String</h2>
+    <p class="slide-lead">ถ้าไม่เขียน __str__ การ print object จะได้ <code class="inline-code">&lt;BankAccount object at 0x...&gt;</code> — ต้องเขียนเองให้อ่านได้</p>
+    <pre class="code-block"><span class="kw">class</span> <span class="fn">BankAccount</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, owner, balance=<span class="nm">0</span>):
+        self.owner = owner
+        self.__balance = balance
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="cm"># ใช้เมื่อ print() — สำหรับผู้ใช้อ่าน</span>
+        <span class="kw">return</span> <span class="st">f"บัญชีของ {self.owner} ยอด {self.__balance:,} บาท"</span>
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(self):
+        <span class="cm"># ใช้ใน debug — สำหรับ developer</span>
+        <span class="kw">return</span> <span class="st">f"BankAccount(owner='{self.owner}', balance={self.__balance})"</span>
+
+    <span class="kw">def</span> <span class="fn">__len__</span>(self):
+        <span class="cm"># len(acc) — คืนจำนวนธุรกรรม</span>
+        <span class="kw">return</span> <span class="fn">len</span>(self.transactions)
+
+<span class="nm">acc</span> = <span class="fn">BankAccount</span>(<span class="st">"สมชาย"</span>, <span class="nm">50_000</span>)
+<span class="fn">print</span>(acc)        <span class="cm"># บัญชีของสมชาย ยอด 50,000 บาท</span>
+<span class="fn">repr</span>(acc)         <span class="cm"># BankAccount(owner='สมชาย', balance=50000)</span></pre>
+    <div class="callout">Dunder methods (double underscore) คือ magic methods ของ Python — ทำให้ object ทำงานกับ built-in functions ได้</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 7 — 🏦 Banking Use Case ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 BankAccount class แบบสมบูรณ์</h2>
+    <pre class="code-block"><span class="kw">class</span> <span class="fn">BankAccount</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, owner, account_id):
+        self.owner = owner
+        self.account_id = account_id
+        self.__balance = <span class="nm">0</span>
+        self.__transactions = []
+
+    <span class="op">@property</span>
+    <span class="kw">def</span> <span class="fn">balance</span>(self):
+        <span class="kw">return</span> self.__balance
+
+    <span class="kw">def</span> <span class="fn">deposit</span>(self, amount):
+        <span class="kw">if</span> amount <= <span class="nm">0</span>:
+            <span class="kw">raise</span> ValueError(<span class="st">"จำนวนเงินต้องมากกว่า 0"</span>)
+        self.__balance += amount
+        self.__transactions.<span class="fn">append</span>({<span class="st">"type"</span>: <span class="st">"D"</span>, <span class="st">"amount"</span>: amount})
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">withdraw</span>(self, amount):
+        <span class="kw">if</span> amount > self.__balance:
+            <span class="kw">raise</span> ValueError(<span class="st">"ยอดเงินไม่เพียงพอ"</span>)
+        self.__balance -= amount
+        self.__transactions.<span class="fn">append</span>({<span class="st">"type"</span>: <span class="st">"W"</span>, <span class="st">"amount"</span>: amount})
+        <span class="kw">return</span> self  <span class="cm"># return self → method chaining!</span>
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="kw">return</span> <span class="st">f"[{self.account_id}] {self.owner}: {self.__balance:,} บาท"</span>
+
+<span class="cm"># Method chaining</span>
+<span class="nm">acc</span> = <span class="fn">BankAccount</span>(<span class="st">"สมชาย"</span>, <span class="st">"A001"</span>)
+acc.<span class="fn">deposit</span>(<span class="nm">50_000</span>).<span class="fn">withdraw</span>(<span class="nm">12_000</span>).<span class="fn">deposit</span>(<span class="nm">5_000</span>)
+<span class="fn">print</span>(acc)</pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 8 — Think! ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">โค้ดนี้ถูกต้องไหม? เกิดอะไรขึ้น?<br><br><code style="font-family:var(--mono);font-size:12px;background:var(--cal);padding:8px 14px;border-radius:6px;display:inline-block;margin:10px 0;text-align:left">class Counter:
+    count = 0   # class attribute
+
+    def __init__(self):
+        Counter.count += 1
+
+a = Counter()
+b = Counter()
+print(Counter.count)</code><br><br><em>count มีค่าเท่าไหร่? เพราะอะไร?</em><br>ถ้าเปลี่ยน <code style="font-family:var(--mono);background:var(--cal);padding:2px 6px;border-radius:4px">Counter.count</code> เป็น <code style="font-family:var(--mono);background:var(--cal);padding:2px 6px;border-radius:4px">self.count</code> จะต่างกันยังไง?</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 9 — Trace MCQ ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Trace</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
+    <pre class="code-block"><span class="kw">class</span> <span class="fn">Acc</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, b):
+        self.__b = b
+
+    <span class="op">@property</span>
+    <span class="kw">def</span> <span class="fn">b</span>(self):
+        <span class="kw">return</span> self.__b * <span class="nm">2</span>
+
+<span class="nm">a</span> = <span class="fn">Acc</span>(<span class="nm">100</span>)
+<span class="fn">print</span>(a.b)</pre>
+    <div id="mc-t5" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-t5','A','C','❌ 100 คือ self.__b แต่ @property คืน self.__b * 2')">A) 100</button>
+      <button class="mc-btn" onclick="pickMC('mc-t5','B','C','❌ AttributeError จะเกิดถ้าเรียก a.__b จากนอก class แต่ a.b เป็น @property ที่ถูกต้อง')">B) AttributeError</button>
+      <button class="mc-btn" onclick="pickMC('mc-t5','C','C','✅ @property b คืน self.__b*2 = 100*2 = 200')">C) 200</button>
+      <button class="mc-btn" onclick="pickMC('mc-t5','D','C','❌ ไม่มี TypeError — a.b เรียก @property getter ได้ตามปกติ')">D) TypeError</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 10 — Fill-in ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Fill-in</div>
+    <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① method พิเศษที่ถูกเรียกเมื่อสร้าง object ด้วย ClassName() คือ?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f5a" placeholder="__...">
+      <button class="fill-btn" onclick="checkFill('f5a','__init__',['init','__init__()'],[],'✅ __init__ — constructor ของ Python','❌ ชื่อ method คือ __init__ (double underscore ทั้งสองด้าน)')">ตรวจ</button>
+    </div>
+    <div id="f5a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② ใน Python การซ่อน attribute โดยใช้ __ นำหน้าเรียกว่า?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f5b" placeholder="...">
+      <button class="fill-btn" onclick="checkFill('f5b','name mangling',['name-mangling','namemangling'],[],'✅ Name Mangling — Python เปลี่ยนชื่อเป็น _ClassName__attr','❌ เรียกว่า Name Mangling')">ตรวจ</button>
+    </div>
+    <div id="f5b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ decorator ที่ทำให้ method เรียกได้เหมือน attribute (read-only)?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f5c" placeholder="@...">
+      <button class="fill-btn" onclick="checkFill('f5c','@property',['property'],[],'✅ @property — getter แบบ Pythonic','❌ ใช้ @property decorator')">ตรวจ</button>
+    </div>
+    <div id="f5c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 11 — Summary ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🎯</div>
+      <div class="summary-title">สรุปบทที่ 5</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">class</div><div class="sum-body">blueprint · สร้าง object ด้วย ClassName() · data + methods รวมกัน</div></div>
+        <div class="sum-card"><div class="sum-head">__init__ &amp; self</div><div class="sum-body">constructor · self = this แต่ต้องเขียนชัดเจน (Explicit)</div></div>
+        <div class="sum-card"><div class="sum-head">Encapsulation</div><div class="sum-body">_single = convention · __double = name mangling</div></div>
+        <div class="sum-card"><div class="sum-head">@property</div><div class="sum-body">getter/setter แบบ Pythonic — เรียกเหมือน attribute + validation</div></div>
+        <div class="sum-card"><div class="sum-head">Class vs Instance attr</div><div class="sum-body">Class attr ใช้ร่วมกัน · @classmethod(cls) · @staticmethod</div></div>
+        <div class="sum-card"><div class="sum-head">Dunder Methods</div><div class="sum-body">__str__ (print) · __repr__ (debug) · __len__ · และอื่นๆ</div></div>
+      </div>
+      <a href="slides_ch6.html" class="summary-next">→ บทที่ 6: OOP ขั้นสูง &amp; Python vs ภาษาอื่น</a>
+    </div>
+  </div>
+</div>
+
+</div>
+<nav class="nav-bar">
+  <button class="nav-btn" id="prev-btn" onclick="go(-1)">← ก่อนหน้า</button>
+  <span class="nav-counter"><span id="cur-num">1</span> / <span id="tot-num">11</span></span>
+  <button class="nav-btn" id="next-btn" onclick="go(1)">ถัดไป →</button>
+</nav>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

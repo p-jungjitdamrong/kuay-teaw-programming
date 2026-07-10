@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 2 — Control Flow & Comprehension | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root { --ca:#b84c00; --cal:#fff3ec; --cam:#d98a5a; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════ SLIDE 0 — COVER ════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Python</div>
+        <div class="cover-title">บทที่ 2<br><em>Control Flow &amp; Comprehension</em></div>
+        <div class="cover-subtitle">if/elif/else, for, while, break/continue — และ List Comprehension ที่เขียนสั้นกว่า C loop มาก</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>if / elif / else</div>
+          <div class="topic-row"><div class="topic-dot"></div>for loop — range, enumerate, zip</div>
+          <div class="topic-row"><div class="topic-dot"></div>while, break, continue, else on loop</div>
+          <div class="topic-row"><div class="topic-dot"></div>List Comprehension — Pythonic</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">02</div>
+        <div class="cover-badge">CHAPTER 2 · CONTROL FLOW</div>
+        <div class="cover-slides-count">11 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 1 — if/elif/else ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Conditional</div>
+    <h2 class="slide-title">if / elif / else</h2>
+    <p class="slide-lead">Python ไม่มี <code class="inline-code">switch</code> (Python 3.10+ มี <code class="inline-code">match</code>) — ใช้ <code class="inline-code">elif</code> แทน else if</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">C</div>
+        <pre class="code-block"><span class="kw">if</span> (score >= <span class="nm">80</span>) {
+    grade = <span class="st">'A'</span>;
+} <span class="kw">else if</span> (score >= <span class="nm">70</span>) {
+    grade = <span class="st">'B'</span>;
+} <span class="kw">else if</span> (score >= <span class="nm">60</span>) {
+    grade = <span class="st">'C'</span>;
+} <span class="kw">else</span> {
+    grade = <span class="st">'F'</span>;
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">Python</div>
+        <pre class="code-block"><span class="kw">if</span> score >= <span class="nm">80</span>:
+    grade = <span class="st">"A"</span>
+<span class="kw">elif</span> score >= <span class="nm">70</span>:
+    grade = <span class="st">"B"</span>
+<span class="kw">elif</span> score >= <span class="nm">60</span>:
+    grade = <span class="st">"C"</span>
+<span class="kw">else</span>:
+    grade = <span class="st">"F"</span></pre>
+      </div>
+    </div>
+    <pre class="code-block"><span class="cm"># Ternary expression — Python style</span>
+<span class="nm">label</span> = <span class="st">"ผ่าน"</span> <span class="kw">if</span> score >= <span class="nm">50</span> <span class="kw">else</span> <span class="st">"ไม่ผ่าน"</span>
+
+<span class="cm"># Truthy/Falsy — Python เช็ค condition โดยไม่ต้อง == 0</span>
+<span class="kw">if</span> balance:        <span class="cm"># True ถ้า balance ไม่ใช่ 0</span>
+    <span class="fn">print</span>(<span class="st">"มียอด"</span>)
+<span class="kw">if</span> <span class="kw">not</span> name:      <span class="cm"># True ถ้า name เป็น "" หรือ None</span>
+    <span class="fn">print</span>(<span class="st">"ไม่มีชื่อ"</span>)</pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 2 — for loop ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · for loop</div>
+    <h2 class="slide-title">for loop — วนซ้ำแบบ Pythonic</h2>
+    <p class="slide-lead">Python for วน <strong>บน iterable</strong> โดยตรง — ไม่ต้องใช้ index เหมือน C</p>
+    <pre class="code-block"><span class="cm"># วนบน list โดยตรง (ไม่ต้องใช้ i)</span>
+<span class="nm">amounts</span> = [<span class="nm">1000</span>, <span class="nm">2500</span>, <span class="nm">500</span>]
+<span class="kw">for</span> amt <span class="kw">in</span> amounts:
+    <span class="fn">print</span>(<span class="st">f"โอน {<span class="nm">amt</span>:,} บาท"</span>)
+
+<span class="cm"># range(start, stop, step) — เหมือน for(i=0;i&lt;n;i++)</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">5</span>):          <span class="cm"># 0,1,2,3,4</span>
+    <span class="fn">print</span>(i)
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">6</span>):       <span class="cm"># 1,2,3,4,5</span>
+    <span class="fn">print</span>(i)
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">10</span>, <span class="nm">0</span>, -<span class="nm">2</span>):  <span class="cm"># 10,8,6,4,2</span>
+    <span class="fn">print</span>(i)
+
+<span class="cm"># enumerate — ได้ทั้ง index และค่า</span>
+<span class="kw">for</span> i, amt <span class="kw">in</span> <span class="fn">enumerate</span>(amounts, start=<span class="nm">1</span>):
+    <span class="fn">print</span>(<span class="st">f"ธุรกรรม #{i}: {<span class="nm">amt</span>:,} บาท"</span>)
+
+<span class="cm"># zip — วนสอง list พร้อมกัน</span>
+<span class="nm">names</span> = [<span class="st">"สมชาย"</span>, <span class="st">"สมหญิง"</span>]
+<span class="nm">bals</span> = [<span class="nm">5000</span>, <span class="nm">12000</span>]
+<span class="kw">for</span> name, bal <span class="kw">in</span> <span class="fn">zip</span>(names, bals):
+    <span class="fn">print</span>(<span class="st">f"{<span class="nm">name</span>}: {<span class="nm">bal</span>:,} บาท"</span>)</pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 3 — while ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · while</div>
+    <h2 class="slide-title">while, break, continue — และ else บน loop</h2>
+    <p class="slide-lead">Python มี <code class="inline-code">else</code> ต่อท้าย loop — ทำงานเมื่อ loop จบโดยไม่ถูก break</p>
+    <pre class="code-block"><span class="cm"># while loop พื้นฐาน</span>
+<span class="nm">retry</span> = <span class="nm">0</span>
+<span class="kw">while</span> retry < <span class="nm">3</span>:
+    <span class="nm">pin</span> = <span class="fn">input</span>(<span class="st">"ใส่ PIN: "</span>)
+    <span class="kw">if</span> pin == <span class="st">"1234"</span>:
+        <span class="fn">print</span>(<span class="st">"เข้าใช้งานได้"</span>)
+        <span class="kw">break</span>           <span class="cm"># ออกจาก loop</span>
+    retry += <span class="nm">1</span>
+    <span class="fn">print</span>(<span class="st">f"PIN ผิด ({retry}/3)"</span>)
+<span class="kw">else</span>:                   <span class="cm"># else block: ทำงานเมื่อ loop จบโดยไม่ break</span>
+    <span class="fn">print</span>(<span class="st">"บัญชีถูกระงับ"</span>)
+
+<span class="cm"># continue — ข้ามรอบนี้</span>
+<span class="kw">for</span> txn <span class="kw">in</span> transactions:
+    <span class="kw">if</span> txn[<span class="st">'amount'</span>] &lt;= <span class="nm">0</span>:
+        <span class="kw">continue</span>   <span class="cm"># ข้าม transaction ที่ไม่ valid</span>
+    <span class="fn">process</span>(txn)</pre>
+    <div class="callout"><code>else</code> บน loop คือ feature ที่ C ไม่มี — ใช้แทนการตั้ง flag เพื่อเช็คว่า loop จบแบบปกติหรือถูก break</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 4 — List Comprehension ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Comprehension</div>
+    <h2 class="slide-title">List Comprehension — หัวใจของ Pythonic Code</h2>
+    <p class="slide-lead">แทน for loop + append ด้วยบรรทัดเดียว — อ่านง่ายกว่า เร็วกว่า</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แบบ C/loop ปกติ</div>
+        <pre class="code-block"><span class="cm"># สร้าง list ยกกำลัง 2</span>
+<span class="nm">squares</span> = []
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">6</span>):
+    squares.<span class="fn">append</span>(i ** <span class="nm">2</span>)
+<span class="cm"># [1, 4, 9, 16, 25]</span></pre>
+      </div>
+      <div>
+        <div class="code-label">List Comprehension</div>
+        <pre class="code-block"><span class="cm"># บรรทัดเดียว!</span>
+squares = [i**<span class="nm">2</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">6</span>)]
+<span class="cm"># [1, 4, 9, 16, 25]</span></pre>
+      </div>
+    </div>
+    <pre class="code-block"><span class="cm"># Syntax: [expression for item in iterable if condition]</span>
+
+<span class="cm"># กรองเฉพาะธุรกรรมที่ > 10,000</span>
+<span class="nm">big_txns</span> = [t <span class="kw">for</span> t <span class="kw">in</span> transactions <span class="kw">if</span> t > <span class="nm">10_000</span>]
+
+<span class="cm"># แปลงค่า — บวกภาษีมูลค่าเพิ่ม 7%</span>
+<span class="nm">with_vat</span> = [<span class="fn">round</span>(p * <span class="nm">1.07</span>, <span class="nm">2</span>) <span class="kw">for</span> p <span class="kw">in</span> prices]
+
+<span class="cm"># Dict Comprehension</span>
+<span class="nm">accounts</span> = {<span class="st">"สมชาย"</span>: <span class="nm">5000</span>, <span class="st">"สมหญิง"</span>: <span class="nm">12000</span>}
+<span class="nm">rich</span> = {k: v <span class="kw">for</span> k, v <span class="kw">in</span> accounts.<span class="fn">items</span>() <span class="kw">if</span> v > <span class="nm">8000</span>}
+<span class="cm"># {"สมหญิง": 12000}</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 5 — match (Python 3.10) ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · match</div>
+    <h2 class="slide-title">match/case — switch ของ Python (3.10+)</h2>
+    <p class="slide-lead">Python 3.10 เพิ่ม <code class="inline-code">match</code> ซึ่งทรงพลังกว่า switch/case ของ C มาก</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">C — switch/case</div>
+        <pre class="code-block"><span class="kw">switch</span> (txn_type) {
+    <span class="kw">case</span> <span class="nm">1</span>: <span class="fn">deposit</span>(); <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="nm">2</span>: <span class="fn">withdraw</span>(); <span class="kw">break</span>;
+    <span class="kw">default</span>: <span class="fn">error</span>();
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">Python 3.10 — match/case</div>
+        <pre class="code-block"><span class="kw">match</span> txn_type:
+    <span class="kw">case</span> <span class="st">"deposit"</span>:
+        <span class="fn">deposit</span>()
+    <span class="kw">case</span> <span class="st">"withdraw"</span>:
+        <span class="fn">withdraw</span>()
+    <span class="kw">case</span> _:         <span class="cm"># default</span>
+        <span class="fn">error</span>()</pre>
+      </div>
+    </div>
+    <pre class="code-block"><span class="cm"># match กับ tuple — ทรงพลังกว่า switch มาก</span>
+<span class="kw">match</span> (action, amount):
+    <span class="kw">case</span> (<span class="st">"deposit"</span>, n) <span class="kw">if</span> n > <span class="nm">0</span>:
+        <span class="fn">print</span>(<span class="st">f"ฝาก {n} บาท"</span>)
+    <span class="kw">case</span> (<span class="st">"withdraw"</span>, n) <span class="kw">if</span> <span class="nm">0</span> < n <= balance:
+        <span class="fn">print</span>(<span class="st">f"ถอน {n} บาท"</span>)
+    <span class="kw">case</span> _:
+        <span class="fn">print</span>(<span class="st">"รายการไม่ถูกต้อง"</span>)</pre>
+    <div class="callout">ถ้า Python version ต่ำกว่า 3.10 ใช้ if/elif แทน — เช็ค version ด้วย <code>python --version</code></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 6 — Truthy/Falsy ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Truthy/Falsy</div>
+    <h2 class="slide-title">Truthy &amp; Falsy — Python ถือว่าอะไรเป็น True/False</h2>
+    <p class="slide-lead">ใน Python ทุกค่ามี "ความเป็น True/False" — ใช้ใน if โดยไม่ต้องเปรียบเทียบตรงๆ</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">❌ Falsy — ถือเป็น False</div>
+        <pre class="code-block"><span class="kw">False</span>
+<span class="nm">0</span>         <span class="cm"># int 0</span>
+<span class="nm">0.0</span>       <span class="cm"># float 0</span>
+<span class="st">""</span>        <span class="cm"># string ว่าง</span>
+[]        <span class="cm"># list ว่าง</span>
+{}        <span class="cm"># dict ว่าง</span>
+<span class="kw">None</span>      <span class="cm"># None</span></pre>
+      </div>
+      <div>
+        <div class="code-label">✅ Truthy — ถือเป็น True</div>
+        <pre class="code-block"><span class="kw">True</span>
+<span class="nm">1</span>, -<span class="nm">1</span>, <span class="nm">42</span>  <span class="cm"># non-zero int</span>
+<span class="nm">0.001</span>      <span class="cm"># non-zero float</span>
+<span class="st">"a"</span>        <span class="cm"># string ไม่ว่าง</span>
+[<span class="nm">0</span>]        <span class="cm"># list ไม่ว่าง (แม้ค่าข้างในเป็น 0)</span>
+{<span class="st">"a"</span>:<span class="nm">1</span>}    <span class="cm"># dict ไม่ว่าง</span></pre>
+      </div>
+    </div>
+    <pre class="code-block"><span class="cm"># ใช้ Truthy/Falsy ตรวจสอบ</span>
+<span class="nm">transactions</span> = []
+<span class="kw">if</span> <span class="kw">not</span> transactions:
+    <span class="fn">print</span>(<span class="st">"ไม่มีประวัติธุรกรรม"</span>)  <span class="cm"># list ว่าง = Falsy</span>
+
+<span class="nm">balance</span> = <span class="nm">0</span>
+<span class="kw">if</span> <span class="kw">not</span> balance:
+    <span class="fn">print</span>(<span class="st">"ยอดเงินเป็น 0"</span>)  <span class="cm"># 0 = Falsy</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 7 — 🏦 Banking Use Case ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 วิเคราะห์ธุรกรรมด้วย Comprehension</h2>
+    <p class="slide-lead">โปรแกรมธนาคารที่ใช้ loop + comprehension + f-string</p>
+    <pre class="code-block"><span class="nm">transactions</span> = [
+    {<span class="st">"type"</span>: <span class="st">"deposit"</span>,  <span class="st">"amount"</span>: <span class="nm">50_000</span>},
+    {<span class="st">"type"</span>: <span class="st">"withdraw"</span>, <span class="st">"amount"</span>: <span class="nm">12_000</span>},
+    {<span class="st">"type"</span>: <span class="st">"withdraw"</span>, <span class="st">"amount"</span>: <span class="nm">3_500</span>},
+    {<span class="st">"type"</span>: <span class="st">"deposit"</span>,  <span class="st">"amount"</span>: <span class="nm">8_000</span>},
+]
+
+<span class="cm"># Comprehension กรองและคำนวณ</span>
+<span class="nm">deposits</span>  = [t[<span class="st">'amount'</span>] <span class="kw">for</span> t <span class="kw">in</span> transactions <span class="kw">if</span> t[<span class="st">'type'</span>] == <span class="st">'deposit'</span>]
+<span class="nm">withdraws</span> = [t[<span class="st">'amount'</span>] <span class="kw">for</span> t <span class="kw">in</span> transactions <span class="kw">if</span> t[<span class="st">'type'</span>] == <span class="st">'withdraw'</span>]
+
+<span class="nm">balance</span> = <span class="fn">sum</span>(deposits) - <span class="fn">sum</span>(withdraws)
+
+<span class="fn">print</span>(<span class="st">f"ฝากรวม  : {<span class="fn">sum</span>(deposits):>10,} บาท"</span>)
+<span class="fn">print</span>(<span class="st">f"ถอนรวม  : {<span class="fn">sum</span>(withdraws):>10,} บาท"</span>)
+<span class="fn">print</span>(<span class="st">f"คงเหลือ : {<span class="nm">balance</span>:>10,} บาท"</span>)
+
+<span class="cm"># แจ้งเตือนถ้า withdraw ครั้งไหน > 10,000</span>
+<span class="nm">big</span> = [t[<span class="st">'amount'</span>] <span class="kw">for</span> t <span class="kw">in</span> transactions
+       <span class="kw">if</span> t[<span class="st">'type'</span>] == <span class="st">'withdraw'</span> <span class="kw">and</span> t[<span class="st">'amount'</span>] > <span class="nm">10_000</span>]
+<span class="kw">if</span> big:
+    <span class="fn">print</span>(<span class="st">f"⚠️ พบถอนเงินจำนวนมาก: {big}"</span>)</pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 8 — Think! ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">List Comprehension นี้ทำอะไร?<br><br><code style="font-family:var(--mono);font-size:14px;background:var(--cal);padding:8px 14px;border-radius:6px;display:inline-block;margin:10px 0">result = [x*x for x in range(1,6) if x % 2 == 0]</code><br><br><em>result มีค่าเท่าไหร่?</em><br><br>แล้วถ้าเขียนเป็น loop ปกติ (for + if + append) จะเขียนยังไง?</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 9 — Trace MCQ ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Trace</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
+    <pre class="code-block"><span class="nm">nums</span> = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>]
+<span class="nm">total</span> = <span class="nm">0</span>
+<span class="kw">for</span> n <span class="kw">in</span> nums:
+    <span class="kw">if</span> n == <span class="nm">3</span>:
+        <span class="kw">break</span>
+    total += n
+<span class="fn">print</span>(total)</pre>
+    <div id="mc-t2" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-t2','A','B','❌ 15 คือ sum ทั้งหมด — แต่มี break ที่ n==3')">A) 15</button>
+      <button class="mc-btn" onclick="pickMC('mc-t2','B','B','✅ วน 1,2 แล้วพอ n==3 break — total = 1+2 = 3')">B) 3</button>
+      <button class="mc-btn" onclick="pickMC('mc-t2','C','B','❌ 6 คือ 1+2+3 — แต่ break เกิดก่อน total += 3')">C) 6</button>
+      <button class="mc-btn" onclick="pickMC('mc-t2','D','B','❌ 12 = 3+4+5 — ไม่ใช่ค่าที่เหลือหลัง break')">D) 12</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 10 — Fill-in ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Fill-in</div>
+    <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① เติม List Comprehension — สร้าง list ตัวเลขคู่จาก 1 ถึง 10</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f2a" placeholder="[... for ...]">
+      <button class="fill-btn" onclick="checkFill('f2a','[x for x in range(1,11) if x%2==0]',['[x for x in range(1, 11) if x % 2 == 0]','[x for x in range(2,11,2)]','[x for x in range(2,12,2)]'],[],'✅ ถูกต้อง!','❌ Hint: [x for x in range(1,11) if x%2==0]')">ตรวจ</button>
+    </div>
+    <div id="f2a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② Python ใช้คำอะไรแทน <code class="inline-code">else if</code> ของ C?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f2b" placeholder="คำสงวน">
+      <button class="fill-btn" onclick="checkFill('f2b','elif',[],[],  '✅ elif — ย่อจาก else if','❌ Python ใช้ elif (ไม่มีช่องว่าง)')">ตรวจ</button>
+    </div>
+    <div id="f2b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ <code class="inline-code">range(0, 10, 2)</code> ให้ค่าอะไรบ้าง? (ตอบแบบ list)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f2c" placeholder="0, 2, 4, ...">
+      <button class="fill-btn" onclick="checkFill('f2c','0, 2, 4, 6, 8',['0,2,4,6,8','0 2 4 6 8'],[],'✅ 0,2,4,6,8 — step=2','❌ range(0,10,2) → 0,2,4,6,8 (ไม่รวม 10)')">ตรวจ</button>
+    </div>
+    <div id="f2c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 11 — Summary ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🎯</div>
+      <div class="summary-title">สรุปบทที่ 2</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">if/elif/else</div><div class="sum-body">elif แทน else if · Ternary: val if cond else other</div></div>
+        <div class="sum-card"><div class="sum-head">for loop</div><div class="sum-body">วนบน iterable โดยตรง · range() · enumerate() · zip()</div></div>
+        <div class="sum-card"><div class="sum-head">while + break/continue</div><div class="sum-body">else บน loop ทำงานเมื่อไม่ถูก break — feature เฉพาะ Python</div></div>
+        <div class="sum-card"><div class="sum-head">Truthy/Falsy</div><div class="sum-body">0, "", [], {}, None คือ Falsy — ใช้ if not x แทน if x == []</div></div>
+        <div class="sum-card"><div class="sum-head">List Comprehension</div><div class="sum-body">[expr for x in it if cond] — Pythonic และเร็วกว่า loop+append</div></div>
+        <div class="sum-card"><div class="sum-head">match/case (3.10+)</div><div class="sum-body">ทรงพลังกว่า switch — match tuple, guard condition ได้</div></div>
+      </div>
+      <a href="slides_ch3.html" class="summary-next">→ บทที่ 3: Functions</a>
+    </div>
+  </div>
+</div>
+
+</div>
+<nav class="nav-bar">
+  <button class="nav-btn" id="prev-btn" onclick="go(-1)">← ก่อนหน้า</button>
+  <span class="nav-counter"><span id="cur-num">1</span> / <span id="tot-num">11</span></span>
+  <button class="nav-btn" id="next-btn" onclick="go(1)">ถัดไป →</button>
+</nav>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

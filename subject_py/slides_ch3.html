@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 3 — Functions | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root { --ca:#b84c00; --cal:#fff3ec; --cam:#d98a5a; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════ SLIDE 0 — COVER ════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Python</div>
+        <div class="cover-title">บทที่ 3<br><em>Functions</em></div>
+        <div class="cover-subtitle">def, default args, *args, **kwargs, lambda — function ใน Python ยืดหยุ่นกว่า C มาก</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>def — นิยาม function, return หลายค่าได้</div>
+          <div class="topic-row"><div class="topic-dot"></div>Default Arguments &amp; Keyword Arguments</div>
+          <div class="topic-row"><div class="topic-dot"></div>*args และ **kwargs</div>
+          <div class="topic-row"><div class="topic-dot"></div>lambda, map, filter</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">03</div>
+        <div class="cover-badge">CHAPTER 3 · FUNCTIONS</div>
+        <div class="cover-slides-count">11 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 1 — def ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · def</div>
+    <h2 class="slide-title">def — นิยาม function</h2>
+    <p class="slide-lead">ใน C ต้อง declare return type และ parameter type — Python ไม่ต้อง และ return ได้หลายค่าพร้อมกัน</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">C — function</div>
+        <pre class="code-block"><span class="kw">double</span> <span class="fn">calc_interest</span>(<span class="kw">double</span> p,
+                        <span class="kw">double</span> r,
+                        <span class="kw">int</span> y) {
+    <span class="kw">return</span> p * r * y;
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">Python — function</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">calc_interest</span>(p, r, y):
+    <span class="kw">return</span> p * r * y</pre>
+      </div>
+    </div>
+    <pre class="code-block"><span class="cm"># Return หลายค่าพร้อมกัน — C ทำไม่ได้!</span>
+<span class="kw">def</span> <span class="fn">deposit_summary</span>(principal, rate, years):
+    interest = principal * rate * years
+    total = principal + interest
+    <span class="kw">return</span> interest, total   <span class="cm"># return tuple</span>
+
+<span class="nm">earned</span>, <span class="nm">final</span> = <span class="fn">deposit_summary</span>(<span class="nm">100_000</span>, <span class="nm">0.025</span>, <span class="nm">3</span>)
+<span class="fn">print</span>(<span class="st">f"ดอกเบี้ย {<span class="nm">earned</span>:,} บาท | รวม {<span class="nm">final</span>:,} บาท"</span>)
+
+<span class="cm"># ไม่มี return → คืน None</span>
+<span class="kw">def</span> <span class="fn">greet</span>(name):
+    <span class="fn">print</span>(<span class="st">f"สวัสดี {<span class="nm">name</span>}"</span>)   <span class="cm"># คืน None</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 2 — Default & Keyword Args ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Arguments</div>
+    <h2 class="slide-title">Default Arguments &amp; Keyword Arguments</h2>
+    <p class="slide-lead">Default args ทำให้ไม่ต้องใส่ทุก argument — Keyword args เรียกโดยใส่ชื่อ parameter ได้เลย</p>
+    <pre class="code-block"><span class="cm"># Default arguments — ต้องอยู่ท้าย parameter list</span>
+<span class="kw">def</span> <span class="fn">open_account</span>(name, acc_type=<span class="st">"ออมทรัพย์"</span>, initial=<span class="nm">500</span>):
+    <span class="fn">print</span>(<span class="st">f"เปิดบัญชี {<span class="nm">acc_type</span>} ชื่อ {<span class="nm">name</span>} เงินเริ่มต้น {<span class="nm">initial</span>:,}"</span>)
+
+<span class="fn">open_account</span>(<span class="st">"สมชาย"</span>)                          <span class="cm"># ใช้ default ทั้งคู่</span>
+<span class="fn">open_account</span>(<span class="st">"สมหญิง"</span>, <span class="st">"ฝากประจำ"</span>)            <span class="cm"># เปลี่ยน acc_type</span>
+<span class="fn">open_account</span>(<span class="st">"วิชัย"</span>, initial=<span class="nm">10_000</span>)          <span class="cm"># Keyword — ข้ามได้!</span>
+
+<span class="cm"># Keyword arguments — เรียกโดยระบุชื่อ parameter</span>
+<span class="kw">def</span> <span class="fn">transfer</span>(from_acc, to_acc, amount, note=<span class="st">""</span>):
+    <span class="fn">print</span>(<span class="st">f"โอน {<span class="nm">amount</span>:,} จาก {<span class="nm">from_acc</span>} → {<span class="nm">to_acc</span>} | {<span class="nm">note</span>}"</span>)
+
+<span class="cm"># ลำดับไม่สำคัญเมื่อใช้ keyword</span>
+<span class="fn">transfer</span>(amount=<span class="nm">5_000</span>, to_acc=<span class="st">"A002"</span>, from_acc=<span class="st">"A001"</span>, note=<span class="st">"ค่าเช่า"</span>)</pre>
+    <div class="callout" style="background:#fce7ec;border-color:#d45f7a;color:#a01d3a">⚠️ อย่าใช้ mutable object (list/dict) เป็น default arg — ใช้ None แทนแล้วตั้งค่าใน body</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 3 — *args **kwargs ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · *args **kwargs</div>
+    <h2 class="slide-title">*args และ **kwargs — รับ argument ไม่จำกัดจำนวน</h2>
+    <p class="slide-lead"><code class="inline-code">*args</code> รับ positional args เป็น tuple — <code class="inline-code">**kwargs</code> รับ keyword args เป็น dict</p>
+    <pre class="code-block"><span class="cm"># *args — ไม่รู้ว่าจะส่งกี่ค่า</span>
+<span class="kw">def</span> <span class="fn">total_amount</span>(*amounts):
+    <span class="fn">print</span>(<span class="st">f"รายการ: {amounts}"</span>)   <span class="cm"># amounts เป็น tuple</span>
+    <span class="kw">return</span> <span class="fn">sum</span>(amounts)
+
+<span class="fn">total_amount</span>(<span class="nm">100</span>, <span class="nm">200</span>, <span class="nm">300</span>)          <span class="cm"># ส่ง 3 ค่า</span>
+<span class="fn">total_amount</span>(<span class="nm">500</span>, <span class="nm">1000</span>)             <span class="cm"># ส่ง 2 ค่า — ก็ได้!</span>
+
+<span class="cm"># **kwargs — keyword arguments ที่ไม่รู้ชื่อล่วงหน้า</span>
+<span class="kw">def</span> <span class="fn">create_customer</span>(**info):
+    <span class="fn">print</span>(<span class="st">f"สร้างลูกค้า:"</span>)
+    <span class="kw">for</span> key, val <span class="kw">in</span> info.<span class="fn">items</span>():
+        <span class="fn">print</span>(<span class="st">f"  {key}: {val}"</span>)
+
+<span class="fn">create_customer</span>(name=<span class="st">"สมชาย"</span>, age=<span class="nm">30</span>, tier=<span class="st">"Gold"</span>)
+
+<span class="cm"># ใช้ทั้งสองพร้อมกัน</span>
+<span class="kw">def</span> <span class="fn">log</span>(action, *targets, **options):
+    <span class="fn">print</span>(<span class="st">f"[{action}] {targets} {options}"</span>)
+
+<span class="fn">log</span>(<span class="st">"transfer"</span>, <span class="st">"A001"</span>, <span class="st">"A002"</span>, amount=<span class="nm">5000</span>, note=<span class="st">"ค่าเช่า"</span>)</pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 4 — lambda ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · lambda</div>
+    <h2 class="slide-title">lambda — function แบบไม่มีชื่อ (Anonymous Function)</h2>
+    <p class="slide-lead"><code class="inline-code">lambda</code> สร้าง function จากบรรทัดเดียว — ใช้เมื่อต้องการ function แบบ throw-away</p>
+    <pre class="code-block"><span class="cm"># Syntax: lambda parameters: expression</span>
+<span class="nm">square</span> = <span class="kw">lambda</span> x: x ** <span class="nm">2</span>
+<span class="fn">print</span>(<span class="fn">square</span>(<span class="nm">5</span>))    <span class="cm"># 25</span>
+
+<span class="nm">add_vat</span> = <span class="kw">lambda</span> price: price * <span class="nm">1.07</span>
+<span class="fn">print</span>(<span class="fn">add_vat</span>(<span class="nm">100</span>))  <span class="cm"># 107.0</span>
+
+<span class="cm"># ใช้จริง: sort list of dicts ตาม key</span>
+<span class="nm">customers</span> = [
+    {<span class="st">"name"</span>: <span class="st">"วิชัย"</span>,  <span class="st">"balance"</span>: <span class="nm">5_000</span>},
+    {<span class="st">"name"</span>: <span class="st">"สมชาย"</span>, <span class="st">"balance"</span>: <span class="nm">50_000</span>},
+    {<span class="st">"name"</span>: <span class="st">"มานี"</span>,  <span class="st">"balance"</span>: <span class="nm">12_000</span>},
+]
+<span class="cm"># เรียงตาม balance มากสุดก่อน</span>
+<span class="nm">sorted_customers</span> = <span class="fn">sorted</span>(customers, key=<span class="kw">lambda</span> c: c[<span class="st">"balance"</span>], reverse=<span class="kw">True</span>)
+<span class="kw">for</span> c <span class="kw">in</span> sorted_customers:
+    <span class="fn">print</span>(<span class="st">f"{c['name']:8} {c['balance']:>10,} บาท"</span>)</pre>
+    <div class="callout">lambda ใช้กับ key= ของ sorted(), min(), max() บ่อยมาก — ทำให้ไม่ต้องสร้าง function แยก</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 5 — map/filter ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · map/filter</div>
+    <h2 class="slide-title">map() และ filter() — Functional Programming</h2>
+    <p class="slide-lead">แปลงและกรอง iterable โดยไม่ต้องเขียน loop — มักใช้คู่กับ lambda</p>
+    <pre class="code-block"><span class="nm">amounts</span> = [<span class="nm">1000</span>, <span class="nm">5000</span>, <span class="nm">200</span>, <span class="nm">15000</span>, <span class="nm">800</span>]
+
+<span class="cm"># map(function, iterable) — ทำกับทุกตัว</span>
+<span class="nm">with_vat</span> = <span class="fn">list</span>(<span class="fn">map</span>(<span class="kw">lambda</span> x: x * <span class="nm">1.07</span>, amounts))
+<span class="cm"># [1070.0, 5350.0, 214.0, 16050.0, 856.0]</span>
+
+<span class="cm"># filter(function, iterable) — เก็บเฉพาะที่ function คืน True</span>
+<span class="nm">big</span> = <span class="fn">list</span>(<span class="fn">filter</span>(<span class="kw">lambda</span> x: x > <span class="nm">1000</span>, amounts))
+<span class="cm"># [5000, 15000]</span>
+
+<span class="cm"># Pythonic: ใช้ comprehension แทน map/filter ก็ได้</span>
+<span class="nm">with_vat</span> = [x * <span class="nm">1.07</span> <span class="kw">for</span> x <span class="kw">in</span> amounts]        <span class="cm"># แทน map</span>
+<span class="nm">big</span>      = [x <span class="kw">for</span> x <span class="kw">in</span> amounts <span class="kw">if</span> x > <span class="nm">1000</span>]  <span class="cm"># แทน filter</span>
+
+<span class="cm"># sorted() + lambda</span>
+<span class="nm">top3</span> = <span class="fn">sorted</span>(amounts, reverse=<span class="kw">True</span>)[:<span class="nm">3</span>]  <span class="cm"># 3 ค่ามากสุด</span>
+<span class="fn">print</span>(<span class="st">f"Top 3: {top3}"</span>)</pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 6 — Scope ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Scope</div>
+    <h2 class="slide-title">Scope — LEGB Rule</h2>
+    <p class="slide-lead">Python หา variable ตาม LEGB: <strong>L</strong>ocal → <strong>E</strong>nclosing → <strong>G</strong>lobal → <strong>B</strong>uilt-in</p>
+    <pre class="code-block"><span class="nm">balance</span> = <span class="nm">100_000</span>   <span class="cm"># Global</span>
+
+<span class="kw">def</span> <span class="fn">show_balance</span>():
+    <span class="fn">print</span>(balance)    <span class="cm"># อ่าน global ได้</span>
+
+<span class="kw">def</span> <span class="fn">withdraw</span>(amount):
+    <span class="nm">balance</span> = <span class="nm">50_000</span>  <span class="cm"># Local — ไม่แตะ global!</span>
+    <span class="nm">balance</span> -= amount
+    <span class="fn">print</span>(<span class="st">f"local balance: {balance}"</span>)
+
+<span class="fn">withdraw</span>(<span class="nm">1000</span>)
+<span class="fn">print</span>(balance)    <span class="cm"># global ยังเป็น 100,000</span>
+
+<span class="cm"># global keyword — ถ้าต้องการแก้ global จริงๆ</span>
+<span class="kw">def</span> <span class="fn">deposit</span>(amount):
+    <span class="kw">global</span> balance
+    balance += amount
+
+<span class="fn">deposit</span>(<span class="nm">5_000</span>)
+<span class="fn">print</span>(balance)    <span class="cm"># 105,000</span></pre>
+    <div class="callout">หลีกเลี่ยง global variable — ส่งผ่าน parameter และ return ค่ากลับดีกว่า</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 7 — 🏦 Banking Use Case ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 ระบบคำนวณดอกเบี้ยหลายรูปแบบ</h2>
+    <p class="slide-lead">ใช้ default args และ lambda เพื่อสร้าง function ที่ยืดหยุ่น</p>
+    <pre class="code-block"><span class="kw">def</span> <span class="fn">calc_interest</span>(principal, rate=<span class="nm">0.025</span>, years=<span class="nm">1</span>, compound=<span class="kw">False</span>):
+    <span class="st">"""คำนวณดอกเบี้ยแบบ simple หรือ compound"""</span>
+    <span class="kw">if</span> compound:
+        total = principal * (<span class="nm">1</span> + rate) ** years
+    <span class="kw">else</span>:
+        total = principal * (<span class="nm">1</span> + rate * years)
+    <span class="kw">return</span> total - principal, total
+
+<span class="cm"># เรียกหลายแบบ</span>
+<span class="fn">print</span>(<span class="fn">calc_interest</span>(<span class="nm">100_000</span>))                        <span class="cm"># ใช้ default ทั้งหมด</span>
+<span class="fn">print</span>(<span class="fn">calc_interest</span>(<span class="nm">100_000</span>, years=<span class="nm">3</span>))               <span class="cm"># 3 ปี simple</span>
+<span class="fn">print</span>(<span class="fn">calc_interest</span>(<span class="nm">100_000</span>, years=<span class="nm">3</span>, compound=<span class="kw">True</span>)) <span class="cm"># compound</span>
+
+<span class="cm"># lambda สร้าง preset function</span>
+<span class="nm">fixed_deposit</span>  = <span class="kw">lambda</span> p, y: <span class="fn">calc_interest</span>(p, rate=<span class="nm">0.035</span>, years=y, compound=<span class="kw">True</span>)
+<span class="nm">savings</span>        = <span class="kw">lambda</span> p: <span class="fn">calc_interest</span>(p, rate=<span class="nm">0.015</span>)
+
+<span class="nm">products</span> = [<span class="st">"ออมทรัพย์"</span>, <span class="st">"ฝากประจำ 3 ปี"</span>]
+<span class="nm">funcs</span>    = [<span class="kw">lambda</span> p: <span class="fn">savings</span>(p), <span class="kw">lambda</span> p: <span class="fn">fixed_deposit</span>(p, <span class="nm">3</span>)]
+<span class="kw">for</span> prod, fn <span class="kw">in</span> <span class="fn">zip</span>(products, funcs):
+    earned, total = <span class="fn">fn</span>(<span class="nm">100_000</span>)
+    <span class="fn">print</span>(<span class="st">f"{prod}: ดอกเบี้ย {earned:,.2f} บาท"</span>)</pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 8 — Think! ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">โค้ดนี้ return อะไร?<br><br><code style="font-family:var(--mono);font-size:13px;background:var(--cal);padding:8px 14px;border-radius:6px;display:inline-block;margin:10px 0;text-align:left">def mystery(x, y=10):
+    return x * 2, y + 1
+
+a, b = mystery(5)
+print(a, b)</code><br><br><em>a และ b มีค่าเท่าไหร่? ทำไม?</em><br><br>แล้วถ้าเรียก <code style="font-family:var(--mono);background:var(--cal);padding:2px 8px;border-radius:4px">mystery(5, 20)</code> จะได้อะไร?</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 9 — Trace MCQ ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Trace</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
+    <pre class="code-block"><span class="kw">def</span> <span class="fn">calc</span>(*nums):
+    <span class="kw">return</span> <span class="fn">sum</span>(nums), <span class="fn">max</span>(nums)
+
+<span class="nm">s</span>, <span class="nm">m</span> = <span class="fn">calc</span>(<span class="nm">3</span>, <span class="nm">1</span>, <span class="nm">4</span>, <span class="nm">1</span>, <span class="nm">5</span>)
+<span class="fn">print</span>(<span class="st">f"{<span class="nm">s</span>} {<span class="nm">m</span>}"</span>)</pre>
+    <div id="mc-t3" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-t3','A','C','❌ 3+1+4+1+5 = 14 ไม่ใช่ 15')">A) 15 5</button>
+      <button class="mc-btn" onclick="pickMC('mc-t3','B','C','❌ max คือ 5 ไม่ใช่ 4')">B) 14 4</button>
+      <button class="mc-btn" onclick="pickMC('mc-t3','C','C','✅ sum([3,1,4,1,5])=14, max([3,1,4,1,5])=5')">C) 14 5</button>
+      <button class="mc-btn" onclick="pickMC('mc-t3','D','C','❌ *nums รับหลายค่าเป็น tuple — ไม่ error')">D) TypeError</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 10 — Fill-in ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Fill-in</div>
+    <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① เขียน lambda function ที่รับ x แล้วคืน x*x</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f3a" placeholder="lambda ...">
+      <button class="fill-btn" onclick="checkFill('f3a','lambda x: x*x',['lambda x: x**2','lambda x : x*x','lambda x: x * x'],[],'✅ ถูกต้อง!','❌ Hint: lambda x: x*x')">ตรวจ</button>
+    </div>
+    <div id="f3a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② parameter ชนิดไหนที่รับ keyword arguments ไม่จำกัดเป็น dict?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f3b" placeholder="**...">
+      <button class="fill-btn" onclick="checkFill('f3b','**kwargs',['kwargs'],[],'✅ **kwargs รับ keyword args เป็น dict','❌ ใช้ ** นำหน้าชื่อ: **kwargs')">ตรวจ</button>
+    </div>
+    <div id="f3b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ function ที่ไม่มี return statement จะคืนค่าอะไร?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f3c" placeholder="ค่าที่คืน">
+      <button class="fill-btn" onclick="checkFill('f3c','none',['null'],[],'✅ None — เทียบเท่า NULL ใน C','❌ Python ใช้ None (N ตัวใหญ่) แต่พิมพ์เล็กก็รับ')">ตรวจ</button>
+    </div>
+    <div id="f3c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 11 — Summary ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🎯</div>
+      <div class="summary-title">สรุปบทที่ 3</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">def</div><div class="sum-body">ไม่ต้องบอก type · return หลายค่าพร้อมกันได้</div></div>
+        <div class="sum-card"><div class="sum-head">Default Args</div><div class="sum-body">ค่า default ต้องอยู่ท้าย · ใช้ None สำหรับ mutable default</div></div>
+        <div class="sum-card"><div class="sum-head">Keyword Args</div><div class="sum-body">เรียกโดยระบุชื่อ parameter — ลำดับไม่สำคัญ</div></div>
+        <div class="sum-card"><div class="sum-head">*args / **kwargs</div><div class="sum-body">*args = tuple · **kwargs = dict — รับไม่จำกัด</div></div>
+        <div class="sum-card"><div class="sum-head">lambda</div><div class="sum-body">lambda x: expr — ใช้กับ sorted/map/filter เป็น key</div></div>
+        <div class="sum-card"><div class="sum-head">Scope LEGB</div><div class="sum-body">Local → Enclosing → Global → Built-in — หลีกเลี่ยง global</div></div>
+      </div>
+      <a href="slides_ch4.html" class="summary-next">→ บทที่ 4: Built-in Data Structures</a>
+    </div>
+  </div>
+</div>
+
+</div>
+<nav class="nav-bar">
+  <button class="nav-btn" id="prev-btn" onclick="go(-1)">← ก่อนหน้า</button>
+  <span class="nav-counter"><span id="cur-num">1</span> / <span id="tot-num">11</span></span>
+  <button class="nav-btn" id="next-btn" onclick="go(1)">ถัดไป →</button>
+</nav>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

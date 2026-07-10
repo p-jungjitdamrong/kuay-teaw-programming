@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 1 — พื้นฐาน Syntax | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root { --ca:#b84c00; --cal:#fff3ec; --cam:#d98a5a; }
+.type-table { width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px; margin-bottom:14px; }
+.type-table th { background:var(--ca); color:#fff; padding:7px 10px; text-align:left; }
+.type-table td { padding:6px 10px; border-bottom:1px solid var(--line); }
+.type-table tr:nth-child(even) td { background:var(--cal); }
+.type-table td:first-child { color:var(--ca); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════ SLIDE 0 — COVER ════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Python</div>
+        <div class="cover-title">บทที่ 1<br><em>พื้นฐาน Syntax</em></div>
+        <div class="cover-subtitle">Variables, Types, Operators, f-string, input/output — รากฐานทุกโปรแกรม Python</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Types: int, float, str, bool, None</div>
+          <div class="topic-row"><div class="topic-dot"></div>Operators — arithmetic, comparison, logical</div>
+          <div class="topic-row"><div class="topic-dot"></div>String — slice, method, f-string</div>
+          <div class="topic-row"><div class="topic-dot"></div>input() และ type conversion</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">01</div>
+        <div class="cover-badge">CHAPTER 1 · SYNTAX</div>
+        <div class="cover-slides-count">11 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 1 — Types ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Types</div>
+    <h2 class="slide-title">Built-in Types ใน Python</h2>
+    <p class="slide-lead">Python มี type พื้นฐานครบ — ไม่ต้อง include header ไม่ต้อง declare ก่อนใช้</p>
+    <table class="type-table">
+      <thead><tr><th>Type</th><th>ตัวอย่าง</th><th>หมายเหตุ</th></tr></thead>
+      <tbody>
+        <tr><td>int</td><td>42, -7, 0</td><td>ขนาดไม่จำกัด (ต่างจาก C int 32-bit)</td></tr>
+        <tr><td>float</td><td>3.14, -0.5, 1e10</td><td>เทียบเท่า double ใน C</td></tr>
+        <tr><td>str</td><td>"hello", 'ธนาคาร'</td><td>Unicode ในตัว — ไม่ต้องแปลง Thai</td></tr>
+        <tr><td>bool</td><td>True, False</td><td>ตัวใหญ่! — ต่างจาก C ที่ใช้ 0/1</td></tr>
+        <tr><td>None</td><td>None</td><td>เทียบได้กับ NULL ใน C — "ไม่มีค่า"</td></tr>
+        <tr><td>complex</td><td>2+3j</td><td>จำนวนเชิงซ้อน — ใช้ใน signal processing</td></tr>
+      </tbody>
+    </table>
+    <pre class="code-block"><span class="nm">balance</span> = <span class="nm">50000</span>          <span class="cm"># int</span>
+<span class="nm">rate</span> = <span class="nm">0.025</span>             <span class="cm"># float</span>
+<span class="nm">name</span> = <span class="st">"สมชาย ใจดี"</span>       <span class="cm"># str — Thai ได้เลย</span>
+<span class="nm">is_active</span> = <span class="kw">True</span>         <span class="cm"># bool</span>
+<span class="nm">ref_no</span> = <span class="kw">None</span>            <span class="cm"># None — ยังไม่มีค่า</span>
+
+<span class="cm"># Python 1000000 → เขียน 1_000_000 ได้ (อ่านง่ายขึ้น)</span>
+<span class="nm">limit</span> = <span class="nm">1_000_000</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 2 — Operators ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Operators</div>
+    <h2 class="slide-title">Operators — Python มีของพิเศษที่ C ไม่มี</h2>
+    <p class="slide-lead">Arithmetic เหมือน C แต่มีบางตัวที่ต่างออกไป — ต้องจำ</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Arithmetic</div>
+        <pre class="code-block"><span class="nm">10</span> + <span class="nm">3</span>   <span class="cm"># 13</span>
+<span class="nm">10</span> - <span class="nm">3</span>   <span class="cm"># 7</span>
+<span class="nm">10</span> * <span class="nm">3</span>   <span class="cm"># 30</span>
+<span class="nm">10</span> / <span class="nm">3</span>   <span class="cm"># 3.333... (float เสมอ!)</span>
+<span class="nm">10</span> // <span class="nm">3</span>  <span class="cm"># 3 (integer division)</span>
+<span class="nm">10</span> % <span class="nm">3</span>   <span class="cm"># 1 (modulo)</span>
+<span class="nm">10</span> ** <span class="nm">3</span>  <span class="cm"># 1000 (ยกกำลัง!)</span></pre>
+        <div class="callout" style="margin-top:8px">⚠️ <code>/</code> ใน Python 3 คือ float เสมอ<br><code>10/3 = 3.333</code> ไม่ใช่ 3</div>
+      </div>
+      <div>
+        <div class="code-label">Comparison & Logical</div>
+        <pre class="code-block"><span class="cm"># Comparison → bool</span>
+<span class="nm">5</span> == <span class="nm">5</span>   <span class="cm"># True</span>
+<span class="nm">5</span> != <span class="nm">3</span>   <span class="cm"># True</span>
+<span class="nm">5</span> &gt; <span class="nm">3</span>    <span class="cm"># True</span>
+
+<span class="cm"># Logical — Python ใช้คำ ไม่ใช่ &&/||</span>
+<span class="kw">True</span> <span class="kw">and</span> <span class="kw">False</span>  <span class="cm"># False</span>
+<span class="kw">True</span> <span class="kw">or</span> <span class="kw">False</span>   <span class="cm"># True</span>
+<span class="kw">not</span> <span class="kw">True</span>        <span class="cm"># False</span>
+
+<span class="cm"># Chaining — Python ทำได้, C ไม่ได้</span>
+<span class="nm">1</span> &lt; <span class="nm">x</span> &lt; <span class="nm">10</span>  <span class="cm"># ถ้า x=5 → True!</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 3 — String ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · String</div>
+    <h2 class="slide-title">String ใน Python — ทรงพลังมากกว่า C มาก</h2>
+    <p class="slide-lead">ใน C string คือ char array จัดการยาก — Python string เป็น object มี method ในตัวครบ</p>
+    <pre class="code-block"><span class="nm">s</span> = <span class="st">"Hello Python"</span>
+
+<span class="cm"># Indexing — เหมือน C</span>
+<span class="nm">s</span>[<span class="nm">0</span>]      <span class="cm"># 'H'</span>
+<span class="nm">s</span>[-<span class="nm">1</span>]     <span class="cm"># 'n' (index ลบ = นับจากท้าย)</span>
+
+<span class="cm"># Slicing [start:end:step] — C ไม่มี</span>
+<span class="nm">s</span>[<span class="nm">0</span>:<span class="nm">5</span>]    <span class="cm"># 'Hello'</span>
+<span class="nm">s</span>[<span class="nm">6</span>:]     <span class="cm"># 'Python'</span>
+<span class="nm">s</span>[::-<span class="nm">1</span>]   <span class="cm"># 'nohtyP olleH' (reverse!)</span>
+
+<span class="cm"># Methods — ใช้ . เรียก</span>
+<span class="nm">s</span>.<span class="fn">upper</span>()          <span class="cm"># 'HELLO PYTHON'</span>
+<span class="nm">s</span>.<span class="fn">lower</span>()          <span class="cm"># 'hello python'</span>
+<span class="nm">s</span>.<span class="fn">replace</span>(<span class="st">"Hello"</span>, <span class="st">"Hi"</span>)  <span class="cm"># 'Hi Python'</span>
+<span class="nm">s</span>.<span class="fn">split</span>(<span class="st">" "</span>)       <span class="cm"># ['Hello', 'Python']</span>
+<span class="nm">s</span>.<span class="fn">startswith</span>(<span class="st">"H"</span>) <span class="cm"># True</span>
+<span class="fn">len</span>(s)             <span class="cm"># 12</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 4 — f-string ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · f-string</div>
+    <h2 class="slide-title">f-string — แทน printf ของ C</h2>
+    <p class="slide-lead">f-string คือวิธีที่ <strong>Pythonic ที่สุด</strong> สำหรับ format string — ใส่ expression ใน <code class="inline-code">{ }</code> ได้เลย</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">C — printf format</div>
+        <pre class="code-block"><span class="kw">char</span> name[] = <span class="st">"สมชาย"</span>;
+<span class="kw">double</span> bal = <span class="nm">50000.0</span>;
+<span class="fn">printf</span>(<span class="st">"ชื่อ: %s\n"</span>, name);
+<span class="fn">printf</span>(<span class="st">"ยอด: %.2f บาท\n"</span>, bal);</pre>
+      </div>
+      <div>
+        <div class="code-label">Python — f-string</div>
+        <pre class="code-block"><span class="nm">name</span> = <span class="st">"สมชาย"</span>
+<span class="nm">balance</span> = <span class="nm">50000.0</span>
+<span class="fn">print</span>(<span class="st">f"ชื่อ: {<span class="nm">name</span>}"</span>)
+<span class="fn">print</span>(<span class="st">f"ยอด: {<span class="nm">balance</span>:,.2f} บาท"</span>)</pre>
+      </div>
+    </div>
+    <pre class="code-block"><span class="cm"># Format spec ใน f-string</span>
+<span class="nm">x</span> = <span class="nm">1234567.89</span>
+<span class="fn">print</span>(<span class="st">f"{<span class="nm">x</span>:,.2f}"</span>)   <span class="cm"># 1,234,567.89 — ใส่ comma + 2 decimal</span>
+<span class="fn">print</span>(<span class="st">f"{<span class="nm">x</span>:.0f}"</span>)    <span class="cm"># 1234568 — ปัดเศษ</span>
+<span class="fn">print</span>(<span class="st">f"{<span class="nm">42</span>:05d}"</span>)   <span class="cm"># 00042 — zero-pad 5 หลัก</span>
+
+<span class="cm"># Expression ใน { } ได้เลย</span>
+<span class="fn">print</span>(<span class="st">f"ดอกเบี้ย: {<span class="nm">50000</span> * <span class="nm">0.025</span>:,.2f} บาท"</span>)  <span class="cm"># 1,250.00</span></pre>
+    <div class="callout">f-string เร็วกว่า .format() และ % formatting — ใช้ f-string เสมอใน Python 3.6+</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 5 — input() ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Input</div>
+    <h2 class="slide-title">input() — รับค่าจากผู้ใช้</h2>
+    <p class="slide-lead"><code class="inline-code">input()</code> คืน string เสมอ — ต้องแปลง type เองถ้าต้องการตัวเลข</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">C — scanf</div>
+        <pre class="code-block"><span class="kw">int</span> amount;
+<span class="fn">printf</span>(<span class="st">"ใส่จำนวนเงิน: "</span>);
+<span class="fn">scanf</span>(<span class="st">"%d"</span>, &amount);</pre>
+      </div>
+      <div>
+        <div class="code-label">Python — input()</div>
+        <pre class="code-block">amount = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"ใส่จำนวนเงิน: "</span>))</pre>
+      </div>
+    </div>
+    <pre class="code-block"><span class="cm"># Type conversion functions</span>
+<span class="fn">int</span>(<span class="st">"42"</span>)      <span class="cm"># 42 (str → int)</span>
+<span class="fn">float</span>(<span class="st">"3.14"</span>)  <span class="cm"># 3.14 (str → float)</span>
+<span class="fn">str</span>(<span class="nm">100</span>)      <span class="cm"># "100" (int → str)</span>
+<span class="fn">bool</span>(<span class="nm">0</span>)       <span class="cm"># False — 0 คือ False, อื่นๆ คือ True</span>
+
+<span class="cm"># ตัวอย่างโปรแกรม ATM</span>
+<span class="nm">name</span> = <span class="fn">input</span>(<span class="st">"ชื่อลูกค้า: "</span>)
+<span class="nm">amount</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"จำนวนเงินฝาก: "</span>))
+<span class="fn">print</span>(<span class="st">f"คุณ {<span class="nm">name</span>} ฝากเงิน {<span class="nm">amount</span>:,.2f} บาท เรียบร้อย"</span>)</pre>
+    <div class="callout" style="background:#fce7ec;border-color:#d45f7a;color:#a01d3a">⚠️ input() คืน str เสมอ — ถ้า int(input()) แล้วผู้ใช้พิมพ์ "abc" จะ ValueError</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 6 — Multiple Assignment ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Assignment</div>
+    <h2 class="slide-title">Multiple Assignment & Unpacking</h2>
+    <p class="slide-lead">Python มีวิธี assign หลายตัวพร้อมกัน — เป็น syntax ที่ C ไม่มี</p>
+    <pre class="code-block"><span class="cm"># Multiple assignment ในบรรทัดเดียว</span>
+<span class="nm">a</span>, <span class="nm">b</span>, <span class="nm">c</span> = <span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>
+
+<span class="cm"># Swap โดยไม่ต้องใช้ temp variable!</span>
+<span class="nm">a</span>, <span class="nm">b</span> = <span class="nm">b</span>, <span class="nm">a</span>   <span class="cm"># ใน C ต้องใช้ tmp</span>
+
+<span class="cm"># Augmented assignment</span>
+<span class="nm">x</span> = <span class="nm">10</span>
+<span class="nm">x</span> += <span class="nm">5</span>   <span class="cm"># x = 15</span>
+<span class="nm">x</span> *= <span class="nm">2</span>   <span class="cm"># x = 30</span>
+<span class="nm">x</span> //= <span class="nm">4</span>  <span class="cm"># x = 7</span>
+
+<span class="cm"># Unpack จาก list/tuple</span>
+<span class="nm">coords</span> = (<span class="nm">13.76</span>, <span class="nm">100.50</span>)
+<span class="nm">lat</span>, <span class="nm">lng</span> = <span class="nm">coords</span>   <span class="cm"># lat=13.76, lng=100.50</span>
+
+<span class="cm"># Star unpack</span>
+<span class="nm">first</span>, *<span class="nm">rest</span> = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>]
+<span class="cm"># first=1, rest=[2,3,4]</span></pre>
+    <div class="callout">Python ไม่มี <code>++</code> และ <code>--</code> — ใช้ <code>+= 1</code> และ <code>-= 1</code> แทน</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 7 — 🏦 Banking Use Case ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 คำนวณดอกเบี้ยเงินฝากประจำ</h2>
+    <p class="slide-lead">โปรแกรม Python เดี่ยวที่ใช้ syntax ทั้งหมดในบทนี้</p>
+    <pre class="code-block"><span class="cm"># คำนวณดอกเบี้ยเงินฝากประจำ — KTB</span>
+<span class="nm">principal</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"เงินต้น (บาท): "</span>))
+<span class="nm">rate_pct</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"ดอกเบี้ย (%/ปี): "</span>))
+<span class="nm">years</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"ระยะเวลา (ปี): "</span>))
+
+<span class="nm">rate</span> = <span class="nm">rate_pct</span> / <span class="nm">100</span>
+<span class="nm">interest</span> = <span class="nm">principal</span> * <span class="nm">rate</span> * <span class="nm">years</span>
+<span class="nm">total</span> = <span class="nm">principal</span> + <span class="nm">interest</span>
+
+<span class="fn">print</span>(<span class="st">f"""
+=== สรุปเงินฝากประจำ ===
+เงินต้น  : {<span class="nm">principal</span>:>12,.2f} บาท
+ดอกเบี้ย : {<span class="nm">interest</span>:>12,.2f} บาท
+รวมทั้งหมด: {<span class="nm">total</span>:>12,.2f} บาท
+"""</span>)</pre>
+    <div class="callout">Triple-quote string <code>"""..."""</code> ใช้เขียน multiline string — ไม่ต้อง \n ทุกบรรทัด</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 8 — Think! ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">โค้ดนี้จะเกิดอะไรขึ้น?<br><br><code style="font-family:var(--mono);font-size:15px;background:var(--cal);padding:6px 14px;border-radius:6px;display:inline-block;margin:10px 0">print(1 / 0)</code><br><br>แล้วถ้าอยากหารโดยไม่ให้ crash เมื่อ divisor เป็น 0 — ใน Python จะป้องกันยังไง?<br><br><em>(Hint: Python ใช้ try/except — แต่ตอนนี้คิดแค่ว่า error ชื่ออะไร)</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 9 — Trace MCQ ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Trace</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
+    <pre class="code-block"><span class="nm">a</span>, <span class="nm">b</span> = <span class="nm">10</span>, <span class="nm">3</span>
+<span class="nm">result</span> = <span class="st">f"{<span class="nm">a</span>//<span class="nm">b</span>} เศษ {<span class="nm">a</span>%<span class="nm">b</span>}"</span>
+<span class="fn">print</span>(<span class="nm">result</span>)</pre>
+    <div id="mc-t1" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-t1','A','C','❌ 3.333 คือ a/b — นี่ใช้ // ซึ่งเป็น integer division')">A) 3.333 เศษ 1</button>
+      <button class="mc-btn" onclick="pickMC('mc-t1','B','C','❌ a//b = 3 ถูก แต่ a%b = 1 ไม่ใช่ 0')">B) 3 เศษ 0</button>
+      <button class="mc-btn" onclick="pickMC('mc-t1','C','C','✅ 10//3 = 3, 10%3 = 1 — f-string ใส่ค่าลงไปได้เลย')">C) 3 เศษ 1</button>
+      <button class="mc-btn" onclick="pickMC('mc-t1','D','C','❌ ไม่มี TypeError — // และ % ทำงานกับ int ปกติ')">D) TypeError</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 10 — Fill-in ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Fill-in</div>
+    <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① แปลง string "25000" ให้เป็น int เพื่อคำนวณ</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f1a" placeholder="เติมฟังก์ชัน">
+      <button class="fill-btn" onclick="checkFill('f1a','int',['int()'],[],'✅ int() แปลง string → integer','❌ ใช้ built-in function ที่แปลงเป็น integer')">ตรวจ</button>
+    </div>
+    <div id="f1a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② f-string แสดงตัวเลข 1234567 ให้มี comma และ 2 decimal → <code class="inline-code">1,234,567.00</code></p>
+    <div class="fill-row">
+      <input class="fill-input" id="f1b" placeholder="f'{x:...}'">
+      <button class="fill-btn" onclick="checkFill('f1b',',.2f',['f\"{x:,.2f}\"','f\'{x:,.2f}\'',':,.2f'],[],'✅ ,.2f — comma separator + 2 decimal places','❌ format spec คือ ,.2f')">ตรวจ</button>
+    </div>
+    <div id="f1b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ ผลของ <code class="inline-code">7 ** 2</code> คือ?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f1c" placeholder="ตัวเลข">
+      <button class="fill-btn" onclick="checkFill('f1c','49',[],[],  '✅ 7**2 = 49 — ** คือยกกำลัง','❌ ** คือยกกำลัง: 7**2 = 7×7')">ตรวจ</button>
+    </div>
+    <div id="f1c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 11 — Summary ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🎯</div>
+      <div class="summary-title">สรุปบทที่ 1</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Types</div><div class="sum-body">int · float · str · bool · None — ไม่ต้อง declare</div></div>
+        <div class="sum-card"><div class="sum-head">Operators พิเศษ</div><div class="sum-body">// integer div · ** ยกกำลัง · and/or/not (ไม่ใช่ &&/||)</div></div>
+        <div class="sum-card"><div class="sum-head">/ vs //</div><div class="sum-body">10/3 = 3.333 (float) · 10//3 = 3 (int)</div></div>
+        <div class="sum-card"><div class="sum-head">String</div><div class="sum-body">slice · method · f-string — ทำงานกับ Thai ได้ตรงๆ</div></div>
+        <div class="sum-card"><div class="sum-head">f-string</div><div class="sum-body">f"{value:,.2f}" — format spec ใน { } ได้เลย</div></div>
+        <div class="sum-card"><div class="sum-head">input()</div><div class="sum-body">คืน str เสมอ — ต้อง int()/float() แปลงเอง</div></div>
+      </div>
+      <a href="slides_ch2.html" class="summary-next">→ บทที่ 2: Control Flow &amp; Comprehension</a>
+    </div>
+  </div>
+</div>
+
+</div>
+<nav class="nav-bar">
+  <button class="nav-btn" id="prev-btn" onclick="go(-1)">← ก่อนหน้า</button>
+  <span class="nav-counter"><span id="cur-num">1</span> / <span id="tot-num">11</span></span>
+  <button class="nav-btn" id="next-btn" onclick="go(1)">ถัดไป →</button>
+</nav>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
