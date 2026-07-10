@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 6 — OOP ขั้นสูง & Python vs ภาษาอื่น | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root { --ca:#b84c00; --cal:#fff3ec; --cam:#d98a5a; }
+.vs-table { width:100%; border-collapse:collapse; font-family:var(--mono); font-size:11px; margin-bottom:14px; }
+.vs-table th { background:var(--ca); color:#fff; padding:7px 10px; text-align:left; }
+.vs-table td { padding:6px 10px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.5; }
+.vs-table tr:nth-child(even) td { background:var(--cal); }
+.vs-table td:first-child { color:var(--ca); font-weight:600; min-width:90px; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════ SLIDE 0 — COVER ════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Python</div>
+        <div class="cover-title">บทที่ 6<br><em>OOP ขั้นสูง &amp; Python vs ภาษาอื่น</em></div>
+        <div class="cover-subtitle">Inheritance, Polymorphism, Duck Typing, Dunder Methods, @dataclass — และทำไม Python OOP ต่างจาก Java/C++ มาก</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Inheritance — super() และ MRO</div>
+          <div class="topic-row"><div class="topic-dot"></div>Polymorphism และ Duck Typing</div>
+          <div class="topic-row"><div class="topic-dot"></div>Abstract Class — ABC</div>
+          <div class="topic-row"><div class="topic-dot"></div>@dataclass — shortcut สำหรับ data class</div>
+          <div class="topic-row"><div class="topic-dot"></div>Python vs Java/C++ · Use Case + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">06</div>
+        <div class="cover-badge">CHAPTER 6 · OOP ADVANCED · จบ Course</div>
+        <div class="cover-slides-count">12 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 1 — Inheritance ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Inheritance</div>
+    <h2 class="slide-title">Inheritance — class ลูกสืบทอดจาก class พ่อแม่</h2>
+    <p class="slide-lead">ใส่ชื่อ parent class ในวงเล็บ — ใช้ <code class="inline-code">super()</code> เรียก constructor พ่อแม่</p>
+    <pre class="code-block"><span class="kw">class</span> <span class="fn">BankAccount</span>:            <span class="cm"># Parent / Base class</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, owner):
+        self.owner = owner
+        self._balance = <span class="nm">0</span>
+
+    <span class="kw">def</span> <span class="fn">deposit</span>(self, amount):
+        self._balance += amount
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="kw">return</span> <span class="st">f"{self.owner}: {self._balance:,} บาท"</span>
+
+
+<span class="kw">class</span> <span class="fn">SavingsAccount</span>(BankAccount):  <span class="cm"># Child — สืบทอด BankAccount</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, owner, rate=<span class="nm">0.015</span>):
+        <span class="fn">super</span>().__init__(owner)   <span class="cm"># เรียก __init__ ของ parent</span>
+        self.rate = rate
+
+    <span class="kw">def</span> <span class="fn">add_interest</span>(self):   <span class="cm"># method ใหม่ที่ parent ไม่มี</span>
+        interest = self._balance * self.rate
+        self._balance += interest
+        <span class="kw">return</span> interest
+
+
+<span class="nm">acc</span> = <span class="fn">SavingsAccount</span>(<span class="st">"สมชาย"</span>)
+acc.<span class="fn">deposit</span>(<span class="nm">100_000</span>)   <span class="cm"># สืบทอดจาก BankAccount</span>
+acc.<span class="fn">add_interest</span>()     <span class="cm"># method ของ SavingsAccount เอง</span>
+<span class="fn">print</span>(acc)             <span class="cm"># สืบทอด __str__ ด้วย</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 2 — Method Overriding ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Override</div>
+    <h2 class="slide-title">Method Overriding — เขียนทับ method ของ parent</h2>
+    <p class="slide-lead">ถ้า child class นิยาม method ชื่อเดิมจาก parent — จะใช้ method ของ child แทน</p>
+    <pre class="code-block"><span class="kw">class</span> <span class="fn">PremiumAccount</span>(BankAccount):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, owner, credit_limit=<span class="nm">100_000</span>):
+        <span class="fn">super</span>().__init__(owner)
+        self.credit_limit = credit_limit
+
+    <span class="kw">def</span> <span class="fn">withdraw</span>(self, amount):
+        <span class="cm"># Override — เพิ่ม credit facility</span>
+        available = self._balance + self.credit_limit
+        <span class="kw">if</span> amount > available:
+            <span class="kw">raise</span> ValueError(<span class="st">"เกิน credit limit"</span>)
+        self._balance -= amount
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="cm"># Override __str__ ให้แสดง credit ด้วย</span>
+        base = <span class="fn">super</span>().__str__()   <span class="cm"># เรียก parent __str__</span>
+        <span class="kw">return</span> <span class="st">f"{base} | เครดิต {self.credit_limit:,}"</span>
+
+<span class="nm">prem</span> = <span class="fn">PremiumAccount</span>(<span class="st">"วิชัย"</span>)
+prem.<span class="fn">deposit</span>(<span class="nm">50_000</span>)
+prem.<span class="fn">withdraw</span>(<span class="nm">120_000</span>)   <span class="cm"># ถอนได้ เพราะมี credit</span>
+<span class="fn">print</span>(prem)</pre>
+    <div class="callout"><code>super()</code> ใน Python 3 ไม่ต้องส่ง class และ self — เขียนแค่ <code>super()</code> เลย (Python 2 ต้องส่ง)</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 3 — Polymorphism ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Polymorphism</div>
+    <h2 class="slide-title">Polymorphism — เรียก method เดิม ผลต่างกัน</h2>
+    <p class="slide-lead">เรียก method ชื่อเดิมบน object ต่าง type — แต่ละ object ทำงานตาม class ของตัวเอง</p>
+    <pre class="code-block"><span class="kw">class</span> <span class="fn">FixedDeposit</span>(BankAccount):
+    <span class="kw">def</span> <span class="fn">withdraw</span>(self, amount):
+        <span class="kw">raise</span> PermissionError(<span class="st">"ฝากประจำถอนไม่ได้ก่อนครบกำหนด"</span>)
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="kw">return</span> <span class="st">f"[ฝากประจำ] {self.owner}: {self._balance:,} บาท"</span>
+
+
+<span class="cm"># Polymorphism — ลูปเดียว จัดการได้ทุก type</span>
+<span class="nm">accounts</span> = [
+    <span class="fn">SavingsAccount</span>(<span class="st">"สมชาย"</span>),
+    <span class="fn">PremiumAccount</span>(<span class="st">"สมหญิง"</span>),
+    <span class="fn">FixedDeposit</span>(<span class="st">"วิชัย"</span>),
+]
+
+<span class="kw">for</span> acc <span class="kw">in</span> accounts:
+    acc.<span class="fn">deposit</span>(<span class="nm">10_000</span>)   <span class="cm"># method เดิม ทำงานเหมือนกัน</span>
+    <span class="fn">print</span>(acc)             <span class="cm"># __str__ แต่ละ type ต่างกัน</span>
+
+<span class="cm"># isinstance() ตรวจ type</span>
+<span class="fn">print</span>(<span class="fn">isinstance</span>(accounts[<span class="nm">0</span>], BankAccount))   <span class="cm"># True — SavingsAccount IS-A BankAccount</span>
+<span class="fn">print</span>(<span class="fn">isinstance</span>(accounts[<span class="nm">0</span>], SavingsAccount)) <span class="cm"># True</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 4 — Duck Typing ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Duck Typing</div>
+    <h2 class="slide-title">Duck Typing — "ถ้ามันเดินเหมือนเป็ด และร้องเหมือนเป็ด มันคือเป็ด"</h2>
+    <p class="slide-lead">Python ไม่สนว่า object เป็น type อะไร — สนแค่ว่ามี method ที่ต้องการหรือเปล่า (ต่างจาก Java ที่ต้อง implement interface)</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Java — ต้อง implement Interface</div>
+        <pre class="code-block"><span class="kw">interface</span> Printable {
+    <span class="kw">void</span> <span class="fn">print</span>();
+}
+<span class="kw">class</span> Report <span class="kw">implements</span> Printable {
+    <span class="kw">public void</span> <span class="fn">print</span>() { ... }
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">Python — ไม่ต้อง declare อะไรเลย</div>
+        <pre class="code-block"><span class="kw">class</span> <span class="fn">Report</span>:
+    <span class="kw">def</span> <span class="fn">generate</span>(self):
+        <span class="kw">return</span> <span class="st">"report data"</span>
+
+<span class="kw">class</span> <span class="fn">PDF</span>:
+    <span class="kw">def</span> <span class="fn">generate</span>(self):
+        <span class="kw">return</span> <span class="st">"pdf bytes"</span></pre>
+      </div>
+    </div>
+    <pre class="code-block"><span class="cm"># Duck typing — ทั้งสอง class ไม่มีความสัมพันธ์กันเลย</span>
+<span class="cm"># แต่ทำงานด้วยกันได้เพราะมี method generate()</span>
+<span class="kw">def</span> <span class="fn">export</span>(generator):
+    data = generator.<span class="fn">generate</span>()   <span class="cm"># ไม่สนว่า type อะไร</span>
+    <span class="fn">print</span>(<span class="st">f"Exported: {data}"</span>)
+
+<span class="fn">export</span>(<span class="fn">Report</span>())   <span class="cm"># ✅ มี generate()</span>
+<span class="fn">export</span>(<span class="fn">PDF</span>())     <span class="cm"># ✅ มี generate() เหมือนกัน</span></pre>
+    <div class="callout">Duck Typing ทำให้ Python ยืดหยุ่นมาก — ไม่ต้อง inherit จาก class เดียวกันเพื่อทำงานร่วมกัน</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 5 — Abstract Class ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · ABC</div>
+    <h2 class="slide-title">Abstract Class — บังคับให้ subclass เขียน method</h2>
+    <p class="slide-lead">ถ้าต้องการบังคับ subclass ทุกตัวให้มี method บางตัว — ใช้ <code class="inline-code">ABC</code> + <code class="inline-code">@abstractmethod</code></p>
+    <pre class="code-block"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="fn">Account</span>(ABC):   <span class="cm"># Abstract Base Class — สร้าง instance ตรงๆ ไม่ได้</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, owner):
+        self.owner = owner
+        self._balance = <span class="nm">0</span>
+
+    <span class="op">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">withdraw</span>(self, amount):   <span class="cm"># subclass ต้อง override นี้</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">def</span> <span class="fn">deposit</span>(self, amount):    <span class="cm"># method ปกติ — สืบทอดได้</span>
+        self._balance += amount
+
+
+<span class="kw">class</span> <span class="fn">Savings</span>(Account):
+    <span class="kw">def</span> <span class="fn">withdraw</span>(self, amount):   <span class="cm"># ต้องเขียน ไม่งั้น TypeError</span>
+        <span class="kw">if</span> amount > self._balance:
+            <span class="kw">raise</span> ValueError(<span class="st">"ยอดไม่พอ"</span>)
+        self._balance -= amount
+
+<span class="cm"># Account()  # ❌ TypeError: Can't instantiate abstract class</span>
+<span class="nm">s</span> = <span class="fn">Savings</span>(<span class="st">"สมชาย"</span>)   <span class="cm"># ✅ Savings implement ครบแล้ว</span></pre>
+    <div class="callout">Abstract Class คือสัญญา — บอกว่า subclass ทุกตัวต้อง implement method พวกนี้</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 6 — @dataclass ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · @dataclass</div>
+    <h2 class="slide-title">@dataclass — Data Class อัตโนมัติ</h2>
+    <p class="slide-lead">Python 3.7+ มี <code class="inline-code">@dataclass</code> ที่สร้าง __init__, __str__, __repr__, __eq__ ให้อัตโนมัติ</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แบบปกติ — เขียนเยอะ</div>
+        <pre class="code-block"><span class="kw">class</span> <span class="fn">Transaction</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, txn_id,
+                 amount, type):
+        self.txn_id = txn_id
+        self.amount = amount
+        self.type = type
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(self):
+        <span class="kw">return</span> (
+            <span class="st">f"Transaction("</span>
+            <span class="st">f"{self.txn_id},"</span>
+            <span class="st">f"{self.amount})"</span>
+        )</pre>
+      </div>
+      <div>
+        <div class="code-label">@dataclass — กระชับกว่า</div>
+        <pre class="code-block"><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="op">@dataclass</span>
+<span class="kw">class</span> <span class="fn">Transaction</span>:
+    txn_id: <span class="kw">str</span>
+    amount: <span class="kw">float</span>
+    type: <span class="kw">str</span>
+    <span class="cm"># __init__, __repr__,</span>
+    <span class="cm"># __eq__ สร้างให้อัตโนมัติ!</span></pre>
+      </div>
+    </div>
+    <pre class="code-block"><span class="nm">t1</span> = <span class="fn">Transaction</span>(<span class="st">"TXN001"</span>, <span class="nm">5000.0</span>, <span class="st">"deposit"</span>)
+<span class="nm">t2</span> = <span class="fn">Transaction</span>(<span class="st">"TXN001"</span>, <span class="nm">5000.0</span>, <span class="st">"deposit"</span>)
+<span class="fn">print</span>(t1)          <span class="cm"># Transaction(txn_id='TXN001', amount=5000.0, type='deposit')</span>
+<span class="fn">print</span>(t1 == t2)    <span class="cm"># True — @dataclass สร้าง __eq__ ให้</span>
+
+<span class="cm"># frozen=True → immutable เหมือน tuple</span>
+<span class="op">@dataclass</span>(frozen=<span class="kw">True</span>)
+<span class="kw">class</span> <span class="fn">Config</span>:
+    host: <span class="kw">str</span> = <span class="st">"localhost"</span>
+    port: <span class="kw">int</span> = <span class="nm">5432</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 7 — Python vs Java/C++ OOP ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · เปรียบเทียบ</div>
+    <h2 class="slide-title">Python OOP vs Java vs C++ — ต่างกันยังไง?</h2>
+    <table class="vs-table">
+      <thead><tr><th>หัวข้อ</th><th>Python</th><th>Java</th><th>C++</th></tr></thead>
+      <tbody>
+        <tr><td>Access modifier</td><td>_ convention<br>__ name mangling</td><td>private/public/<br>protected keyword</td><td>private/public/<br>protected keyword</td></tr>
+        <tr><td>Interface</td><td>ไม่มี — ใช้ Duck Typing<br>หรือ ABC</td><td>interface keyword<br>บังคับ implement</td><td>Pure virtual function</td></tr>
+        <tr><td>Multiple inheritance</td><td>✅ ได้เลย (MRO)</td><td>❌ ไม่ได้<br>(interface แทน)</td><td>✅ ได้ (ซับซ้อน)</td></tr>
+        <tr><td>Operator overloading</td><td>✅ ง่าย — dunder methods</td><td>❌ ไม่ได้</td><td>✅ ได้แต่ซับซ้อน</td></tr>
+        <tr><td>Constructor</td><td>__init__(self, ...)</td><td>ClassName(...)</td><td>ClassName::ClassName()</td></tr>
+        <tr><td>Typing</td><td>Dynamic + Type Hints</td><td>Static — ต้อง declare</td><td>Static — ต้อง declare</td></tr>
+        <tr><td>Memory management</td><td>Garbage Collector</td><td>Garbage Collector</td><td>Manual (new/delete)</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">Python OOP <strong>ยืดหยุ่นกว่า</strong> Java — ไม่ต้อง declare type และ interface ทุกอย่าง แต่แลกด้วย runtime error แทน compile-time error</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 8 — 🏦 Banking Use Case ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 ระบบบัญชีธนาคาร OOP แบบสมบูรณ์</h2>
+    <pre class="code-block"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+
+<span class="op">@dataclass</span>
+<span class="kw">class</span> <span class="fn">Txn</span>:
+    type: <span class="kw">str</span>
+    amount: <span class="kw">float</span>
+
+<span class="kw">class</span> <span class="fn">Account</span>(ABC):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, owner):
+        self.owner = owner
+        self._balance = <span class="nm">0.0</span>
+        self._history: list[Txn] = []
+
+    <span class="kw">def</span> <span class="fn">deposit</span>(self, amt):
+        self._balance += amt
+        self._history.<span class="fn">append</span>(<span class="fn">Txn</span>(<span class="st">"D"</span>, amt))
+        <span class="kw">return</span> self
+
+    <span class="op">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">withdraw</span>(self, amt): <span class="kw">pass</span>
+
+    <span class="op">@property</span>
+    <span class="kw">def</span> <span class="fn">balance</span>(self): <span class="kw">return</span> self._balance
+
+<span class="kw">class</span> <span class="fn">Savings</span>(Account):
+    <span class="kw">def</span> <span class="fn">withdraw</span>(self, amt):
+        <span class="kw">if</span> amt > self._balance: <span class="kw">raise</span> ValueError(<span class="st">"ยอดไม่พอ"</span>)
+        self._balance -= amt
+        self._history.<span class="fn">append</span>(<span class="fn">Txn</span>(<span class="st">"W"</span>, amt))
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="kw">return</span> <span class="st">f"[ออมทรัพย์] {self.owner}: {self._balance:,.2f}"</span>
+
+<span class="nm">acc</span> = <span class="fn">Savings</span>(<span class="st">"สมชาย"</span>)
+acc.<span class="fn">deposit</span>(<span class="nm">50_000</span>).<span class="fn">deposit</span>(<span class="nm">10_000</span>).<span class="fn">withdraw</span>(<span class="nm">8_000</span>)
+<span class="fn">print</span>(acc)  <span class="cm"># [ออมทรัพย์] สมชาย: 52,000.00</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 9 — Think! ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">Duck Typing vs Interface — อะไรดีกว่า?<br><br>ฝ่าย <strong>Python (Duck Typing)</strong>: ยืดหยุ่น เขียนเร็ว ไม่ต้อง boilerplate<br>ฝ่าย <strong>Java (Interface)</strong>: ปลอดภัยกว่า compiler ตรวจให้ที่ compile-time<br><br><em>ถ้าทีมมี developer 50 คน ทำงานร่วมกันบน codebase ใหญ่ 5 ปี — ควรเลือกแบบไหน และทำไม?</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 10 — Trace MCQ ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Trace</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
+    <pre class="code-block"><span class="kw">class</span> <span class="fn">A</span>:
+    <span class="kw">def</span> <span class="fn">greet</span>(self): <span class="kw">return</span> <span class="st">"A"</span>
+
+<span class="kw">class</span> <span class="fn">B</span>(A):
+    <span class="kw">def</span> <span class="fn">greet</span>(self): <span class="kw">return</span> <span class="st">"B + "</span> + <span class="fn">super</span>().<span class="fn">greet</span>()
+
+<span class="kw">class</span> <span class="fn">C</span>(B):
+    <span class="kw">pass</span>
+
+<span class="fn">print</span>(<span class="fn">C</span>().<span class="fn">greet</span>())</pre>
+    <div id="mc-t6" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-t6','A','C','❌ A เรียกเมื่อ C ไม่มี greet → ขึ้น B แต่ B เรียก super().greet() ซึ่งเป็น A')">A) A</button>
+      <button class="mc-btn" onclick="pickMC('mc-t6','B','C','❌ B เรียกเมื่อ C ไม่มี greet → B.greet() → แต่มี super() ด้วย')">B) B</button>
+      <button class="mc-btn" onclick="pickMC('mc-t6','C','C','✅ C ไม่มี greet → B.greet() → "B + " + A.greet() → "B + A"')">C) B + A</button>
+      <button class="mc-btn" onclick="pickMC('mc-t6','D','C','❌ ไม่มี error — C สืบทอด greet จาก B ได้')">D) AttributeError</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 11 — Fill-in ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Fill-in</div>
+    <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① เรียก constructor ของ parent class ใน Python ใช้ฟังก์ชันอะไร?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f6a" placeholder="function()">
+      <button class="fill-btn" onclick="checkFill('f6a','super()',['super','super().__init__()'],[],'✅ super() — แล้วเรียก method เช่น super().__init__()','❌ ใช้ super() แล้วตามด้วย method: super().__init__()')">ตรวจ</button>
+    </div>
+    <div id="f6a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② decorator ที่บังคับให้ subclass ต้อง implement method?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f6b" placeholder="@...">
+      <button class="fill-btn" onclick="checkFill('f6b','@abstractmethod',['abstractmethod'],[],'✅ @abstractmethod — จาก abc module','❌ ใช้ @abstractmethod decorator (import จาก abc)')">ตรวจ</button>
+    </div>
+    <div id="f6b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ Python OOP concept ที่ทำให้ทำงานกับ object ต่าง type ได้โดยไม่สน type จริงๆ?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f6c" placeholder="...">
+      <button class="fill-btn" onclick="checkFill('f6c','duck typing',['duck-typing','ductyping'],[],'✅ Duck Typing — ถ้ามี method ที่ต้องการ ก็ทำงานด้วยได้','❌ เรียกว่า Duck Typing')">ตรวจ</button>
+    </div>
+    <div id="f6c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 12 — Summary & Course Wrap ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🎓</div>
+      <div class="summary-title">จบ Course Python — สรุปทั้งหมด</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">บทที่ 0 — ทำไม Python</div><div class="sum-body">Philosophy · PEP 8 · Indentation = Syntax · Dynamic Typing</div></div>
+        <div class="sum-card"><div class="sum-head">บทที่ 1 — Syntax</div><div class="sum-body">Types · f-string · input() · // ** · Multiple assignment</div></div>
+        <div class="sum-card"><div class="sum-head">บทที่ 2 — Control Flow</div><div class="sum-body">elif · for/range/enumerate · while+else · List Comprehension</div></div>
+        <div class="sum-card"><div class="sum-head">บทที่ 3 — Functions</div><div class="sum-body">def · default/keyword args · *args **kwargs · lambda</div></div>
+        <div class="sum-card"><div class="sum-head">บทที่ 4 — Data Structures</div><div class="sum-body">list · tuple · dict · set — แทน struct/array/hashtable ของ C</div></div>
+        <div class="sum-card"><div class="sum-head">บทที่ 5 — OOP พื้นฐาน</div><div class="sum-body">class · __init__ · self · @property · Encapsulation</div></div>
+        <div class="sum-card"><div class="sum-head">บทที่ 6 — OOP ขั้นสูง</div><div class="sum-body">Inheritance · Polymorphism · Duck Typing · ABC · @dataclass</div></div>
+        <div class="sum-card"><div class="sum-head">Python vs ภาษาอื่น</div><div class="sum-body">ยืดหยุ่นกว่า Java · เขียนเร็วกว่า C · Duck Typing แทน Interface</div></div>
+      </div>
+      <a href="index.html" class="summary-next">→ กลับหน้าหลัก Python</a>
+    </div>
+  </div>
+</div>
+
+</div>
+<nav class="nav-bar">
+  <button class="nav-btn" id="prev-btn" onclick="go(-1)">← ก่อนหน้า</button>
+  <span class="nav-counter"><span id="cur-num">1</span> / <span id="tot-num">12</span></span>
+  <button class="nav-btn" id="next-btn" onclick="go(1)">ถัดไป →</button>
+</nav>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

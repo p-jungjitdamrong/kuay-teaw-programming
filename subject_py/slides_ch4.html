@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 4 — Built-in Data Structures | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root { --ca:#b84c00; --cal:#fff3ec; --cam:#d98a5a; }
+.ds-table { width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px; margin-bottom:14px; }
+.ds-table th { background:var(--ca); color:#fff; padding:7px 10px; text-align:left; }
+.ds-table td { padding:6px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+.ds-table tr:nth-child(even) td { background:var(--cal); }
+.ds-table td:first-child { color:var(--ca); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════ SLIDE 0 — COVER ════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Python</div>
+        <div class="cover-title">บทที่ 4<br><em>Built-in Data Structures</em></div>
+        <div class="cover-subtitle">list, tuple, dict, set — Python มีให้ built-in ทั้งหมด ไม่ต้องสร้าง struct เอง</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>list — dynamic array, ordered, mutable</div>
+          <div class="topic-row"><div class="topic-dot"></div>tuple — immutable list, เร็วกว่า</div>
+          <div class="topic-row"><div class="topic-dot"></div>dict — key-value store, O(1) lookup</div>
+          <div class="topic-row"><div class="topic-dot"></div>set — unique values, O(1) membership</div>
+          <div class="topic-row"><div class="topic-dot"></div>Use Case + Think! + โจทย์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">04</div>
+        <div class="cover-badge">CHAPTER 4 · DATA STRUCTURES</div>
+        <div class="cover-slides-count">11 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 1 — Overview ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · ภาพรวม</div>
+    <h2 class="slide-title">เปรียบเทียบ 4 Data Structures</h2>
+    <p class="slide-lead">Python มี 4 collection built-in — เลือกให้ถูกตามงาน</p>
+    <table class="ds-table">
+      <thead><tr><th>Type</th><th>สร้าง</th><th>Ordered</th><th>Mutable</th><th>Duplicate</th><th>ใช้เมื่อ</th></tr></thead>
+      <tbody>
+        <tr><td>list</td><td>[1,2,3]</td><td>✅</td><td>✅</td><td>✅</td><td>ลำดับสำคัญ ต้องแก้ไข</td></tr>
+        <tr><td>tuple</td><td>(1,2,3)</td><td>✅</td><td>❌</td><td>✅</td><td>ค่าคงที่ return หลายค่า</td></tr>
+        <tr><td>dict</td><td>{"a":1}</td><td>✅ (3.7+)</td><td>✅</td><td>key ❌</td><td>ค้นหาด้วย key</td></tr>
+        <tr><td>set</td><td>{1,2,3}</td><td>❌</td><td>✅</td><td>❌</td><td>unique / ตรวจสอบสมาชิก</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">ถ้าใน C ต้องสร้าง array, struct, linked list เอง — Python ให้มาพร้อมทั้งหมด และขยายขนาดได้อัตโนมัติ</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 2 — list ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · list</div>
+    <h2 class="slide-title">list — Dynamic Array ของ Python</h2>
+    <p class="slide-lead">list ขยายขนาดได้เอง เก็บได้ทุก type ปะปนกัน — ไม่ต้องกำหนดขนาดล่วงหน้าเหมือน array C</p>
+    <pre class="code-block"><span class="nm">txns</span> = [<span class="nm">1000</span>, <span class="nm">5000</span>, <span class="nm">200</span>]   <span class="cm"># สร้าง</span>
+
+<span class="cm"># เพิ่ม/ลบ</span>
+txns.<span class="fn">append</span>(<span class="nm">3000</span>)          <span class="cm"># เพิ่มท้าย: [1000,5000,200,3000]</span>
+txns.<span class="fn">insert</span>(<span class="nm">1</span>, <span class="nm">9999</span>)       <span class="cm"># แทรกที่ index 1</span>
+txns.<span class="fn">remove</span>(<span class="nm">200</span>)           <span class="cm"># ลบค่า 200 ออก (ตัวแรก)</span>
+txns.<span class="fn">pop</span>()                 <span class="cm"># ดึงค่าสุดท้ายออก</span>
+txns.<span class="fn">pop</span>(<span class="nm">0</span>)               <span class="cm"># ดึงค่า index 0 ออก</span>
+
+<span class="cm"># Query</span>
+<span class="fn">len</span>(txns)                  <span class="cm"># ความยาว</span>
+txns.<span class="fn">index</span>(<span class="nm">5000</span>)          <span class="cm"># หา index ของค่า</span>
+<span class="nm">5000</span> <span class="kw">in</span> txns              <span class="cm"># True/False</span>
+txns.<span class="fn">count</span>(<span class="nm">1000</span>)          <span class="cm"># นับจำนวนที่ซ้ำ</span>
+
+<span class="cm"># Sort</span>
+txns.<span class="fn">sort</span>()                <span class="cm"># in-place ascending</span>
+txns.<span class="fn">sort</span>(reverse=<span class="kw">True</span>)   <span class="cm"># in-place descending</span>
+<span class="nm">sorted_txns</span> = <span class="fn">sorted</span>(txns) <span class="cm"># คืน list ใหม่ (ไม่แก้ original)</span>
+
+<span class="cm"># Slice [start:end:step]</span>
+txns[<span class="nm">1</span>:<span class="nm">3</span>]    <span class="cm"># index 1,2</span>
+txns[::-<span class="nm">1</span>]   <span class="cm"># reverse ทั้ง list</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 3 — tuple ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · tuple</div>
+    <h2 class="slide-title">tuple — Immutable Sequence</h2>
+    <p class="slide-lead">tuple คือ list ที่เปลี่ยนแปลงไม่ได้หลัง create — เร็วกว่า list และใช้เป็น key ของ dict ได้</p>
+    <pre class="code-block"><span class="cm"># สร้าง tuple</span>
+<span class="nm">account</span> = (<span class="st">"A001"</span>, <span class="st">"สมชาย"</span>, <span class="nm">50_000</span>)
+<span class="nm">point</span> = (<span class="nm">13.76</span>, <span class="nm">100.50</span>)   <span class="cm"># lat, lng — ไม่ควรเปลี่ยน</span>
+
+<span class="cm"># Unpack</span>
+<span class="nm">acc_id</span>, <span class="nm">name</span>, <span class="nm">balance</span> = account
+<span class="fn">print</span>(<span class="st">f"{<span class="nm">name</span>} มียอด {<span class="nm">balance</span>:,} บาท"</span>)
+
+<span class="cm"># tuple เหมาะสำหรับ return หลายค่า</span>
+<span class="kw">def</span> <span class="fn">get_account</span>(acc_id):
+    <span class="kw">return</span> <span class="st">"สมชาย"</span>, <span class="nm">50_000</span>   <span class="cm"># return tuple (ไม่ต้องใส่วงเล็บ)</span>
+
+<span class="nm">name</span>, <span class="nm">bal</span> = <span class="fn">get_account</span>(<span class="st">"A001"</span>)
+
+<span class="cm"># tuple เป็น key ของ dict ได้ (list ไม่ได้!)</span>
+<span class="nm">branches</span> = {
+    (<span class="nm">13.76</span>, <span class="nm">100.50</span>): <span class="st">"สาขาสีลม"</span>,
+    (<span class="nm">13.80</span>, <span class="nm">100.55</span>): <span class="st">"สาขาสุขุมวิท"</span>,
+}
+
+<span class="cm"># แปลงกลับไปมา</span>
+<span class="nm">t</span> = <span class="fn">tuple</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>])   <span class="cm"># list → tuple</span>
+<span class="nm">l</span> = <span class="fn">list</span>((<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>))   <span class="cm"># tuple → list</span></pre>
+    <div class="callout">tuple เร็วกว่า list ~10-15% — ใช้เมื่อข้อมูลไม่ควรเปลี่ยน เช่น coordinates, config values</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 4 — dict ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · dict</div>
+    <h2 class="slide-title">dict — Key-Value Store, O(1) Lookup</h2>
+    <p class="slide-lead">dict คือ Hash Map ที่ Python สร้างให้ built-in — lookup เร็ว O(1) ไม่ว่าจะมีกี่ key</p>
+    <pre class="code-block"><span class="nm">account</span> = {
+    <span class="st">"id"</span>: <span class="st">"A001"</span>,
+    <span class="st">"name"</span>: <span class="st">"สมชาย"</span>,
+    <span class="st">"balance"</span>: <span class="nm">50_000</span>,
+    <span class="st">"tier"</span>: <span class="st">"Gold"</span>,
+}
+
+<span class="cm"># Access</span>
+account[<span class="st">"name"</span>]                    <span class="cm"># "สมชาย"</span>
+account.<span class="fn">get</span>(<span class="st">"email"</span>, <span class="st">"ไม่มี"</span>)      <span class="cm"># "ไม่มี" (ไม่ error ถ้า key ไม่มี)</span>
+
+<span class="cm"># แก้ไข/เพิ่ม</span>
+account[<span class="st">"balance"</span>] += <span class="nm">5_000</span>
+account[<span class="st">"email"</span>] = <span class="st">"somchai@email.com"</span>  <span class="cm"># เพิ่ม key ใหม่</span>
+
+<span class="cm"># ลบ</span>
+<span class="kw">del</span> account[<span class="st">"tier"</span>]
+account.<span class="fn">pop</span>(<span class="st">"email"</span>, <span class="kw">None</span>)           <span class="cm"># ลบโดยไม่ error ถ้าไม่มี</span>
+
+<span class="cm"># วน</span>
+<span class="kw">for</span> key, val <span class="kw">in</span> account.<span class="fn">items</span>():
+    <span class="fn">print</span>(<span class="st">f"  {key}: {val}"</span>)
+
+<span class="cm"># เช็ค key</span>
+<span class="st">"name"</span> <span class="kw">in</span> account    <span class="cm"># True</span>
+
+<span class="cm"># update หลาย key พร้อมกัน</span>
+account.<span class="fn">update</span>({<span class="st">"tier"</span>: <span class="st">"Platinum"</span>, <span class="st">"score"</span>: <span class="nm">850</span>})</pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 5 — set ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · set</div>
+    <h2 class="slide-title">set — Unique Values, O(1) Membership Test</h2>
+    <p class="slide-lead">set เก็บค่าไม่ซ้ำ ค้นหาเร็ว O(1) — รองรับ set operations เหมือนในคณิตศาสตร์</p>
+    <pre class="code-block"><span class="cm"># กรองค่าซ้ำออกด้วย set</span>
+<span class="nm">raw</span> = [<span class="st">"A001"</span>, <span class="st">"A002"</span>, <span class="st">"A001"</span>, <span class="st">"A003"</span>, <span class="st">"A002"</span>]
+<span class="nm">unique</span> = <span class="fn">set</span>(raw)    <span class="cm"># {"A001","A002","A003"}</span>
+
+<span class="cm"># เพิ่ม/ลบ</span>
+unique.<span class="fn">add</span>(<span class="st">"A004"</span>)
+unique.<span class="fn">discard</span>(<span class="st">"A999"</span>)   <span class="cm"># ลบโดยไม่ error ถ้าไม่มี</span>
+
+<span class="cm"># Membership — O(1)</span>
+<span class="st">"A001"</span> <span class="kw">in</span> unique    <span class="cm"># True — เร็วกว่า list มาก!</span>
+
+<span class="cm"># Set Operations</span>
+<span class="nm">ktb_customers</span> = {<span class="st">"A001"</span>, <span class="st">"A002"</span>, <span class="st">"A003"</span>}
+<span class="nm">scb_customers</span> = {<span class="st">"A002"</span>, <span class="st">"A003"</span>, <span class="st">"A004"</span>}
+
+<span class="nm">both</span>     = ktb_customers & scb_customers   <span class="cm"># intersection: {"A002","A003"}</span>
+<span class="nm">either</span>   = ktb_customers | scb_customers   <span class="cm"># union: {"A001".."A004"}</span>
+<span class="nm">ktb_only</span> = ktb_customers - scb_customers   <span class="cm"># difference: {"A001"}</span>
+
+<span class="fn">print</span>(<span class="st">f"ลูกค้าที่ใช้ทั้งสองธนาคาร: {both}"</span>)</pre>
+    <div class="callout">ตรวจสอบ membership ใน list = O(n) — ใน set = O(1) ถ้า list ใหญ่มาก ควรแปลงเป็น set ก่อน</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 6 — nested collections ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Nested</div>
+    <h2 class="slide-title">Nested Collections — ซ้อนกันได้</h2>
+    <p class="slide-lead">list of dict, dict of list — ใช้แทน struct array ของ C ได้เลย</p>
+    <pre class="code-block"><span class="cm"># List of dicts — แทน array of struct ใน C</span>
+<span class="nm">customers</span> = [
+    {<span class="st">"id"</span>: <span class="st">"A001"</span>, <span class="st">"name"</span>: <span class="st">"สมชาย"</span>, <span class="st">"balance"</span>: <span class="nm">50_000</span>},
+    {<span class="st">"id"</span>: <span class="st">"A002"</span>, <span class="st">"name"</span>: <span class="st">"สมหญิง"</span>, <span class="st">"balance"</span>: <span class="nm">12_000</span>},
+    {<span class="st">"id"</span>: <span class="st">"A003"</span>, <span class="st">"name"</span>: <span class="st">"วิชัย"</span>,  <span class="st">"balance"</span>: <span class="nm">120_000</span>},
+]
+
+<span class="cm"># ค้นหาด้วย comprehension</span>
+<span class="nm">rich</span> = [c <span class="kw">for</span> c <span class="kw">in</span> customers <span class="kw">if</span> c[<span class="st">"balance"</span>] > <span class="nm">50_000</span>]
+<span class="nm">total</span> = <span class="fn">sum</span>(c[<span class="st">"balance"</span>] <span class="kw">for</span> c <span class="kw">in</span> customers)
+
+<span class="cm"># Dict of lists — เก็บหลาย transaction ต่อ account</span>
+<span class="nm">history</span> = {
+    <span class="st">"A001"</span>: [<span class="nm">1000</span>, <span class="nm">-500</span>, <span class="nm">2000</span>],
+    <span class="st">"A002"</span>: [<span class="nm">5000</span>, -<span class="nm">1000</span>],
+}
+<span class="nm">history</span>[<span class="st">"A001"</span>].<span class="fn">append</span>(<span class="nm">3000</span>)   <span class="cm"># เพิ่ม transaction ให้ A001</span>
+
+<span class="cm"># defaultdict — ไม่ต้อง init list ก่อน</span>
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+<span class="nm">history2</span> = defaultdict(<span class="fn">list</span>)
+<span class="nm">history2</span>[<span class="st">"A003"</span>].<span class="fn">append</span>(<span class="nm">7000</span>)   <span class="cm"># ไม่ต้อง history["A003"] = [] ก่อน</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 7 — 🏦 Banking Use Case ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 ระบบ Mini Bank ด้วย dict + list</h2>
+    <p class="slide-lead">ไม่ต้องใช้ struct หรือ Node — dict + list ทำได้เลย</p>
+    <pre class="code-block"><span class="nm">bank</span> = {}   <span class="cm"># dict เก็บ account</span>
+
+<span class="kw">def</span> <span class="fn">create_account</span>(acc_id, name):
+    <span class="nm">bank</span>[acc_id] = {<span class="st">"name"</span>: name, <span class="st">"balance"</span>: <span class="nm">0</span>, <span class="st">"txns"</span>: []}
+
+<span class="kw">def</span> <span class="fn">deposit</span>(acc_id, amount):
+    <span class="kw">if</span> acc_id <span class="kw">not in</span> bank:
+        <span class="kw">return</span> <span class="st">"ไม่พบบัญชี"</span>
+    <span class="nm">bank</span>[acc_id][<span class="st">"balance"</span>] += amount
+    <span class="nm">bank</span>[acc_id][<span class="st">"txns"</span>].<span class="fn">append</span>((+amount, <span class="st">"ฝาก"</span>))
+
+<span class="kw">def</span> <span class="fn">withdraw</span>(acc_id, amount):
+    acc = bank.<span class="fn">get</span>(acc_id)
+    <span class="kw">if not</span> acc:
+        <span class="kw">return</span> <span class="st">"ไม่พบบัญชี"</span>
+    <span class="kw">if</span> acc[<span class="st">"balance"</span>] < amount:
+        <span class="kw">return</span> <span class="st">"ยอดไม่พอ"</span>
+    acc[<span class="st">"balance"</span>] -= amount
+    acc[<span class="st">"txns"</span>].<span class="fn">append</span>((-amount, <span class="st">"ถอน"</span>))
+
+<span class="fn">create_account</span>(<span class="st">"A001"</span>, <span class="st">"สมชาย"</span>)
+<span class="fn">deposit</span>(<span class="st">"A001"</span>, <span class="nm">50_000</span>)
+<span class="fn">withdraw</span>(<span class="st">"A001"</span>, <span class="nm">12_000</span>)
+<span class="fn">print</span>(<span class="st">f"ยอด: {bank['A001']['balance']:,} บาท"</span>)  <span class="cm"># 38,000</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 8 — Think! ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">มีรายชื่อลูกค้า 1,000,000 คน ต้องการตรวจว่า "A12345" อยู่ในรายชื่อหรือเปล่า<br><br>ถ้าเก็บเป็น <strong>list</strong> — ใช้เวลา O(n) = ตรวจ 1 ล้านครั้ง<br>ถ้าเก็บเป็น <strong>set</strong> — ใช้เวลา O(1) = ตรวจ 1 ครั้ง<br><br><em>แต่ set ไม่มีลำดับและ duplicate ไม่ได้ — ถ้า use case ต้องการลำดับและ membership test เร็ว จะใช้อะไร?</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 9 — Trace MCQ ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Trace</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
+    <pre class="code-block"><span class="nm">d</span> = {<span class="st">"a"</span>: <span class="nm">1</span>, <span class="st">"b"</span>: <span class="nm">2</span>, <span class="st">"c"</span>: <span class="nm">3</span>}
+<span class="nm">result</span> = [v*<span class="nm">2</span> <span class="kw">for</span> k, v <span class="kw">in</span> d.<span class="fn">items</span>() <span class="kw">if</span> v > <span class="nm">1</span>]
+<span class="fn">print</span>(<span class="nm">result</span>)</pre>
+    <div id="mc-t4" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-t4','A','C','❌ [2,4,6] รวม a:1 ด้วย แต่ condition ตัด v&lt;=1 ออก')">A) [2, 4, 6]</button>
+      <button class="mc-btn" onclick="pickMC('mc-t4','B','C','❌ [2,3] คือ value ตั้งต้น ไม่ได้ x2')">B) [2, 3]</button>
+      <button class="mc-btn" onclick="pickMC('mc-t4','C','C','✅ v>1 → b:2, c:3 แล้ว *2 → [4,6]')">C) [4, 6]</button>
+      <button class="mc-btn" onclick="pickMC('mc-t4','D','C','❌ [1,4,6] ไม่ถูก — v=1 ไม่ผ่าน condition v>1')">D) [1, 4, 6]</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 10 — Fill-in ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Fill-in</div>
+    <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① method ของ dict ที่ใช้อ่าน key โดยไม่ error ถ้า key ไม่มี?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f4a" placeholder="method name">
+      <button class="fill-btn" onclick="checkFill('f4a','get',['get()','dict.get'],[],'✅ .get(key, default) — ไม่ error ถ้า key ไม่มี','❌ ใช้ .get(key, default_value)')">ตรวจ</button>
+    </div>
+    <div id="f4a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② กรองค่าซ้ำออกจาก list [1,2,2,3,3,3] ให้เหลือแต่ unique ค่า</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f4b" placeholder="expression">
+      <button class="fill-btn" onclick="checkFill('f4b','list(set([1,2,2,3,3,3]))',['set([1,2,2,3,3,3])','list(set([1,2,3]))'],[],'✅ set() กรอง duplicate แล้วแปลงกลับเป็น list','❌ ใช้ set() กรองก่อน แล้ว list() แปลงกลับ')">ตรวจ</button>
+    </div>
+    <div id="f4b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ collection ชนิดไหนที่ immutable (เปลี่ยนแปลงหลัง create ไม่ได้)?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f4c" placeholder="ชื่อ type">
+      <button class="fill-btn" onclick="checkFill('f4c','tuple',[],[],  '✅ tuple — immutable · ใช้เป็น key ของ dict ได้','❌ list และ dict mutable, set mutable, tuple คือ immutable')">ตรวจ</button>
+    </div>
+    <div id="f4c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 11 — Summary ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🎯</div>
+      <div class="summary-title">สรุปบทที่ 4</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">list</div><div class="sum-body">dynamic · ordered · mutable · append/pop/sort</div></div>
+        <div class="sum-card"><div class="sum-head">tuple</div><div class="sum-body">immutable · เร็วกว่า list · ใช้ return หลายค่า · เป็น dict key ได้</div></div>
+        <div class="sum-card"><div class="sum-head">dict</div><div class="sum-body">key-value · O(1) lookup · .get() ปลอดภัยกว่า d[key]</div></div>
+        <div class="sum-card"><div class="sum-head">set</div><div class="sum-body">unique · O(1) membership · &amp; | - operations</div></div>
+        <div class="sum-card"><div class="sum-head">เลือกให้ถูก</div><div class="sum-body">ลำดับ+แก้ไข→list · คงที่→tuple · ค้นด้วยชื่อ→dict · unique→set</div></div>
+        <div class="sum-card"><div class="sum-head">Nested</div><div class="sum-body">list of dict แทน struct array · dict of list แทน hash of linked list</div></div>
+      </div>
+      <a href="slides_ch5.html" class="summary-next">→ บทที่ 5: OOP พื้นฐาน</a>
+    </div>
+  </div>
+</div>
+
+</div>
+<nav class="nav-bar">
+  <button class="nav-btn" id="prev-btn" onclick="go(-1)">← ก่อนหน้า</button>
+  <span class="nav-counter"><span id="cur-num">1</span> / <span id="tot-num">11</span></span>
+  <button class="nav-btn" id="next-btn" onclick="go(1)">ถัดไป →</button>
+</nav>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
