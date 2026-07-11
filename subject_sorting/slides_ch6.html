@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 6 — Heap Sort + เปรียบเทียบ | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#005f73;--cal:#e0f4f6;--cam:#0a9396;}
+.big-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin-bottom:12px;}
+.big-table th{background:var(--ca);color:#fff;padding:6px 8px;text-align:left;}
+.big-table td{padding:5px 8px;border-bottom:1px solid var(--line);}
+.big-table tr:nth-child(even) td{background:var(--cal);}
+.big-table td:first-child{color:var(--ca);font-weight:700;}
+.on2{color:#c0392b;font-weight:700;}.onlogn{color:#27ae60;font-weight:700;}.on{color:#2980b9;font-weight:700;}
+.heap-tree{font-family:var(--mono);font-size:12px;line-height:2;background:var(--cal);border-radius:8px;padding:12px 16px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Sorting Algorithms</div>
+        <div class="cover-title">บทที่ 6<br><em>Heap Sort + เปรียบเทียบ</em></div>
+        <div class="cover-subtitle">Heap Sort, Counting Sort, Radix Sort — และตารางเปรียบเทียบทุก Algorithm</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Max Heap และ Heapify</div>
+          <div class="topic-row"><div class="topic-dot"></div>Counting Sort — O(n+k) non-comparison</div>
+          <div class="topic-row"><div class="topic-dot"></div>Radix Sort — sort ทีละหลัก</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตารางเปรียบเทียบทุก Algorithm</div>
+          <div class="topic-row"><div class="topic-dot"></div>แบบฝึกหัด Real-world</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">06</div>
+        <div class="cover-badge">FINAL CHAPTER · เปรียบเทียบ</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 Max Heap คืออะไร -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Heap</div>
+    <h2 class="slide-title">Max Heap คืออะไร?</h2>
+    <p class="slide-lead"><strong>Max Heap</strong>: Binary Tree ที่ parent ≥ children เสมอ → root คือค่าสูงสุด เก็บใน array โดย children ของ i อยู่ที่ 2i+1, 2i+2</p>
+    <div class="two-col">
+      <div>
+        <div class="heap-tree">
+              90<br>
+           /       \<br>
+         75         82<br>
+        /   \      /   \<br>
+      55    60   38    45<br>
+      /  \<br>
+    10   20
+        </div>
+      </div>
+      <div>
+        <div class="code-label">เก็บใน Array</div>
+        <pre class="code-block">idx: 0   1   2   3   4   5   6   7   8
+val: 90  75  82  55  60  38  45  10  20
+
+parent(i) = (i-1)/2
+left(i)   = 2*i + 1
+right(i)  = 2*i + 2
+
+idx 1 (75): left=3(55), right=4(60)
+idx 2 (82): left=5(38), right=6(45)
+
+<span class="cm">/* parent ≥ children ทุกตัว */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Heap Sort ใช้ Max Heap เก็บใน array เดิม — In-place O(1) extra space</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 Heapify + Heap Sort -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · โค้ด</div>
+    <h2 class="slide-title">Heapify และ Heap Sort</h2>
+    <pre class="code-block"><span class="kw">void</span> <span class="fn">heapify</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n, <span class="kw">int</span> i) {
+    <span class="kw">int</span> largest = i;
+    <span class="kw">int</span> l = <span class="nm">2</span>*i + <span class="nm">1</span>, r = <span class="nm">2</span>*i + <span class="nm">2</span>;
+
+    <span class="kw">if</span> (l &lt; n && arr[l] > arr[largest]) largest = l;
+    <span class="kw">if</span> (r &lt; n && arr[r] > arr[largest]) largest = r;
+
+    <span class="kw">if</span> (largest != i) {
+        <span class="fn">swap</span>(&arr[i], &arr[largest]);
+        <span class="fn">heapify</span>(arr, n, largest);  <span class="cm">/* fix ลงไปข้างล่าง */</span>
+    }
+}
+
+<span class="kw">void</span> <span class="fn">heap_sort</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="cm">/* Phase 1: Build Max Heap — O(n) */</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i = n/<span class="nm">2</span> - <span class="nm">1</span>; i >= <span class="nm">0</span>; i--)
+        <span class="fn">heapify</span>(arr, n, i);
+
+    <span class="cm">/* Phase 2: ดึง max ออกทีละตัว — O(n log n) */</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i = n-<span class="nm">1</span>; i > <span class="nm">0</span>; i--) {
+        <span class="fn">swap</span>(&arr[<span class="nm">0</span>], &arr[i]);   <span class="cm">/* root (max) ไปท้าย */</span>
+        <span class="fn">heapify</span>(arr, i, <span class="nm">0</span>);      <span class="cm">/* heapify ส่วนที่เหลือ */</span>
+    }
+}</pre>
+    <div class="callout">Build heap = O(n) · Phase 2 = n-1 ครั้ง × O(log n) = O(n log n) · Total O(n log n) ทุก case</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 Counting Sort -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Non-Comparison</div>
+    <h2 class="slide-title">Counting Sort — O(n+k)</h2>
+    <p class="slide-lead">นับจำนวนของแต่ละค่า ไม่ต้องเปรียบเทียบ — เร็วกว่า O(n log n) แต่ใช้ได้กับ <strong>integer ที่รู้ขอบเขต k</strong> เท่านั้น</p>
+    <pre class="code-block"><span class="kw">void</span> <span class="fn">counting_sort</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n, <span class="kw">int</span> max_val) {
+    <span class="kw">int</span> count[max_val + <span class="nm">1</span>];
+    <span class="kw">int</span> output[n];
+
+    <span class="cm">/* Phase 1: นับ */</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;=max_val; i++) count[i] = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++) count[arr[i]]++;
+
+    <span class="cm">/* Phase 2: cumulative — หาตำแหน่ง */</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">1</span>; i&lt;=max_val; i++) count[i] += count[i-<span class="nm">1</span>];
+
+    <span class="cm">/* Phase 3: วาง output (วนจากหลังเพื่อ Stable) */</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i=n-<span class="nm">1</span>; i>=<span class="nm">0</span>; i--) {
+        output[--count[arr[i]]] = arr[i];
+    }
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++) arr[i] = output[i];
+}
+<span class="cm">/* {4,2,2,8,3,3,1} max=8
+   count[1]=1,count[2]=2,count[3]=2,count[4]=1,count[8]=1
+   → {1,2,2,3,3,4,8} */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 4 Radix Sort -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Radix</div>
+    <h2 class="slide-title">Radix Sort — sort ทีละหลัก</h2>
+    <p class="slide-lead">ใช้ Counting Sort เป็น subroutine sort ทีละหลัก (ones → tens → hundreds) — O(d × n) โดย d = จำนวนหลัก</p>
+    <pre class="code-block"><span class="kw">void</span> <span class="fn">counting_sort_digit</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n, <span class="kw">int</span> exp) {
+    <span class="kw">int</span> output[n], count[<span class="nm">10</span>] = {<span class="nm">0</span>};
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++) count[(arr[i]/exp)%<span class="nm">10</span>]++;
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">1</span>; i&lt;<span class="nm">10</span>; i++) count[i]+=count[i-<span class="nm">1</span>];
+    <span class="kw">for</span> (<span class="kw">int</span> i=n-<span class="nm">1</span>; i>=<span class="nm">0</span>; i--) { output[--count[(arr[i]/exp)%<span class="nm">10</span>]]=arr[i]; }
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++) arr[i]=output[i];
+}
+
+<span class="kw">void</span> <span class="fn">radix_sort</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> max_val = arr[<span class="nm">0</span>];
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">1</span>; i&lt;n; i++) <span class="kw">if</span>(arr[i]>max_val) max_val=arr[i];
+
+    <span class="kw">for</span> (<span class="kw">int</span> exp=<span class="nm">1</span>; max_val/exp><span class="nm">0</span>; exp*=<span class="nm">10</span>)
+        <span class="fn">counting_sort_digit</span>(arr, n, exp);
+}
+<span class="cm">/* {170,45,75,90,802,24,2,66}
+   ones:  {170,90,802,2,24,45,75,66}
+   tens:  {802,2,24,45,66,170,75,90}
+   hundreds: {2,24,45,66,75,90,170,802} ✅ */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 5 ตารางเปรียบเทียบ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · เปรียบเทียบ</div>
+    <h2 class="slide-title">ตารางเปรียบเทียบทุก Algorithm</h2>
+    <table class="big-table">
+      <thead><tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable</th><th>In-place</th></tr></thead>
+      <tbody>
+        <tr><td>Bubble Sort</td><td class="on">O(n)</td><td class="on2">O(n²)</td><td class="on2">O(n²)</td><td>O(1)</td><td>✅</td><td>✅</td></tr>
+        <tr><td>Selection Sort</td><td class="on2">O(n²)</td><td class="on2">O(n²)</td><td class="on2">O(n²)</td><td>O(1)</td><td>❌</td><td>✅</td></tr>
+        <tr><td>Insertion Sort</td><td class="on">O(n)</td><td class="on2">O(n²)</td><td class="on2">O(n²)</td><td>O(1)</td><td>✅</td><td>✅</td></tr>
+        <tr><td>Merge Sort</td><td class="onlogn">O(n log n)</td><td class="onlogn">O(n log n)</td><td class="onlogn">O(n log n)</td><td>O(n)</td><td>✅</td><td>❌</td></tr>
+        <tr><td>Quick Sort</td><td class="onlogn">O(n log n)</td><td class="onlogn">O(n log n)</td><td class="on2">O(n²)</td><td>O(log n)</td><td>❌</td><td>✅</td></tr>
+        <tr><td>Heap Sort</td><td class="onlogn">O(n log n)</td><td class="onlogn">O(n log n)</td><td class="onlogn">O(n log n)</td><td>O(1)</td><td>❌</td><td>✅</td></tr>
+        <tr><td>Counting Sort</td><td class="on">O(n+k)</td><td class="on">O(n+k)</td><td class="on">O(n+k)</td><td>O(k)</td><td>✅</td><td>❌</td></tr>
+        <tr><td>Radix Sort</td><td class="on">O(dn)</td><td class="on">O(dn)</td><td class="on">O(dn)</td><td>O(n+k)</td><td>✅</td><td>❌</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">k = ช่วงค่า · d = จำนวนหลัก · Quick Sort เร็วที่สุดในทางปฏิบัติ · Merge Sort เหมาะกับ Stable + guaranteed</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 เลือก Algorithm ตาม Scenario -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · การเลือก</div>
+    <h2 class="slide-title">เลือก Algorithm อย่างไร?</h2>
+    <table class="big-table">
+      <thead><tr><th>Scenario</th><th>เลือก</th><th>เหตุผล</th></tr></thead>
+      <tbody>
+        <tr><td>n &lt; 50, random</td><td>Insertion Sort</td><td>Low overhead, O(n) nearly sorted</td></tr>
+        <tr><td>n ใหญ่, ทั่วไป</td><td>Quick Sort (random pivot)</td><td>เร็วที่สุดในทางปฏิบัติ, In-place</td></tr>
+        <tr><td>ต้องการ Stable</td><td>Merge Sort</td><td>Stable + O(n log n) guaranteed</td></tr>
+        <tr><td>Memory จำกัด, n ใหญ่</td><td>Heap Sort</td><td>O(1) space + O(n log n) guaranteed</td></tr>
+        <tr><td>Integer ที่รู้ขอบเขต k</td><td>Counting Sort</td><td>O(n+k) — เร็วกว่าทุก comparison sort</td></tr>
+        <tr><td>Integer หลายหลัก, n ใหญ่</td><td>Radix Sort</td><td>O(dn) — เร็วมากถ้า d เล็ก</td></tr>
+        <tr><td>Linked List</td><td>Merge Sort</td><td>O(1) extra space กับ Linked List</td></tr>
+        <tr><td>Nearly sorted</td><td>Insertion Sort</td><td>O(n) best case</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SLIDE 7 Heap Sort Trace -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Trace</div>
+    <h2 class="slide-title">Trace Heap Sort: {4, 10, 3, 5, 1}</h2>
+    <pre class="code-block"><span class="cm">/* Phase 1: Build Max Heap
+   เริ่มจาก i = n/2-1 = 1 ถึง 0 */</span>
+
+i=1: heapify({4,10,3,5,1}, 5, 1)
+  left=3(5), right=4(1), largest=3 → swap(arr[1],arr[3])
+  → {4,5,3,10,1} → wait, 10>5 so largest=idx-of-10
+  arr[1]=10, left=arr[3]=5, right=arr[4]=1 → largest=1 (10) no swap
+  → {4,10,3,5,1}
+
+i=0: heapify({4,10,3,5,1}, 5, 0)
+  left=arr[1]=10, right=arr[2]=3 → largest=1(10) → swap(arr[0],arr[1])
+  → {10,4,3,5,1} → heapify(idx1): left=arr[3]=5>arr[1]=4 → swap
+  → {10,5,3,4,1}  ← Max Heap สร้างแล้ว!
+
+<span class="cm">/* Phase 2: ดึง max ทีละตัว */</span>
+i=4: swap(arr[0],arr[4])={1,5,3,4,10}, heapify(4,0)→{5,4,3,1,10}
+i=3: swap(arr[0],arr[3])={1,4,3,5,10}, heapify(3,0)→{4,1,3,5,10}
+i=2: swap(arr[0],arr[2])={3,1,4,5,10}, heapify(2,0)→{3,1,4,5,10}
+i=1: swap(arr[0],arr[1])={1,3,4,5,10}
+→ {1,3,4,5,10} ✅</pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Banking Final -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 เลือก Algorithm ตาม Use Case จริง</h2>
+    <pre class="code-block"><span class="cm">/* 1. Sort 10M customer by credit score (int 300-850) */</span>
+<span class="cm">/* k = 550 เล็ก → Counting Sort O(n+k) เร็วที่สุด */</span>
+<span class="fn">counting_sort</span>(customers, <span class="nm">10000000</span>, <span class="nm">850</span>);
+
+<span class="cm">/* 2. Sort bank statements ตาม date+amount (Stable) */</span>
+<span class="cm">/* ต้องการ Stable → Merge Sort */</span>
+<span class="fn">merge_sort_stmt</span>(statements, <span class="nm">0</span>, n-<span class="nm">1</span>);
+
+<span class="cm">/* 3. Sort transaction IDs (10-digit numbers) */</span>
+<span class="cm">/* d=10, n ใหญ่ → Radix Sort */</span>
+<span class="fn">radix_sort</span>(txn_ids, n);
+
+<span class="cm">/* 4. Memory-critical embedded ATM system */</span>
+<span class="cm">/* O(1) space, O(n log n) guaranteed → Heap Sort */</span>
+<span class="fn">heap_sort</span>(atm_logs, n);
+
+<span class="cm">/* 5. General purpose ranking (n=1M, random data) */</span>
+<span class="cm">/* เร็วที่สุด → Quick Sort with random pivot */</span>
+<span class="fn">qsort</span>(data, n, <span class="kw">sizeof</span>(<span class="kw">int</span>), compare_fn); <span class="cm">/* stdlib */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think! — Final</div>
+      <div class="think-q">มีข้อมูล transaction 5 ล้านรายการ<br>แต่ละ record มี: date, amount (float), customer_id<br><br>ต้องการ: sort ตาม date ก่อน ถ้า date เท่ากันให้เรียง amount มากไปน้อย<br><br>เลือก algorithm อะไร? ทำกี่ pass?<br><br><em>힌트: float เปรียบเทียบได้แต่ Counting/Radix ทำไม่ได้ · multi-key sort ต้องการ Stable</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Trace MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · Trace MCQ</div>
+    <h2 class="slide-title">Build Max Heap จาก {3,1,6,5,2,4}?</h2>
+    <p class="slide-lead">heapify จาก i = n/2-1 = 2 ถึง 0</p>
+    <div id="mc-h6" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-h6','A','C','❌ ลอง heapify i=2: arr[2]=6, left=arr[5]=4, right=none → largest=2 ไม่ swap')">A) {6,5,4,3,2,1}</button>
+      <button class="mc-btn" onclick="pickMC('mc-h6','B','C','❌ trace i=0 ให้ดี')">B) {6,5,3,1,2,4}</button>
+      <button class="mc-btn" onclick="pickMC('mc-h6','C','C','✅ i=2: arr[2]=6>arr[5]=4 no swap; i=1: arr[1]=1,left=5,right=2→largest=3(5)swap→{3,5,6,1,2,4}; i=0: arr[0]=3,left=5,right=6→largest=2(6)swap→{6,5,3,1,2,4}? heapify(2): arr[2]=3,left=5(4)<no child? → {6,5,4,1,2,3}')">C) {6,5,4,1,2,3}</button>
+      <button class="mc-btn" onclick="pickMC('mc-h6','D','C','❌ heap property: parent ≥ children ต้องตรวจทุกตำแหน่ง')">D) {3,5,6,1,2,4}</button>
+    </div>
+    <pre class="code-block" style="margin-top:10px;font-size:11px">arr = {3,1,6,5,2,4}  (idx 0-5)
+i=2: arr[2]=6, l=5(4), r=6(ไม่มี) → largest=2 → no swap
+i=1: arr[1]=1, l=3(5), r=4(2) → largest=3(5) → swap(arr[1],arr[3])
+     → {3,5,6,1,2,4} → heapify(3): l=7,r=8 ไม่มี → done
+i=0: arr[0]=3, l=1(5), r=2(6) → largest=2(6) → swap(arr[0],arr[2])
+     → {6,5,3,1,2,4} → heapify(2): arr[2]=3, l=5(4) → largest=5 → swap
+     → {6,5,4,1,2,3} ✅</pre>
+  </div>
+</div>
+
+<!-- SLIDE 11 Fill-in แบบฝึกหัด Real-world -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 6 · แบบฝึกหัด</div>
+    <h2 class="slide-title">เลือก Algorithm ให้ถูก Scenario</h2>
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Sort account numbers (0–9,999,999) จำนวน 1 ล้านรายการ — ควรใช้?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fh6a" placeholder="ชื่อ algorithm">
+      <button class="fill-btn" onclick="checkFill('fh6a','counting sort',['counting','count sort','radix sort','radix'],[],'✅ Counting Sort หรือ Radix Sort — integer ที่รู้ขอบเขต O(n+k) หรือ O(dn)','❌ ใช้ Counting Sort (k=10M) หรือ Radix Sort (d=7) ดีกว่า comparison sort')">ตรวจ</button>
+    </div>
+    <div id="fh6a-msg" class="fill-msg"></div>
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② O(n log n) guaranteed + O(1) space + Unstable — คือ algorithm อะไร?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fh6b" placeholder="ชื่อ algorithm">
+      <button class="fill-btn" onclick="checkFill('fh6b','heap sort',['heapsort','heap'],[],'✅ Heap Sort — O(n log n) ทุก case, O(1) space, Unstable','❌ Heap Sort: O(n log n) guaranteed, O(1) in-place, แต่ Unstable')">ตรวจ</button>
+    </div>
+    <div id="fh6b-msg" class="fill-msg"></div>
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ Counting Sort ใช้ O(___)space เพื่อเก็บ count array</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fh6c" placeholder="complexity">
+      <button class="fill-btn" onclick="checkFill('fh6c','k',['O(k)','o(k)'],[],'✅ O(k) โดย k คือขอบเขตค่า — count array มี k+1 ช่อง','❌ O(k) — count array มีขนาด max_value+1 ช่อง')">ตรวจ</button>
+    </div>
+    <div id="fh6c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 12 Course Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🏆</div>
+      <div class="summary-title">สรุป Course — Sorting Algorithms</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">O(n²) Simple</div><div class="sum-body">Bubble · Selection · Insertion — เข้าใจง่าย เหมาะกับ n เล็ก</div></div>
+        <div class="sum-card"><div class="sum-head">O(n log n) Fast</div><div class="sum-body">Merge · Quick · Heap — ใช้ใน production จริง</div></div>
+        <div class="sum-card"><div class="sum-head">O(n) Linear</div><div class="sum-body">Counting · Radix — เร็วที่สุด แต่มีข้อจำกัด (integer เท่านั้น)</div></div>
+        <div class="sum-card"><div class="sum-head">Stable</div><div class="sum-body">Bubble · Insertion · Merge · Counting · Radix</div></div>
+        <div class="sum-card"><div class="sum-head">หลักการเลือก</div><div class="sum-body">ดู n, ประเภทข้อมูล, ต้องการ stable ไหม, memory มีแค่ไหน</div></div>
+        <div class="sum-card"><div class="sum-head">ทางปฏิบัติ</div><div class="sum-body">stdlib qsort() ใช้ Quick Sort · Python sorted() ใช้ Timsort (Merge+Insertion)</div></div>
+      </div>
+      <a href="index.html" class="summary-next">🏠 กลับหน้าหลัก Sorting</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 6 — Heap Sort + เปรียบเทียบ</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+<script>
+const TITLES=['Cover','Max Heap คืออะไร','Heapify + Heap Sort','Counting Sort','Radix Sort','ตารางเปรียบเทียบ','เลือก Algorithm','Heap Sort Trace','Banking Use Case','Think!','Trace MCQ','แบบฝึกหัด','Course Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

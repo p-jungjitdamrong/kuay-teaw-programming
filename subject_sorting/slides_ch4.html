@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 4 — Merge Sort | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>:root{--ca:#005f73;--cal:#e0f4f6;--cam:#0a9396;}
+.tree{font-family:var(--mono);font-size:12px;line-height:1.8;color:var(--body);background:var(--cal);border-radius:8px;padding:14px 18px;margin:10px 0;}
+.ok{color:#27ae60;font-weight:700;}
+.dim2{color:var(--dim);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Sorting Algorithms</div>
+        <div class="cover-title">บทที่ 4<br><em>Merge Sort</em></div>
+        <div class="cover-subtitle">Divide &amp; Conquer — แบ่งครึ่งซ้ำๆ จนเหลือ 1 ตัว แล้ว merge กลับอย่างมีระเบียบ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Divide &amp; Conquer คืออะไร?</div>
+          <div class="topic-row"><div class="topic-dot"></div>O(n log n) ทุก case — guaranteed</div>
+          <div class="topic-row"><div class="topic-dot"></div>Stable sort — เหมาะกับ multi-key sort</div>
+          <div class="topic-row"><div class="topic-dot"></div>Merge function — หัวใจของ algorithm</div>
+          <div class="topic-row"><div class="topic-dot"></div>Think! + แบบฝึกหัด</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">04</div>
+        <div class="cover-badge">MERGE SORT · O(n log n)</div>
+        <div class="cover-slides-count">12 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 Divide & Conquer -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · หลักการ</div>
+    <h2 class="slide-title">Divide &amp; Conquer</h2>
+    <p class="slide-lead"><strong>Divide</strong>: แบ่ง array ครึ่งซ้ำๆ จนเหลือ 1 ตัว (base case) · <strong>Conquer</strong>: merge สอง sorted half กลับ</p>
+    <div class="tree">
+[38, 27, 43, 3, 9, 82, 10]
+        ↙               ↘
+[38, 27, 43]         [3, 9, 82, 10]
+   ↙      ↘            ↙         ↘
+[38]   [27, 43]    [3, 9]     [82, 10]
+         ↙  ↘       ↙  ↘       ↙   ↘
+        [27][43]   [3]  [9]   [82]  [10]
+         ↘  ↙       ↘  ↙       ↘   ↙
+        [27,43]     [3,9]      [10,82]
+           ↘           ↙
+         [3, 9, 27, 43]    [10, 82]  (ตัวอย่างย่อ)
+                    ↘         ↙
+              <span class="ok">[3, 9, 10, 27, 43, 82]</span>
+    </div>
+    <div class="callout">ความลึกของ recursion = log₂(n) · แต่ละ level ทำ merge รวม O(n) → Total O(n log n)</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 Merge Function -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Merge</div>
+    <h2 class="slide-title">Merge Function — หัวใจของ Merge Sort</h2>
+    <pre class="code-block"><span class="kw">void</span> <span class="fn">merge</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> l, <span class="kw">int</span> m, <span class="kw">int</span> r) {
+    <span class="kw">int</span> n1 = m - l + <span class="nm">1</span>, n2 = r - m;
+    <span class="kw">int</span> L[n1], R[n2];           <span class="cm">/* temp arrays — O(n) space */</span>
+
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n1; i++) L[i] = arr[l+i];
+    <span class="kw">for</span> (<span class="kw">int</span> j=<span class="nm">0</span>; j&lt;n2; j++) R[j] = arr[m+<span class="nm">1</span>+j];
+
+    <span class="kw">int</span> i=<span class="nm">0</span>, j=<span class="nm">0</span>, k=l;
+    <span class="kw">while</span> (i &lt; n1 && j &lt; n2) {
+        <span class="kw">if</span> (L[i] &lt;= R[j]) {        <span class="cm">/* <= คือ Stable! ค่าเท่ากัน L มาก่อน */</span>
+            arr[k++] = L[i++];
+        } <span class="kw">else</span> {
+            arr[k++] = R[j++];
+        }
+    }
+    <span class="kw">while</span> (i &lt; n1) arr[k++] = L[i++];  <span class="cm">/* เหลือใน L */</span>
+    <span class="kw">while</span> (j &lt; n2) arr[k++] = R[j++];  <span class="cm">/* เหลือใน R */</span>
+}</pre>
+    <div class="callout">ใช้ &lt;= แทน &lt; ตรงนี้สำคัญมาก — ทำให้ Merge Sort เป็น Stable sort</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 Full Code -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · โค้ดเต็ม</div>
+    <h2 class="slide-title">Merge Sort — โค้ด C เต็ม</h2>
+    <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">void</span> <span class="fn">merge</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> l, <span class="kw">int</span> m, <span class="kw">int</span> r); <span class="cm">/* จาก slide ก่อน */</span>
+
+<span class="kw">void</span> <span class="fn">merge_sort</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> l, <span class="kw">int</span> r) {
+    <span class="kw">if</span> (l >= r) <span class="kw">return</span>;           <span class="cm">/* base case: 1 ตัว */</span>
+
+    <span class="kw">int</span> m = l + (r - l) / <span class="nm">2</span>;     <span class="cm">/* หาจุดกึ่งกลาง */</span>
+
+    <span class="fn">merge_sort</span>(arr, l, m);         <span class="cm">/* sort ซ้าย */</span>
+    <span class="fn">merge_sort</span>(arr, m + <span class="nm">1</span>, r);    <span class="cm">/* sort ขวา */</span>
+    <span class="fn">merge</span>(arr, l, m, r);           <span class="cm">/* merge สองฝั่ง */</span>
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> arr[] = {<span class="nm">38</span>, <span class="nm">27</span>, <span class="nm">43</span>, <span class="nm">3</span>, <span class="nm">9</span>, <span class="nm">82</span>, <span class="nm">10</span>};
+    <span class="kw">int</span> n = <span class="kw">sizeof</span>(arr) / <span class="kw">sizeof</span>(arr[<span class="nm">0</span>]);
+    <span class="fn">merge_sort</span>(arr, <span class="nm">0</span>, n - <span class="nm">1</span>);
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++) <span class="fn">printf</span>(<span class="st">"%d "</span>, arr[i]);
+    <span class="cm">/* 3 9 10 27 38 43 82 */</span>
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+    <div class="callout">หมายเหตุ: <code class="inline-code">m = l + (r-l)/2</code> ป้องกัน integer overflow ดีกว่า <code class="inline-code">(l+r)/2</code></div>
+  </div>
+</div>
+
+<!-- SLIDE 4 Trace Merge Step -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Trace</div>
+    <h2 class="slide-title">Trace: Merge [1,3,5] และ [2,4,6]</h2>
+    <p class="slide-lead">ดูว่า merge function ทำงานยังไงเมื่อรับ 2 sorted array</p>
+    <pre class="code-block">L = [1, 3, 5]   R = [2, 4, 6]
+i=0, j=0, k=0
+
+Step 1: L[0]=1 ≤ R[0]=2 → arr[0]=1, i=1
+Step 2: L[1]=3 > R[0]=2 → arr[1]=2, j=1
+Step 3: L[1]=3 ≤ R[1]=4 → arr[2]=3, i=2
+Step 4: L[2]=5 > R[1]=4 → arr[3]=4, j=2
+Step 5: L[2]=5 ≤ R[2]=6 → arr[4]=5, i=3
+Step 6: i=3=n1 → exit while
+        copy R[2]=6 → arr[5]=6
+
+ผลลัพธ์: [1, 2, 3, 4, 5, 6] ✅</pre>
+    <div class="callout">merge ใช้ O(n) time และ O(n) space (temp arrays L, R) — นี่คือข้อเสียเดียวของ Merge Sort</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 Complexity -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Complexity</div>
+    <h2 class="slide-title">ทำไม O(n log n)?</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">วิเคราะห์ตาม level</div>
+        <pre class="code-block">n = 8
+
+Level 0: 1 call  → merge O(n)
+Level 1: 2 calls → merge O(n/2) × 2 = O(n)
+Level 2: 4 calls → merge O(n/4) × 4 = O(n)
+Level 3: 8 calls → base case
+
+จำนวน level = log₂(8) = 3
+แต่ละ level รวม O(n)
+→ Total = O(n × log n)</pre>
+      </div>
+      <div>
+        <div class="code-label">Summary</div>
+        <pre class="code-block">Best Case:  O(n log n) ✅
+Average:    O(n log n) ✅
+Worst Case: O(n log n) ✅ ← guaranteed!
+
+Space:  O(n) ← จุดเสีย
+Stable: ✅ Yes
+In-place: ❌ No
+
+<span class="cm">/* เมื่อไหร่ใช้ Merge Sort? */</span>
+<span class="cm">/* - ต้องการ O(n log n) guaranteed */</span>
+<span class="cm">/* - ต้องการ Stable sort */</span>
+<span class="cm">/* - Linked List sort (O(1) space!) */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Merge Sort ดีกว่า Quick Sort ตรงที่ worst case = O(n log n) เสมอ — Quick Sort worst O(n²)</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Stable คืออะไร ทบทวน -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Stable</div>
+    <h2 class="slide-title">ทำไม Merge Sort ถึง Stable?</h2>
+    <p class="slide-lead">เพราะ merge function ใช้ <code class="inline-code">L[i] &lt;= R[j]</code> — ค่าเท่ากัน ฝั่ง L (ซ้าย = เดิมมาก่อน) จะถูกหยิบก่อนเสมอ</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่าง: ค่าเท่ากัน</div>
+        <pre class="code-block"><span class="cm">/* L = [3a, 5]  R = [3b, 7]
+   3a มาจากฝั่งซ้าย (index ก่อน)
+   3b มาจากฝั่งขวา */</span>
+
+Merge:
+  L[0]=3a ≤ R[0]=3b → arr[0]=3a
+  L[1]=5  > R[0]=3b → arr[1]=3b
+  L[1]=5  ≤ R[1]=7  → arr[2]=5
+  arr[3]=7
+
+Result: [3a, 3b, 5, 7]
+✅ 3a ยังมาก่อน 3b</pre>
+      </div>
+      <div>
+        <div class="code-label">ประโยชน์ใน Multi-key Sort</div>
+        <pre class="code-block"><span class="cm">/* ธนาคาร: sort ธุรกรรม 2 รอบ */</span>
+
+Step 1: sort ตาม amount
+Step 2: sort ตาม date
+        (ใช้ Stable sort)
+
+ผลลัพธ์: เรียงตาม date
+  แต่ในวันเดียวกัน → ยังเรียง
+  ตาม amount จาก step 1 ✅
+
+<span class="cm">/* ถ้า sort step 2 ด้วย Unstable
+   ลำดับ amount ใน 1 วันหายไป */</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Iterative Merge Sort -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Iterative</div>
+    <h2 class="slide-title">Bottom-up Merge Sort (ไม่ใช้ Recursion)</h2>
+    <p class="slide-lead">เริ่มจาก subarray ขนาด 1 แล้วเพิ่มทีละ 2× — ใช้ loop แทน recursion ไม่มี stack overflow</p>
+    <pre class="code-block"><span class="kw">void</span> <span class="fn">merge_sort_iterative</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> curr_size, left_start;
+
+    <span class="kw">for</span> (curr_size = <span class="nm">1</span>; curr_size &lt; n; curr_size *= <span class="nm">2</span>) {
+        <span class="kw">for</span> (left_start = <span class="nm">0</span>; left_start &lt; n-<span class="nm">1</span>; left_start += <span class="nm">2</span>*curr_size) {
+            <span class="kw">int</span> mid = left_start + curr_size - <span class="nm">1</span>;
+            <span class="kw">int</span> right_end = left_start + <span class="nm">2</span>*curr_size - <span class="nm">1</span>;
+            <span class="kw">if</span> (right_end >= n) right_end = n - <span class="nm">1</span>;
+            <span class="kw">if</span> (mid &lt; right_end)
+                <span class="fn">merge</span>(arr, left_start, mid, right_end);
+        }
+    }
+}
+<span class="cm">/* n=8:
+   Round 1: merge pairs  [0,1][2,3][4,5][6,7]
+   Round 2: merge quads  [0,3][4,7]
+   Round 3: merge all    [0,7]
+*/</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Banking -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 Sort Statement แบบ Multi-key</h2>
+    <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;string.h&gt;</span>
+
+<span class="kw">typedef struct</span> {
+    <span class="kw">char</span> date[<span class="nm">11</span>];   <span class="cm">/* "2024-01-15" */</span>
+    <span class="kw">double</span> amount;
+    <span class="kw">char</span> type[<span class="nm">10</span>];   <span class="cm">/* "DEBIT"/"CREDIT" */</span>
+} Statement;
+
+<span class="kw">int</span> <span class="fn">cmp_date_then_amount</span>(Statement a, Statement b) {
+    <span class="kw">int</span> d = <span class="fn">strcmp</span>(a.date, b.date);
+    <span class="kw">if</span> (d != <span class="nm">0</span>) <span class="kw">return</span> d;          <span class="cm">/* primary: date */</span>
+    <span class="kw">return</span> (a.amount > b.amount) -   <span class="cm">/* secondary: amount desc */</span>
+           (a.amount &lt; b.amount);
+}
+
+<span class="kw">void</span> <span class="fn">merge_stmt</span>(Statement arr[], <span class="kw">int</span> l, <span class="kw">int</span> m, <span class="kw">int</span> r) {
+    <span class="kw">int</span> n1=m-l+<span class="nm">1</span>, n2=r-m;
+    Statement L[n1], R[n2];
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nm">0</span>;i&lt;n1;i++) L[i]=arr[l+i];
+    <span class="kw">for</span>(<span class="kw">int</span> j=<span class="nm">0</span>;j&lt;n2;j++) R[j]=arr[m+<span class="nm">1</span>+j];
+    <span class="kw">int</span> i=<span class="nm">0</span>,j=<span class="nm">0</span>,k=l;
+    <span class="kw">while</span>(i&lt;n1&&j&lt;n2) {
+        <span class="kw">if</span>(<span class="fn">cmp_date_then_amount</span>(L[i],R[j])&lt;=<span class="nm">0</span>) arr[k++]=L[i++];
+        <span class="kw">else</span> arr[k++]=R[j++];
+    }
+    <span class="kw">while</span>(i&lt;n1) arr[k++]=L[i++];
+    <span class="kw">while</span>(j&lt;n2) arr[k++]=R[j++];
+}</pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">Merge Sort ใช้ Space O(n) เพราะต้องสร้าง temp arrays<br><br>ถ้าต้องการ sort Linked List — Merge Sort ยังใช้ O(n) extra space ไหม?<br><br><em>힌트: Linked List ไม่ต้องใช้ array temp — แค่เปลี่ยน pointer ใน merge step ได้เลย</em><br><br>Merge Sort กับ Linked List เป็น combination ที่ดีมาก — ทำไม?</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Trace MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Trace</div>
+    <h2 class="slide-title">Merge [2,5,8] กับ [1,4,7] — ผลคือ?</h2>
+    <div id="mc-m4" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-m4','A','C','❌ ลำดับไม่ถูก — ดู merge step: L[0]=2, R[0]=1 → 1&lt;2 มาก่อน')">A) {2,1,4,5,7,8}</button>
+      <button class="mc-btn" onclick="pickMC('mc-m4','B','C','❌ ตัวเลขครบ แต่ลำดับผิด')">B) {1,2,4,5,7,8} อันนี้ถูก แต่กด C แทน</button>
+      <button class="mc-btn" onclick="pickMC('mc-m4','C','C','✅ 1&lt;2→1, 2&lt;4→2, 4&lt;5→4, 5&lt;7→5, 7&lt;8→7, เหลือ 8 → {1,2,4,5,7,8}')">C) {1,2,4,5,7,8}</button>
+      <button class="mc-btn" onclick="pickMC('mc-m4','D','C','❌ ไม่ถูก — merge ทำตามลำดับ comparison ทีละคู่')">D) {1,2,4,5,8,7}</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">L=[2,5,8]  R=[1,4,7]
+i=0,j=0: L[0]=2 > R[0]=1 → take 1, j=1
+i=0,j=1: L[0]=2 ≤ R[1]=4 → take 2, i=1
+i=1,j=1: L[1]=5 > R[1]=4 → take 4, j=2
+i=1,j=2: L[1]=5 ≤ R[2]=7 → take 5, i=2
+i=2,j=2: L[2]=8 > R[2]=7 → take 7, j=3
+j=3=n2 → copy L[2]=8
+Result: {1,2,4,5,7,8}</pre>
+  </div>
+</div>
+
+<!-- SLIDE 11 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 4 · Fill-in</div>
+    <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Merge Sort base case คือเมื่อ l ___ r → return</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fm4a" placeholder="เงื่อนไข">
+      <button class="fill-btn" onclick="checkFill('fm4a','>=',['> ','>=','มากกว่าเท่ากับ'],[],'✅ l >= r หมายถึง subarray มีแค่ 1 ตัว (l==r) หรือว่าง → ไม่ต้อง sort','❌ l >= r — เมื่อ l==r มี 1 ตัว sorted แล้ว เมื่อ l>r เป็น empty')">ตรวจ</button>
+    </div>
+    <div id="fm4a-msg" class="fill-msg"></div>
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② Merge Sort ใช้ Space O(___) เพราะต้องสร้าง temp arrays</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fm4b" placeholder="complexity">
+      <button class="fill-btn" onclick="checkFill('fm4b','n',['o(n)','O(n)'],[],'✅ O(n) — temp arrays L, R รวมกัน = n elements','❌ O(n) — ทุก level ของ recursion ใช้ temp arrays รวม n elements')">ตรวจ</button>
+    </div>
+    <div id="fm4b-msg" class="fill-msg"></div>
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ ใน merge function ต้องใช้ <code class="inline-code">L[i] ___ R[j]</code> เพื่อให้ Stable</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fm4c" placeholder="operator">
+      <button class="fill-btn" onclick="checkFill('fm4c','<=',['<= ','น้อยกว่าเท่ากับ'],[],'✅ <= เมื่อค่าเท่ากัน L (ซ้าย = เดิมมาก่อน) ถูกหยิบก่อน → Stable','❌ ต้อง <= ไม่ใช่ < เพราะถ้าใช้ < เมื่อค่าเท่ากัน R จะถูกหยิบก่อน → Unstable')">ตรวจ</button>
+    </div>
+    <div id="fm4c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 12 Summary (slide index 12 = 13th slide, but this is slide 11 0-indexed, so 12 total) -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔀</div>
+      <div class="summary-title">สรุปบทที่ 4 — Merge Sort</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">หลักการ</div><div class="sum-body">Divide ครึ่ง → sort แต่ละฝั่ง → Merge กลับ</div></div>
+        <div class="sum-card"><div class="sum-head">Complexity</div><div class="sum-body">O(n log n) ทุก case — Best/Avg/Worst เหมือนกัน</div></div>
+        <div class="sum-card"><div class="sum-head">Stable</div><div class="sum-body">ใช้ L[i]<=R[j] → ค่าเท่ากัน ฝั่งซ้ายมาก่อนเสมอ</div></div>
+        <div class="sum-card"><div class="sum-head">Space O(n)</div><div class="sum-body">ต้องสร้าง temp arrays ใน merge — ข้อเสียเดียว</div></div>
+        <div class="sum-card"><div class="sum-head">เมื่อไหร่ใช้</div><div class="sum-body">ต้องการ Stable + O(n log n) guaranteed · Linked List sort</div></div>
+        <div class="sum-card"><div class="sum-head">vs Quick Sort</div><div class="sum-body">Merge: Stable, guaranteed · Quick: In-place, เร็วกว่าในทางปฏิบัติ</div></div>
+      </div>
+      <a href="slides_ch5.html" class="summary-next">→ บทที่ 5: Quick Sort</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 4 — Merge Sort</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+<script>
+const TITLES=['Cover','Divide & Conquer','Merge Function','โค้ดเต็ม','Trace Merge','Complexity','ทำไม Stable','Bottom-up Iterative','Banking Use Case','Think!','Trace MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

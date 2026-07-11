@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 3 — Insertion Sort | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>:root{--ca:#005f73;--cal:#e0f4f6;--cam:#0a9396;}
+.tc{display:grid;gap:4px;margin:6px 0;}
+.c{background:var(--cal);border:1px solid var(--cam);border-radius:4px;text-align:center;padding:6px 2px;font-family:var(--mono);font-size:13px;font-weight:700;color:var(--ca);}
+.c.key{background:#e74c3c;border-color:#c0392b;color:#fff;}
+.c.ok{background:#d4edda;border-color:#27ae60;color:#155724;}
+.c.sh{background:#fff3cd;border-color:#f0ad4e;color:#856404;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Sorting Algorithms</div>
+        <div class="cover-title">บทที่ 3<br><em>Insertion Sort</em></div>
+        <div class="cover-subtitle">เรียงไพ่ทีละใบ — หยิบ key ใหม่ แล้วหาตำแหน่งที่ถูกต้องใน sorted portion</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>หลักการ: เหมือนเรียงไพ่มือ</div>
+          <div class="topic-row"><div class="topic-dot"></div>O(n) best case สำหรับ nearly sorted</div>
+          <div class="topic-row"><div class="topic-dot"></div>Stable + In-place</div>
+          <div class="topic-row"><div class="topic-dot"></div>Binary Insertion Sort optimization</div>
+          <div class="topic-row"><div class="topic-dot"></div>Think! + แบบฝึกหัด</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">03</div>
+        <div class="cover-badge">INSERTION SORT · O(n²)</div>
+        <div class="cover-slides-count">12 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 หลักการ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · หลักการ</div>
+    <h2 class="slide-title">Insertion Sort — เหมือนเรียงไพ่</h2>
+    <p class="slide-lead">หยิบไพ่ใบใหม่ (key) แล้วเลื่อนไพ่ที่ใหญ่กว่าออก จนหาช่องที่เหมาะสมเจอ — <strong>sorted portion</strong> ขยายทีละ 1</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ภาพจำลอง: เรียงไพ่ {5,2,4,6,1}</div>
+        <pre class="code-block">มือเริ่มต้น: [5]
+
+หยิบ 2: เลื่อน 5 ออก → ใส่ 2
+  → [2, 5]
+
+หยิบ 4: เลื่อน 5 ออก → ใส่ 4
+  → [2, 4, 5]
+
+หยิบ 6: 6 > 5 → ใส่หลัง 5
+  → [2, 4, 5, 6]
+
+หยิบ 1: เลื่อน 6,5,4,2 ออก → ใส่ 1
+  → [1, 2, 4, 5, 6] ✅</pre>
+      </div>
+      <div>
+        <div class="code-label">ข้อสังเกต</div>
+        <pre class="code-block"><span class="cm">/* ไม่ swap — ใช้ shift แทน */</span>
+<span class="cm">/* shift เร็วกว่า swap (1 write) */</span>
+
+arr[j+1] = arr[j];  <span class="cm">/* shift right */</span>
+j--;
+
+<span class="cm">/* เมื่อหาช่องเจอ: */</span>
+arr[j+1] = key;     <span class="cm">/* วาง key */</span>
+
+<span class="cm">/* Nearly sorted → เกือบไม่ shift
+   → O(n) best case */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Insertion Sort ดีที่สุดสำหรับข้อมูล nearly sorted — แต่ละ key ใช้ shift น้อยมาก</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 โค้ด -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · โค้ด</div>
+    <h2 class="slide-title">Insertion Sort — โค้ด C</h2>
+    <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">void</span> <span class="fn">insertion_sort</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i, j, key;
+
+    <span class="kw">for</span> (i = <span class="nm">1</span>; i &lt; n; i++) {          <span class="cm">/* เริ่มจาก index 1 */</span>
+        key = arr[i];                    <span class="cm">/* หยิบ key ออกมา */</span>
+        j = i - <span class="nm">1</span>;
+
+        <span class="cm">/* เลื่อนตัวที่ > key ไปทางขวา */</span>
+        <span class="kw">while</span> (j >= <span class="nm">0</span> && arr[j] > key) {
+            arr[j + <span class="nm">1</span>] = arr[j];        <span class="cm">/* shift right */</span>
+            j--;
+        }
+        arr[j + <span class="nm">1</span>] = key;               <span class="cm">/* วาง key ลงช่องที่ถูกต้อง */</span>
+    }
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> arr[] = {<span class="nm">12</span>, <span class="nm">11</span>, <span class="nm">13</span>, <span class="nm">5</span>, <span class="nm">6</span>};
+    <span class="kw">int</span> n = <span class="kw">sizeof</span>(arr) / <span class="kw">sizeof</span>(arr[<span class="nm">0</span>]);
+    <span class="fn">insertion_sort</span>(arr, n);
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++) <span class="fn">printf</span>(<span class="st">"%d "</span>, arr[i]);
+    <span class="cm">/* 5 6 11 12 13 */</span>
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+    <div class="callout">ใช้ shift (arr[j+1]=arr[j]) แทน swap — ลด write operation ลงครึ่งหนึ่ง เร็วกว่า Bubble ในทางปฏิบัติ</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 Trace -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Trace</div>
+    <h2 class="slide-title">Trace: {12, 11, 13, 5, 6}</h2>
+    <p class="slide-lead"><span style="color:#e74c3c">■ แดง</span> = key ที่หยิบออก &nbsp; <span style="color:#f0ad4e">■ เหลือง</span> = ตัวที่ shift &nbsp; <span style="color:#27ae60">■ เขียว</span> = sorted</p>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:2px">i=1: key=11, shift 12→ ใส่ 11</div>
+    <div class="tc" style="grid-template-columns:repeat(5,1fr)">
+      <div class="c ok">11</div><div class="c ok">12</div><div class="c">13</div><div class="c">5</div><div class="c">6</div>
+    </div>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:2px">i=2: key=13, 13>12 ไม่ shift → ใส่ 13 ที่เดิม</div>
+    <div class="tc" style="grid-template-columns:repeat(5,1fr)">
+      <div class="c ok">11</div><div class="c ok">12</div><div class="c ok">13</div><div class="c">5</div><div class="c">6</div>
+    </div>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:2px">i=3: key=5, shift 13,12,11→ ใส่ 5 ที่ idx0</div>
+    <div class="tc" style="grid-template-columns:repeat(5,1fr)">
+      <div class="c ok">5</div><div class="c ok">11</div><div class="c ok">12</div><div class="c ok">13</div><div class="c">6</div>
+    </div>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:2px">i=4: key=6, shift 13,12,11→ ใส่ 6 หลัง 5</div>
+    <div class="tc" style="grid-template-columns:repeat(5,1fr)">
+      <div class="c ok">5</div><div class="c ok">6</div><div class="c ok">11</div><div class="c ok">12</div><div class="c ok">13</div>
+    </div>
+    <div class="callout">สังเกต i=2 (key=13): ไม่มี shift เลย — ถ้าข้อมูลเรียงแล้วทุก key จะเป็นแบบนี้ → O(n)</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 Complexity -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Complexity</div>
+    <h2 class="slide-title">Best O(n) เมื่อไหร่?</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Best Case: Already Sorted</div>
+        <pre class="code-block"><span class="cm">/* {1, 2, 3, 4, 5} */</span>
+i=1: key=2, arr[0]=1 &lt; 2 → ไม่ shift
+i=2: key=3, arr[1]=2 &lt; 3 → ไม่ shift
+i=3: key=4, arr[2]=3 &lt; 4 → ไม่ shift
+i=4: key=5, arr[3]=4 &lt; 5 → ไม่ shift
+
+Shifts: 0 → O(n) comparisons เท่านั้น
+<span class="cm">/* เร็วกว่า Selection/Bubble มาก! */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Worst Case: Reverse Sorted</div>
+        <pre class="code-block"><span class="cm">/* {5, 4, 3, 2, 1} */</span>
+i=1: key=4, shift 1 ครั้ง
+i=2: key=3, shift 2 ครั้ง
+i=3: key=2, shift 3 ครั้ง
+i=4: key=1, shift 4 ครั้ง
+
+Total shifts: 1+2+3+4 = n(n-1)/2
+= O(n²) shifts
+
+Best:  O(n)   ← sorted!
+Avg:   O(n²)
+Worst: O(n²)  ← reverse sorted</pre>
+      </div>
+    </div>
+    <div class="callout">Insertion Sort ดีที่สุดเมื่อ: 1) ข้อมูลเกือบเรียงแล้ว  2) n เล็ก (&lt;50)  3) Online sort (รับข้อมูลทีละตัว)</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 Online Sort -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Online Sort</div>
+    <h2 class="slide-title">Online Sort — รับข้อมูลทีละตัว</h2>
+    <p class="slide-lead">Insertion Sort เป็น <strong>Online Algorithm</strong> — รับ element ใหม่มาแล้วแทรกเข้า sorted array ได้ทันที ไม่ต้องรอข้อมูลครบ</p>
+    <pre class="code-block"><span class="cm">/* รับ transaction แบบ realtime แล้ว maintain sorted order */</span>
+<span class="kw">void</span> <span class="fn">insert_txn</span>(<span class="kw">double</span> amounts[], <span class="kw">int</span> *size, <span class="kw">double</span> new_amount) {
+    <span class="kw">int</span> j = *size - <span class="nm">1</span>;
+
+    <span class="cm">/* เลื่อนตัวที่ > new_amount ไปขวา */</span>
+    <span class="kw">while</span> (j >= <span class="nm">0</span> && amounts[j] > new_amount) {
+        amounts[j + <span class="nm">1</span>] = amounts[j];
+        j--;
+    }
+    amounts[j + <span class="nm">1</span>] = new_amount;
+    (*size)++;
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">double</span> sorted[<span class="nm">100</span>]; <span class="kw">int</span> size = <span class="nm">0</span>;
+
+    <span class="cm">/* รับ transaction realtime */</span>
+    <span class="fn">insert_txn</span>(sorted, &size, <span class="nm">500.0</span>);  <span class="cm">/* → {500} */</span>
+    <span class="fn">insert_txn</span>(sorted, &size, <span class="nm">200.0</span>);  <span class="cm">/* → {200, 500} */</span>
+    <span class="fn">insert_txn</span>(sorted, &size, <span class="nm">350.0</span>);  <span class="cm">/* → {200, 350, 500} */</span>
+    <span class="cm">/* array เรียงอยู่เสมอ ไม่ต้อง sort ใหม่ */</span>
+}</pre>
+  </div>
+</div>
+
+<!-- SLIDE 6 Binary Insertion Sort -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Optimization</div>
+    <h2 class="slide-title">Binary Insertion Sort</h2>
+    <p class="slide-lead">ใช้ Binary Search หาตำแหน่งแทน linear scan — ลด comparisons จาก O(n) เป็น O(log n) ต่อ key แต่ยังต้อง shift O(n)</p>
+    <pre class="code-block"><span class="cm">/* Binary Search หาตำแหน่งที่จะแทรก */</span>
+<span class="kw">int</span> <span class="fn">binary_search</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> lo, <span class="kw">int</span> hi, <span class="kw">int</span> key) {
+    <span class="kw">while</span> (lo &lt; hi) {
+        <span class="kw">int</span> mid = (lo + hi) / <span class="nm">2</span>;
+        <span class="kw">if</span> (arr[mid] &lt; key) lo = mid + <span class="nm">1</span>;
+        <span class="kw">else</span>                hi = mid;
+    }
+    <span class="kw">return</span> lo;
+}
+
+<span class="kw">void</span> <span class="fn">binary_insertion_sort</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i, j, key, pos;
+    <span class="kw">for</span> (i = <span class="nm">1</span>; i &lt; n; i++) {
+        key = arr[i];
+        pos = <span class="fn">binary_search</span>(arr, <span class="nm">0</span>, i, key);  <span class="cm">/* O(log i) */</span>
+        j = i - <span class="nm">1</span>;
+        <span class="kw">while</span> (j >= pos) { arr[j+<span class="nm">1</span>] = arr[j]; j--; }  <span class="cm">/* shift O(n) */</span>
+        arr[pos] = key;
+    }
+}
+<span class="cm">/* Total: O(n log n) comparisons, O(n²) shifts
+   → ยังเป็น O(n²) overall แต่ comparison ลดลง */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 7 Banking -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 Realtime Transaction Leaderboard</h2>
+    <p class="slide-lead">ระบบ anti-fraud ต้องการ Top-10 transaction ใหญ่สุดแบบ realtime — ใช้ Insertion Sort maintain sorted array ขนาดเล็ก</p>
+    <pre class="code-block"><span class="pp">#define</span> TOP_K 10
+
+<span class="kw">typedef struct</span> { <span class="kw">char</span> id[<span class="nm">10</span>]; <span class="kw">double</span> amount; } Txn;
+
+<span class="cm">/* รักษา top-K sorted array */</span>
+<span class="kw">void</span> <span class="fn">update_top_k</span>(Txn top[], <span class="kw">int</span> *size, Txn new_txn) {
+    <span class="kw">if</span> (*size &lt; TOP_K || new_txn.amount > top[*size-<span class="nm">1</span>].amount) {
+        <span class="kw">int</span> pos = (*size &lt; TOP_K) ? *size : TOP_K - <span class="nm">1</span>;
+        <span class="kw">int</span> j = pos - <span class="nm">1</span>;
+
+        <span class="cm">/* หาตำแหน่งแทรก (descending) */</span>
+        <span class="kw">while</span> (j >= <span class="nm">0</span> && top[j].amount &lt; new_txn.amount) {
+            top[j+<span class="nm">1</span>] = top[j]; j--;
+        }
+        top[j+<span class="nm">1</span>] = new_txn;
+        <span class="kw">if</span> (*size &lt; TOP_K) (*size)++;
+    }
+}
+<span class="cm">/* n=10 เสมอ → O(10) = O(1) per insert
+   เร็วมาก เหมาะกับ realtime feed */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">Insertion Sort ใช้ <strong>shift</strong> แทน <strong>swap</strong><br><br>ถ้า n = 5 และ worst case ({5,4,3,2,1})<br>Insertion Sort shift กี่ครั้ง?<br>Bubble Sort (ไม่ optimized) swap กี่ครั้ง?<br><br><em>힌트: นับ operation แต่ละ pass</em><br><br>และ shift 1 ครั้ง vs swap 1 ครั้ง — อันไหนใช้ write operations น้อยกว่า?</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Trace MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Trace</div>
+    <h2 class="slide-title">หลัง i=2 ของ {5, 2, 4, 6, 1}?</h2>
+    <p class="slide-lead">Insertion Sort: i=1 จัดการ key=2, i=2 จัดการ key=4 — ผลลัพธ์หลัง i=2 คืออะไร?</p>
+    <div id="mc-i3" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-i3','A','B','❌ ยัง sort ไม่ถึง 6 ตอน i=2 — แค่ sorted portion [0..2]')">A) {2,4,5,6,1}</button>
+      <button class="mc-btn" onclick="pickMC('mc-i3','B','B','✅ i=1: key=2 shift5→{2,5,4,6,1}, i=2: key=4 shift5→{2,4,5,6,1}')">B) {2,4,5,6,1}</button>
+      <button class="mc-btn" onclick="pickMC('mc-i3','C','B','❌ ตำแหน่งไม่ถูก — trace i=1 ก่อน key=2')">C) {2,5,4,6,1}</button>
+      <button class="mc-btn" onclick="pickMC('mc-i3','D','B','❌ sorted portion [0..2] ถูกต้อง แต่ตัวหลังยังเดิม')">D) {1,2,4,5,6}</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">i=1: key=2
+  j=0: arr[0]=5 > 2 → shift: {5,5,4,6,1}
+  j=-1: หยุด → arr[0]=2 → {2,5,4,6,1}
+
+i=2: key=4
+  j=1: arr[1]=5 > 4 → shift: {2,5,5,6,1}
+  j=0: arr[0]=2 ≤ 4 → หยุด → arr[1]=4 → {2,4,5,6,1}</pre>
+  </div>
+</div>
+
+<!-- SLIDE 10 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Fill-in</div>
+    <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① outer loop ของ Insertion Sort เริ่มจาก i = ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fi3a" placeholder="ค่าเริ่มต้น">
+      <button class="fill-btn" onclick="checkFill('fi3a','1',['1'],[],'✅ i=1 เพราะ arr[0] เดี่ยวๆ ถือว่า sorted แล้ว','❌ ต้อง i=1 เพราะ sorted portion เริ่มจาก arr[0] ที่มีแค่ 1 ตัว')">ตรวจ</button>
+    </div>
+    <div id="fi3a-msg" class="fill-msg"></div>
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② Insertion Sort ใช้ ___ แทน swap เพื่อลด write operations</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fi3b" placeholder="operation ชื่อ?">
+      <button class="fill-btn" onclick="checkFill('fi3b','shift',['shifting','เลื่อน'],[],'✅ shift — arr[j+1]=arr[j] เขียนแค่ 1 ตำแหน่ง ไม่เหมือน swap ที่เขียน 2 ตำแหน่ง','❌ คือ shift (เลื่อน) — arr[j+1]=arr[j] ใช้ write น้อยกว่า swap')">ตรวจ</button>
+    </div>
+    <div id="fi3b-msg" class="fill-msg"></div>
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ Insertion Sort เป็น Online Algorithm คือหมายความว่าอะไร?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fi3c" placeholder="อธิบายสั้นๆ">
+      <button class="fill-btn" onclick="checkFill('fi3c','รับข้อมูลทีละตัว',['รับข้อมูลทีละตัวได้','insert ได้ทีละตัว','online','รับข้อมูลมาแล้วแทรกได้เลย','realtime'],[],'✅ รับ element ใหม่แล้วแทรกเข้า sorted array ได้ทันที ไม่ต้องรอข้อมูลครบ','❌ Online = สามารถรับข้อมูลทีละตัวแล้ว maintain sorted array ได้เลย')">ตรวจ</button>
+    </div>
+    <div id="fi3c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 11 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🃏</div>
+      <div class="summary-title">สรุปบทที่ 3 — Insertion Sort</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">หลักการ</div><div class="sum-body">หยิบ key → shift ตัวที่ใหญ่กว่าออก → วาง key ลง</div></div>
+        <div class="sum-card"><div class="sum-head">Complexity</div><div class="sum-body">Best O(n) · Average/Worst O(n²) · Space O(1)</div></div>
+        <div class="sum-card"><div class="sum-head">Shift ไม่ใช่ Swap</div><div class="sum-body">arr[j+1]=arr[j] — write น้อยกว่า swap ครึ่งหนึ่ง</div></div>
+        <div class="sum-card"><div class="sum-head">Stable</div><div class="sum-body">ใส่ key หลังตัวเท่ากัน (arr[j] > key ไม่ใช่ >=) → Stable</div></div>
+        <div class="sum-card"><div class="sum-head">Online</div><div class="sum-body">รับ element ใหม่แล้วแทรกได้ทันที — เหมาะกับ realtime feed</div></div>
+        <div class="sum-card"><div class="sum-head">เมื่อไหร่ใช้</div><div class="sum-body">Nearly sorted, n&lt;50, Online sort, หรือเป็น sub-routine ของ Timsort</div></div>
+      </div>
+      <a href="slides_ch4.html" class="summary-next">→ บทที่ 4: Merge Sort</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 3 — Insertion Sort</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+<script>
+const TITLES=['Cover','หลักการ','โค้ด C','Trace','Complexity','Online Sort','Binary Insertion Sort','Banking Use Case','Think!','Trace MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
