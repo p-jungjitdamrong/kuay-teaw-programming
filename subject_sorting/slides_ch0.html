@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 0 — Sorting คืออะไร? | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root { --ca:#005f73; --cal:#e0f4f6; --cam:#0a9396; }
+.big-table { width:100%; border-collapse:collapse; font-family:var(--mono); font-size:11px; margin-bottom:12px; }
+.big-table th { background:var(--ca); color:#fff; padding:6px 8px; text-align:left; }
+.big-table td { padding:5px 8px; border-bottom:1px solid var(--line); }
+.big-table tr:nth-child(even) td { background:var(--cal); }
+.big-table td:first-child { color:var(--ca); font-weight:700; }
+.on2  { color:#c0392b; font-weight:700; }
+.onlogn { color:#27ae60; font-weight:700; }
+.on   { color:#2980b9; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════ SLIDE 0 — COVER ════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Sorting Algorithms</div>
+        <div class="cover-title">บทที่ 0<br><em>Sorting คืออะไร?</em></div>
+        <div class="cover-subtitle">ก่อนเรียน Algorithm ต้องรู้ภาพรวมก่อน — Big O, Stability, In-place, และ Swap function ใน C</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ทำไมต้อง Sort? — ค้นหาเร็วขึ้น O(log n)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Big O เปรียบเทียบทุก Algorithm</div>
+          <div class="topic-row"><div class="topic-dot"></div>Stability — sort รักษาลำดับเดิมหรือเปล่า?</div>
+          <div class="topic-row"><div class="topic-dot"></div>In-place vs Out-of-place</div>
+          <div class="topic-row"><div class="topic-dot"></div>Swap function ใน C + Banking Use Case</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">00</div>
+        <div class="cover-badge">CHAPTER 0 · OVERVIEW</div>
+        <div class="cover-slides-count">12 slides · อ่านเองได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 1 — ทำไมต้อง Sort ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · ทำไมต้อง Sort</div>
+    <h2 class="slide-title">ทำไมต้องเรียงข้อมูล?</h2>
+    <p class="slide-lead">ข้อมูลที่ถูก sort แล้ว <strong>ค้นหาได้เร็วกว่ามาก</strong> — Binary Search O(log n) ทำได้ก็ต่อเมื่อข้อมูลเรียงแล้วเท่านั้น</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ค้นหาแบบ Linear (ไม่ได้ sort)</div>
+        <pre class="code-block"><span class="cm">/* ต้องวนทุกตัว O(n) */</span>
+<span class="kw">int</span> i;
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n; i++) {
+    <span class="kw">if</span> (arr[i] == target)
+        <span class="kw">return</span> i;
+}
+<span class="cm">/* 1,000,000 รายการ = loop 1M ครั้ง */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Binary Search (sort แล้ว)</div>
+        <pre class="code-block"><span class="cm">/* แบ่งครึ่งทุกรอบ O(log n) */</span>
+<span class="kw">int</span> lo=<span class="nm">0</span>, hi=n-<span class="nm">1</span>;
+<span class="kw">while</span>(lo &lt;= hi){
+    <span class="kw">int</span> mid=(lo+hi)/<span class="nm">2</span>;
+    <span class="kw">if</span>(arr[mid]==target) ...
+    <span class="kw">else if</span>(arr[mid]&lt;target) lo=mid+<span class="nm">1</span>;
+    <span class="kw">else</span> hi=mid-<span class="nm">1</span>;
+}
+<span class="cm">/* 1,000,000 รายการ = loop แค่ 20 ครั้ง! */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Sort ใช้ใน: แสดงรายการธุรกรรมล่าสุดก่อน · จัดอันดับ credit score · ค้นหาลูกค้าตามชื่อ · Group ข้อมูลตามประเภท</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 2 — Big O Table ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Big O</div>
+    <h2 class="slide-title">เปรียบเทียบ Sorting Algorithms ทั้งหมด</h2>
+    <p class="slide-lead">ดูตารางนี้ก่อนเลือก algorithm — <span class="on2">O(n²)</span> ช้า · <span class="onlogn">O(n log n)</span> ดี · <span class="on">O(n)</span> เร็วที่สุด (แต่มีเงื่อนไข)</p>
+    <table class="big-table">
+      <thead><tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable</th><th>In-place</th></tr></thead>
+      <tbody>
+        <tr><td>Bubble Sort</td><td class="on">O(n)</td><td class="on2">O(n²)</td><td class="on2">O(n²)</td><td>O(1)</td><td>✅</td><td>✅</td></tr>
+        <tr><td>Selection Sort</td><td class="on2">O(n²)</td><td class="on2">O(n²)</td><td class="on2">O(n²)</td><td>O(1)</td><td>❌</td><td>✅</td></tr>
+        <tr><td>Insertion Sort</td><td class="on">O(n)</td><td class="on2">O(n²)</td><td class="on2">O(n²)</td><td>O(1)</td><td>✅</td><td>✅</td></tr>
+        <tr><td>Merge Sort</td><td class="onlogn">O(n log n)</td><td class="onlogn">O(n log n)</td><td class="onlogn">O(n log n)</td><td>O(n)</td><td>✅</td><td>❌</td></tr>
+        <tr><td>Quick Sort</td><td class="onlogn">O(n log n)</td><td class="onlogn">O(n log n)</td><td class="on2">O(n²)</td><td>O(log n)</td><td>❌</td><td>✅</td></tr>
+        <tr><td>Heap Sort</td><td class="onlogn">O(n log n)</td><td class="onlogn">O(n log n)</td><td class="onlogn">O(n log n)</td><td>O(1)</td><td>❌</td><td>✅</td></tr>
+        <tr><td>Counting Sort</td><td class="on">O(n+k)</td><td class="on">O(n+k)</td><td class="on">O(n+k)</td><td>O(k)</td><td>✅</td><td>❌</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">n = จำนวนข้อมูล · k = ช่วงของค่า (Counting Sort) · ในทางปฏิบัติ Quick Sort เร็วที่สุดเพราะ cache friendly</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 3 — Stability ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Stability</div>
+    <h2 class="slide-title">Stability — ลำดับ relative ของค่าเท่ากัน</h2>
+    <p class="slide-lead"><strong>Stable sort</strong> รักษาลำดับเดิมของ element ที่มีค่าเท่ากัน — สำคัญมากเมื่อ sort หลาย key</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ก่อน sort (เรียงตาม Amount)</div>
+        <pre class="code-block">TXN  Name      Amount
+T001 สมชาย    500
+T002 สมหญิง   300  ← ซ้ำ
+T003 วิชัย    300  ← ซ้ำ
+T004 มานี     100</pre>
+      </div>
+      <div>
+        <div class="code-label">Stable vs Unstable</div>
+        <pre class="code-block"><span class="cm">/* Stable sort → ลำดับ T002, T003 ยังเดิม */</span>
+T004 มานี     100
+T002 สมหญิง   300  ✅ ยังมาก่อน
+T003 วิชัย    300
+T001 สมชาย    500
+
+<span class="cm">/* Unstable sort → อาจสลับ */</span>
+T004 มานี     100
+T003 วิชัย    300  ⚠️ สลับ!
+T002 สมหญิง   300
+T001 สมชาย    500</pre>
+      </div>
+    </div>
+    <div class="callout">ธนาคารต้องใช้ Stable sort เมื่อ sort ธุรกรรมตาม amount แล้ว sort อีกรอบตาม date — ต้องการ sort หลาย level โดยรักษาลำดับจาก level ก่อน</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 4 — In-place ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Memory</div>
+    <h2 class="slide-title">In-place vs Out-of-place</h2>
+    <p class="slide-lead"><strong>In-place</strong> = sort ในอาร์เรย์เดิม ไม่ต้องใช้ array เพิ่ม O(1) extra space — <strong>Out-of-place</strong> = ต้องการ array ช่วย O(n)</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">In-place — ใช้ memory น้อย</div>
+        <pre class="code-block"><span class="cm">/* Bubble, Selection, Insertion,
+   Quick, Heap Sort */</span>
+<span class="kw">void</span> <span class="fn">bubble_sort</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="cm">/* แก้ค่าใน arr เดิมเลย */</span>
+    <span class="cm">/* ไม่สร้าง array ใหม่ */</span>
+}
+
+<span class="cm">/* Memory เพิ่ม: O(1) — แค่ตัวแปร temp */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Out-of-place — ต้องการ extra space</div>
+        <pre class="code-block"><span class="cm">/* Merge Sort */</span>
+<span class="kw">void</span> <span class="fn">merge</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> l,
+           <span class="kw">int</span> m, <span class="kw">int</span> r) {
+    <span class="cm">/* ต้องสร้าง temp array */</span>
+    <span class="kw">int</span> temp[r - l + <span class="nm">1</span>];
+    <span class="cm">/* copy กลับไป arr */</span>
+}
+
+<span class="cm">/* Memory เพิ่ม: O(n) */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Embedded system หรือ environment ที่ memory จำกัด → ใช้ In-place sort · ถ้า memory ไม่ใช่ปัญหา → Merge Sort stable + O(n log n) guaranteed</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 5 — Swap Function ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Building Block</div>
+    <h2 class="slide-title">Swap Function — หัวใจของ Sorting</h2>
+    <p class="slide-lead">ทุก comparison-based sort ใช้ swap ในการสลับตำแหน่ง — ต้องส่ง pointer เพื่อให้แก้ค่าจริงใน caller</p>
+    <pre class="code-block"><span class="cm">/* ผิด — เปลี่ยนแค่ copy local */</span>
+<span class="kw">void</span> <span class="fn">swap_wrong</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
+    <span class="kw">int</span> temp = a;
+    a = b;
+    b = temp;  <span class="cm">/* a, b ที่นี่เป็น local copy — caller ไม่เห็น */</span>
+}
+
+<span class="cm">/* ถูก — ส่ง pointer เข้ามา */</span>
+<span class="kw">void</span> <span class="fn">swap</span>(<span class="kw">int</span> *a, <span class="kw">int</span> *b) {
+    <span class="kw">int</span> temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+<span class="cm">/* เรียก: ส่ง address ด้วย & */</span>
+<span class="kw">int</span> arr[] = {<span class="nm">5</span>, <span class="nm">3</span>};
+<span class="fn">swap</span>(&arr[<span class="nm">0</span>], &arr[<span class="nm">1</span>]);  <span class="cm">/* → {3, 5} */</span>
+
+<span class="cm">/* XOR swap — ไม่ใช้ temp (เท่ แต่อ่านยาก) */</span>
+<span class="kw">void</span> <span class="fn">swap_xor</span>(<span class="kw">int</span> *a, <span class="kw">int</span> *b) {
+    *a ^= *b;
+    *b ^= *a;
+    *a ^= *b;  <span class="cm">/* a=5,b=3 → a=6,b=5,a=3 */</span>
+}</pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 6 — Comparison vs Non-Comparison ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · ประเภท</div>
+    <h2 class="slide-title">Comparison vs Non-Comparison Sort</h2>
+    <p class="slide-lead">Algorithm ทุกตัวที่ใช้ <code class="inline-code">&lt;</code> หรือ <code class="inline-code">&gt;</code> เปรียบเทียบ มี lower bound O(n log n) — Non-comparison ทำได้ O(n) แต่มีข้อจำกัด</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Comparison-based Sort</div>
+        <pre class="code-block"><span class="cm">/* ใช้ < > เปรียบเทียบ */</span>
+<span class="cm">/* Bubble, Selection, Insertion */</span>
+<span class="cm">/* Merge, Quick, Heap Sort */</span>
+
+<span class="cm">/* ✅ เรียง type อะไรก็ได้ */</span>
+<span class="cm">/* ✅ ไม่ต้องรู้ขอบเขตค่า */</span>
+<span class="cm">/* ⚠️ O(n log n) คือ lower bound */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Non-Comparison Sort</div>
+        <pre class="code-block"><span class="cm">/* Counting Sort, Radix Sort */</span>
+<span class="cm">/* ใช้ index แทนการเปรียบเทียบ */</span>
+
+<span class="cm">/* ✅ เร็วกว่า O(n log n) */</span>
+<span class="cm">/* ⚠️ ใช้ได้กับ integer เท่านั้น */</span>
+<span class="cm">/* ⚠️ ต้องรู้ขอบเขตค่า (k) */</span>
+<span class="cm">/* ⚠️ ถ้า k ใหญ่มาก waste memory */</span></pre>
+      </div>
+    </div>
+    <div class="callout">ในวิชานี้เรียน Comparison sort ch1-ch5 — Non-comparison (Counting, Radix) อยู่ใน ch6</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 7 — 🏦 Banking Use Case ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 ธนาคาร Sort ข้อมูลอะไรบ้าง?</h2>
+    <p class="slide-lead">Sorting เป็น operation พื้นฐานที่ระบบธนาคารทำทุกวัน — เลือก algorithm ให้ถูกตามบริบท</p>
+    <table class="big-table">
+      <thead><tr><th>Use Case</th><th>Algorithm</th><th>เหตุผล</th></tr></thead>
+      <tbody>
+        <tr><td>แสดง statement ล่าสุดก่อน</td><td>ใช้ index (reverse)</td><td>ไม่ต้อง sort — เพิ่มท้าย แสดงกลับหัว</td></tr>
+        <tr><td>เรียง transaction ตาม amount</td><td>Merge Sort</td><td>Stable + O(n log n) — sort ซ้อนกันได้</td></tr>
+        <tr><td>จัดอันดับ credit score ลูกค้า</td><td>Quick Sort</td><td>In-place, เร็ว, ข้อมูลไม่ต้อง stable</td></tr>
+        <tr><td>เรียง account ID (ตัวเลข)</td><td>Radix Sort</td><td>O(n) — ID เป็นตัวเลข 10 หลัก</td></tr>
+        <tr><td>Sort n&lt;50 รายการ (small batch)</td><td>Insertion Sort</td><td>O(n) best case ถ้าข้อมูลเกือบเรียงแล้ว</td></tr>
+      </tbody>
+    </table>
+    <pre class="code-block"><span class="cm">/* sort transactions array ตาม amount */</span>
+<span class="kw">typedef struct</span> { <span class="kw">int</span> id; <span class="kw">double</span> amount; } Txn;
+
+<span class="kw">int</span> <span class="fn">cmp_amount</span>(<span class="kw">const void</span> *a, <span class="kw">const void</span> *b) {
+    Txn *ta = (Txn *)a, *tb = (Txn *)b;
+    <span class="kw">return</span> (ta->amount > tb->amount) - (ta->amount &lt; tb->amount);
+}
+<span class="fn">qsort</span>(txns, n, <span class="kw">sizeof</span>(Txn), cmp_amount); <span class="cm">/* stdlib Quick Sort */</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 8 — Think! ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">มีข้อมูลธุรกรรม 10 ล้านรายการ ต้องการ sort ตาม timestamp แล้วแสดงผล<br><br>มี 3 ตัวเลือก:<br>A) Insertion Sort — O(n²) worst<br>B) Merge Sort — O(n log n) guaranteed, stable<br>C) Quick Sort — O(n log n) average, แต่ O(n²) worst<br><br><em>เลือก algorithm ไหน และทำไม? คิดถึง: ข้อมูลจริงเรียงเกือบแล้วหรือเปล่า? ต้องการ stable ไหม? memory มีจำกัดไหม?</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 9 — Trace MCQ ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Trace</div>
+    <h2 class="slide-title">หลัง swap ค่าเป็นอะไร?</h2>
+    <pre class="code-block"><span class="kw">int</span> x = <span class="nm">10</span>, y = <span class="nm">20</span>;
+<span class="kw">int</span> temp = x;
+x = y;
+y = temp;
+<span class="fn">printf</span>(<span class="st">"%d %d"</span>, x, y);</pre>
+    <div id="mc-s0" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-s0','A','C','❌ 10 20 คือค่าเริ่มต้น — หลัง swap ค่าสลับแล้ว')">A) 10 20</button>
+      <button class="mc-btn" onclick="pickMC('mc-s0','B','C','❌ 10 10 ไม่ถูก — temp เก็บค่าเดิมของ x แล้ว y รับค่านั้น')">B) 10 10</button>
+      <button class="mc-btn" onclick="pickMC('mc-s0','C','C','✅ temp=10, x=20, y=10 → print "20 10"')">C) 20 10</button>
+      <button class="mc-btn" onclick="pickMC('mc-s0','D','C','❌ 20 20 ไม่ถูก — y=temp=10 ไม่ใช่ 20')">D) 20 20</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 10 — Fill-in ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Fill-in</div>
+    <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① swap function ต้องรับ parameter เป็น ___ ไม่ใช่ค่าธรรมดา</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f0a" placeholder="ประเภท parameter">
+      <button class="fill-btn" onclick="checkFill('f0a','pointer',['int*','int *','pointers'],[],'✅ pointer — ส่ง address เพื่อแก้ค่าจริงใน caller','❌ ต้องส่ง pointer (int*) เพื่อให้แก้ค่าได้')">ตรวจ</button>
+    </div>
+    <div id="f0a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② Sorting algorithm ที่ Stable และ O(n log n) guaranteed ทุก case คือ?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f0b" placeholder="ชื่อ algorithm">
+      <button class="fill-btn" onclick="checkFill('f0b','merge sort',['mergesort','merge'],[],'✅ Merge Sort — Stable + O(n log n) best/avg/worst','❌ Quick Sort ไม่ stable และ worst O(n²) / Merge Sort คือคำตอบ')">ตรวจ</button>
+    </div>
+    <div id="f0b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ Sorting ที่ใช้ index แทนการเปรียบเทียบ ทำให้เร็วกว่า O(n log n) ได้ เรียกว่า?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="f0c" placeholder="ประเภท sort">
+      <button class="fill-btn" onclick="checkFill('f0c','non-comparison sort',['non comparison sort','counting sort','radix sort','noncomparison'],[],'✅ Non-Comparison Sort — เช่น Counting Sort, Radix Sort','❌ เรียกว่า Non-Comparison Sort (Counting/Radix)')">ตรวจ</button>
+    </div>
+    <div id="f0c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 11 — Summary ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🎯</div>
+      <div class="summary-title">สรุปบทที่ 0</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">ทำไมต้อง Sort</div><div class="sum-body">Binary Search O(log n) ทำได้ก็ต่อเมื่อข้อมูลเรียงแล้ว</div></div>
+        <div class="sum-card"><div class="sum-head">O(n²) algorithms</div><div class="sum-body">Bubble · Selection · Insertion — ง่าย แต่ช้าสำหรับข้อมูลใหญ่</div></div>
+        <div class="sum-card"><div class="sum-head">O(n log n) algorithms</div><div class="sum-body">Merge · Quick · Heap — เร็ว ใช้ใน production จริง</div></div>
+        <div class="sum-card"><div class="sum-head">Stability</div><div class="sum-body">รักษาลำดับ relative ของค่าเท่ากัน — Bubble/Insertion/Merge = Stable</div></div>
+        <div class="sum-card"><div class="sum-head">In-place</div><div class="sum-body">ไม่ใช้ extra array — Bubble/Selection/Insertion/Quick/Heap</div></div>
+        <div class="sum-card"><div class="sum-head">Swap function</div><div class="sum-body">ต้องส่ง int* เสมอ — ไม่งั้น swap แค่ copy local</div></div>
+      </div>
+      <a href="slides_ch1.html" class="summary-next">→ บทที่ 1: Bubble Sort</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 0 — Sorting คืออะไร?</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ทำไมต้อง Sort','Big O Table','Stability','In-place vs Out','Comparison vs Non-Comparison','Swap Function','Banking Use Case','Think!','Trace MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

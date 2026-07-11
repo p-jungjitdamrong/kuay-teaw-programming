@@ -14,6 +14,7 @@
   --c-ds:#2c4ea0;--c-dsl:#e8edf9;--c-dsm:#5b7fd4;
   --c-oop:#9b1d6a;--c-oopl:#fce7f3;--c-oopm:#d45fa0;
   --c-py:#b84c00;--c-pyl:#fff0e6;--c-pym:#e8763a;
+  --c-sort:#005f73;--c-sortl:#e0f4f6;--c-sortm:#0a9396;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -45,6 +46,8 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
 .card.ds .badge{background:var(--c-dsl);color:var(--c-ds)}
 .card.oop .badge{background:var(--c-oopl);color:var(--c-oop)}
 .card.py .badge{background:var(--c-pyl);color:var(--c-py)}
+.card.sort::after{background:linear-gradient(90deg,var(--c-sort),var(--c-sortm))}
+.card.sort .badge{background:var(--c-sortl);color:var(--c-sort)}
 .card-title{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1.3}
 .card-desc{font-size:12.5px;color:var(--dim);line-height:1.65;margin-bottom:12px;flex:1}
 .chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
@@ -88,6 +91,14 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
       <div class="card-title">OOP</div>
       <div class="card-desc">Class, Object, Inheritance, Polymorphism, Encapsulation — แนวคิดเขียนโปรแกรมเชิงวัตถุ</div>
       <div class="chips"><span class="chip">Coming soon</span></div>
+    </a>
+
+    <a class="card sort" href="subject_sorting/index.html">
+      <div class="card-top"><span class="em">🔢</span><span class="arr">→</span></div>
+      <span class="badge">พร้อมเรียน</span>
+      <div class="card-title">Sorting Algorithms</div>
+      <div class="card-desc">Bubble, Selection, Insertion, Merge, Quick, Heap, Counting, Radix — ครบทุกแบบ พร้อมหลักการคิดและแบบฝึกหัดใน C</div>
+      <div class="chips"><span class="chip">7 บท</span><span class="chip">โค้ด C ทุก Algorithm</span></div>
     </a>
 
     <a class="card py" href="subject_py/index.html">

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 2 — Selection Sort | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>:root{--ca:#005f73;--cal:#e0f4f6;--cam:#0a9396;}
+.tc{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:6px 0;}
+.c{background:var(--cal);border:1px solid var(--cam);border-radius:4px;text-align:center;padding:6px 2px;font-family:var(--mono);font-size:13px;font-weight:700;color:var(--ca);}
+.c.hi{background:#f0ad4e;border-color:#d68910;color:#fff;}
+.c.mn{background:#e74c3c;border-color:#c0392b;color:#fff;}
+.c.ok{background:#d4edda;border-color:#27ae60;color:#155724;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Sorting Algorithms</div>
+        <div class="cover-title">บทที่ 2<br><em>Selection Sort</em></div>
+        <div class="cover-subtitle">เลือกตัวเล็กสุดจาก unsorted วางที่ตำแหน่งถูกต้อง — swap น้อยที่สุดใน O(n²) sort</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>หลักการ: หา min แล้ว swap</div>
+          <div class="topic-row"><div class="topic-dot"></div>โค้ด C พร้อม trace</div>
+          <div class="topic-row"><div class="topic-dot"></div>ทำไม swap น้อย = ดีกว่า Bubble</div>
+          <div class="topic-row"><div class="topic-dot"></div>ทำไม Unstable?</div>
+          <div class="topic-row"><div class="topic-dot"></div>Think! + แบบฝึกหัด</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">02</div>
+        <div class="cover-badge">SELECTION SORT · O(n²)</div>
+        <div class="cover-slides-count">12 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 หลักการ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · หลักการ</div>
+    <h2 class="slide-title">Selection Sort คิดยังไง?</h2>
+    <p class="slide-lead">แบ่ง array เป็น 2 ส่วน: <strong>sorted</strong> (ซ้าย) และ <strong>unsorted</strong> (ขวา) — ทุก pass หา min ใน unsorted แล้ว swap ไปต่อท้าย sorted</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แต่ละ pass ทำอะไร</div>
+        <pre class="code-block"><span class="cm">/* arr = {29,10,14,37,13} */</span>
+
+Pass 0: unsorted=[0..4]
+  min อยู่ที่ index 4 (13)
+  swap arr[0]↔arr[4]
+  → {13,10,14,37,29}
+
+Pass 1: unsorted=[1..4]
+  min อยู่ที่ index 1 (10)
+  swap arr[1]↔arr[1] (ตัวเอง)
+  → {13,10,14,37,29}
+
+Pass 2: unsorted=[2..4]
+  min อยู่ที่ index 4 (29)
+  swap arr[2]↔arr[4] ...</pre>
+      </div>
+      <div>
+        <div class="code-label">ข้อสังเกต</div>
+        <pre class="code-block"><span class="cm">/* ทุก pass: swap แค่ 1 ครั้ง! */</span>
+<span class="cm">/* n-1 passes → n-1 swaps max */</span>
+
+<span class="cm">/* เทียบกับ Bubble: */</span>
+Bubble:    O(n²) swaps worst
+Selection: O(n)  swaps เสมอ
+
+<span class="cm">/* ถ้า swap cost สูง (เขียน disk,
+   เขียน flash memory) → Selection
+   ดีกว่า Bubble มาก */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Selection Sort = หยิบตัวเล็กสุดมาวางซ้ายสุดของ unsorted — ทำจนหมด n-1 รอบ</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 โค้ด -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · โค้ด</div>
+    <h2 class="slide-title">Selection Sort — โค้ด C</h2>
+    <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">void</span> <span class="fn">swap</span>(<span class="kw">int</span> *a, <span class="kw">int</span> *b) {
+    <span class="kw">int</span> temp = *a; *a = *b; *b = temp;
+}
+
+<span class="kw">void</span> <span class="fn">selection_sort</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i, j, min_idx;
+
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n - <span class="nm">1</span>; i++) {     <span class="cm">/* ตำแหน่งที่จะวาง min */</span>
+        min_idx = i;                      <span class="cm">/* สมมติว่า i คือ min */</span>
+
+        <span class="kw">for</span> (j = i + <span class="nm">1</span>; j &lt; n; j++) {   <span class="cm">/* หา min จริงๆ */</span>
+            <span class="kw">if</span> (arr[j] &lt; arr[min_idx]) {
+                min_idx = j;              <span class="cm">/* อัปเดต index ของ min */</span>
+            }
+        }
+
+        <span class="kw">if</span> (min_idx != i) {               <span class="cm">/* swap ก็ต่อเมื่อ min ไม่ใช่ตำแหน่ง i */</span>
+            <span class="fn">swap</span>(&arr[min_idx], &arr[i]);
+        }
+    }
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> arr[] = {<span class="nm">64</span>, <span class="nm">25</span>, <span class="nm">12</span>, <span class="nm">22</span>, <span class="nm">11</span>};
+    <span class="kw">int</span> n = <span class="kw">sizeof</span>(arr) / <span class="kw">sizeof</span>(arr[<span class="nm">0</span>]);
+    <span class="fn">selection_sort</span>(arr, n);
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++) <span class="fn">printf</span>(<span class="st">"%d "</span>, arr[i]);
+    <span class="cm">/* 11 12 22 25 64 */</span>
+}</pre>
+  </div>
+</div>
+
+<!-- SLIDE 3 Trace -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Trace</div>
+    <h2 class="slide-title">Trace: {64, 25, 12, 22, 11}</h2>
+    <p class="slide-lead"><span style="color:#e74c3c">■ แดง</span> = min ที่พบ &nbsp; <span style="color:#f0ad4e">■ ส้ม</span> = ตำแหน่ง i &nbsp; <span style="color:#27ae60">■ เขียว</span> = sorted แล้ว</p>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:4px">Pass 0 (i=0): min=11 at idx4 → swap idx0↔idx4</div>
+    <div class="tc"><div class="c ok">11</div><div class="c">25</div><div class="c">12</div><div class="c">22</div><div class="c">64</div></div>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:4px">Pass 1 (i=1): min=12 at idx2 → swap idx1↔idx2</div>
+    <div class="tc"><div class="c ok">11</div><div class="c ok">12</div><div class="c">25</div><div class="c">22</div><div class="c">64</div></div>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:4px">Pass 2 (i=2): min=22 at idx3 → swap idx2↔idx3</div>
+    <div class="tc"><div class="c ok">11</div><div class="c ok">12</div><div class="c ok">22</div><div class="c">25</div><div class="c">64</div></div>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:4px">Pass 3 (i=3): min=25 at idx3 (ตัวเอง) → ไม่ swap</div>
+    <div class="tc"><div class="c ok">11</div><div class="c ok">12</div><div class="c ok">22</div><div class="c ok">25</div><div class="c ok">64</div></div>
+    <div class="callout">เรียงครบแล้วหลัง 4 passes, swap แค่ 3 ครั้ง (pass 3 ไม่ swap เพราะ min_idx == i)</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 Unstable -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · ทำไม Unstable</div>
+    <h2 class="slide-title">ทำไม Selection Sort ถึง Unstable?</h2>
+    <p class="slide-lead">เพราะ swap ข้ามระยะไกล อาจสลับตำแหน่ง relative ของค่าเท่ากัน</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่าง Unstable</div>
+        <pre class="code-block"><span class="cm">/* arr = {3a, 3b, 1} */</span>
+<span class="cm">/* 3a, 3b = ค่า 3 ทั้งคู่
+   แต่ 3a มาก่อน 3b ตั้งต้น */</span>
+
+Pass 0 (i=0):
+  min = 1 at idx 2
+  swap arr[0]↔arr[2]
+  → {1, 3b, 3a}
+      ↑  ⚠️ 3a, 3b สลับแล้ว!
+
+<span class="cm">/* Stable sort จะได้ {1, 3a, 3b} */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Stable version (ใช้ shift แทน swap)</div>
+        <pre class="code-block"><span class="cm">/* ทำให้ Stable ได้ แต่ cost สูงขึ้น */</span>
+<span class="kw">void</span> <span class="fn">stable_selection</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+  <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n-<span class="nm">1</span>; i++) {
+    <span class="kw">int</span> min_idx = i;
+    <span class="kw">for</span> (<span class="kw">int</span> j=i+<span class="nm">1</span>; j&lt;n; j++)
+      <span class="kw">if</span>(arr[j]&lt;arr[min_idx]) min_idx=j;
+    <span class="kw">int</span> key = arr[min_idx];
+    <span class="cm">/* shift แทน swap */</span>
+    <span class="kw">while</span>(min_idx > i) {
+      arr[min_idx] = arr[min_idx-<span class="nm">1</span>];
+      min_idx--;
+    }
+    arr[i] = key;
+  }
+} <span class="cm">/* O(n²) shifts — ช้ากว่าเดิม */</span></pre>
+      </div>
+    </div>
+    <div class="callout">ในทางปฏิบัติ: ถ้าต้องการ Stable sort ใช้ Insertion Sort หรือ Merge Sort แทน</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 Complexity -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Complexity</div>
+    <h2 class="slide-title">Complexity วิเคราะห์</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Comparisons</div>
+        <pre class="code-block">Pass 0: n-1 comparisons
+Pass 1: n-2 comparisons
+...
+Pass n-2: 1 comparison
+
+Total: (n-1)+(n-2)+...+1
+     = n(n-1)/2 = O(n²)
+
+<span class="cm">/* ทุก case = O(n²) */</span>
+<span class="cm">/* ไม่มี early termination */</span>
+<span class="cm">/* แม้ข้อมูลเรียงแล้วก็ยังวน */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Summary</div>
+        <pre class="code-block">Best Case:   O(n²)  ← เหมือน worst!
+Average:     O(n²)
+Worst Case:  O(n²)
+
+Swaps:       O(n)   ← จุดเด่น!
+Space:       O(1)   in-place
+Stable:      ❌ No
+In-place:    ✅ Yes
+
+<span class="cm">/* เลือกใช้เมื่อ: */</span>
+<span class="cm">/* swap cost สูงมาก */</span>
+<span class="cm">/* (flash mem, SSD write) */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Selection Sort ดีกว่า Bubble เพราะ swap น้อยกว่ามาก แต่แย่กว่าตรงที่ทุก case = O(n²) ไม่มี best case ดีกว่า</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Find Max variant -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Variant</div>
+    <h2 class="slide-title">หา Max แทน Min — เรียง Descending</h2>
+    <p class="slide-lead">เปลี่ยนเล็กน้อย: หา max แทน min วางทางขวา → ได้ descending order</p>
+    <pre class="code-block"><span class="cm">/* Descending sort */</span>
+<span class="kw">void</span> <span class="fn">selection_sort_desc</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i, j, max_idx;
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n - <span class="nm">1</span>; i++) {
+        max_idx = i;                        <span class="cm">/* หา max แทน min */</span>
+        <span class="kw">for</span> (j = i + <span class="nm">1</span>; j &lt; n; j++) {
+            <span class="kw">if</span> (arr[j] > arr[max_idx])      <span class="cm">/* เปลี่ยน &lt; เป็น &gt; */</span>
+                max_idx = j;
+        }
+        <span class="kw">if</span> (max_idx != i)
+            <span class="fn">swap</span>(&arr[max_idx], &arr[i]);
+    }
+}
+
+<span class="cm">/* {64,25,12,22,11} → {64,25,22,12,11} */</span>
+
+<span class="cm">/* Banking: เรียง transaction จาก amount มากไปน้อย
+   เพื่อแสดง top transactions ก่อน */</span>
+<span class="kw">void</span> <span class="fn">sort_txn_desc</span>(Transaction arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i, j, max_idx;
+    Transaction temp;
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n-<span class="nm">1</span>; i++) {
+        max_idx = i;
+        <span class="kw">for</span> (j = i+<span class="nm">1</span>; j &lt; n; j++)
+            <span class="kw">if</span> (arr[j].amount > arr[max_idx].amount) max_idx = j;
+        <span class="kw">if</span> (max_idx != i) { temp=arr[i]; arr[i]=arr[max_idx]; arr[max_idx]=temp; }
+    }
+}</pre>
+  </div>
+</div>
+
+<!-- SLIDE 7 Banking -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 เลือก Algorithm ตาม Constraint</h2>
+    <p class="slide-lead">ธนาคารต้อง sort ข้อมูล ATM logs ที่เก็บใน flash memory — <strong>swap cost สูง</strong> เพราะ write ทุกครั้ง = wear</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Scenario: ATM Flash Memory</div>
+        <pre class="code-block">n = 200 records
+Write cost: 1ms per swap
+Read cost:  0.01ms per compare
+
+Bubble Sort:
+  Swaps worst: ~20,000
+  Write time: 20 seconds ⚠️
+
+Selection Sort:
+  Swaps: 199 max
+  Write time: 0.2 seconds ✅</pre>
+      </div>
+      <div>
+        <div class="code-label">Code สำหรับ ATM logs</div>
+        <pre class="code-block"><span class="kw">typedef struct</span> {
+    <span class="kw">int</span>  atm_id;
+    <span class="kw">long</span> timestamp;
+    <span class="kw">double</span> amount;
+} ATMLog;
+
+<span class="cm">/* sort by timestamp, minimize writes */</span>
+<span class="kw">void</span> <span class="fn">sort_atm_logs</span>(ATMLog logs[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i, j, min_idx;
+    <span class="kw">for</span> (i=<span class="nm">0</span>; i&lt;n-<span class="nm">1</span>; i++) {
+        min_idx = i;
+        <span class="kw">for</span> (j=i+<span class="nm">1</span>; j&lt;n; j++)
+          <span class="kw">if</span>(logs[j].timestamp &lt; logs[min_idx].timestamp)
+            min_idx = j;
+        <span class="kw">if</span>(min_idx!=i){
+          ATMLog t=logs[i]; logs[i]=logs[min_idx];
+          logs[min_idx]=t;
+        }
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">array {5, 5, 5, 5, 5} (ค่าเท่ากันหมด)<br><br>Selection Sort ทำกี่ pass? กี่ swap?<br><br>และถ้า {1, 2, 3, 4, 5} (เรียงแล้ว) ทำกี่ swap?<br><br><em>힌트: เงื่อนไข if (min_idx != i) ทำงานยังไง?</em><br><br>เปรียบกับ Bubble Sort (optimized) — ใครออกเร็วกว่า?</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Trace MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Trace</div>
+    <h2 class="slide-title">หลัง Pass 1 ของ {29, 10, 14, 37, 13}?</h2>
+    <p class="slide-lead">i=0: หา min ใน [0..4] → swap arr[0] กับ min</p>
+    <div id="mc-s2" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-s2','A','C','❌ 10 มาก่อนได้ แต่ตำแหน่งอื่นผิด — ลอง trace ใหม่')">A) {10,29,14,37,13}</button>
+      <button class="mc-btn" onclick="pickMC('mc-s2','B','C','❌ ไม่ถูก — min คือ 10 ไม่ใช่ 13')">B) {13,10,14,37,29}</button>
+      <button class="mc-btn" onclick="pickMC('mc-s2','C','C','✅ min=10 at idx1, swap arr[0]↔arr[1] → {10,29,14,37,13}')">C) {10,29,14,37,13}</button>
+      <button class="mc-btn" onclick="pickMC('mc-s2','D','C','❌ ยัง sort แค่ pass แรก ไม่ได้เรียงทั้งหมด')">D) {10,13,14,29,37}</button>
+    </div>
+    <div style="margin-top:14px">
+      <pre class="code-block">i=0: min_idx=0 (29)
+  j=1: arr[1]=10 &lt; arr[0]=29 → min_idx=1
+  j=2: arr[2]=14 &lt; arr[1]=10? ไม่
+  j=3: arr[3]=37 &lt; arr[1]=10? ไม่
+  j=4: arr[4]=13 &lt; arr[1]=10? ไม่
+min_idx=1 ≠ i=0 → swap arr[0]↔arr[1]
+→ {10, 29, 14, 37, 13}</pre>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Fill-in</div>
+    <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① ใน Selection Sort inner loop เริ่มจาก j = ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fs2a" placeholder="ค่าเริ่มต้นของ j">
+      <button class="fill-btn" onclick="checkFill('fs2a','i+1',['i + 1','i+1'],[],'✅ j = i+1 เพราะต้องหา min ใน unsorted part ที่เริ่มหลัง i','❌ ต้อง i+1 เพราะตำแหน่ง i เราสมมติว่าเป็น min แล้ว')">ตรวจ</button>
+    </div>
+    <div id="fs2a-msg" class="fill-msg"></div>
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② Selection Sort swap น้อยกว่า Bubble Sort เพราะ swap แค่ ___ ครั้งต่อ pass</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fs2b" placeholder="จำนวน">
+      <button class="fill-btn" onclick="checkFill('fs2b','1',['one','หนึ่ง'],[],'✅ swap แค่ 1 ครั้งต่อ pass — swap min ไปที่ตำแหน่ง i','❌ Selection Sort swap ครั้งเดียวต่อ pass (ไม่เหมือน Bubble ที่ swap ทุกคู่)')">ตรวจ</button>
+    </div>
+    <div id="fs2b-msg" class="fill-msg"></div>
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ Selection Sort เป็น Stable sort ไหม? (ใช่/ไม่ใช่)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fs2c" placeholder="ใช่หรือไม่ใช่">
+      <button class="fill-btn" onclick="checkFill('fs2c','ไม่ใช่',['no','ไม่','not stable','unstable'],[],'✅ ไม่ใช่ — swap ข้ามระยะไกลทำให้ค่าเท่ากันสลับลำดับกันได้','❌ Selection Sort Unstable เพราะ swap อาจสลับ relative order ของค่าเท่ากัน')">ตรวจ</button>
+    </div>
+    <div id="fs2c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 11 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🎯</div>
+      <div class="summary-title">สรุปบทที่ 2 — Selection Sort</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">หลักการ</div><div class="sum-body">หา min ใน unsorted → swap ไปที่ตำแหน่ง i — ทำ n-1 passes</div></div>
+        <div class="sum-card"><div class="sum-head">Complexity</div><div class="sum-body">ทุก case O(n²) — ไม่มี early termination · Swaps: O(n)</div></div>
+        <div class="sum-card"><div class="sum-head">จุดเด่น</div><div class="sum-body">Swap น้อยที่สุดใน O(n²) sort — ดีเมื่อ write cost สูง</div></div>
+        <div class="sum-card"><div class="sum-head">Unstable</div><div class="sum-body">Swap ข้ามระยะไกล → สลับ relative order ของค่าเท่ากัน</div></div>
+        <div class="sum-card"><div class="sum-head">In-place</div><div class="sum-body">Space O(1) ใช้แค่ตัวแปรเพิ่มเล็กน้อย</div></div>
+        <div class="sum-card"><div class="sum-head">เมื่อไหร่ใช้</div><div class="sum-body">Flash/SSD ที่ write cost สูง, n เล็ก, ไม่ต้องการ stable</div></div>
+      </div>
+      <a href="slides_ch3.html" class="summary-next">→ บทที่ 3: Insertion Sort</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 2 — Selection Sort</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+<script>
+const TITLES=['Cover','หลักการ','โค้ด C','Trace','ทำไม Unstable','Complexity','หา Max Variant','Banking Use Case','Think!','Trace MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

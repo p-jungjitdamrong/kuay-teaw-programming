@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 5 — Quick Sort | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>:root{--ca:#005f73;--cal:#e0f4f6;--cam:#0a9396;}
+.tc{display:grid;gap:4px;margin:6px 0;}
+.c{background:var(--cal);border:1px solid var(--cam);border-radius:4px;text-align:center;padding:6px 2px;font-family:var(--mono);font-size:13px;font-weight:700;color:var(--ca);}
+.c.piv{background:#9b59b6;border-color:#8e44ad;color:#fff;}
+.c.lo{background:#2ecc71;border-color:#27ae60;color:#fff;}
+.c.hi{background:#e74c3c;border-color:#c0392b;color:#fff;}
+.c.ok{background:#d4edda;border-color:#27ae60;color:#155724;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Sorting Algorithms</div>
+        <div class="cover-title">บทที่ 5<br><em>Quick Sort</em></div>
+        <div class="cover-subtitle">เลือก Pivot แล้ว Partition — ตัวเล็กไปซ้าย ตัวใหญ่ไปขวา แล้ว recurse</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Partition function — หัวใจของ Quick Sort</div>
+          <div class="topic-row"><div class="topic-dot"></div>O(n log n) average, O(n²) worst</div>
+          <div class="topic-row"><div class="topic-dot"></div>การเลือก Pivot — Random, Median-of-3</div>
+          <div class="topic-row"><div class="topic-dot"></div>In-place, cache friendly — เร็วที่สุดในทางปฏิบัติ</div>
+          <div class="topic-row"><div class="topic-dot"></div>Think! + แบบฝึกหัด</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">05</div>
+        <div class="cover-badge">QUICK SORT · O(n log n) avg</div>
+        <div class="cover-slides-count">12 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 หลักการ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · หลักการ</div>
+    <h2 class="slide-title">Quick Sort — Pivot และ Partition</h2>
+    <p class="slide-lead">เลือก <strong>pivot</strong> → จัด element: ตัวที่ &lt; pivot ไปซ้าย, ตัวที่ &gt; pivot ไปขวา → pivot อยู่ตำแหน่งถูกต้อง → recurse ซ้ายขวา</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แนวคิด partition</div>
+        <pre class="code-block"><span class="cm">/* arr = {3,6,8,10,1,2,1}
+   pivot = arr[r] = 1 (ตัวสุดท้าย) */</span>
+
+หลัง partition:
+{1, 1, | 8, 10, 6, 2, 3}
+         ↑
+      pivot อยู่ตำแหน่งนี้แล้ว
+
+ซ้ายของ pivot: ทุกตัว ≤ 1
+ขวาของ pivot: ทุกตัว > 1
+
+→ recurse ซ้าย {1}
+→ recurse ขวา {8,10,6,2,3}</pre>
+      </div>
+      <div>
+        <div class="code-label">ทำไมเร็ว</div>
+        <pre class="code-block"><span class="cm">/* In-place: ไม่ต้องสร้าง array ใหม่ */</span>
+<span class="cm">/* Cache friendly: เข้าถึงหน่วยความจำ
+   ตามลำดับ → cache hit rate สูง */</span>
+
+<span class="cm">/* constant factor ต่ำกว่า Merge Sort
+   ในทางปฏิบัติเร็วกว่า 2-3 เท่า */</span>
+
+<span class="cm">/* แม้ worst O(n²) แต่ถ้าใช้ random
+   pivot โอกาสเกิด worst น้อยมาก */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Quick Sort ไม่ stable เพราะ partition swap ข้ามระยะไกล — ถ้าต้องการ stable ใช้ Merge Sort</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 Partition Function -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Partition</div>
+    <h2 class="slide-title">Partition Function (Lomuto Scheme)</h2>
+    <pre class="code-block"><span class="kw">int</span> <span class="fn">partition</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> lo, <span class="kw">int</span> hi) {
+    <span class="kw">int</span> pivot = arr[hi];  <span class="cm">/* เลือกตัวสุดท้ายเป็น pivot */</span>
+    <span class="kw">int</span> i = lo - <span class="nm">1</span>;       <span class="cm">/* i = ขอบของ "zone น้อยกว่า pivot" */</span>
+
+    <span class="kw">for</span> (<span class="kw">int</span> j = lo; j &lt; hi; j++) {
+        <span class="kw">if</span> (arr[j] &lt;= pivot) {    <span class="cm">/* ถ้า j น้อยกว่าหรือเท่า pivot */</span>
+            i++;                      <span class="cm">/* ขยาย zone น้อยกว่า */</span>
+            <span class="fn">swap</span>(&arr[i], &arr[j]); <span class="cm">/* ดึงเข้า zone */</span>
+        }
+    }
+    <span class="fn">swap</span>(&arr[i + <span class="nm">1</span>], &arr[hi]);  <span class="cm">/* วาง pivot ที่ตำแหน่งถูกต้อง */</span>
+    <span class="kw">return</span> i + <span class="nm">1</span>;                 <span class="cm">/* return ตำแหน่ง pivot */</span>
+}
+
+<span class="kw">void</span> <span class="fn">quick_sort</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> lo, <span class="kw">int</span> hi) {
+    <span class="kw">if</span> (lo &lt; hi) {
+        <span class="kw">int</span> pi = <span class="fn">partition</span>(arr, lo, hi);
+        <span class="fn">quick_sort</span>(arr, lo, pi - <span class="nm">1</span>);   <span class="cm">/* ซ้ายของ pivot */</span>
+        <span class="fn">quick_sort</span>(arr, pi + <span class="nm">1</span>, hi);  <span class="cm">/* ขวาของ pivot */</span>
+    }
+}</pre>
+  </div>
+</div>
+
+<!-- SLIDE 3 Trace Partition -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Trace</div>
+    <h2 class="slide-title">Trace Partition: {10, 80, 30, 90, 40, 50, 70}</h2>
+    <p class="slide-lead"><span style="color:#9b59b6">■ ม่วง</span> = pivot (70) &nbsp; <span style="color:#2ecc71">■ เขียว</span> = อยู่ใน zone ≤pivot &nbsp; i เริ่มที่ -1</p>
+    <pre class="code-block">pivot = arr[6] = 70, i = -1
+
+j=0: arr[0]=10 ≤ 70 → i=0, swap(arr[0],arr[0]) → {10,80,30,90,40,50,70}
+j=1: arr[1]=80 > 70  → ไม่ swap
+j=2: arr[2]=30 ≤ 70 → i=1, swap(arr[1],arr[2]) → {10,30,80,90,40,50,70}
+j=3: arr[3]=90 > 70  → ไม่ swap
+j=4: arr[4]=40 ≤ 70 → i=2, swap(arr[2],arr[4]) → {10,30,40,90,80,50,70}
+j=5: arr[5]=50 ≤ 70 → i=3, swap(arr[3],arr[5]) → {10,30,40,50,80,90,70}
+
+สุดท้าย: swap(arr[i+1],arr[hi]) = swap(arr[4],arr[6])
+→ {10,30,40,50,70,90,80}
+                 ↑ pivot อยู่ตำแหน่ง 4 ถูกแล้ว!
+return 4</pre>
+    <div class="callout">ซ้าย [10,30,40,50] ทั้งหมด ≤ 70 · ขวา [90,80] ทั้งหมด &gt; 70 — partition สำเร็จ</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 Pivot Selection -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Pivot</div>
+    <h2 class="slide-title">การเลือก Pivot — สำคัญมาก!</h2>
+    <p class="slide-lead">Pivot เลือกไม่ดี → worst case O(n²) — Pivot เลือกดี → O(n log n)</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">วิธีเลือก Pivot</div>
+        <pre class="code-block"><span class="cm">/* 1. ตัวสุดท้าย (Lomuto) — ง่าย */</span>
+pivot = arr[hi];
+
+<span class="cm">/* 2. Random Pivot — ดีที่สุดทั่วไป */</span>
+<span class="kw">int</span> rand_idx = lo + <span class="fn">rand</span>() % (hi-lo+<span class="nm">1</span>);
+<span class="fn">swap</span>(&arr[rand_idx], &arr[hi]);
+pivot = arr[hi];
+
+<span class="cm">/* 3. Median-of-3 — ดีกว่า random */</span>
+<span class="kw">int</span> mid = lo + (hi-lo)/<span class="nm">2</span>;
+<span class="cm">/* sort arr[lo], arr[mid], arr[hi] */</span>
+<span class="cm">/* เลือก median เป็น pivot */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ทำไม Worst O(n²)?</div>
+        <pre class="code-block"><span class="cm">/* sorted array + last as pivot */</span>
+{1,2,3,4,5} pivot=5
+
+partition: {1,2,3,4} | 5 | {}
+  ซ้ายมี n-1 ตัว ขวาว่าง!
+
+recursion depth = n
+→ O(n²) total
+
+<span class="cm">/* แก้: random pivot */</span>
+<span class="cm">/* โอกาสเกิด worst case ≈ 1/n! */</span></pre>
+      </div>
+    </div>
+    <div class="callout">stdlib qsort() ใน C ส่วนใหญ่ใช้ introsort = Quick Sort + Heap Sort fallback เพื่อป้องกัน worst case</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 Hoare Partition -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Hoare</div>
+    <h2 class="slide-title">Hoare Partition Scheme — swap น้อยกว่า</h2>
+    <p class="slide-lead">Hoare ใช้ 2 pointer จากสองข้าง — swap น้อยกว่า Lomuto ประมาณ 3 เท่า แต่โค้ดซับซ้อนกว่า</p>
+    <pre class="code-block"><span class="kw">int</span> <span class="fn">partition_hoare</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> lo, <span class="kw">int</span> hi) {
+    <span class="kw">int</span> pivot = arr[lo + (hi-lo)/<span class="nm">2</span>];  <span class="cm">/* pivot ตรงกลาง */</span>
+    <span class="kw">int</span> i = lo - <span class="nm">1</span>, j = hi + <span class="nm">1</span>;
+
+    <span class="kw">while</span> (<span class="nm">1</span>) {
+        <span class="kw">do</span> { i++; } <span class="kw">while</span> (arr[i] &lt; pivot);   <span class="cm">/* หา i ที่ arr[i] >= pivot */</span>
+        <span class="kw">do</span> { j--; } <span class="kw">while</span> (arr[j] > pivot);   <span class="cm">/* หา j ที่ arr[j] <= pivot */</span>
+
+        <span class="kw">if</span> (i >= j) <span class="kw">return</span> j;               <span class="cm">/* pointer ชนกัน → เสร็จ */</span>
+        <span class="fn">swap</span>(&arr[i], &arr[j]);
+    }
+}
+
+<span class="kw">void</span> <span class="fn">quick_sort_hoare</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> lo, <span class="kw">int</span> hi) {
+    <span class="kw">if</span> (lo &lt; hi) {
+        <span class="kw">int</span> p = <span class="fn">partition_hoare</span>(arr, lo, hi);
+        <span class="fn">quick_sort_hoare</span>(arr, lo, p);       <span class="cm">/* ไม่ใช่ p-1 ! */</span>
+        <span class="fn">quick_sort_hoare</span>(arr, p + <span class="nm">1</span>, hi);
+    }
+}</pre>
+  </div>
+</div>
+
+<!-- SLIDE 6 Complexity -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Complexity</div>
+    <h2 class="slide-title">Complexity Analysis</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Best / Average: O(n log n)</div>
+        <pre class="code-block"><span class="cm">/* pivot แบ่งครึ่งพอดีทุกครั้ง */</span>
+Level 0: partition n elements
+Level 1: partition n/2 each × 2
+Level 2: partition n/4 each × 4
+...
+log n levels × O(n) per level
+= O(n log n)
+
+<span class="cm">/* Random pivot → average O(n log n)
+   ด้วย high probability */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Worst: O(n²)</div>
+        <pre class="code-block"><span class="cm">/* pivot ไม่สมดุล: 1 ตัว vs n-1 */</span>
+Level 0: n comparisons
+Level 1: n-1 comparisons
+...
+Level n-1: 1 comparison
+Total: n(n-1)/2 = O(n²)
+
+Summary:
+Best:   O(n log n)
+Avg:    O(n log n)
+Worst:  O(n²) ← ถ้า pivot แย่
+Space:  O(log n) call stack
+Stable: ❌ No
+In-place: ✅ Yes</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 3-way Partition (Dutch National Flag) -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · 3-way</div>
+    <h2 class="slide-title">3-way Partition — จัดการค่าซ้ำ</h2>
+    <p class="slide-lead">ถ้ามีค่าซ้ำเยอะ Quick Sort ปกติยังช้า — 3-way partition แยก: &lt;pivot | ==pivot | &gt;pivot ทำให้ดีขึ้นมาก</p>
+    <pre class="code-block"><span class="kw">void</span> <span class="fn">quick_sort_3way</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> lo, <span class="kw">int</span> hi) {
+    <span class="kw">if</span> (lo >= hi) <span class="kw">return</span>;
+    <span class="kw">int</span> lt = lo, gt = hi, i = lo + <span class="nm">1</span>;
+    <span class="kw">int</span> pivot = arr[lo];
+
+    <span class="kw">while</span> (i &lt;= gt) {
+        <span class="kw">if</span> (arr[i] &lt; pivot) {
+            <span class="fn">swap</span>(&arr[lt++], &arr[i++]);  <span class="cm">/* น้อยกว่า → ซ้าย */</span>
+        } <span class="kw">else if</span> (arr[i] > pivot) {
+            <span class="fn">swap</span>(&arr[i], &arr[gt--]);    <span class="cm">/* มากกว่า → ขวา */</span>
+        } <span class="kw">else</span> {
+            i++;                           <span class="cm">/* เท่ากัน → ข้ามไป */</span>
+        }
+    }
+    <span class="cm">/* arr[lo..lt-1] < pivot
+       arr[lt..gt]   == pivot  (ไม่ต้อง recurse!)
+       arr[gt+1..hi] > pivot */</span>
+    <span class="fn">quick_sort_3way</span>(arr, lo, lt - <span class="nm">1</span>);
+    <span class="fn">quick_sort_3way</span>(arr, gt + <span class="nm">1</span>, hi);
+}
+<span class="cm">/* ข้อมูลที่มีค่าซ้ำเยอะ → O(n) !! */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Banking -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 Credit Score Ranking</h2>
+    <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdlib.h&gt;</span>
+<span class="pp">#include</span> <span class="st">&lt;time.h&gt;</span>
+
+<span class="kw">typedef struct</span> { <span class="kw">char</span> id[<span class="nm">12</span>]; <span class="kw">int</span> score; } Customer;
+
+<span class="kw">void</span> <span class="fn">swap_cust</span>(Customer *a, Customer *b) { Customer t=*a; *a=*b; *b=t; }
+
+<span class="kw">int</span> <span class="fn">partition_cust</span>(Customer arr[], <span class="kw">int</span> lo, <span class="kw">int</span> hi) {
+    <span class="cm">/* random pivot เพื่อป้องกัน worst case */</span>
+    <span class="kw">int</span> r = lo + <span class="fn">rand</span>() % (hi - lo + <span class="nm">1</span>);
+    <span class="fn">swap_cust</span>(&arr[r], &arr[hi]);
+
+    <span class="kw">int</span> pivot = arr[hi].score, i = lo - <span class="nm">1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> j=lo; j&lt;hi; j++) {
+        <span class="kw">if</span> (arr[j].score >= pivot)  <span class="cm">/* descending: score สูงมาก่อน */</span>
+            <span class="fn">swap_cust</span>(&arr[++i], &arr[j]);
+    }
+    <span class="fn">swap_cust</span>(&arr[i+<span class="nm">1</span>], &arr[hi]);
+    <span class="kw">return</span> i + <span class="nm">1</span>;
+}
+
+<span class="kw">void</span> <span class="fn">rank_customers</span>(Customer arr[], <span class="kw">int</span> lo, <span class="kw">int</span> hi) {
+    <span class="kw">if</span> (lo &lt; hi) {
+        <span class="kw">int</span> p = <span class="fn">partition_cust</span>(arr, lo, hi);
+        <span class="fn">rank_customers</span>(arr, lo, p-<span class="nm">1</span>);
+        <span class="fn">rank_customers</span>(arr, p+<span class="nm">1</span>, hi);
+    }
+}
+<span class="cm">/* n=1,000,000 customers → sort ใน ~20M comparisons */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">array {1, 2, 3, 4, 5} เรียงแล้ว<br>ใช้ Quick Sort แบบ Lomuto (pivot = last element)<br><br>เกิด worst case O(n²) ไหม?<br>Recursion tree หน้าตาเป็นยังไง?<br><br><em>힌트: partition ครั้งแรก pivot=5 อยู่ที่ไหน?</em><br><br>แล้วถ้าใช้ Random Pivot แทน — โอกาสเจอ worst case เป็นเท่าไหร่?</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Trace MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Trace</div>
+    <h2 class="slide-title">Partition {3,6,8,10,1,2,1} pivot=last (1)?</h2>
+    <p class="slide-lead">Lomuto partition, pivot = arr[6] = 1</p>
+    <div id="mc-q5" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-q5','A','C','❌ pivot ตัวสุดท้ายคือ 1 ไม่ใช่ค่าอื่น')">A) {1,6,8,10,3,2,1} pivot ที่ index 0</button>
+      <button class="mc-btn" onclick="pickMC('mc-q5','B','C','❌ ลำดับ partition ผิด — j วนจาก lo ถึง hi-1')">B) {1,1,3,6,8,10,2} pivot ที่ index 1</button>
+      <button class="mc-btn" onclick="pickMC('mc-q5','C','C','✅ pivot=1, i=-1 → j=0:3>1 no; j=1:6>1 no; j=2:8>1 no; j=3:10>1 no; j=4:1≤1 i=0 swap(arr[0],arr[4]); j=5:2>1 no → swap(arr[1],arr[6])={1,1,8,10,3,2,6}? ตอบ {1,1,...} pivot idx=1')">C) {1,1,8,10,3,2,6} pivot ที่ index 1</button>
+      <button class="mc-btn" onclick="pickMC('mc-q5','D','C','❌ ลอง trace ใหม่ j วน 0 ถึง 5')">D) {1,2,8,10,6,3,1} pivot ที่ index 6</button>
+    </div>
+    <pre class="code-block" style="margin-top:10px;font-size:11px">pivot=1, i=-1
+j=0: arr[0]=3>1 no  j=1: arr[1]=6>1 no  j=2: arr[2]=8>1 no
+j=3: arr[3]=10>1 no  j=4: arr[4]=1≤1 → i=0, swap(arr[0],arr[4])={1,6,8,10,3,2,1}
+j=5: arr[5]=2>1 no
+swap(arr[i+1],arr[hi])=swap(arr[1],arr[6])={1,1,8,10,3,2,6}  pivot@idx1</pre>
+  </div>
+</div>
+
+<!-- SLIDE 11 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 5 · Fill-in</div>
+    <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Quick Sort (Lomuto) เลือก pivot เป็น arr[___]</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fq5a" placeholder="index">
+      <button class="fill-btn" onclick="checkFill('fq5a','hi',['hi','r','right'],[],'✅ arr[hi] — ตัวสุดท้ายของ subarray ปัจจุบัน','❌ Lomuto scheme เลือก pivot = arr[hi] (ตัวสุดท้าย)')">ตรวจ</button>
+    </div>
+    <div id="fq5a-msg" class="fill-msg"></div>
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② Quick Sort ไม่ใช่ Stable เพราะ?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fq5b" placeholder="เหตุผล">
+      <button class="fill-btn" onclick="checkFill('fq5b','swap ข้ามระยะไกล',['swap ข้าม','long-distance swap','swap ไกล','partition swap'],[],'✅ partition swap ข้ามระยะไกล → ค่าเท่ากันอาจสลับลำดับ','❌ เพราะ partition swap ข้ามระยะไกล ทำให้ค่าเท่ากันสลับ relative order')">ตรวจ</button>
+    </div>
+    <div id="fq5b-msg" class="fill-msg"></div>
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ วิธีแก้ Quick Sort worst case O(n²) คือ?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fq5c" placeholder="วิธีการ">
+      <button class="fill-btn" onclick="checkFill('fq5c','random pivot',['randomized pivot','random','สุ่ม pivot'],[],'✅ Random Pivot — สุ่ม pivot แทนการเลือกตำแหน่งตายตัว ลดโอกาส worst case','❌ ใช้ Random Pivot หรือ Median-of-3 เพื่อลดโอกาสเจอ worst case')">ตรวจ</button>
+    </div>
+    <div id="fq5c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 12 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">⚡</div>
+      <div class="summary-title">สรุปบทที่ 5 — Quick Sort</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">หลักการ</div><div class="sum-body">เลือก pivot → partition → recurse ซ้ายขวา</div></div>
+        <div class="sum-card"><div class="sum-head">Complexity</div><div class="sum-body">Best/Avg O(n log n) · Worst O(n²) · Space O(log n)</div></div>
+        <div class="sum-card"><div class="sum-head">In-place + Cache</div><div class="sum-body">ไม่สร้าง array ใหม่ + เข้า memory ตามลำดับ → เร็วที่สุดในทางปฏิบัติ</div></div>
+        <div class="sum-card"><div class="sum-head">Unstable</div><div class="sum-body">swap ข้ามระยะไกล → ค่าเท่ากันอาจสลับลำดับ</div></div>
+        <div class="sum-card"><div class="sum-head">Pivot Selection</div><div class="sum-body">Random หรือ Median-of-3 ป้องกัน worst case</div></div>
+        <div class="sum-card"><div class="sum-head">เมื่อไหร่ใช้</div><div class="sum-body">ข้อมูลทั่วไป ต้องการเร็ว ไม่ต้องการ stable · stdlib qsort()</div></div>
+      </div>
+      <a href="slides_ch6.html" class="summary-next">→ บทที่ 6: Heap Sort + เปรียบเทียบทั้งหมด</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 5 — Quick Sort</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+<script>
+const TITLES=['Cover','หลักการ','Partition (Lomuto)','Trace Partition','Pivot Selection','Hoare Scheme','Complexity','3-way Partition','Banking Use Case','Think!','Trace MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

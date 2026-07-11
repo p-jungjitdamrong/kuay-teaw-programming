@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 1 — Bubble Sort | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root { --ca:#005f73; --cal:#e0f4f6; --cam:#0a9396; }
+.trace-grid { display:grid; grid-template-columns: repeat(6,1fr); gap:4px; margin:10px 0; }
+.trace-cell { background:var(--cal); border:1px solid var(--cam); border-radius:4px; text-align:center; padding:6px 4px; font-family:var(--mono); font-size:13px; font-weight:700; color:var(--ca); }
+.trace-cell.hi { background:var(--ca); color:#fff; }
+.trace-cell.sorted { background:#d4edda; border-color:#27ae60; color:#155724; }
+.trace-row-label { font-family:var(--mono); font-size:11px; color:var(--dim); margin-bottom:4px; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════ SLIDE 0 — COVER ════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Sorting Algorithms</div>
+        <div class="cover-title">บทที่ 1<br><em>Bubble Sort</em></div>
+        <div class="cover-subtitle">ฟองน้ำลอยขึ้น — ค่าใหญ่ไหลไปทางขวาทีละ pass จนครบทุกตัว</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>หลักการคิด: Bubble คืออะไร?</div>
+          <div class="topic-row"><div class="topic-dot"></div>โค้ด C แบบ basic และ optimized</div>
+          <div class="topic-row"><div class="topic-dot"></div>Trace ทีละ pass — เห็นภาพชัด</div>
+          <div class="topic-row"><div class="topic-dot"></div>Early Termination optimization</div>
+          <div class="topic-row"><div class="topic-dot"></div>Think! + แบบฝึกหัด</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">01</div>
+        <div class="cover-badge">BUBBLE SORT · O(n²)</div>
+        <div class="cover-slides-count">12 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 1 — หลักการคิด ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · หลักการคิด</div>
+    <h2 class="slide-title">Bubble Sort คิดยังไง?</h2>
+    <p class="slide-lead">เปรียบเทียบ <strong>คู่ข้างๆ กัน</strong> ทีละคู่ ถ้าซ้าย > ขวา → swap — ทำซ้ำจนค่าใหญ่สุด "ลอย" ไปตำแหน่งสุดท้าย</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">หนึ่ง pass เต็มๆ</div>
+        <pre class="code-block"><span class="cm">/* arr = {5, 3, 8, 1} */</span>
+
+Pass 1:
+  [<span class="nm">5</span>,<span class="nm">3</span>] → swap → {<span class="nm">3</span>,<span class="nm">5</span>,<span class="nm">8</span>,<span class="nm">1</span>}
+  [<span class="nm">5</span>,<span class="nm">8</span>] → ไม่ swap
+  [<span class="nm">8</span>,<span class="nm">1</span>] → swap → {<span class="nm">3</span>,<span class="nm">5</span>,<span class="nm">1</span>,<span class="nm">8</span>}
+                              ↑ 8 ลอยถึงจุดหมาย!
+
+Pass 2: จบที่ตำแหน่ง n-2
+Pass 3: จบที่ตำแหน่ง n-3
+...</pre>
+      </div>
+      <div>
+        <div class="code-label">ภาพรวม: ทำไมเรียก Bubble?</div>
+        <pre class="code-block"><span class="cm">/* ค่าใหญ่ไหลขึ้นทางขวา
+   เหมือนฟองอากาศลอยขึ้น */</span>
+
+Pass 1: ค่าใหญ่สุดอยู่ที่ arr[n-1]
+Pass 2: ค่าใหญ่ที่ 2 อยู่ที่ arr[n-2]
+...
+Pass n-1: เรียงครบแล้ว!
+
+<span class="cm">/* ทำ n-1 pass → O(n²) comparisons
+   n=1000 → ≈500,000 comparisons */</span></pre>
+      </div>
+    </div>
+    <div class="callout">กฎง่ายๆ: ถ้า arr[j] &gt; arr[j+1] → swap — วนซ้ำจนไม่มี swap เกิดขึ้น = เรียงแล้ว</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 2 — โค้ด Basic ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · โค้ด</div>
+    <h2 class="slide-title">Bubble Sort — โค้ด C</h2>
+    <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">void</span> <span class="fn">swap</span>(<span class="kw">int</span> *a, <span class="kw">int</span> *b) {
+    <span class="kw">int</span> temp = *a; *a = *b; *b = temp;
+}
+
+<span class="kw">void</span> <span class="fn">bubble_sort</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i, j;
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n - <span class="nm">1</span>; i++) {          <span class="cm">/* n-1 passes */</span>
+        <span class="kw">for</span> (j = <span class="nm">0</span>; j &lt; n - <span class="nm">1</span> - i; j++) {  <span class="cm">/* ลดขอบขวาทุก pass */</span>
+            <span class="kw">if</span> (arr[j] > arr[j + <span class="nm">1</span>]) {
+                <span class="fn">swap</span>(&arr[j], &arr[j + <span class="nm">1</span>]);
+            }
+        }
+    }
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> arr[] = {<span class="nm">64</span>, <span class="nm">34</span>, <span class="nm">25</span>, <span class="nm">12</span>, <span class="nm">22</span>, <span class="nm">11</span>, <span class="nm">90</span>};
+    <span class="kw">int</span> n = <span class="kw">sizeof</span>(arr) / <span class="kw">sizeof</span>(arr[<span class="nm">0</span>]);
+    <span class="fn">bubble_sort</span>(arr, n);
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++)
+        <span class="fn">printf</span>(<span class="st">"%d "</span>, arr[i]);  <span class="cm">/* 11 12 22 25 34 64 90 */</span>
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+    <div class="callout">inner loop วน n-1-i รอบ เพราะ i ตัวหลังสุดได้ที่ถูกต้องแล้ว ไม่ต้องตรวจซ้ำ</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 3 — Trace Pass 1-2 ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Trace</div>
+    <h2 class="slide-title">Trace: {5, 1, 4, 2, 8}</h2>
+    <p class="slide-lead">ติดตามทีละ pass — ดูว่าค่าใหญ่ "ลอย" ไปทางขวาอย่างไร</p>
+    <div class="trace-row-label">เริ่มต้น:</div>
+    <div class="trace-grid" style="grid-template-columns:repeat(5,1fr)">
+      <div class="trace-cell">5</div><div class="trace-cell">1</div><div class="trace-cell">4</div><div class="trace-cell">2</div><div class="trace-cell">8</div>
+    </div>
+    <div class="trace-row-label">Pass 1 — เปรียบ (5,1)→swap (5,4)→swap (5,2)→swap (5,8)→ไม่swap:</div>
+    <div class="trace-grid" style="grid-template-columns:repeat(5,1fr)">
+      <div class="trace-cell">1</div><div class="trace-cell">4</div><div class="trace-cell">2</div><div class="trace-cell">5</div><div class="trace-cell sorted">8</div>
+    </div>
+    <div class="trace-row-label">Pass 2 — เปรียบ (1,4)→ไม่swap (4,2)→swap (4,5)→ไม่swap:</div>
+    <div class="trace-grid" style="grid-template-columns:repeat(5,1fr)">
+      <div class="trace-cell">1</div><div class="trace-cell">2</div><div class="trace-cell">4</div><div class="trace-cell sorted">5</div><div class="trace-cell sorted">8</div>
+    </div>
+    <div class="trace-row-label">Pass 3 — เปรียบ (1,2)→ไม่swap (2,4)→ไม่swap:</div>
+    <div class="trace-grid" style="grid-template-columns:repeat(5,1fr)">
+      <div class="trace-cell">1</div><div class="trace-cell">2</div><div class="trace-cell sorted">4</div><div class="trace-cell sorted">5</div><div class="trace-cell sorted">8</div>
+    </div>
+    <div class="trace-row-label">Pass 4 — เปรียบ (1,2)→ไม่swap → เรียงแล้ว!</div>
+    <div class="trace-grid" style="grid-template-columns:repeat(5,1fr)">
+      <div class="trace-cell sorted">1</div><div class="trace-cell sorted">2</div><div class="trace-cell sorted">4</div><div class="trace-cell sorted">5</div><div class="trace-cell sorted">8</div>
+    </div>
+    <div class="callout">n=5 → ทำ 4 passes, 10 comparisons total — แต่ข้อมูลนี้จริงๆ เรียงแล้วใน pass 3 ถ้าใช้ early termination จะออกเร็วกว่า</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 4 — Early Termination ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Optimization</div>
+    <h2 class="slide-title">Early Termination — O(n) Best Case</h2>
+    <p class="slide-lead">ถ้า pass ไหนไม่มี swap เกิดขึ้นเลย แสดงว่าเรียงแล้ว — หยุดได้ทันที ทำให้ best case กลายเป็น O(n)</p>
+    <pre class="code-block"><span class="kw">void</span> <span class="fn">bubble_sort_optimized</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i, j;
+    <span class="kw">int</span> swapped;  <span class="cm">/* flag: มี swap ใน pass นี้ไหม */</span>
+
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n - <span class="nm">1</span>; i++) {
+        swapped = <span class="nm">0</span>;  <span class="cm">/* reset ทุก pass */</span>
+
+        <span class="kw">for</span> (j = <span class="nm">0</span>; j &lt; n - <span class="nm">1</span> - i; j++) {
+            <span class="kw">if</span> (arr[j] > arr[j + <span class="nm">1</span>]) {
+                <span class="fn">swap</span>(&arr[j], &arr[j + <span class="nm">1</span>]);
+                swapped = <span class="nm">1</span>;  <span class="cm">/* มี swap เกิดขึ้น */</span>
+            }
+        }
+
+        <span class="kw">if</span> (!swapped) <span class="kw">break</span>;  <span class="cm">/* ไม่มี swap = เรียงแล้ว! */</span>
+    }
+}
+
+<span class="cm">/* Best case: already sorted → O(n) เพราะ pass แรกไม่มี swap */</span>
+<span class="cm">/* Worst case: reverse sorted → O(n²) ยังเหมือนเดิม */</span></pre>
+    <div class="callout">ข้อมูลธนาคารที่ sort ไว้แล้ว แค่มีธุรกรรมใหม่ 1-2 ตัวต่อท้าย → Insertion/Bubble + early term เร็วมาก</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 5 — Complexity Analysis ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Complexity</div>
+    <h2 class="slide-title">วิเคราะห์ Complexity</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">นับ Comparisons</div>
+        <pre class="code-block"><span class="cm">/* n=5 */</span>
+Pass 1: 4 comparisons
+Pass 2: 3 comparisons
+Pass 3: 2 comparisons
+Pass 4: 1 comparison
+Total: 4+3+2+1 = 10
+
+<span class="cm">/* สูตรทั่วไป: */</span>
+(n-1)+(n-2)+...+1 = n(n-1)/2
+= O(n²)</pre>
+      </div>
+      <div>
+        <div class="code-label">Summary</div>
+        <pre class="code-block">Best Case:  O(n)   [optimized, sorted]
+Average:    O(n²)
+Worst Case: O(n²)  [reverse sorted]
+
+Space:      O(1)   [in-place]
+Stable:     ✅ Yes
+In-place:   ✅ Yes
+
+<span class="cm">/* เมื่อไหร่ใช้ Bubble Sort? */</span>
+<span class="cm">/* - เรียนเข้าใจ concept */</span>
+<span class="cm">/* - n < 50 รายการ */</span>
+<span class="cm">/* - ข้อมูลเกือบเรียงแล้ว */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Bubble Sort ไม่ค่อยใช้ใน production เพราะ Selection/Insertion Sort เร็วกว่าในทางปฏิบัติ แม้ O(n²) เหมือนกัน</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 6 — เปรียบกับ Selection/Insertion ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · เปรียบเทียบ</div>
+    <h2 class="slide-title">Bubble vs Selection vs Insertion</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Bubble — swap บ่อย</div>
+        <pre class="code-block">{5,1,4,2,8}
+→ swap ทุกครั้งที่ไม่ลำดับ
+→ 5 ต้องเลื่อนไปทีละช่อง
+→ swap มาก กว่า Selection
+
+Swap count: O(n²) worst</pre>
+      </div>
+      <div>
+        <div class="code-label">Selection — swap น้อยที่สุด</div>
+        <pre class="code-block">{5,1,4,2,8}
+→ หา min ก่อน แล้ว swap
+   ครั้งเดียวต่อ pass
+→ swap แค่ n-1 ครั้ง
+
+Swap count: O(n) เสมอ</pre>
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:8px">
+      <div>
+        <div class="code-label">Insertion — เหมาะกับ nearly sorted</div>
+        <pre class="code-block">{1,2,3,10,4}
+→ เลื่อน 10 ออก แล้ว ใส่ 4
+→ กรณี nearly sorted: O(n)
+→ Comparison-wise ดีกว่า Bubble</pre>
+      </div>
+      <div>
+        <div class="code-label">เลือกใช้</div>
+        <pre class="code-block">n &lt; 50, random order:
+  → ใช้อะไรก็ได้ ต่างกันน้อย
+
+น้อย swap (เขียน disk):
+  → Selection Sort
+
+Nearly sorted:
+  → Insertion Sort</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 7 — Banking Use Case ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Banking Use Case</div>
+    <h2 class="slide-title">🏦 Sort ยอดธุรกรรมด้วย Bubble Sort</h2>
+    <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="pp">#include</span> <span class="st">&lt;string.h&gt;</span>
+
+<span class="kw">typedef struct</span> {
+    <span class="kw">char</span> txn_id[<span class="nm">10</span>];
+    <span class="kw">double</span> amount;
+} Transaction;
+
+<span class="kw">void</span> <span class="fn">bubble_sort_txn</span>(Transaction arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i, j; Transaction temp; <span class="kw">int</span> swapped;
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n - <span class="nm">1</span>; i++) {
+        swapped = <span class="nm">0</span>;
+        <span class="kw">for</span> (j = <span class="nm">0</span>; j &lt; n - <span class="nm">1</span> - i; j++) {
+            <span class="kw">if</span> (arr[j].amount > arr[j+<span class="nm">1</span>].amount) {
+                temp = arr[j]; arr[j] = arr[j+<span class="nm">1</span>]; arr[j+<span class="nm">1</span>] = temp;
+                swapped = <span class="nm">1</span>;
+            }
+        }
+        <span class="kw">if</span> (!swapped) <span class="kw">break</span>;
+    }
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    Transaction txns[] = {{"T001",<span class="nm">500.0</span>},{"T002",<span class="nm">150.0</span>},{"T003",<span class="nm">300.0</span>}};
+    <span class="fn">bubble_sort_txn</span>(txns, <span class="nm">3</span>);
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nm">0</span>;i&lt;<span class="nm">3</span>;i++) <span class="fn">printf</span>(<span class="st">"%s %.0f\n"</span>,txns[i].txn_id,txns[i].amount);
+    <span class="cm">/* T002 150 / T003 300 / T001 500 */</span>
+}</pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 8 — Think! ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">ให้ array {3, 3, 3, 3} (ค่าเหมือนกันหมด)<br><br>Bubble Sort (แบบ optimized) ใช้กี่ passes? กี่ comparisons?<br><br><em>힌트: เกิด swap ใน pass แรกไหม? → early termination ออกเมื่อไหร่?</em><br><br>และถ้า array {1, 2, 3, 4, 5} (เรียงแล้ว) — คำตอบต่างกันไหม?</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 9 — Trace MCQ ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Trace</div>
+    <h2 class="slide-title">หลัง Pass 1 ของ {4, 2, 7, 1, 3}?</h2>
+    <p class="slide-lead">ทำ Bubble Sort pass แรก (i=0, j วน 0–3) ผลลัพธ์คืออะไร?</p>
+    <div id="mc-b1" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-b1','A','B','❌ {2,4,1,3,7} ถูกต้อง — 4 ไม่ขยับไปตำแหน่งนั้น')">A) {2,4,7,1,3}</button>
+      <button class="mc-btn" onclick="pickMC('mc-b1','B','B','✅ (4,2)swap→{2,4,7,1,3}, (4,7)no, (7,1)swap→{2,4,1,7,3}, (7,3)swap→{2,4,1,3,7}')">B) {2,4,1,3,7}</button>
+      <button class="mc-btn" onclick="pickMC('mc-b1','C','B','❌ ไม่ถูก — ลอง trace ทีละคู่ (4,2) (7,1) (7,3)')">C) {1,2,3,4,7}</button>
+      <button class="mc-btn" onclick="pickMC('mc-b1','D','B','❌ pass แรกยัง sort ไม่ครบ — แค่ max ลอยไปขวาสุด')">D) {2,1,3,4,7}</button>
+    </div>
+    <div style="margin-top:14px">
+      <div class="code-label">Trace ทีละขั้น</div>
+      <pre class="code-block">j=0: (4,2) → 4>2 swap → {2,4,7,1,3}
+j=1: (4,7) → 4<7 no swap
+j=2: (7,1) → 7>1 swap → {2,4,1,7,3}
+j=3: (7,3) → 7>3 swap → {2,4,1,3,7}  ← ผลลัพธ์</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 10 — Fill-in ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Fill-in</div>
+    <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① inner loop ควรวนถึง <code class="inline-code">j &lt; n - 1 - ___</code> เพื่อข้ามส่วนที่เรียงแล้ว</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fb1a" placeholder="ตัวแปรอะไร?">
+      <button class="fill-btn" onclick="checkFill('fb1a','i',['i'],[],'✅ n-1-i เพราะ i ตัวหลังสุด sorted แล้ว','❌ คือ i — ทุก pass ขอบขวาลดลง 1 เพราะ i ตัวหลังถูกที่แล้ว')">ตรวจ</button>
+    </div>
+    <div id="fb1a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② Bubble Sort (optimized) มี best case O(n) เพราะ?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fb1b" placeholder="เงื่อนไขอะไร?">
+      <button class="fill-btn" onclick="checkFill('fb1b','ไม่มี swap',['no swap','swapped = 0','swapped==0','not swapped'],[],'✅ ถ้า pass แรกไม่มี swap แสดงว่าเรียงแล้ว → break ออก O(n)','❌ เพราะถ้าไม่มี swap ใน pass ใด → หยุดได้เลย (early termination)')">ตรวจ</button>
+    </div>
+    <div id="fb1b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ Bubble Sort เป็น Stable sort หรือไม่? (ใช่/ไม่ใช่)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fb1c" placeholder="ใช่หรือไม่ใช่">
+      <button class="fill-btn" onclick="checkFill('fb1c','ใช่',['yes','stable','stble'],[],'✅ ใช่ — Bubble Sort Stable เพราะ swap เมื่อ arr[j] > arr[j+1] เท่านั้น ค่าเท่ากันไม่ swap','❌ Bubble Sort Stable เพราะ swap ก็ต่อเมื่อ > ไม่ใช่ >=')">ตรวจ</button>
+    </div>
+    <div id="fb1c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 11 — Summary ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🫧</div>
+      <div class="summary-title">สรุปบทที่ 1 — Bubble Sort</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">หลักการ</div><div class="sum-body">เปรียบคู่ข้างๆ ถ้า left > right → swap วนซ้ำจน max ลอยไปขวาสุด</div></div>
+        <div class="sum-card"><div class="sum-head">Complexity</div><div class="sum-body">Best O(n) · Average/Worst O(n²) · Space O(1)</div></div>
+        <div class="sum-card"><div class="sum-head">Early Termination</div><div class="sum-body">ใช้ flag <code class="inline-code">swapped</code> ถ้า pass ไหนไม่ swap → break ทันที</div></div>
+        <div class="sum-card"><div class="sum-head">Stable + In-place</div><div class="sum-body">Swap ก็ต่อเมื่อ > เท่านั้น ค่าเท่ากันไม่สลับ → Stable</div></div>
+        <div class="sum-card"><div class="sum-head">เมื่อไหร่ใช้</div><div class="sum-body">n เล็ก, เรียนทำความเข้าใจ, หรือข้อมูลเกือบเรียงแล้ว</div></div>
+        <div class="sum-card"><div class="sum-head">ข้อเสีย</div><div class="sum-body">Swap มาก → ช้ากว่า Selection/Insertion ในทางปฏิบัติ</div></div>
+      </div>
+      <a href="slides_ch2.html" class="summary-next">→ บทที่ 2: Selection Sort</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 1 — Bubble Sort</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','หลักการคิด','โค้ด C','Trace Pass 1-4','Early Termination','Complexity','เปรียบเทียบ','Banking Use Case','Think!','Trace MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
