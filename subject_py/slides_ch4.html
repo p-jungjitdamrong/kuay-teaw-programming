@@ -348,11 +348,22 @@ unique.<span class="fn">discard</span>(<span class="st">"A999"</span>)   <span c
 </div>
 
 </div>
-<nav class="nav-bar">
-  <button class="nav-btn" id="prev-btn" onclick="go(-1)">← ก่อนหน้า</button>
-  <span class="nav-counter"><span id="cur-num">1</span> / <span id="tot-num">11</span></span>
-  <button class="nav-btn" id="next-btn" onclick="go(1)">ถัดไป →</button>
-</nav>
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 4 — Built-in Data Structures</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ภาพรวม 4 DS','list','tuple','dict','set','Nested Collections','Banking Use Case','Think!','Trace','Fill-in','Summary'];
+</script>
 <script src="../slide-engine.js"></script>
 </body>
 </html>
