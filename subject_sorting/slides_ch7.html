@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 7 — Big O Notation | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#005f73;--cal:#e0f4f6;--cam:#0a9396;}
+
+/* graph */
+.graph-wrap{background:var(--cal);border-radius:10px;padding:16px;margin:10px 0;}
+.graph-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.graph-label{font-family:var(--mono);font-size:11px;color:var(--ca);width:80px;flex-shrink:0;font-weight:700;}
+.graph-bar-wrap{flex:1;background:#fff;border-radius:4px;height:18px;overflow:hidden;}
+.graph-bar{height:100%;border-radius:4px;transition:width .4s;}
+.g1{background:#27ae60;width:4%;}
+.g2{background:#2ecc71;width:8%;}
+.g3{background:#f39c12;width:18%;}
+.g4{background:#e67e22;width:32%;}
+.g5{background:#e74c3c;width:62%;}
+.g6{background:#c0392b;width:90%;}
+.g7{background:#7d1c1c;width:100%;}
+.graph-note{font-family:var(--mono);font-size:10px;color:var(--dim);margin-left:4px;flex-shrink:0;}
+
+/* complexity badge */
+.cx{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;margin:1px 2px;}
+.cx-g{background:#d4edda;color:#155724;}
+.cx-y{background:#fff3cd;color:#856404;}
+.cx-r{background:#f8d7da;color:#721c24;}
+.cx-d{background:#f5c6cb;color:#491217;}
+
+/* code highlight rules */
+.lp{color:#e74c3c;font-weight:700;}  /* loop — red */
+.ln{color:#2ecc71;font-weight:700;} /* O(n) */
+
+/* step table */
+.step-table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.step-table th{background:var(--ca);color:#fff;padding:5px 8px;text-align:left;font-weight:600;}
+.step-table td{padding:5px 8px;border-bottom:1px solid var(--line);}
+.step-table tr:nth-child(even) td{background:var(--cal);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════ SLIDE 0 — COVER ════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Sorting Algorithms</div>
+        <div class="cover-title">บทที่ 7<br><em>Big O Notation</em></div>
+        <div class="cover-subtitle">วัด "ความเร็ว" ของ algorithm อย่างเป็นระบบ — อ่านจากโค้ด คำนวณเอง ใช้จริงได้</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Big O คืออะไร? ทำไมต้องรู้?</div>
+          <div class="topic-row"><div class="topic-dot"></div>Classes: O(1) O(log n) O(n) O(n log n) O(n²)</div>
+          <div class="topic-row"><div class="topic-dot"></div>กฎนับ Operations จาก Code</div>
+          <div class="topic-row"><div class="topic-dot"></div>วิเคราะห์ Loop, Nested Loop, Recursion</div>
+          <div class="topic-row"><div class="topic-dot"></div>Space Complexity + Think! + แบบฝึกหัด</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">07</div>
+        <div class="cover-badge">BIG O NOTATION</div>
+        <div class="cover-slides-count">14 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 1 — Big O คืออะไร ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · นิยาม</div>
+    <h2 class="slide-title">Big O คืออะไร?</h2>
+    <p class="slide-lead">Big O วัด <strong>อัตราการเติบโต</strong> ของเวลา (หรือ memory) เมื่อ input <strong>n ใหญ่ขึ้น</strong> — ไม่สนใจ hardware หรือ constant เล็กน้อย</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างเวลาจริง</div>
+        <pre class="code-block"><span class="cm">/* n = จำนวนธุรกรรม */</span>
+n = 1,000
+  O(n)     → ~1,000 ops   ✅
+  O(n²)    → ~1,000,000   ⚠️
+  O(n³)    → ~1,000,000,000 ❌
+
+n = 1,000,000
+  O(n)     → 1M ops       ✅
+  O(n log n)→ ~20M ops    ✅
+  O(n²)    → 1,000,000M   💀</pre>
+      </div>
+      <div>
+        <div class="code-label">นิยามทางคณิตศาสตร์</div>
+        <pre class="code-block"><span class="cm">/* f(n) = O(g(n)) หมายความว่า:
+   มี c > 0 และ n₀ ที่ทำให้
+   f(n) ≤ c·g(n) สำหรับทุก n ≥ n₀ */</span>
+
+<span class="cm">/* ภาษาคน:
+   g(n) คือ "กรอบบน" ของ f(n)
+   เมื่อ n ใหญ่พอ — constant ไม่สำคัญ */</span>
+
+3n² + 100n + 500  = O(n²)
+  ↑ ทิ้ง 100n และ 500
+  ↑ ทิ้ง constant 3
+  → เหลือ n²</pre>
+      </div>
+    </div>
+    <div class="callout">Big O บอก worst case "กรอบบน" — ไม่ใช่เวลาจริง แต่ช่วยเปรียบเทียบ algorithm ได้โดยไม่สน hardware</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 2 — กฎทิ้ง ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · กฎ</div>
+    <h2 class="slide-title">กฎ 3 ข้อในการเขียน Big O</h2>
+    <p class="slide-lead">นับ operations ได้แล้ว ให้ทำตาม 3 ขั้นตอนนี้</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กฎ 1: ทิ้ง Constant</div>
+        <pre class="code-block">5n      → O(n)
+100n    → O(n)
+0.001n  → O(n)
+
+<span class="cm">/* เพราะ hardware เปลี่ยน constant
+   เสมอ — ไม่มีความหมายระยะยาว */</span></pre>
+        <div class="code-label" style="margin-top:10px">กฎ 2: ทิ้ง Lower-order Terms</div>
+        <pre class="code-block">n² + n       → O(n²)
+n³ + n² + n  → O(n³)
+n + log n    → O(n)
+
+<span class="cm">/* เมื่อ n ใหญ่ term ที่ใหญ่สุด
+   ครอบงำ term อื่นทั้งหมด */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">กฎ 3: ลำดับ Complexity</div>
+        <div class="graph-wrap">
+          <div class="graph-row"><div class="graph-label">O(1)</div><div class="graph-bar-wrap"><div class="graph-bar g1"></div></div><div class="graph-note">Constant</div></div>
+          <div class="graph-row"><div class="graph-label">O(log n)</div><div class="graph-bar-wrap"><div class="graph-bar g2"></div></div><div class="graph-note">Logarithmic</div></div>
+          <div class="graph-row"><div class="graph-label">O(n)</div><div class="graph-bar-wrap"><div class="graph-bar g3"></div></div><div class="graph-note">Linear</div></div>
+          <div class="graph-row"><div class="graph-label">O(n log n)</div><div class="graph-bar-wrap"><div class="graph-bar g4"></div></div><div class="graph-note">Linearithmic</div></div>
+          <div class="graph-row"><div class="graph-label">O(n²)</div><div class="graph-bar-wrap"><div class="graph-bar g5"></div></div><div class="graph-note">Quadratic</div></div>
+          <div class="graph-row"><div class="graph-label">O(2ⁿ)</div><div class="graph-bar-wrap"><div class="graph-bar g6"></div></div><div class="graph-note">Exponential</div></div>
+          <div class="graph-row"><div class="graph-label">O(n!)</div><div class="graph-bar-wrap"><div class="graph-bar g7"></div></div><div class="graph-note">Factorial</div></div>
+        </div>
+        <div class="callout" style="margin-top:4px">ยิ่งแท่งสั้น ยิ่งดี — n = 1,000</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 3 — O(1) และ O(log n) ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · Classes</div>
+    <h2 class="slide-title"><span class="cx cx-g">O(1)</span> Constant และ <span class="cx cx-g">O(log n)</span> Logarithmic</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">O(1) — ไม่ว่า n จะใหญ่แค่ไหน เร็วเท่าเดิม</div>
+        <pre class="code-block"><span class="kw">int</span> <span class="fn">get_first</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">return</span> arr[<span class="nm">0</span>];  <span class="cm">/* 1 operation */</span>
+}
+
+<span class="kw">void</span> <span class="fn">push</span>(Stack *s, <span class="kw">int</span> val) {
+    s->data[++s->top] = val; <span class="cm">/* O(1) */</span>
+}
+
+<span class="cm">/* ตัวอย่าง O(1):
+   - array access arr[i]
+   - hash table lookup
+   - push/pop stack
+   - เพิ่ม/ลบ head linked list */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">O(log n) — ทุก step ลด n ลงครึ่ง</div>
+        <pre class="code-block"><span class="kw">int</span> <span class="fn">binary_search</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n, <span class="kw">int</span> target) {
+    <span class="kw">int</span> lo = <span class="nm">0</span>, hi = n - <span class="nm">1</span>;
+    <span class="kw">while</span> (lo &lt;= hi) {   <span class="cm">/* วน log₂(n) ครั้ง */</span>
+        <span class="kw">int</span> mid = (lo+hi)/<span class="nm">2</span>;
+        <span class="kw">if</span> (arr[mid] == target) <span class="kw">return</span> mid;
+        <span class="kw">else if</span> (arr[mid] < target) lo = mid+<span class="nm">1</span>;
+        <span class="kw">else</span>                        hi = mid-<span class="nm">1</span>;
+    }
+    <span class="kw">return</span> -<span class="nm">1</span>;
+}
+<span class="cm">/* n=1,000,000 → แค่ 20 steps!
+   log₂(1,000,000) ≈ 20 */</span></pre>
+      </div>
+    </div>
+    <div class="callout">O(log n) เกิดเมื่อ: แต่ละ step ตัด input ออกด้วยปัจจัยคงที่ (ครึ่ง, หนึ่งสาม ฯลฯ) — Binary Search, Heap operations, Balanced BST</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 4 — O(n) และ O(n log n) ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · Classes</div>
+    <h2 class="slide-title"><span class="cx cx-y">O(n)</span> Linear และ <span class="cx cx-y">O(n log n)</span> Linearithmic</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">O(n) — วนครบทุก element ครั้งเดียว</div>
+        <pre class="code-block"><span class="kw">int</span> <span class="fn">find_max</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> max = arr[<span class="nm">0</span>];
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">1</span>; i&lt;n; i++) { <span class="cm">/* n-1 ops */</span>
+        <span class="kw">if</span> (arr[i] > max) max = arr[i];
+    }
+    <span class="kw">return</span> max;
+}
+<span class="cm">/* ตัวอย่าง O(n):
+   - Linear Search
+   - Counting Sort inner loop
+   - Copy array
+   - Sum all elements */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">O(n log n) — loop + recursive half</div>
+        <pre class="code-block"><span class="cm">/* Merge Sort: */</span>
+merge_sort(arr, 0, n-1)
+  ↓ แบ่งครึ่ง log n ครั้ง
+  ↓ แต่ละ level ทำ merge O(n)
+  → O(n) × O(log n) = O(n log n)
+
+<span class="cm">/* Quick Sort average: */</span>
+partition O(n) × recursion depth O(log n)
+  → O(n log n)
+
+<span class="cm">/* O(n log n) คือ theoretical minimum
+   ของ comparison-based sort! */</span></pre>
+      </div>
+    </div>
+    <div class="callout">ไม่มี comparison-based sort ที่เร็วกว่า O(n log n) ได้ — ใครบอกว่า sort ได้ O(n) แสดงว่าใช้ข้อมูลพิเศษ (Counting/Radix)</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 5 — O(n²) และ O(2ⁿ) ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · Classes</div>
+    <h2 class="slide-title"><span class="cx cx-r">O(n²)</span> Quadratic และ <span class="cx cx-d">O(2ⁿ)</span> Exponential</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">O(n²) — nested loop ครบทุกคู่</div>
+        <pre class="code-block"><span class="cm">/* Bubble Sort inner + outer */</span>
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n; i++) {       <span class="cm">/* n */</span>
+    <span class="kw">for</span> (j = <span class="nm">0</span>; j &lt; n; j++) {   <span class="cm">/* n */</span>
+        <span class="cm">/* n × n = n² ops */</span>
+    }
+}
+
+<span class="cm">/* ตัวอย่าง O(n²):
+   - Bubble/Selection/Insertion Sort
+   - Matrix multiplication ปกติ (n²)
+   - Printing all pairs */</span>
+
+<span class="cm">/* n=1000 → 1,000,000 ops
+   n=10,000 → 100,000,000 ops ⚠️ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">O(2ⁿ) และ O(n!) — หลีกเลี่ยง!</div>
+        <pre class="code-block"><span class="cm">/* O(2ⁿ): Fibonacci แบบ naive */</span>
+<span class="kw">int</span> <span class="fn">fib</span>(<span class="kw">int</span> n) {
+    <span class="kw">if</span> (n &lt;= <span class="nm">1</span>) <span class="kw">return</span> n;
+    <span class="kw">return</span> <span class="fn">fib</span>(n-<span class="nm">1</span>) + <span class="fn">fib</span>(n-<span class="nm">2</span>);
+}
+<span class="cm">/* n=50 → 2^50 ≈ 1 quadrillion ops 💀 */</span>
+
+<span class="cm">/* O(n!): Permutation / Brute-force TSP */</span>
+<span class="cm">/* n=20 → 2,432,902,008,176,640,000 ops */</span>
+
+<span class="cm">/* แก้ O(2ⁿ) ด้วย Memoization/DP
+   → O(n) time, O(n) space */</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 6 — อ่าน Big O จาก Code: Loop ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · อ่านจากโค้ด</div>
+    <h2 class="slide-title">กฎ: อ่าน Big O จาก Loop</h2>
+    <p class="slide-lead">ดูที่ <strong>จำนวนครั้งที่ loop body ทำงาน</strong> เมื่อ n เปลี่ยน — นั่นคือ complexity</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Pattern ที่เจอบ่อย</div>
+        <pre class="code-block"><span class="cm">/* 1. วน n ครั้ง → O(n) */</span>
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; <span class="lp">n</span>; i++) { ... }
+
+<span class="cm">/* 2. วน n/2 ครั้ง → O(n) */</span>
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; <span class="lp">n</span>; i += <span class="nm">2</span>) { ... }
+
+<span class="cm">/* 3. หาร 2 ทุกรอบ → O(log n) */</span>
+<span class="kw">for</span> (i = <span class="nm">1</span>; i &lt; <span class="lp">n</span>; i *= <span class="nm">2</span>) { ... }
+<span class="kw">for</span> (i = <span class="lp">n</span>; i > <span class="nm">0</span>; i /= <span class="nm">2</span>) { ... }
+
+<span class="cm">/* 4. Nested n×n → O(n²) */</span>
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; <span class="lp">n</span>; i++)
+    <span class="kw">for</span> (j = <span class="nm">0</span>; j &lt; <span class="lp">n</span>; j++) { ... }
+
+<span class="cm">/* 5. Nested n×log n → O(n log n) */</span>
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; <span class="lp">n</span>; i++)
+    <span class="kw">for</span> (j = <span class="nm">1</span>; j &lt; <span class="lp">n</span>; j *= <span class="nm">2</span>) { ... }</pre>
+      </div>
+      <div>
+        <div class="code-label">ทดสอบความเข้าใจ</div>
+        <pre class="code-block"><span class="cm">/* กี่ ops? */</span>
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n; i++)        <span class="cm">/* n */</span>
+    <span class="kw">for</span> (j = <span class="nm">0</span>; j &lt; i; j++) { } <span class="cm">/* ? */</span>
+
+<span class="cm">/* นับ: i=0→0, i=1→1, i=2→2 ... i=n-1→n-1
+   รวม: 0+1+2+...+(n-1) = n(n-1)/2
+   → O(n²) แม้ไม่ใช่ n×n ตรงๆ */</span>
+
+<span class="cm">/* อีกตัวอย่าง: */</span>
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n; i++) { }   <span class="cm">/* n */</span>
+<span class="kw">for</span> (j = <span class="nm">0</span>; j &lt; n; j++) { }   <span class="cm">/* n */</span>
+<span class="cm">/* สอง loop ติดกัน (ไม่ nest):
+   n + n = 2n → O(n) ไม่ใช่ O(n²)! */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Loop ติดกัน (sequential) = บวก · Loop ซ้อนกัน (nested) = คูณ</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 7 — อ่านจาก Code: Recursion ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · อ่านจากโค้ด</div>
+    <h2 class="slide-title">วิเคราะห์ Recursion ด้วย Recurrence</h2>
+    <p class="slide-lead">เขียน <strong>T(n)</strong> = work per call + recursive calls → แก้หา Big O</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Binary Search: T(n) = T(n/2) + O(1)</div>
+        <pre class="code-block"><span class="kw">int</span> <span class="fn">binary_search</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> lo, <span class="kw">int</span> hi, <span class="kw">int</span> x) {
+    <span class="kw">if</span> (lo > hi) <span class="kw">return</span> -<span class="nm">1</span>;   <span class="cm">/* O(1) */</span>
+    <span class="kw">int</span> mid = (lo+hi)/<span class="nm">2</span>;      <span class="cm">/* O(1) */</span>
+    <span class="kw">if</span> (arr[mid] == x) <span class="kw">return</span> mid;
+    <span class="kw">if</span> (arr[mid] < x)            <span class="cm">/* call 1 ครั้ง */</span>
+        <span class="kw">return</span> <span class="fn">binary_search</span>(arr, mid+<span class="nm">1</span>, hi, x);  <span class="cm">/* n/2 */</span>
+    <span class="kw">return</span> <span class="fn">binary_search</span>(arr, lo, mid-<span class="nm">1</span>, x);     <span class="cm">/* n/2 */</span>
+}
+<span class="cm">/* T(n) = T(n/2) + 1
+   → T(n) = O(log n) */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Merge Sort: T(n) = 2T(n/2) + O(n)</div>
+        <pre class="code-block"><span class="kw">void</span> <span class="fn">merge_sort</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> l, <span class="kw">int</span> r) {
+    <span class="kw">if</span> (l >= r) <span class="kw">return</span>;
+    <span class="kw">int</span> m = l + (r-l)/<span class="nm">2</span>;
+    <span class="fn">merge_sort</span>(arr, l, m);      <span class="cm">/* T(n/2) */</span>
+    <span class="fn">merge_sort</span>(arr, m+<span class="nm">1</span>, r);   <span class="cm">/* T(n/2) */</span>
+    <span class="fn">merge</span>(arr, l, m, r);        <span class="cm">/* O(n) */</span>
+}
+<span class="cm">/* T(n) = 2T(n/2) + n
+   → Master Theorem Case 2
+   → T(n) = O(n log n) */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Master Theorem: T(n) = aT(n/b) + f(n) ถ้า f(n) = O(n^log_b(a)) → T(n) = O(n^log_b(a) · log n)</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 8 — Workshop อ่านโค้ด ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · Workshop</div>
+    <h2 class="slide-title">อ่าน Big O จากโค้ด — ฝึกทีละตัว</h2>
+    <p class="slide-lead">ดูโค้ดแล้ว วิเคราะห์ทีละบรรทัด — ใช้กฎ loop บวก/คูณ</p>
+    <pre class="code-block"><span class="cm">/* ① ฟังก์ชันนี้ O(?) */</span>
+<span class="kw">void</span> <span class="fn">f1</span>(<span class="kw">int</span> n) {
+    <span class="kw">int</span> sum = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++)         <span class="cm">/* n */</span>
+        <span class="kw">for</span> (<span class="kw">int</span> j = <span class="nm">0</span>; j &lt; <span class="nm">10</span>; j++)     <span class="cm">/* 10 (constant!) */</span>
+            sum++;
+}  <span class="cm">/* n × 10 = 10n → O(n) ← constant ทิ้งได้! */</span>
+
+<span class="cm">/* ② O(?) */</span>
+<span class="kw">void</span> <span class="fn">f2</span>(<span class="kw">int</span> n) {
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++)         <span class="cm">/* n */</span>
+        <span class="kw">for</span> (<span class="kw">int</span> j = i; j &lt; n; j++)      <span class="cm">/* n-i */</span>
+            <span class="fn">printf</span>(<span class="st">"%d"</span>, i*j);
+} <span class="cm">/* 0+1+...+(n-1) ≈ n²/2 → O(n²) */</span>
+
+<span class="cm">/* ③ O(?) */</span>
+<span class="kw">void</span> <span class="fn">f3</span>(<span class="kw">int</span> n) {
+    <span class="kw">for</span> (<span class="kw">int</span> i = n; i > <span class="nm">0</span>; i /= <span class="nm">3</span>)     <span class="cm">/* หาร 3 ทุกรอบ */</span>
+        <span class="fn">printf</span>(<span class="st">"%d\n"</span>, i);
+} <span class="cm">/* log₃(n) ≈ log(n) → O(log n) */</span>
+
+<span class="cm">/* ④ O(?) */</span>
+<span class="kw">void</span> <span class="fn">f4</span>(<span class="kw">int</span> n) {
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++)         <span class="cm">/* n */</span>
+        <span class="kw">for</span> (<span class="kw">int</span> j = <span class="nm">1</span>; j &lt; n; j *= <span class="nm">2</span>)  <span class="cm">/* log n */</span>
+            <span class="fn">printf</span>(<span class="st">"%d"</span>, i+j);
+} <span class="cm">/* n × log n → O(n log n) */</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 9 — Best / Average / Worst ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · Cases</div>
+    <h2 class="slide-title">Best / Average / Worst Case</h2>
+    <p class="slide-lead">Big O ปกติหมาย worst case แต่ algorithm หนึ่งตัวมี 3 case ต้องแยกออกจากกัน</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Linear Search — 3 cases</div>
+        <pre class="code-block"><span class="kw">int</span> <span class="fn">linear_search</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n, <span class="kw">int</span> x) {
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+        <span class="kw">if</span> (arr[i] == x)
+            <span class="kw">return</span> i;
+    }
+    <span class="kw">return</span> -<span class="nm">1</span>;
+}
+
+Best:    O(1)   → x อยู่ index แรก
+Average: O(n/2) → O(n)
+Worst:   O(n)   → x ไม่มี หรืออยู่สุดท้าย</pre>
+      </div>
+      <div>
+        <div class="code-label">Notation อื่นๆ</div>
+        <pre class="code-block"><span class="cm">/* Big O   = กรอบบน (worst case)
+   Big Ω   = กรอบล่าง (best case)
+   Big Θ   = กรอบทั้งสอง (tight bound)
+
+   ถ้า Best = Worst = O(n log n)
+   → Θ(n log n) — Merge Sort! */</span>
+
+<span class="cm">/* Amortized Analysis:
+   Dynamic array (realloc):
+   - push ปกติ: O(1)
+   - push ที่ต้อง resize: O(n)
+   - Amortized per push: O(1)
+     เพราะ resize ไม่บ่อย */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Quick Sort: Best/Avg O(n log n) แต่ Worst O(n²) — ถ้าบอกแค่ "O(n log n)" แสดงว่าพูดถึง average case</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 10 — Space Complexity ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · Space</div>
+    <h2 class="slide-title">Space Complexity</h2>
+    <p class="slide-lead">Big O วัดได้ทั้ง <strong>Time</strong> และ <strong>Space</strong> (memory) — มักต้อง trade-off กัน</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Space Complexity ของแต่ละ Sort</div>
+        <table class="step-table">
+          <thead><tr><th>Algorithm</th><th>Space</th><th>เหตุผล</th></tr></thead>
+          <tbody>
+            <tr><td>Bubble Sort</td><td>O(1)</td><td>แค่ตัวแปร temp</td></tr>
+            <tr><td>Insertion Sort</td><td>O(1)</td><td>key + j</td></tr>
+            <tr><td>Selection Sort</td><td>O(1)</td><td>min_idx เท่านั้น</td></tr>
+            <tr><td>Merge Sort</td><td>O(n)</td><td>temp arrays L, R</td></tr>
+            <tr><td>Quick Sort</td><td>O(log n)</td><td>call stack depth</td></tr>
+            <tr><td>Heap Sort</td><td>O(1)</td><td>in-place heap</td></tr>
+            <tr><td>Counting Sort</td><td>O(k)</td><td>count array</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="code-label">Trade-off: Time vs Space</div>
+        <pre class="code-block"><span class="cm">/* Fibonacci */</span>
+<span class="cm">/* Naive O(2ⁿ) time, O(n) stack */</span>
+<span class="kw">int</span> <span class="fn">fib_naive</span>(<span class="kw">int</span> n) {
+    <span class="kw">if</span>(n&lt;=<span class="nm">1</span>) <span class="kw">return</span> n;
+    <span class="kw">return</span> <span class="fn">fib_naive</span>(n-<span class="nm">1</span>) + <span class="fn">fib_naive</span>(n-<span class="nm">2</span>);
+}
+
+<span class="cm">/* Memoized: O(n) time, O(n) space */</span>
+<span class="kw">int</span> memo[<span class="nm">1000</span>] = {-<span class="nm">1</span>};
+<span class="kw">int</span> <span class="fn">fib_memo</span>(<span class="kw">int</span> n) {
+    <span class="kw">if</span>(n&lt;=<span class="nm">1</span>) <span class="kw">return</span> n;
+    <span class="kw">if</span>(memo[n]!=-<span class="nm">1</span>) <span class="kw">return</span> memo[n];
+    <span class="kw">return</span> memo[n] = <span class="fn">fib_memo</span>(n-<span class="nm">1</span>) + <span class="fn">fib_memo</span>(n-<span class="nm">2</span>);
+}
+<span class="cm">/* ใช้ O(n) space แลกกับ O(n) time */</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 11 — ตาราง Complexity Reference ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · Reference</div>
+    <h2 class="slide-title">Complexity Quick Reference</h2>
+    <table class="step-table">
+      <thead><tr><th>Complexity</th><th>n=10</th><th>n=100</th><th>n=1,000</th><th>n=1M</th><th>เจอที่ไหน</th></tr></thead>
+      <tbody>
+        <tr><td><span class="cx cx-g">O(1)</span></td><td>1</td><td>1</td><td>1</td><td>1</td><td>Array access, Hash table</td></tr>
+        <tr><td><span class="cx cx-g">O(log n)</span></td><td>3</td><td>7</td><td>10</td><td>20</td><td>Binary Search, Heap ops</td></tr>
+        <tr><td><span class="cx cx-g">O(n)</span></td><td>10</td><td>100</td><td>1,000</td><td>1M</td><td>Linear Search, sum</td></tr>
+        <tr><td><span class="cx cx-y">O(n log n)</span></td><td>33</td><td>664</td><td>10,000</td><td>20M</td><td>Merge/Quick/Heap Sort</td></tr>
+        <tr><td><span class="cx cx-r">O(n²)</span></td><td>100</td><td>10,000</td><td>1M</td><td>1T</td><td>Bubble/Selection/Insertion</td></tr>
+        <tr><td><span class="cx cx-d">O(n³)</span></td><td>1,000</td><td>1M</td><td>1B</td><td>—</td><td>Matrix multiply naive</td></tr>
+        <tr><td><span class="cx cx-d">O(2ⁿ)</span></td><td>1,024</td><td>10³⁰</td><td>—</td><td>—</td><td>Fibonacci naive, Backtrack</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">rule of thumb: n=10⁸ → O(n) รันได้ใน ~1 วินาที · O(n²) รับได้แค่ n~10,000 · O(n log n) รับได้ n~10⁷</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 12 — Think! ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">โค้ดต่อไปนี้มี Time Complexity อะไร?<br><br>
+<code style="font-size:13px;font-family:monospace;background:var(--cal);padding:4px 10px;border-radius:6px;display:inline-block;text-align:left">
+for (i = 1; i &lt;= n; i *= 2)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;for (j = 0; j &lt; i; j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf("%d %d\n", i, j);
+</code><br><br>
+<em>힌트: i วน log n ครั้ง, แต่ j วน i ครั้ง<br>รวม: 1+2+4+8+...+n = ?</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 13 — MCQ ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · MCQ</div>
+    <h2 class="slide-title">โค้ดนี้มี Complexity อะไร?</h2>
+    <pre class="code-block" style="margin-bottom:14px"><span class="kw">void</span> <span class="fn">mystery</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+        <span class="kw">int</span> j = <span class="nm">1</span>;
+        <span class="kw">while</span> (j &lt; n) {
+            arr[i] += j;
+            j *= <span class="nm">2</span>;        <span class="cm">/* j สองเท่าทุกรอบ */</span>
+        }
+    }
+}</pre>
+    <div id="mc-bo7" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-bo7','A','C','❌ outer n แต่ inner ไม่ใช่ n — j เพิ่มเป็น 2 เท่า')">A) O(n²)</button>
+      <button class="mc-btn" onclick="pickMC('mc-bo7','B','C','❌ ไม่ใช่ค่าคงที่ — มี outer loop วน n ครั้ง')">B) O(log n)</button>
+      <button class="mc-btn" onclick="pickMC('mc-bo7','C','C','✅ outer i วน n ครั้ง · inner j วน log₂(n) ครั้ง (j *= 2) → n × log n = O(n log n)')">C) O(n log n)</button>
+      <button class="mc-btn" onclick="pickMC('mc-bo7','D','C','❌ ยังมี outer loop — ไม่ใช่แค่ log n')">D) O(n)</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px"><span class="cm">/* วิเคราะห์:
+   outer i: วน 0..n-1 → n ครั้ง
+   inner j: 1,2,4,8,...จนถึง n → log₂(n) ครั้ง
+   รวม: n × log₂(n) → O(n log n) */</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 14 — Fill-in + Summary ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① <code class="inline-code">for(i=1; i&lt;n; i*=2)</code> วนกี่ครั้ง? → Big O คือ?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fbo7a" placeholder="O(?)">
+      <button class="fill-btn" onclick="checkFill('fbo7a','log n',['O(log n)','o(log n)','log(n)','logn'],[],'✅ O(log n) — i เพิ่มเป็น 2 เท่าทุกรอบ วน log₂(n) ครั้ง','❌ คือ O(log n) เพราะ i*=2 ทุกรอบ → วน log₂(n) ครั้ง')">ตรวจ</button>
+    </div>
+    <div id="fbo7a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② n² + 3n + 100 → Big O คือ?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fbo7b" placeholder="O(?)">
+      <button class="fill-btn" onclick="checkFill('fbo7b','n^2',['O(n²)','O(n^2)','o(n2)','n²','n2'],[],'✅ O(n²) — ทิ้ง 3n และ 100 ทิ้ง constant ด้วย','❌ O(n²) — เก็บแค่ term ที่ใหญ่สุด ทิ้ง lower-order terms และ constants')">ตรวจ</button>
+    </div>
+    <div id="fbo7b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Merge Sort ใช้ T(n) = 2T(n/2) + n → Big O คือ?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fbo7c" placeholder="O(?)">
+      <button class="fill-btn" onclick="checkFill('fbo7c','n log n',['O(n log n)','o(n log n)','nlogn','n*logn'],[],'✅ O(n log n) — Master Theorem: a=2, b=2, f(n)=n → T(n)=O(n log n)','❌ O(n log n) — T(n)=2T(n/2)+n แก้ได้ด้วย Master Theorem')">ตรวจ</button>
+    </div>
+    <div id="fbo7c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 15 — Summary ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">📐</div>
+      <div class="summary-title">สรุปบทที่ 7 — Big O Notation</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Big O คืออะไร</div><div class="sum-body">กรอบบนของอัตราการเติบโต — ไม่สน constant ดูแค่ n ใหญ่ขึ้น อะไรโตเร็วกว่า</div></div>
+        <div class="sum-card"><div class="sum-head">กฎ 3 ข้อ</div><div class="sum-body">① ทิ้ง constant  ② ทิ้ง lower-order terms  ③ เรียงตาม O(1)&lt;log n&lt;n&lt;n log n&lt;n²</div></div>
+        <div class="sum-card"><div class="sum-head">อ่านจาก Loop</div><div class="sum-body">Loop n ครั้ง→O(n) · หาร 2→O(log n) · Nested→คูณ · Sequential→บวก</div></div>
+        <div class="sum-card"><div class="sum-head">อ่านจาก Recursion</div><div class="sum-body">T(n) = aT(n/b) + f(n) → แก้ด้วย Master Theorem หรือ expansion</div></div>
+        <div class="sum-card"><div class="sum-head">3 Cases</div><div class="sum-body">Best / Average / Worst — Big O ปกติหมาย Worst เสมอ</div></div>
+        <div class="sum-card"><div class="sum-head">Space Complexity</div><div class="sum-body">วัด memory เพิ่ม — In-place = O(1) · Merge Sort = O(n) · Quick Stack = O(log n)</div></div>
+      </div>
+      <a href="index.html" class="summary-next">🏠 กลับหน้าหลัก Sorting</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 15</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 7 — Big O Notation</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover',
+  'Big O คืออะไร',
+  'กฎ 3 ข้อ',
+  'O(1) และ O(log n)',
+  'O(n) และ O(n log n)',
+  'O(n²) และ O(2ⁿ)',
+  'อ่านจาก Loop',
+  'อ่านจาก Recursion',
+  'Workshop โค้ด 4 ตัว',
+  'Best/Average/Worst',
+  'Space Complexity',
+  'Complexity Table',
+  'Think!',
+  'MCQ',
+  'Fill-in + Summary'
+];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
