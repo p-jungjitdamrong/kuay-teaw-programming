@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 4 — Linked List | ติวสอบ Data Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#a4133c;--cal:#fde8ef;--cam:#d45a7e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.tr-t{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;margin:8px 0;}
+.tr-t th{background:var(--ca);color:#fff;padding:5px 8px;text-align:left;font-weight:600;}
+.tr-t td{padding:5px 8px;border:1px solid var(--line);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.8;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🚨 ติวสอบ Midterm · 02204231 Data Structures</div>
+        <div class="cover-title">ติวบทที่ 4<br><em>Linked List</em></div>
+        <div class="cover-subtitle">บทที่โค้ดเยอะสุดของ midterm — insert/delete ทีละกรณี วาดรูปก่อนเขียนเสมอ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ตาราง Array vs Linked List (ปรนัยชอบออก)</div>
+          <div class="topic-row"><div class="topic-dot"></div>struct node + วาดรูปให้เป็น</div>
+          <div class="topic-row"><div class="topic-dot"></div>Singly: insert หัว/กลาง/ท้าย + delete ทุกกรณี</div>
+          <div class="topic-row"><div class="topic-dot"></div>Doubly / Circular — จุดต่างที่ออกสอบ</div>
+          <div class="topic-row"><div class="topic-dot"></div>Applications: Hash chain, Sparse matrix, Polynomial</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">T4</div>
+        <div class="cover-badge">โค้ดเยอะสุด · วาดรูปก่อน</div>
+        <div class="cover-slides-count">14 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 Array vs LL -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · ตารางบังคับจำ</div>
+    <h2 class="slide-title">Array vs Linked List — ตารางจากสไลด์อาจารย์</h2>
+    <table class="tr-t">
+      <thead><tr><th></th><th>1D-Array</th><th>(Singly) Linked List</th></tr></thead>
+      <tbody>
+        <tr><td>ขนาด</td><td>คงที่ (Fixed size) — จองก่อนใช้</td><td>เพิ่ม/ลดได้ (Dynamic size)</td></tr>
+        <tr><td>Insert / Remove</td><td>ต้องเลื่อนข้อมูล → <b>O(n)</b></td><td>ไม่ต้องเลื่อน — แก้ pointer → <b>O(1)</b> ถ้ารู้ตำแหน่ง</td></tr>
+        <tr><td>เข้าถึงสมาชิก</td><td>ระบุ index ได้ทันที → <b>O(1)</b></td><td>ต้องเดินจาก head → <b>O(n)</b></td></tr>
+        <tr><td>หน่วยความจำ</td><td>ติดกันเป็นแถบ</td><td>กระจายได้ เชื่อมด้วย pointer</td></tr>
+        <tr><td>พื้นที่ต่อสมาชิก</td><td>เก็บแค่ data</td><td>data + pointer (เปลืองกว่าต่อตัว)</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>วิธีจำที่ไม่มีวันลืม:</b> สองโครงสร้างนี้ "สลับจุดแข็งกัน" — Array เข้าถึงเร็วแต่แทรกช้า · LL แทรกเร็วแต่เข้าถึงช้า · ข้อสอบถามได้ทั้ง "ข้อดีของ LL" และ "ข้อเสียของ LL" ต้องตอบได้สองทาง</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 struct node -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · โครงสร้าง</div>
+    <h2 class="slide-title">struct node + กติกาวาดรูป</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โค้ดพื้นฐาน (จาก Lab template)</div>
+        <pre class="code-block"><span class="kw">struct</span> node {
+    <span class="kw">int</span> data;
+    <span class="kw">struct</span> node *next;
+};
+<span class="kw">typedef struct</span> node Node;
+
+Node *head = <span class="nm">NULL</span>;   <span class="cm">/* ลิสต์ว่าง */</span>
+
+<span class="cm">/* สร้างโหนดใหม่ */</span>
+Node* <span class="fn">createNode</span>(<span class="kw">int</span> x) {
+    Node *n = (Node*)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(Node));
+    n->data = x;
+    n->next = <span class="nm">NULL</span>;
+    <span class="kw">return</span> n;
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">วาดรูปแบบนี้เสมอ</div>
+        <div class="diagram">head
+ │
+ ▼
+┌────┬───┐   ┌────┬───┐   ┌────┬───┐
+│ 25 │ ●─┼──▶│ 31 │ ●─┼──▶│ 42 │ ╳ │
+└────┴───┘   └────┴───┘   └────┴───┘
+                            ╳ = NULL</div>
+        <pre class="code-block"><span class="cm">/* กติกาห้องสอบ:
+   ① ทุกข้อ LL — วาดรูปก่อนเขียนโค้ด
+   ② เขียนเลขลำดับบนลูกศรที่แก้
+   ③ โหนดสุดท้าย next = NULL เสมอ
+     (ยกเว้น Circular!) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ท่อง 3 สัญลักษณ์จากบท 1:</b> <b>-&gt;</b> เข้า field ของโหนดที่ pointer ชี้ · <b>p = p-&gt;next</b> เดินไปโหนดถัดไป · <b>p-&gt;next = q</b> เปลี่ยนลูกศร — ทั้งบทมีแค่ 3 ท่านี้ผสมกัน</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 insert หัว -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · Insert (1/2)</div>
+    <h2 class="slide-title">Insert หัวลิสต์ — ลำดับบรรทัดคือคะแนน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">insertFront — 2 บรรทัดที่ห้ามสลับ</div>
+        <pre class="code-block"><span class="kw">void</span> <span class="fn">insertFront</span>(Node **head, <span class="kw">int</span> x) {
+    Node *n = <span class="fn">createNode</span>(x);
+    n->next = *head;   <span class="cm">/* ① ชี้ตัวแรกเดิม */</span>
+    *head = n;         <span class="cm">/* ② ย้าย head มาที่เรา */</span>
+}
+
+<span class="cm">/* ⚠️ ถ้าสลับ ①② :
+   *head = n; ก่อน
+   → ตัวแรกเดิมหายไปเลย
+   ลิสต์ที่เหลือหลุดหมด (หลุดทั้งเส้น!)
+   ← จุดหักคะแนนอันดับ 1 ของบทนี้ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">วาดตาม: insertFront 10</div>
+        <div class="diagram">ก่อน:  head ─▶ [25]─▶[31]─▶ ╳
+
+① n->next = head เดิม
+   [10]─▶[25]─▶[31]─▶ ╳
+    ▲ n
+
+② head = n
+   head ─▶ [10]─▶[25]─▶[31]─▶ ╳  ✓</div>
+        <pre class="code-block"><span class="cm">/* กรณีลิสต์ว่าง (head=NULL)?
+   n->next = NULL (ค่า head เดิม)
+   head = n
+   → ทำงานถูกโดยไม่ต้อง if พิเศษ ✓ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>หลักจำลำดับ:</b> "ต่อของใหม่ก่อน แล้วค่อยปล่อยมือจากของเก่า" — เหมือนโหนผาต้องคว้าเชือกใหม่ก่อนปล่อยเชือกเดิม ใช้ได้กับ insert ทุกกรณีในบทนี้</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 insert กลาง/ท้าย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · Insert (2/2)</div>
+    <h2 class="slide-title">Insert กลาง (หลังโหนด p) และ ท้ายลิสต์</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แทรกหลังโหนด p</div>
+        <pre class="code-block"><span class="kw">void</span> <span class="fn">insertAfter</span>(Node *p, <span class="kw">int</span> x) {
+    Node *n = <span class="fn">createNode</span>(x);
+    n->next = p->next;   <span class="cm">/* ① */</span>
+    p->next = n;         <span class="cm">/* ② */</span>
+}</pre>
+        <div class="diagram">[p]─▶[q]  แทรก n ระหว่าง:
+
+① n->next = p->next (ชี้ q)
+② p->next = n
+
+[p]─▶[n]─▶[q] ✓  (ห้ามสลับ ①②)</div>
+      </div>
+      <div>
+        <div class="code-label">แทรกท้าย — ต้องเดินไปหาท้ายก่อน</div>
+        <pre class="code-block"><span class="kw">void</span> <span class="fn">insertLast</span>(Node **head, <span class="kw">int</span> x) {
+    Node *n = <span class="fn">createNode</span>(x);
+    <span class="kw">if</span> (*head == <span class="nm">NULL</span>) {   <span class="cm">/* เคสลิสต์ว่าง! */</span>
+        *head = n;
+        <span class="kw">return</span>;
+    }
+    Node *p = *head;
+    <span class="kw">while</span> (p->next != <span class="nm">NULL</span>)  <span class="cm">/* เดินหาท้าย */</span>
+        p = p->next;
+    p->next = n;             <span class="cm">/* ต่อท้าย */</span>
+}
+<span class="cm">/* เดินหาท้าย O(n) — จุดที่ Circular LL
+   (ใช้ tail) จะมาแก้ทีหลัง */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เช็คลิสต์ insert ครบ 3 กรณี:</b> หัว (แก้ head) · กลาง (แก้ p-&gt;next) · ท้าย (เดินก่อน + ระวังลิสต์ว่าง) — ข้อสอบให้เขียนกรณีใดกรณีหนึ่ง หรือให้เรียงบรรทัดที่สลับมา</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 delete -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · Delete</div>
+    <h2 class="slide-title">Delete — ต้องหยุดที่ "ตัวก่อนหน้า" เสมอ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ลบตัวแรก</div>
+        <pre class="code-block"><span class="kw">void</span> <span class="fn">deleteFront</span>(Node **head) {
+    <span class="kw">if</span> (*head == <span class="nm">NULL</span>) <span class="kw">return</span>;
+    Node *tmp = *head;      <span class="cm">/* ① จำไว้ก่อน */</span>
+    *head = (*head)->next;  <span class="cm">/* ② ข้ามตัวแรก */</span>
+    <span class="fn">free</span>(tmp);              <span class="cm">/* ③ คืนหน่วยความจำ */</span>
+}
+
+<span class="cm">/* ⚠️ free ก่อนย้าย head = พัง!
+   ต้อง "จำ→ข้าม→ค่อย free" */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ลบโหนดที่มีค่า x</div>
+        <pre class="code-block"><span class="kw">void</span> <span class="fn">deleteValue</span>(Node **head, <span class="kw">int</span> x) {
+    <span class="kw">if</span> (*head == <span class="nm">NULL</span>) <span class="kw">return</span>;
+    <span class="kw">if</span> ((*head)->data == x) {      <span class="cm">/* เคสตัวแรก */</span>
+        <span class="fn">deleteFront</span>(head); <span class="kw">return</span>;
+    }
+    Node *p = *head;
+    <span class="kw">while</span> (p->next != <span class="nm">NULL</span> &&
+           p->next->data != x)     <span class="cm">/* หยุดที่ตัว "ก่อน" x */</span>
+        p = p->next;
+    <span class="kw">if</span> (p->next == <span class="nm">NULL</span>) <span class="kw">return</span>;   <span class="cm">/* ไม่เจอ */</span>
+    Node *tmp = p->next;            <span class="cm">/* ตัวที่จะลบ */</span>
+    p->next = tmp->next;            <span class="cm">/* ข้ามมัน */</span>
+    <span class="fn">free</span>(tmp);
+}</pre>
+      </div>
+    </div>
+    <div class="diagram">ลบ 31:  [25]─▶[31]─▶[42]   p ต้องหยุดที่ [25] (ตัวก่อน!)
+        p->next = p->next->next  →  [25]────▶[42]   แล้ว free(31)</div>
+    <div class="exam"><b>ทำไมต้องหยุดตัวก่อนหน้า:</b> Singly LL เดินย้อนไม่ได้ — ถ้าเดินไปถึงตัวที่จะลบแล้ว จะไม่มีใครชี้ข้ามมันได้ · เงื่อนไข while ใช้ <b>p-&gt;next-&gt;data</b> ไม่ใช่ p-&gt;data เพราะเหตุนี้</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 traverse + count -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · ท่าพื้นฐานที่เหลือ</div>
+    <h2 class="slide-title">Traverse / Count / Search — โครงเดียวกันหมด</h2>
+    <pre class="code-block"><span class="cm">/* โครงศักดิ์สิทธิ์ของบทนี้ — ทุก operation ใช้โครงนี้: */</span>
+Node *p = head;
+<span class="kw">while</span> (p != <span class="nm">NULL</span>) {
+    <span class="cm">/* ...ทำอะไรกับ p->data... */</span>
+    p = p->next;
+}
+
+<span class="cm">/* ① แสดงผลทุกตัว */</span>              <span class="cm">/* ② นับจำนวนโหนด */</span>
+<span class="kw">void</span> <span class="fn">printList</span>(Node *head) {        <span class="kw">int</span> <span class="fn">countList</span>(Node *head) {
+    Node *p = head;                     <span class="kw">int</span> c = <span class="nm">0</span>;
+    <span class="kw">while</span> (p != <span class="nm">NULL</span>) {                 Node *p = head;
+        <span class="fn">printf</span>(<span class="st">"%d "</span>, p->data);         <span class="kw">while</span> (p != <span class="nm">NULL</span>) {
+        p = p->next;                        c++;
+    }                                       p = p->next;
+}                                       }
+                                        <span class="kw">return</span> c;
+                                    }
+<span class="cm">/* ③ ค้นหาค่า x — คืน pointer หรือ NULL */</span>
+Node* <span class="fn">search</span>(Node *head, <span class="kw">int</span> x) {
+    Node *p = head;
+    <span class="kw">while</span> (p != <span class="nm">NULL</span>) {
+        <span class="kw">if</span> (p->data == x) <span class="kw">return</span> p;
+        p = p->next;
+    }
+    <span class="kw">return</span> <span class="nm">NULL</span>;      <span class="cm">/* ไม่เจอ */</span>
+}</pre>
+    <div class="exam"><b>ข้อสอบเขียนโค้ดสายนี้ให้คะแนนตาม 3 จุด:</b> ① เริ่ม p = head ② เงื่อนไข p != NULL ③ อย่าลืม p = p-&gt;next (ลืมแล้ว infinite loop = ศูนย์คะแนนข้อนั้น)</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Doubly -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · Doubly</div>
+    <h2 class="slide-title">Doubly Linked List — เพิ่ม prev เดินได้สองทาง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โครงสร้าง</div>
+        <pre class="code-block"><span class="kw">struct</span> dnode {
+    <span class="kw">struct</span> dnode *prev;   <span class="cm">/* ← เพิ่ม */</span>
+    <span class="kw">int</span> data;
+    <span class="kw">struct</span> dnode *next;
+};</pre>
+        <div class="diagram"> ╳◀─[25]◀──▶[31]◀──▶[42]─▶╳
+     ▲ head          (2 ลูกศรต่อคู่)</div>
+      </div>
+      <div>
+        <div class="code-label">แทรก n หลัง p — แก้ 4 ลูกศร!</div>
+        <pre class="code-block">n->prev = p;            <span class="cm">/* ① */</span>
+n->next = p->next;      <span class="cm">/* ② */</span>
+<span class="kw">if</span> (p->next != <span class="nm">NULL</span>)
+    p->next->prev = n;  <span class="cm">/* ③ */</span>
+p->next = n;            <span class="cm">/* ④ */</span>
+
+<span class="cm">/* จุดสอบ: ครบ 4 เส้นไหม?
+   ลืม ③ บ่อยสุด (prev ของตัวขวา)
+   วาดรูปแล้วนับลูกศร: โหนดใหม่
+   มี 2 เส้นออก + 2 เส้นเข้า */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เทียบข้อดี-เสีย (ปรนัย):</b> Doubly เดินย้อนได้ + ลบโหนดที่รู้ตำแหน่งได้ไม่ต้องหาตัวก่อนหน้า · แลกกับ pointer เพิ่ม 1 ตัวต่อโหนด (เปลืองที่) และแก้ลูกศรเยอะขึ้นตอน insert/delete</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 Circular -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · Circular</div>
+    <h2 class="slide-title">Circular Linked List — ท้ายชี้กลับหัว ไม่มี NULL</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">จุดต่างจาก Singly (จากสไลด์อาจารย์)</div>
+        <pre class="code-block">① โหนดสุดท้าย next ชี้กลับต้นลิสต์
+   → "ไม่มีพอยน์เตอร์ใดมีค่า NULL"
+
+② นิยมใช้ pointer ชี้ "โหนดสุดท้าย"
+   (tail) แทน head เพราะ:
+   tail       = ท้ายลิสต์  O(1)
+   tail->next = หัวลิสต์!  O(1)
+   → เข้าถึงหัวและท้ายได้ทันทีทั้งคู่
+
+③ เดินครบรอบ = กลับมาเจอจุดเริ่ม
+   while (p != จุดเริ่ม) ← ไม่ใช่ NULL!</pre>
+      </div>
+      <div>
+        <div class="code-label">ใช้กับงานอะไร (ออกปรนัย)</div>
+        <pre class="code-block"><span class="cm">/* งานที่ต้อง "วนซ้ำเป็นรอบ":
+   Round-robin scheduling
+   ของระบบปฏิบัติการ
+   — CPU แจกเวลาให้โปรแกรม
+     วนไปเรื่อยๆ ทีละตัว
+
+   ← ตัวอย่างนี้อยู่ในสไลด์อาจารย์
+     ตรงๆ ให้ตอบคำนี้เลย */</span>
+
+<span class="cm">/* เดินพิมพ์ทุกตัว (เริ่มจากหัว): */</span>
+Node *p = tail->next;      <span class="cm">/* หัว */</span>
+<span class="kw">do</span> {
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, p->data);
+    p = p->next;
+} <span class="kw">while</span> (p != tail->next); <span class="cm">/* ครบรอบ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดหลอกปรนัย:</b> "Circular LL โหนดใดมีค่า next เป็น NULL?" → <b>ไม่มีเลย</b> · และการวนลูปต้องใช้ do-while (เพราะเช็คก่อนจะไม่ได้เข้าลูปเลย — p เริ่มที่จุดเช็คพอดี)</div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Applications -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · Applications</div>
+    <h2 class="slide-title">Applications — 3 ตัวอย่างจากสไลด์ (ออกปรนัย)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① Hash Table chaining (โยงไปบท 5!)</div>
+        <div class="diagram">index
+ [0] ─▶ [20]─▶[10]─▶[30]─▶╳
+ [1] ─▶ [81]─▶╳        (81%10=1)
+ [2] ─▶ [22]─▶[42]─▶╳  (ชนกัน→ต่อแถว)</div>
+        <pre class="code-block"><span class="cm">/* คีย์ชนช่องเดียวกัน → ต่อเป็น
+   linked list ในช่องนั้น
+   = Separate Chaining (บท 5) */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">② Sparse Matrix ③ Polynomial</div>
+        <pre class="code-block"><span class="cm">/* ② matrix ที่ส่วนใหญ่เป็น 0
+   เก็บเฉพาะช่องที่มีค่า
+   → ประหยัดหน่วยความจำมหาศาล */</span>
+
+<span class="cm">/* ③ พหุนาม 5x³ + 2x + 7
+   เก็บทีละเทอม (coef, degree):
+   [5,3]─▶[2,1]─▶[7,0]─▶╳
+   เรียง degree มาก → น้อย
+   บวกพหุนาม = merge สองลิสต์ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>แนวถาม:</b> "ข้อใดเป็นการประยุกต์ใช้ Linked List" → จำ 3 ตัว: <b>Hash chaining · Sparse Matrix/Vector · Single Variable Polynomial</b> (ทั้งสามอยู่ในสไลด์ part 3 ของอาจารย์)</div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โค้ดลบโหนดของเพื่อนคนหนึ่งเขียนแบบนี้:<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.8">
+Node *p = head;<br>
+while (p-&gt;data != x)&nbsp;&nbsp;// เดินไปหาตัวที่จะลบ<br>
+&nbsp;&nbsp;p = p-&gt;next;<br>
+free(p);
+</code><br><br>
+ผิดตรงไหนบ้าง? (มีอย่างน้อย 3 จุด)<br><br>
+<em>ใบ้: ① ลบแล้วใครชี้ข้าม? ② ถ้า x ไม่มีในลิสต์?<br>③ ถ้าลิสต์ว่าง (head = NULL)?</em><br><br>
+ข้อสอบชอบให้ "หาข้อผิดพลาดจากโค้ด" แบบนี้แหละ</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · ลองข้อสอบ</div>
+    <h2 class="slide-title">insertFront เขียนถูกคือข้อใด?</h2>
+    <div id="mc-t4" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-t4','A','B','❌ head = n ก่อน → ลิสต์เดิมหลุดหมด n->next จะชี้ตัวเองแทน')">A) *head = n; n-&gt;next = *head;</button>
+      <button class="mc-btn" onclick="pickMC('mc-t4','B','B','✅ ต่อของใหม่เข้าลิสต์ก่อน (n->next = *head) แล้วค่อยย้าย head')">B) n-&gt;next = *head; *head = n;</button>
+      <button class="mc-btn" onclick="pickMC('mc-t4','C','B','❌ n->next = NULL ทำให้ลิสต์เดิมหลุด — ต้องชี้ตัวแรกเดิม')">C) n-&gt;next = NULL; *head = n;</button>
+      <button class="mc-btn" onclick="pickMC('mc-t4','D','B','❌ (*head)->next = n คือเอา n ไปต่อ \"หลังตัวแรก\" ไม่ใช่แทรกหน้า')">D) (*head)-&gt;next = n; *head = n;</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px"><span class="cm">/* หลักตัดสิน: "ต่อของใหม่ก่อน ค่อยปล่อยของเก่า"
+   ข้อ A คือกับดักคลาสสิก — บรรทัดถูกทั้งคู่ แต่สลับลำดับ = ลิสต์หาย
+   วาดรูปตาม 2 บรรทัดของแต่ละข้อ แล้วดูว่าเส้นไหนขาด */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 5</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① การลบโหนดใน Singly LL ต้องเดินไปหยุดที่ตัว ___ ของตัวที่จะลบ</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft4a" placeholder="ตำแหน่ง">
+      <button class="fill-btn" onclick="checkFill('ft4a','ก่อนหน้า',['ก่อน','previous','prev','ตัวก่อน'],[],'✅ ตัวก่อนหน้า — เพราะ Singly เดินย้อนไม่ได้ ต้องให้ตัวก่อนชี้ข้าม','❌ ตัวก่อนหน้า — p->next = p->next->next ต้องยืนที่ตัวก่อน')">ตรวจ</button>
+    </div>
+    <div id="ft4a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Circular LL นิยมเก็บ pointer ชี้โหนด ___ เพราะเข้าถึงได้ทั้งหัวและท้าย O(1)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft4b" placeholder="โหนดไหน">
+      <button class="fill-btn" onclick="checkFill('ft4b','สุดท้าย',['ท้าย','tail','last','ตัวสุดท้าย'],[],'✅ tail — tail คือท้าย และ tail->next คือหัว ได้สองอย่างในตัวเดียว','❌ โหนดสุดท้าย (tail) — tail->next ก็คือหัวลิสต์ทันที')">ตรวจ</button>
+    </div>
+    <div id="ft4b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ การเข้าถึงสมาชิกตัวที่ k ใน Linked List ใช้เวลา O(___)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft4c" placeholder="complexity">
+      <button class="fill-btn" onclick="checkFill('ft4c','n',['O(n)','o(n)'],[],'✅ O(n) — ต้องเดินจาก head ทีละตัว (จุดที่แพ้ array)','❌ O(n) — LL ระบุ index ตรงๆ ไม่ได้ ต้องเดินจากหัว')">ตรวจ</button>
+    </div>
+    <div id="ft4c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔗</div>
+      <div class="summary-title">จบติวบทที่ 4 — Linked List</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Array vs LL</div><div class="sum-body">สลับจุดแข็งกัน: Array เข้าถึง O(1) แทรก O(n) · LL กลับกัน</div></div>
+        <div class="sum-card"><div class="sum-head">Insert</div><div class="sum-body">"ต่อของใหม่ก่อน ค่อยปล่อยของเก่า" — n-&gt;next ก่อน แล้วค่อยแก้ head/p-&gt;next</div></div>
+        <div class="sum-card"><div class="sum-head">Delete</div><div class="sum-body">หยุดที่ตัวก่อนหน้า · จำ→ข้าม→free · เช็คลิสต์ว่าง+ไม่เจอเสมอ</div></div>
+        <div class="sum-card"><div class="sum-head">โครงเดิน</div><div class="sum-body">p=head → while(p!=NULL) → p=p-&gt;next — ใช้กับ print/count/search</div></div>
+        <div class="sum-card"><div class="sum-head">Doubly / Circular</div><div class="sum-body">Doubly แก้ 4 ลูกศร (อย่าลืม prev ตัวขวา) · Circular ไม่มี NULL ใช้ tail</div></div>
+        <div class="sum-card"><div class="sum-head">Applications</div><div class="sum-body">Hash chaining · Sparse Matrix · Polynomial — ตัวแรกคือบท 5 พอดี</div></div>
+      </div>
+      <a href="slides_ch5.html" class="summary-next">→ ติวบทที่ 5: Hashing เติมตาราง</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 4 — Linked List</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Array vs LL','struct + วาดรูป','Insert หัว','Insert กลาง/ท้าย','Delete','Traverse/Count/Search','Doubly','Circular','Applications','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 2 — T(n) + Big-O | ติวสอบ Data Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#a4133c;--cal:#fde8ef;--cam:#d45a7e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🚨 ติวสอบ Midterm · 02204231 Data Structures</div>
+        <div class="cover-title">ติวบทที่ 2<br><em>T(n) + Big-O</em></div>
+        <div class="cover-subtitle">ข้อสอบตัวเป้งของ midterm — นับ T(n) ทีละบรรทัดแบบที่อาจารย์ให้คะแนน แล้วสรุปเป็น Big-O</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>นับ T(n) ทีละบรรทัด (วิธีเขียนตอบให้ได้คะแนนเต็ม)</div>
+          <div class="topic-row"><div class="topic-dot"></div>กฎหา Big-O จาก T(n) — 2 ขั้นตอนจบ</div>
+          <div class="topic-row"><div class="topic-dot"></div>Best / Worst Case พร้อมรูปแบบข้อมูล</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลยใบ practice จริง: ค้นหาใน matrix + sum 1..n</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลย function_A, function_B, function_C ครบ</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">T2</div>
+        <div class="cover-badge">ออกสอบแน่นอน · น้ำหนักเยอะ</div>
+        <div class="cover-slides-count">14 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 ทำไมต้องวิเคราะห์ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · ปูพื้น 2 นาที</div>
+    <h2 class="slide-title">ตัวอย่างเปิดบทของอาจารย์ — ต้องเล่าได้</h2>
+    <p class="slide-lead">สไลด์อาจารย์เปิดด้วยโจทย์นี้ และมันสรุปทั้งบทในตัวอย่างเดียว</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์: เครื่องไหนเรียงเสร็จก่อน?</div>
+        <pre class="code-block">Computer A: เร็ว 10⁹ คำสั่ง/วิ
+  ใช้ insertion sort → n²
+
+Computer B: ช้า 10⁷ คำสั่ง/วิ (ช้ากว่า 100 เท่า!)
+  ใช้ merge sort → n log₂ n
+
+เรียงตัวเลข n = 1 ล้านตัว
+
+A: (10⁶)² / 10⁹      = 1000 วินาที ≈ 16 นาที
+B: 10⁶·log₂(10⁶) / 10⁷ ≈ 2 วินาที
+
+เครื่องช้ากว่า 100 เท่า ชนะ 500 เท่า!!</pre>
+      </div>
+      <div>
+        <div class="code-label">บทเรียนที่ข้อสอบอยากได้</div>
+        <pre class="code-block"><span class="cm">/* "อัลกอริทึมที่ดีกว่า
+    สำคัญกว่าเครื่องที่เร็วกว่า"
+
+   การวิเคราะห์มี 2 แนวทาง:
+   ① Experimental — เขียนโปรแกรม
+     รันจริง จับเวลา
+   ② Mathematical — นับจำนวนคำสั่ง
+     เป็นฟังก์ชันของ n ← ที่สอบ!
+
+   วิชานี้เน้น Time Complexity
+   (ไม่ใช่ Space) — ตอบปรนัยให้ถูก */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>แนวปรนัย:</b> "การวิเคราะห์เชิงคณิตศาสตร์ต่างจากการทดลองอย่างไร" → การทดลองต้องเขียนโปรแกรม+รัน+จับเวลา (ขึ้นกับเครื่อง) แต่คณิตวิเคราะห์นับจำนวนคำสั่งเป็นฟังก์ชันของ n (ไม่ขึ้นกับเครื่อง)</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 นับ T(n) พื้นฐาน -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · หัวใจของบท</div>
+    <h2 class="slide-title">นับ T(n) ทีละบรรทัด — วิธีที่อาจารย์ให้คะแนน</h2>
+    <p class="slide-lead">ข้อสอบสั่งว่า "ระบุเวลาที่ใช้แต่ละบรรทัด" — ต้องเขียนข้างบรรทัด ไม่ใช่ตอบ Big-O ลอยๆ</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กฎการนับ (จำ 4 ข้อ)</div>
+        <pre class="code-block">① คำสั่งเดี่ยว (กำหนดค่า, if, printf)
+   → นับ 1
+
+② for(i=0; i&lt;n; i++)
+   → หัวลูปทำงาน n+1 ครั้ง
+     (เช็คเงื่อนไขรอบสุดท้ายที่หลุด)
+   → body ทำงาน n ครั้ง
+
+③ ลูปซ้อน → คูณกัน
+
+④ รวมทุกบรรทัด = T(n)
+   แล้วค่อยลดรูปเป็น Big-O</pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่างมาตรฐาน</div>
+        <pre class="code-block"><span class="kw">int</span> sum = <span class="nm">0</span>;              <span class="cm">/* 1        */</span>
+<span class="kw">for</span> (i=<span class="nm">1</span>; i&lt;=n; i++) {    <span class="cm">/* n+1      */</span>
+    sum = sum + i;         <span class="cm">/* n        */</span>
+}
+<span class="fn">printf</span>(<span class="st">"%d"</span>, sum);        <span class="cm">/* 1        */</span>
+
+T(n) = 1 + (n+1) + n + 1
+     = 2n + 3
+
+Big-O: ตัด constant, ตัด term เล็ก
+     → O(n)</pre>
+      </div>
+    </div>
+    <div class="exam"><b>เขียนตอบแบบได้คะแนนเต็ม:</b> ① เขียนจำนวนครั้งข้างทุกบรรทัด ② รวมเป็น T(n) = ... ③ สรุป "ดังนั้น Big-O คือ O(...)" — ข้ามขั้นตอนไหนโดนหักขั้นตอนนั้น</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 กฎ Big-O -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · กฎลดรูป</div>
+    <h2 class="slide-title">T(n) → Big-O ใน 2 ขั้นตอน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ขั้น 1 ตัดตัวน้อย · ขั้น 2 ตัด constant</div>
+        <pre class="code-block">T(n) = 6n² + 10n + 5
+  ขั้น 1: เก็บ term โตสุด → 6n²
+  ขั้น 2: ตัด 6 → n²
+  ∴ O(n²)
+
+T(n) = 2n + 3        → O(n)
+T(n) = 5             → O(1)
+T(n) = n²/2 + n/2    → O(n²)
+T(n) = 3n + 2log n   → O(n)
+T(n) = n log n + n   → O(n log n)</pre>
+      </div>
+      <div>
+        <div class="code-label">ลำดับการโต (เรียงให้ได้)</div>
+        <pre class="code-block">O(1) &lt; O(log n) &lt; O(n)
+     &lt; O(n log n) &lt; O(n²)
+     &lt; O(n³) &lt; O(2ⁿ)
+
+ชื่อเรียก (ข้อสอบให้ "ระบุชื่อฟังก์ชัน"):
+O(1)       constant
+O(log n)   logarithmic
+O(n)       linear
+O(n log n) linearithmic
+O(n²)      quadratic
+O(2ⁿ)      exponential</pre>
+      </div>
+    </div>
+    <div class="exam"><b>ระวังในใบ practice:</b> โจทย์ function_A/B/C สั่งให้ "ระบุชื่อฟังก์ชันของอัตราการเติบโต" ด้วย — ตอบ O(n) เฉยๆ ไม่พอ ต้องเขียน "linear" กำกับ</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 spot loop patterns -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · ดูลูปปุ๊บตอบปั๊บ</div>
+    <h2 class="slide-title">4 Pattern ลูปที่ต้องมองออกทันที</h2>
+    <pre class="code-block"><span class="cm">/* ① เพิ่มทีละคงที่ → O(n)   (i++ หรือ i+=5 ก็ O(n) — n/5 ตัด constant) */</span>
+<span class="kw">for</span> (i = <span class="nm">1</span>; i &lt;= n; i++)     ...
+<span class="kw">for</span> (i = <span class="nm">1</span>; i &lt;= n; i += <span class="nm">5</span>)  ...
+
+<span class="cm">/* ② คูณ/หารทีละเท่า → O(log n)   (จำนวนรอบ = log₂ n) */</span>
+<span class="kw">for</span> (j = <span class="nm">1</span>; j &lt;= n; j = <span class="nm">2</span> * j)  ...
+<span class="kw">for</span> (j = n; j >= <span class="nm">1</span>; j = j / <span class="nm">2</span>)  ...
+
+<span class="cm">/* ③ ลูปซ้อน → คูณกัน */</span>
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n; i++)          <span class="cm">/* n     */</span>
+    <span class="kw">for</span> (j = <span class="nm">0</span>; j &lt; n; j++)      <span class="cm">/* × n   */</span>
+        ...                       <span class="cm">/* = O(n²) */</span>
+
+<span class="kw">for</span> (i = n/<span class="nm">2</span>; i &lt;= n; i++)       <span class="cm">/* n/2 → O(n) */</span>
+    <span class="kw">for</span> (j = <span class="nm">1</span>; j &lt;= n; j = <span class="nm">2</span>*j) <span class="cm">/* × log n    */</span>
+        ...                       <span class="cm">/* = O(n log n) */</span>
+
+<span class="cm">/* ④ มี break ในลูปใน → ลูปในทำแค่รอบเดียว! */</span>
+<span class="kw">for</span> (i = <span class="nm">1</span>; i &lt;= n; i++)
+    <span class="kw">for</span> (j = <span class="nm">1</span>; j &lt;= n; j += <span class="nm">5</span>) {
+        <span class="fn">printf</span>(<span class="st">"*"</span>);
+        <span class="kw">break</span>;                    <span class="cm">/* ← ออกทันที! ลูปใน = O(1) */</span>
+    }                             <span class="cm">/* รวม = O(n) ไม่ใช่ O(n²)!! */</span></pre>
+    <div class="exam"><b>Pattern ④ คือ function_A ในใบ practice เป๊ะๆ</b> — อาจารย์จงใจใส่ break หลอก คนไม่อ่านโค้ดจะตอบ O(n²) แล้วผิด · อ่านทุกบรรทัดก่อนตอบเสมอ</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 เฉลย practice ข้อ 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · เฉลยใบ practice ข้อ 1</div>
+    <h2 class="slide-title">เฉลยจริง: ค้นหา item ใน matrix n×n</h2>
+    <p class="slide-lead">โจทย์ practice_ch2 ข้อ 1 — โปรแกรมวนหา item ใน mat[100][100] แล้วตอบ 1.1–1.4</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">1.1-1.2: ปัญหาอะไร + T(n)</div>
+        <pre class="code-block"><span class="cm">/* 1.1 โปรแกรมแก้ปัญหาอะไร?
+   → ค้นหาค่า item ใน matrix ขนาด n×n
+     (Searching) */</span>
+
+<span class="cm">/* 1.2 นับตั้งแต่บรรทัด 9: */</span>
+<span class="kw">for</span>(row=<span class="nm">0</span>;row&lt;n;row++)      <span class="cm">/* n+1 */</span>
+ <span class="kw">for</span>(col=<span class="nm">0</span>;col&lt;n;col++)     <span class="cm">/* n(n+1) */</span>
+  <span class="kw">if</span>(mat[row][col]==item)   <span class="cm">/* n·n */</span>
+    found=<span class="nm">1</span>;                 <span class="cm">/* ≤ n·n */</span>
+<span class="kw">if</span>(found) ... <span class="kw">else</span> ...       <span class="cm">/* 1+1 */</span>
+
+T(n) = (n+1) + n(n+1) + n² + n² + 2
+     ≈ 3n² + 2n + 3</pre>
+      </div>
+      <div>
+        <div class="code-label">1.3-1.4: Big-O + ปรับปรุง</div>
+        <pre class="code-block"><span class="cm">/* 1.3 Big-O = O(n²) — แต่โจทย์ให้บอก
+   "รูปแบบข้อมูล" แต่ละกรณีด้วย!
+
+   ⚠️ โค้ดนี้ไม่มี break
+   → วนครบทุกช่องเสมอ
+   Best  = Worst = O(n²)
+   (เจอเร็วก็ไม่หยุด!) */</span>
+
+<span class="cm">/* 1.4 เขียนใหม่ให้ดีกว่า: เพิ่ม break */</span>
+<span class="kw">if</span> (mat[row][col]==item) {
+    found=<span class="nm">1</span>; <span class="kw">break</span>;  <span class="cm">/* + ออกลูปนอกด้วย */</span>
+}
+<span class="cm">/* Best: เจอช่องแรก O(1)
+   Worst: ไม่เจอเลย O(n²) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดที่เก็งได้เลย:</b> โค้ดค้นหา "ไม่มี break" → Best = Worst · เติม break แล้ว Best O(1) — ข้อสอบชอบให้เทียบสองเวอร์ชันนี้ และถามว่า "รูปแบบข้อมูล Best case คืออะไร" (ตอบ: item อยู่ช่องแรก)</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 เฉลย practice ข้อ 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · เฉลยใบ practice ข้อ 2</div>
+    <h2 class="slide-title">เฉลยจริง: sum 1..n และเวอร์ชัน O(1)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">2.1: T(n) ของ pseudocode</div>
+        <pre class="code-block">Set i=1, sum=0        <span class="cm">/* 2      */</span>
+While i&lt;=n            <span class="cm">/* n+1    */</span>
+    sum=sum+i         <span class="cm">/* n      */</span>
+    i=i+1             <span class="cm">/* n      */</span>
+End while
+
+T(n) = 2 + (n+1) + n + n
+     = 3n + 3
+∴ O(n) — linear</pre>
+      </div>
+      <div>
+        <div class="code-label">2.2: เขียนใหม่ให้เป็น O(1)</div>
+        <pre class="code-block"><span class="cm">/* ใช้สูตร Gauss:
+   1+2+...+n = n(n+1)/2 */</span>
+
+Begin
+  sum = n * (n + <span class="nm">1</span>) / <span class="nm">2</span>   <span class="cm">/* 1 คำสั่ง */</span>
+End
+
+T(n) = 1 → O(1) — constant
+
+<span class="cm">/* สูตรนี้ต้องจำ! ใช้อีกในบท 3:
+   จำนวนเปรียบเทียบของ
+   selection sort = n(n-1)/2 */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>สูตรบังคับจำ:</b> 1+2+...+n = <b>n(n+1)/2</b> และ 1+2+...+(n−1) = <b>n(n−1)/2</b> — โผล่ทั้งบท 2 (ลดรูป T(n)) และบท 3 (นับการเปรียบเทียบ sorting) สองบทใช้สูตรเดียวกัน</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 เฉลย function_A -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · เฉลยใบ practice ข้อ 3</div>
+    <h2 class="slide-title">เฉลยจริง: function_A — กับดัก break</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์</div>
+        <pre class="code-block"><span class="kw">void</span> <span class="fn">function_A</span>(<span class="kw">int</span> n) {
+    <span class="kw">int</span> i, j;
+    <span class="kw">if</span> (n == <span class="nm">1</span>) <span class="kw">return</span>;
+    <span class="kw">for</span> (i = <span class="nm">1</span>; i &lt;= n; i++) {
+        <span class="kw">for</span> (j = <span class="nm">1</span>; j &lt;= n; j += <span class="nm">5</span>) {
+            <span class="fn">printf</span>(<span class="st">"*"</span>);
+            <span class="kw">break</span>;   <span class="cm">/* ← ตัวเปลี่ยนเกม */</span>
+        }
+    }
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">วิเคราะห์</div>
+        <pre class="code-block"><span class="cm">/* มองผ่านๆ: ลูปซ้อน → O(n²)? ผิด!
+
+   ลูปใน: เข้ารอบแรก printf แล้ว
+   break ทันที → ทำงานแค่ 1 รอบเสมอ
+   = O(1)
+
+   ลูปนอก: วน n รอบ = O(n)
+
+   รวม: n × 1 = O(n) — linear ✓ */</span>
+
+<span class="cm">/* บทเรียน: อย่านับจำนวนชั้นลูป
+   ให้นับ "จำนวนครั้งที่ body ทำงานจริง" */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>คำตอบส่ง:</b> function_A = <b>O(n) — linear</b> เพราะ break ทำให้ลูปในทำงานรอบเดียว · ใครตอบ O(n²) คือคนที่อาจารย์ตั้งใจดัก</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 เฉลย function_B C -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · เฉลยใบ practice ข้อ 3 (ต่อ)</div>
+    <h2 class="slide-title">เฉลยจริง: function_B และ function_C</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">function_B → O(n log n)</div>
+        <pre class="code-block"><span class="kw">for</span> (i = n/<span class="nm">2</span>; i &lt;= n; i++)      <span class="cm">/* n/2 รอบ
+                                   → O(n) */</span>
+    <span class="kw">for</span> (j = <span class="nm">1</span>; j &lt;= n; j = <span class="nm">2</span>*j) <span class="cm">/* คูณ 2
+                                   → log₂n */</span>
+        count++;
+
+รวม: (n/2) × log n
+   → O(n log n) — linearithmic ✓</pre>
+      </div>
+      <div>
+        <div class="code-label">function_C → O(n² log n)</div>
+        <pre class="code-block"><span class="kw">for</span> (i = n/<span class="nm">2</span>; i &lt;= n; i++)       <span class="cm">/* n/2 → O(n) */</span>
+    <span class="kw">for</span> (j = <span class="nm">1</span>; j+n/<span class="nm">2</span> &lt;= n; j++)  <span class="cm">/* j วน 1..n/2
+                                    → O(n) */</span>
+        <span class="kw">for</span> (k = <span class="nm">1</span>; k &lt;= n; k = k*<span class="nm">2</span>) <span class="cm">/* → log₂n */</span>
+            count++;
+
+รวม: (n/2) × (n/2) × log n
+   → O(n² log n) ✓
+
+<span class="cm">/* เทคนิค: วิเคราะห์ทีละชั้น
+   เขียนกำกับข้างลูป แล้วคูณรวม */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>วิธีทำสามข้อนี้ในห้องสอบ:</b> เขียนข้างลูปทุกตัวว่า "กี่รอบ" (n/2, log n, ...) → คูณจากนอกเข้าใน → ตัด constant — อย่าลัดขั้นตอนแม้มั่นใจ เพราะคะแนนอยู่ที่วิธีทำ</div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Best Worst -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · Best/Worst</div>
+    <h2 class="slide-title">Best / Worst Case — ต้องตอบ "รูปแบบข้อมูล" ด้วย</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">หลักการ</div>
+        <pre class="code-block">Best Case  = ข้อมูลแบบไหนทำให้
+             ทำงานน้อยสุด + O เท่าไหร่
+Worst Case = ข้อมูลแบบไหนทำให้
+             ทำงานมากสุด + O เท่าไหร่
+
+<span class="cm">/* ตัวอย่าง: Linear Search (มี break)
+   Best:  item อยู่ตัวแรก → O(1)
+   Worst: item อยู่ตัวสุดท้าย
+          หรือไม่มีในข้อมูล → O(n) */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ตารางที่ใช้ตอบบท 3 ล่วงหน้า</div>
+        <pre class="code-block">Selection Sort:
+  Best = Worst = O(n²)
+  (ไม่มีทางหยุดก่อน — วนครบเสมอ)
+
+Insertion Sort:
+  Best: เรียงอยู่แล้ว → O(n)
+  Worst: เรียงกลับด้าน → O(n²)
+
+Bubble Sort (มี flag):
+  Best: เรียงอยู่แล้ว → O(n)
+  Worst: เรียงกลับด้าน → O(n²)</pre>
+      </div>
+    </div>
+    <div class="exam"><b>สูตรตอบเต็ม:</b> "Best case คือ O(...) เมื่อข้อมูล [บอกรูปแบบ]" — เช่น "O(n) เมื่อข้อมูลเรียงลำดับอยู่แล้ว" · ลืมบอกรูปแบบข้อมูล = โดนหักครึ่ง ทุกปีมีคนพลาดตรงนี้</div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">ลองทำเองก่อนดูเฉลยหน้าถัดไป:<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.8">
+for (i = 1; i &lt;= n; i++)<br>
+&nbsp;&nbsp;for (j = 1; j &lt;= i; j++)&nbsp;&nbsp;// สังเกต: j ≤ i ไม่ใช่ n!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;count++;
+</code><br><br>
+count++ ทำงานกี่ครั้ง? Big-O เท่าไหร่?<br><br>
+<em>ใบ้: i=1 ทำ 1 ครั้ง, i=2 ทำ 2 ครั้ง, ..., i=n ทำ n ครั้ง<br>
+รวม = 1+2+...+n = ? (สูตรที่เพิ่งจำไป)</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · ลองข้อสอบ</div>
+    <h2 class="slide-title">จากโจทย์เช็คตัวเอง — Big-O คือ?</h2>
+    <div id="mc-t2" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-t2','A','B','❌ O(n) คือลูปเดี่ยว — ลูปในวนตาม i ซึ่งโตขึ้นเรื่อยๆ รวมแล้วเกิน n มาก')">A) O(n)</button>
+      <button class="mc-btn" onclick="pickMC('mc-t2','B','B','✅ 1+2+...+n = n(n+1)/2 = (n²+n)/2 → เก็บ term โตสุด ตัด constant → O(n²)')">B) O(n²)</button>
+      <button class="mc-btn" onclick="pickMC('mc-t2','C','B','❌ O(n log n) เกิดเมื่อลูปในเป็นแบบคูณ/หารทีละเท่า — อันนี้ j เพิ่มทีละ 1')">C) O(n log n)</button>
+      <button class="mc-btn" onclick="pickMC('mc-t2','D','B','❌ ครึ่งหนึ่งของ n² ก็ยังเป็น O(n²) — constant 1/2 ถูกตัดทิ้ง')">D) O(n²/2) เป็นคำตอบสุดท้าย</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">count++ ทำงาน = 1 + 2 + 3 + ... + n = n(n+1)/2 ครั้ง
+
+T(n) = (n² + n)/2  →  เก็บ n²/2  →  ตัด 1/2  →  <b>O(n²)</b>
+
+⚠️ ตัวเลือก D คือกับดัก: O(n²/2) "ไม่ใช่รูปแบบคำตอบ" — Big-O ต้องตัด constant เสมอ</pre>
+  </div>
+</div>
+
+<!-- SLIDE 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 3</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① T(n) = 4n² + 100n + 999 → Big-O คือ O(___)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft2a" placeholder="คำตอบ">
+      <button class="fill-btn" onclick="checkFill('ft2a','n^2',['n²','n2','O(n²)','O(n^2)'],[],'✅ เก็บ 4n² → ตัด 4 → O(n²) แม้ 100n จะดูใหญ่ n²ก็โตแซงเสมอ','❌ O(n²) — เก็บ term โตสุด (n²) แล้วตัด constant')">ตรวจ</button>
+    </div>
+    <div id="ft2a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② for (j = 1; j &lt;= n; j = 2*j) วนกี่รอบ (ตอบเป็นฟังก์ชันของ n)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft2b" placeholder="คำตอบ">
+      <button class="fill-btn" onclick="checkFill('ft2b','log n',['log₂n','log2 n','log n รอบ','logn','O(log n)'],[],'✅ log₂n รอบ — j คูณสองทุกรอบจนเกิน n','❌ log₂n — คูณ/หารทีละเท่า = log เสมอ')">ตรวจ</button>
+    </div>
+    <div id="ft2b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ 1 + 2 + ... + n = ___ (สูตร)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft2c" placeholder="สูตร">
+      <button class="fill-btn" onclick="checkFill('ft2c','n(n+1)/2',['n(n+1)/2','(n(n+1))/2','n*(n+1)/2'],[],'✅ n(n+1)/2 — สูตร Gauss ใช้ทั้งบท 2 และนับเปรียบเทียบ sorting บท 3','❌ n(n+1)/2 — ท่องเลย ใช้สองบท')">ตรวจ</button>
+    </div>
+    <div id="ft2c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">⏱️</div>
+      <div class="summary-title">จบติวบทที่ 2 — T(n) + Big-O</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">นับ T(n)</div><div class="sum-body">คำสั่งเดี่ยว 1 · หัวลูป n+1 · body n · ซ้อน = คูณ · เขียนข้างทุกบรรทัด</div></div>
+        <div class="sum-card"><div class="sum-head">ลดรูป 2 ขั้น</div><div class="sum-body">เก็บ term โตสุด → ตัด constant → O(...) + บอกชื่อ (linear ฯลฯ)</div></div>
+        <div class="sum-card"><div class="sum-head">Pattern ลูป</div><div class="sum-body">+1 → n · ×2 → log n · ซ้อน → คูณ · มี break → ดูให้ดี!</div></div>
+        <div class="sum-card"><div class="sum-head">เฉลย practice</div><div class="sum-body">matrix ไม่มี break: Best=Worst=O(n²) · A: O(n) · B: O(n log n) · C: O(n² log n)</div></div>
+        <div class="sum-card"><div class="sum-head">Best/Worst</div><div class="sum-body">ตอบ O + "รูปแบบข้อมูล" คู่กันเสมอ ไม่งั้นได้ครึ่งเดียว</div></div>
+        <div class="sum-card"><div class="sum-head">สูตร Gauss</div><div class="sum-body">1+...+n = n(n+1)/2 — สะพานเชื่อมไปบท 3 Sorting</div></div>
+      </div>
+      <a href="slides_ch3.html" class="summary-next">→ ติวบทที่ 3: Sorting trace ลงตาราง</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 2 — T(n) + Big-O</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ตัวอย่างเปิดบท','นับ T(n)','กฎ Big-O','4 Pattern ลูป','เฉลย matrix','เฉลย sum 1..n','เฉลย function_A','เฉลย function_B/C','Best/Worst','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

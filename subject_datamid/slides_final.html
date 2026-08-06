@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheat Sheet ก่อนเข้าห้องสอบ | ติวสอบ Data Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#a4133c;--cal:#fde8ef;--cam:#d45a7e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.cs{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.cs th{background:var(--ca);color:#fff;padding:5px 9px;text-align:left;font-weight:600;}
+.cs td{padding:5px 9px;border:1px solid var(--line);font-family:var(--mono);}
+.cs td:first-child{font-family:var(--sans);font-weight:600;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🚨 ติวสอบ Midterm · 02204231 Data Structures</div>
+        <div class="cover-title">ด่านสุดท้าย<br><em>Cheat Sheet</em></div>
+        <div class="cover-subtitle">ทวนรอบสุดท้ายก่อนเข้าห้องสอบ — ทุกสูตรในที่เดียว + 10 ข้อผิดพลาดที่ห้ามทำ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>สูตรทั้งหมด 5 บทในหน้าเดียว</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตาราง Big-O รวมทุกโครงสร้าง/อัลกอริทึม</div>
+          <div class="topic-row"><div class="topic-dot"></div>10 ข้อผิดพลาดที่ทำให้เสียคะแนนฟรี</div>
+          <div class="topic-row"><div class="topic-dot"></div>แผนคืนก่อนสอบ + แผนในห้องสอบ</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">✓</div>
+        <div class="cover-badge">ทวน 30 นาทีจบ</div>
+        <div class="cover-slides-count">10 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 สูตรรวม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · สูตร</div>
+    <h2 class="slide-title">สูตรทั้งหมดของ Midterm ในหน้าเดียว</h2>
+    <table class="cs">
+      <thead><tr><th>เรื่อง</th><th>สูตร / กฎ</th></tr></thead>
+      <tbody>
+        <tr><td>ผลรวม Gauss</td><td>1+2+...+n = n(n+1)/2 &nbsp;·&nbsp; 1+...+(n−1) = n(n−1)/2</td></tr>
+        <tr><td>นับ T(n)</td><td>คำสั่งเดี่ยว 1 · หัวลูป n+1 · body n · ลูปซ้อน = คูณ</td></tr>
+        <tr><td>Big-O จาก T(n)</td><td>เก็บ term โตสุด → ตัด constant</td></tr>
+        <tr><td>ลูป log</td><td>i = i*2 หรือ i = i/2 → log₂n รอบ</td></tr>
+        <tr><td>เปรียบเทียบ sorting (worst)</td><td>ทั้ง 3 ตัว = n(n−1)/2 → O(n²)</td></tr>
+        <tr><td>Hash function</td><td>h(k) = k mod m</td></tr>
+        <tr><td>Probing</td><td>hᵢ(k) = ( h(k) + f(i) ) mod m · f(0)=0</td></tr>
+        <tr><td>f(i) สามแบบ</td><td>Linear: i · Quadratic: i² · Double: i·h₂(k)</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>วิธีใช้หน้านี้:</b> คืนก่อนสอบ เขียนตารางนี้ใหม่จากความจำ 1 รอบ — เขียนได้ครบ = พร้อม เขียนไม่ได้ช่องไหน = กลับไปทวนบทนั้น</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 ตาราง Big-O รวม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · Big-O</div>
+    <h2 class="slide-title">ตาราง Big-O รวม — ตอบปรนัยได้ทั้งชุด</h2>
+    <table class="cs">
+      <thead><tr><th>Operation</th><th>Best</th><th>Worst</th><th>หมายเหตุ</th></tr></thead>
+      <tbody>
+        <tr><td>Array: เข้าถึง index</td><td>O(1)</td><td>O(1)</td><td>จุดแข็งเดียวที่ชนะ LL</td></tr>
+        <tr><td>Array: insert/remove</td><td>—</td><td>O(n)</td><td>ต้องเลื่อนข้อมูล</td></tr>
+        <tr><td>LL: insert/delete (รู้ตำแหน่ง)</td><td>O(1)</td><td>O(1)</td><td>แก้ pointer ไม่เลื่อนข้อมูล</td></tr>
+        <tr><td>LL: เข้าถึง/ค้นหา</td><td>O(1)</td><td>O(n)</td><td>เดินจาก head</td></tr>
+        <tr><td>Selection Sort</td><td>O(n²)</td><td>O(n²)</td><td>Best=Worst! swap ≤ n−1</td></tr>
+        <tr><td>Insertion Sort</td><td>O(n)</td><td>O(n²)</td><td>Best: เรียงแล้ว · Worst: กลับด้าน</td></tr>
+        <tr><td>Bubble Sort (flag)</td><td>O(n)</td><td>O(n²)</td><td>Best: เรียงแล้ว ไม่มี swap</td></tr>
+        <tr><td>Sequential Search</td><td>O(1)</td><td>O(n)</td><td>ไม่ต้องเรียงก่อน</td></tr>
+        <tr><td>Binary Search</td><td>O(1)</td><td>O(log n)</td><td>ต้องเรียงก่อน!</td></tr>
+        <tr><td>Hashing Search</td><td>O(1)</td><td>O(n)</td><td>ชนเยอะ → เสื่อม</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SLIDE 3 10 ข้อผิดพลาด 1-5 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ห้ามทำ</div>
+    <h2 class="slide-title">10 ข้อผิดพลาดเสียคะแนนฟรี (ข้อ 1–5)</h2>
+    <pre class="code-block"><span class="cm">① ตอบ Big-O โดยไม่แสดง T(n)</span>
+   โจทย์สั่ง "ระบุเวลาแต่ละบรรทัด" → เขียนกำกับทุกบรรทัด รวม แล้วค่อยสรุป O
+
+<span class="cm">② เห็นลูปซ้อนตอบ O(n²) ทันที โดยไม่อ่านข้างใน</span>
+   มี break → ลูปในอาจเหลือ O(1) (function_A!)
+   ลูปในเป็น j=j*2 → O(n log n) ไม่ใช่ O(n²)
+
+<span class="cm">③ Best/Worst ตอบแค่ O ไม่บอกรูปแบบข้อมูล</span>
+   ต้องตอบคู่: "O(n) เมื่อข้อมูลเรียงลำดับอยู่แล้ว" — ครึ่งคะแนนอยู่ตรงนี้
+
+<span class="cm">④ Selection Sort สลับกลางรอบ (เอา Bubble มาปน)</span>
+   Selection หา min ให้จบรอบก่อน แล้วสลับ "ครั้งเดียว" ท้ายรอบ
+
+<span class="cm">⑤ trace sorting ผิดทิศ</span>
+   อ่านโจทย์ให้ชัด: น้อย→มาก หรือ มาก→น้อย · ลอกเลขทุกตัวลงแถวใหม่ อย่าเขียนลัด</pre>
+  </div>
+</div>
+
+<!-- SLIDE 4 10 ข้อผิดพลาด 6-10 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ห้ามทำ</div>
+    <h2 class="slide-title">10 ข้อผิดพลาดเสียคะแนนฟรี (ข้อ 6–10)</h2>
+    <pre class="code-block"><span class="cm">⑥ insertFront สลับลำดับ 2 บรรทัด</span>
+   n->next = head ก่อนเสมอ แล้วค่อย head = n — "ต่อของใหม่ก่อน ค่อยปล่อยของเก่า"
+
+<span class="cm">⑦ ลบโหนดโดยเดินไปถึงตัวที่จะลบ</span>
+   ต้องหยุดที่ "ตัวก่อนหน้า": while (p->next->data != x) — Singly เดินย้อนไม่ได้
+
+<span class="cm">⑧ ลืม p = p->next ท้าย while</span>
+   infinite loop = ข้อนั้นศูนย์ — เช็คทุก while ก่อนส่งกระดาษ
+
+<span class="cm">⑨ mod ผิด / ลืม mod วนกลับ</span>
+   95%7 = 4 (ไม่ใช่ 5!) · probe เกินท้ายตาราง (9+1)%10 = 0 วนกลับหัว
+
+<span class="cm">⑩ Double hashing ใช้ h₂ ผิดตัว</span>
+   h₂ คำนวณจาก k ของ "ตัวที่กำลังแทรก" — แต่ละ key ก้าวไม่เท่ากัน
+   และ h₂ ต้องไม่เป็น 0 (สูตร 5−(k%5) ให้ 1..5 เสมอ)</pre>
+    <div class="exam"><b>คืนก่อนสอบ:</b> อ่าน 10 ข้อนี้อีกรอบเดียวพอ — มันคือสาเหตุการเสียคะแนนของคนสอบตกรุ่นก่อนๆ ทั้งนั้น</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 โครง LL -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · โค้ดท่องจำ</div>
+    <h2 class="slide-title">โค้ด Linked List 4 ท่า — เขียนได้จากความจำ</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">/* ① เดินลิสต์ (โครงศักดิ์สิทธิ์) */</span>
+Node *p = head;
+<span class="kw">while</span> (p != <span class="nm">NULL</span>) {
+    <span class="cm">/* ใช้ p->data */</span>
+    p = p->next;      <span class="cm">/* ห้ามลืม! */</span>
+}
+
+<span class="cm">/* ② แทรกหน้า */</span>
+n->next = *head;      <span class="cm">/* ก่อน */</span>
+*head = n;            <span class="cm">/* หลัง */</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">/* ③ แทรกหลัง p */</span>
+n->next = p->next;    <span class="cm">/* ก่อน */</span>
+p->next = n;          <span class="cm">/* หลัง */</span>
+
+<span class="cm">/* ④ ลบตัวถัดจาก p (ตัวก่อนหน้า!) */</span>
+Node *tmp = p->next;  <span class="cm">/* จำ */</span>
+p->next = tmp->next;  <span class="cm">/* ข้าม */</span>
+<span class="fn">free</span>(tmp);            <span class="cm">/* ค่อยทิ้ง */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ทดสอบตัวเอง:</b> ปิดหน้านี้ เขียน 4 ท่าลงกระดาษเปล่า — เขียนถูกครบใน 5 นาที = บท 4 พร้อมสอบ · สังเกตว่าทุกท่ามี pattern "จำ/ต่อของใหม่ก่อน แก้ลิงก์ทีหลัง"</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 hash quick ref -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · Hashing</div>
+    <h2 class="slide-title">Hashing Quick Reference</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ขั้นตอนข้อเติมตาราง</div>
+        <pre class="code-block">① เขียน h(k)=k%m ของทุก key ยกแผง
+② วาดตารางเปล่า 0..m−1
+③ ใส่ทีละตัวตามลำดับโจทย์
+④ ชน → เขียนสมการ probe ทุกขั้น:
+   Linear:    +1, +2, +3, ...
+   Quadratic: +1, +4, +9, +16, ...
+   Double:    +h₂, +2h₂, +3h₂, ...
+   (บวกจาก h(k) เดิม แล้ว mod m เสมอ)
+⑤ Quadratic หาไม่เจอ → ตอบ
+   "แทรกไม่ได้ probe วนซ้ำ" ได้!</pre>
+      </div>
+      <div>
+        <div class="code-label">การค้นหา — กติกาหยุด</div>
+        <pre class="code-block">เริ่มที่ h(k) → probe แบบเดียวกับตอนแทรก
+
+หยุดเมื่อ:
+① เจอ k          → "เจอ"
+② เจอช่องว่าง     → "ไม่เจอ"
+③ ครบทั้งตาราง   → "ไม่เจอ"
+
+จำนวนครั้ง = ทุกช่องที่เปิดดู
+(รวมช่องที่ทำให้หยุด)
+
+ศัพท์: Open = Chaining (ต่อ LL)
+      Closed = Probing (ในตาราง)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 แผนคืนก่อนสอบ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · แผน</div>
+    <h2 class="slide-title">แผนคืนก่อนสอบ + ในห้องสอบ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คืนก่อนสอบ (2 ชั่วโมงพอ)</div>
+        <pre class="code-block">□ 30 นาที: เขียนสูตรหน้า Cheat Sheet
+  จากความจำ + อ่าน 10 ข้อผิดพลาด
+□ 30 นาที: trace sorting 1 ชุด
+  ครบ 3 แบบ (ใช้ 29 10 14 37 13)
+□ 30 นาที: ทำ hash m=7 ชุด practice
+  ครบ 3 วิธี ไม่เปิดเฉลย
+□ 20 นาที: เขียน LL 4 ท่า จากความจำ
+□ 10 นาที: ทวนตาราง Big-O รวม
+□ นอน! สมองจำตอนหลับ
+  อดนอนแล้ว trace พลาด = เสียมากกว่าได้</pre>
+      </div>
+      <div>
+        <div class="code-label">ในห้องสอบ</div>
+        <pre class="code-block">① เปิดดูทั้งฉบับ 2 นาที
+   — ข้อไหน "ทำตามขั้นตอน"
+   (trace/เติมตาราง) ทำก่อน
+   เก็บคะแนนชัวร์
+② ข้อนิยาม/ปรนัย ทำเร็วๆ
+   อย่าคิดเกิน 1 นาทีต่อข้อ
+③ ข้อเขียนโค้ด ทำท้ายสุด
+   วาดรูปก่อนเขียนเสมอ
+④ เหลือเวลา: เช็ค
+   - แถวสุดท้าย sorting เรียงจริงไหม
+   - จำนวนค่าในตาราง hash ครบไหม
+   - ทุก while มี p = p->next ไหม</pre>
+      </div>
+    </div>
+    <div class="exam"><b>คติประจำห้องสอบ:</b> ข้อสอบวิชานี้ให้คะแนน "วิธีทำ" — เขียนขั้นตอนช้าๆ ชัดๆ ดีกว่ารีบแล้วข้าม ทุกสมการที่เขียนคือคะแนน</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 MCQ รวม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ข้อสุดท้าย</div>
+    <h2 class="slide-title">ข้อสอบรวบยอด — ผสม 3 บทในข้อเดียว</h2>
+    <p class="slide-lead">ต้องการเก็บข้อมูลที่ "แทรก/ลบบ่อยมาก ไม่รู้จำนวนล่วงหน้า และไม่ต้องเข้าถึงด้วย index" ควรใช้อะไร?</p>
+    <div id="mc-tf" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-tf','A','B','❌ Array แทรก/ลบ O(n) ต้องเลื่อนข้อมูล + ขนาดคงที่ — ตรงข้ามโจทย์ทุกข้อ')">A) Array</button>
+      <button class="mc-btn" onclick="pickMC('mc-tf','B','B','✅ Linked List — แทรก/ลบ O(1), ขนาด dynamic, และโจทย์บอกชัดว่าไม่ต้องใช้ index (จุดอ่อนเดียวของ LL ถูกตัดทิ้ง)')">B) Linked List</button>
+      <button class="mc-btn" onclick="pickMC('mc-tf','C','B','❌ Hash Table เด่นเรื่อง \"ค้นหาเร็ว\" — โจทย์ไม่ได้เน้นค้นหา และ hash จัดเรียง/ไล่ลำดับไม่ได้')">C) Hash Table</button>
+      <button class="mc-btn" onclick="pickMC('mc-tf','D','B','❌ Sorted Array ยิ่งแย่ — ทุกการแทรกต้องหาที่ + เลื่อน O(n)')">D) Sorted Array</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px"><span class="cm">/* วิธีคิดข้อเลือกโครงสร้าง: ดู operation ที่โจทย์เน้น
+   แทรก/ลบบ่อย   → LL ชนะ (O(1))
+   เข้าถึง index   → Array ชนะ (O(1))
+   ค้นหาเร็วสุด    → Hash ชนะ (O(1))
+   โจทย์ตัด index ทิ้ง = ตัดจุดแข็ง Array → เหลือ LL ชัดๆ */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 Final -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🏆</div>
+      <div class="summary-title">พร้อมสอบแล้ว — รอบนี้ไม่เหมือนสองรอบก่อน</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">บท 1</div><div class="sum-body">นิยาม 2 คีย์เวิร์ด · Array ต้องระบุ index · insert เลื่อนจากท้าย</div></div>
+        <div class="sum-card"><div class="sum-head">บท 2</div><div class="sum-body">นับทุกบรรทัด → T(n) → ตัดเหลือ O · ระวัง break</div></div>
+        <div class="sum-card"><div class="sum-head">บท 3</div><div class="sum-body">Selection สลับท้ายรอบ · Insertion เลื่อนแล้วแทรก · นับ swap ระหว่างทำ</div></div>
+        <div class="sum-card"><div class="sum-head">บท 4</div><div class="sum-body">ต่อของใหม่ก่อน · ลบหยุดตัวก่อนหน้า · p=p-&gt;next ทุก while</div></div>
+        <div class="sum-card"><div class="sum-head">บท 5</div><div class="sum-body">h(k) ยกแผง · probe เขียนทุกขั้น · mod วนกลับเสมอ</div></div>
+        <div class="sum-card"><div class="sum-head">คืนก่อนสอบ</div><div class="sum-body">ทวนตามแผน 2 ชม. แล้วนอน — เข้าห้องไปเก็บทีละข้อ</div></div>
+      </div>
+      <a href="index.html" class="summary-next">🏠 กลับหน้าหลัก — ทวนบทไหนอีกรอบก็ได้ สู้ๆ 💪</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 10</span>
+      <span class="nav-chapter" id="chapterLabel">Cheat Sheet ก่อนเข้าห้องสอบ</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','สูตรรวมหน้าเดียว','ตาราง Big-O รวม','ข้อผิดพลาด 1-5','ข้อผิดพลาด 6-10','โค้ด LL 4 ท่า','Hashing Quick Ref','แผนคืนก่อนสอบ','ข้อสอบรวบยอด','พร้อมสอบแล้ว'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
