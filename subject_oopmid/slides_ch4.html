@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 4 — Encapsulation | ติวสอบ OOP Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#4338ca;--cal:#e7e5fc;--cam:#7a6ff0;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.mt{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;font-family:var(--mono);}
+.mt th{background:var(--ca);color:#fff;padding:5px 9px;text-align:center;font-weight:600;}
+.mt td{padding:5px 9px;border:1px solid var(--line);text-align:center;}
+.mt td:first-child{text-align:left;font-weight:700;color:var(--ca);}
+.mt td.y{background:#d4edda;color:#155724;font-weight:700;}
+.mt td.n{background:#f8d7da;color:#721c24;font-weight:700;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">☕ ติวสอบ Midterm · 02204172 OOP (Java)</div>
+        <div class="cover-title">ติวบทที่ 4<br><em>Encapsulation</em></div>
+        <div class="cover-subtitle">หลักการเชิงวัตถุข้อที่ 1 — ตาราง access modifiers ที่ต้องกาถูกทุกช่อง</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Encapsulation นิยามตามสไลด์ (ข้อบรรยาย)</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตาราง public / protected / (default) / private</div>
+          <div class="topic-row"><div class="topic-dot"></div>Class modifiers: abstract, final, public, ไม่มี</div>
+          <div class="topic-row"><div class="topic-dot"></div>โครงประกาศ class / method / field เต็มรูป</div>
+          <div class="topic-row"><div class="topic-dot"></div>getter/setter + validation (โยง lab 4)</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">J4</div>
+        <div class="cover-badge">ตารางบังคับจำ</div>
+        <div class="cover-slides-count">11 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 นิยาม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · นิยาม</div>
+    <h2 class="slide-title">Encapsulation — ตอบข้อบรรยายตามสไลด์</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คำนิยามจากสไลด์ (จำโครงนี้)</div>
+        <pre class="code-block">"Encapsulation แปลตามตัวว่า
+ การห่อหุ้ม
+
+ • ห่อหุ้มข้อมูลของวัตถุไว้ภายใน
+   โดยมี method เป็นเปลือกนอก
+ • ห่อหุ้ม method ที่ไม่ต้องการ
+   เปิดเผยไว้ภายใน
+
+ วัตถุมี 'ด่านหน้า' รับข่าวสาร
+ จากโลกภายนอก = ประกาศเป็น public
+ ซ่อนคุณสมบัติภายใน = ประกาศ private"
+
+← "หลักการเชิงวัตถุข้อที่ 1"</pre>
+      </div>
+      <div>
+        <div class="code-label">แปลงเป็นภาพ + เหตุผล</div>
+        <pre class="code-block"><span class="cm">/*      ┌─ public method ─┐
+        │  (เปลือก/ด่านหน้า) │
+        │  ┌─ private ────┐ │
+        │  │ field ข้อมูล  │ │
+        │  └──────────────┘ │
+        └──────────────────┘
+
+   ทำไมต้องห่อ?
+   ① กันคนนอกยัดค่าพัง
+      (d.day = 99 ← กันได้)
+   ② เปลี่ยนข้างในได้โดย
+      คนใช้ไม่กระทบ
+   ③ ตรวจสอบ (validate)
+      ก่อนรับค่าเสมอ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>สไลด์เตือนตรงๆ ว่า:</b> "ไม่ควรใช้ public attribute อย่างยิ่ง" — ถ้าข้อสอบถามว่า field ควรเป็นอะไร ตอบ <b>private + เปิด getter/setter</b> เสมอ</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 ตาราง modifiers -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · ตารางบังคับจำ</div>
+    <h2 class="slide-title">ตาราง Access Modifiers — กาให้ถูกทุกช่อง</h2>
+    <table class="mt">
+      <thead><tr><th>เข้าถึงจาก →</th><th>คลาสตัวเอง</th><th>package เดียวกัน</th><th>คลาสลูก (ต่าง pkg)</th><th>ทุกที่</th></tr></thead>
+      <tbody>
+        <tr><td>public</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+        <tr><td>protected</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">✗</td></tr>
+        <tr><td>(ไม่ระบุ = default)</td><td class="y">✓</td><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td></tr>
+        <tr><td>private</td><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
+      </tbody>
+    </table>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">/* วิธีจำ: เรียงจากกว้าง → แคบ
+   public > protected > default > private
+   แต่ละขั้น "หด" ลงทีละวง
+
+   default (ไม่เขียนอะไรเลย):
+   "เรียกได้จาก class ใน
+    package (folder) เดียวกัน"
+   ← นิยามในสไลด์ตรงๆ */</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">/* จุดหลอก 2 จุด:
+   ① default ≠ public!
+     ไม่เขียน modifier ไม่ใช่
+     เปิดหมด — จำกัดแค่ package
+   ② protected กว้างกว่า default
+     ตรง "คลาสลูกต่าง package"
+     ← ช่องเดียวที่สองแถวต่างกัน
+     ข้อสอบชอบเจาะช่องนี้! */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ก่อนสอบ:</b> วาดตารางนี้จากความจำ 1 รอบ — 4 แถว × 4 ช่อง ใช้เวลา 1 นาที ได้คะแนนทุกข้อที่ถาม modifiers</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 class modifiers -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · Class Modifiers</div>
+    <h2 class="slide-title">Class Modifiers — abstract / final / public / ไม่มี</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตามตารางในสไลด์</div>
+        <pre class="code-block">abstract  มี abstract method
+          อย่างน้อย 1 method
+          (ไม่มี body มีแต่ header)
+          → new ตรงๆ ไม่ได้
+
+final     "มี subclass ไม่ได้"
+          → ห้าม extends ต่อ!
+
+public    instantiate ได้ +
+          เรียกใช้ได้จากทุก class
+
+ไม่มี     เรียกใช้ได้จาก class
+          ใน package เดียวกัน
+
+private   เป็น inner class เท่านั้น
+          (class ซ้อนใน class)</pre>
+      </div>
+      <div>
+        <div class="code-label">คู่ตรงข้ามที่ชอบถาม</div>
+        <pre class="code-block"><span class="cm">/* abstract vs final = ตรงข้ามกัน!
+
+   abstract: "ต้องมีลูกมาสานต่อ"
+             (new เองไม่ได้)
+   final:    "ห้ามมีลูก"
+             (extends ไม่ได้)
+
+   → class เดียวเป็นทั้ง
+     abstract และ final ไม่ได้!
+     (ขัดแย้งกันเอง)
+   ← ข้อ "ข้อใดผิด" ชอบเอามาออก
+
+   ตัวอย่างจริง: String เป็น
+   final class — สืบทอดไม่ได้ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ถามแนวนี้:</b> "class ที่ไม่ต้องการให้ใครสืบทอด ใช้ modifier ใด" → final · "class ที่มี method ไม่มี body ต้องประกาศเป็น" → abstract</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 โครงประกาศ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · Syntax เต็มรูป</div>
+    <h2 class="slide-title">โครงประกาศ class เต็มรูป — สไลด์ให้ template นี้</h2>
+    <pre class="code-block">[&lt;Class_modifier&gt;] <span class="kw">class</span> &lt;class-name&gt;
+        [<span class="kw">extends</span> &lt;superclass-name&gt;]
+        [<span class="kw">implements</span> &lt;interface_1&gt;, &lt;interface_2&gt;, ...] {
+
+    <span class="cm">// field:  [&lt;modifier&gt;] &lt;type&gt; &lt;field-name&gt;;</span>
+    <span class="kw">private</span> String name;
+
+    <span class="cm">// method: [&lt;modifier&gt;] &lt;return type&gt; &lt;method-name&gt;([&lt;parameters&gt;]) { body }</span>
+    <span class="kw">public</span> String <span class="fn">getName</span>() {
+        <span class="kw">return</span> name;
+    }
+}</pre>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">/* ลำดับใน [ ] ต้องจำ:
+   extends มาก่อน implements!
+
+   class A extends B implements C, D ✓
+   class A implements C extends B ❌
+
+   extends ได้ "ชื่อเดียว"
+   implements ได้ "หลายชื่อ" คั่น , */</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">/* ข้อเติม syntax ชอบเว้น:
+   - ช่อง modifier
+   - ช่อง return type
+   - ลำดับ extends/implements
+
+   เขียน template นี้ได้
+   = ทำข้อเติมได้ทั้งชุด */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>กฎเหล็ก:</b> extends ก่อน implements เสมอ · extends แม่เดียว · implements หลาย interface ได้ — สามข้อนี้พอสำหรับทุกข้อ syntax ประกาศคลาส</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 getter setter -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · ลงมือ</div>
+    <h2 class="slide-title">getter / setter + validation — ท่าเขียนมาตรฐาน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โครง (จาก lab 4: Date)</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">Date</span> {
+    <span class="kw">private int</span> day;
+
+    <span class="kw">public int</span> <span class="fn">getDay</span>() {
+        <span class="kw">return</span> day;
+    }
+    <span class="kw">public void</span> <span class="fn">setDay</span>(<span class="kw">int</span> day) {
+        <span class="kw">if</span> (day >= <span class="nm">1</span> && day &lt;= <span class="nm">31</span>)
+            <span class="kw">this</span>.day = day;
+        <span class="cm">// นอกช่วง → เก็บค่าเดิม</span>
+    }
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">จุดให้คะแนน 3 จุด</div>
+        <pre class="code-block">① field เป็น private เสมอ
+② setter มี validation
+   (ค่าเพี้ยน → ไม่รับ)
+③ this.day แยก field จาก
+   parameter ชื่อซ้ำ
+
+<span class="cm">/* getter แปลงค่าได้ด้วย:
+   getYear() { return year + 543; }
+   ← เก็บ ค.ศ. คืน พ.ศ. (โจทย์ lab!)
+
+   เฉลย lab 4 เต็มทุกข้อ
+   (Date, BankAccount, ร้านโชห่วย)
+   → วิชา OOP Lab 2–7 บท Lab 4 */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>read-only property:</b> balance ของ BankAccount มี getter แต่<b>ไม่มี setter</b> — เงินต้องเปลี่ยนผ่าน deposit/withdraw เท่านั้น · แนวคิดนี้เป็นข้อบรรยายได้ ("ทำไมไม่ควรมี setBalance")</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">class A อยู่ package p1 · class B extends A อยู่ package p2<br>
+field ใน A ประกาศแบบไหน ให้ B ใช้ได้ แต่ class อื่นนอก p1 ใช้ไม่ได้?<br><br>
+<em>ไล่ตาราง: public → ทุกที่ใช้ได้ (กว้างไป)<br>
+default → B ต่าง package ใช้ไม่ได้ (แคบไป)<br>
+private → แม้แต่ B ก็ใช้ไม่ได้<br>
+เหลือตัวเดียว... protected!</em><br><br>
+นี่คือช่อง "คลาสลูกต่าง package" ที่เป็นจุดแตกต่าง<br>ระหว่าง protected กับ default — จุดที่ข้อสอบชอบเจาะ</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · ลองข้อสอบ</div>
+    <h2 class="slide-title">field ที่ไม่เขียน modifier เลย ใครเข้าถึงได้บ้าง?</h2>
+    <div id="mc-j4" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-j4','A','B','❌ นั่นคือ public — default แคบกว่านั้น')">A) ทุกคลาสเข้าถึงได้</button>
+      <button class="mc-btn" onclick="pickMC('mc-j4','B','B','✅ default (ไม่ระบุ) = เข้าถึงได้จากคลาสใน package เดียวกัน — ตามนิยามในสไลด์เป๊ะ')">B) คลาสใน package เดียวกัน</button>
+      <button class="mc-btn" onclick="pickMC('mc-j4','C','B','❌ นั่นคือ private — default กว้างกว่า (ทั้ง package)')">C) เฉพาะคลาสตัวเอง</button>
+      <button class="mc-btn" onclick="pickMC('mc-j4','D','B','❌ นั่นคือ protected — default ไม่รวมคลาสลูกที่อยู่ต่าง package')">D) คลาสตัวเอง + คลาสลูกทุกที่</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">public > protected > default > private   (กว้าง → แคบ)
+default ≠ public!  ไม่เขียน modifier = จำกัดอยู่ใน package (folder) เดียวกัน</pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 5</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① class ที่ห้ามมี subclass ใช้ modifier ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj4a" placeholder="modifier">
+      <button class="fill-btn" onclick="checkFill('fj4a','final',['final'],[],'✅ final = ห้าม extends ต่อ (ตรงข้ามกับ abstract ที่ต้องมีลูกมาสานต่อ)','❌ final — "มี subclass ไม่ได้" ตามตารางสไลด์')">ตรวจ</button>
+    </div>
+    <div id="fj4a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② ลำดับที่ถูกต้อง: class A ___ B ___ C, D (เติมสองคีย์เวิร์ด)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj4b" placeholder="คีย์เวิร์ดสองคำ">
+      <button class="fill-btn" onclick="checkFill('fj4b','extends implements',['extends, implements','extends แล้ว implements'],[],'✅ extends B implements C, D — extends มาก่อนเสมอ และได้แม่เดียว','❌ extends ก่อน implements — extends แม่เดียว, implements หลายตัวได้')">ตรวจ</button>
+    </div>
+    <div id="fj4b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ modifier ที่คลาสลูก "ต่าง package" ยังเข้าถึงได้ แต่คนทั่วไปเข้าไม่ได้ คือ ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj4c" placeholder="modifier">
+      <button class="fill-btn" onclick="checkFill('fj4c','protected',['protected'],[],'✅ protected — ช่องที่ต่างจาก default คือ "คลาสลูกต่าง package"','❌ protected — จุดแตกต่างเดียวกับ default คือคลาสลูกต่าง package')">ตรวจ</button>
+    </div>
+    <div id="fj4c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔒</div>
+      <div class="summary-title">จบติวบทที่ 4 — Encapsulation</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">นิยาม</div><div class="sum-body">ห่อหุ้มข้อมูลไว้ภายใน มี method เป็นเปลือก — หลักเชิงวัตถุข้อที่ 1</div></div>
+        <div class="sum-card"><div class="sum-head">ตาราง 4 ระดับ</div><div class="sum-body">public &gt; protected &gt; default &gt; private · default ≠ public!</div></div>
+        <div class="sum-card"><div class="sum-head">จุดเจาะ</div><div class="sum-body">protected vs default ต่างกันช่องเดียว: คลาสลูกต่าง package</div></div>
+        <div class="sum-card"><div class="sum-head">Class modifiers</div><div class="sum-body">abstract ต้องมีลูก · final ห้ามมีลูก — เป็นคู่กันไม่ได้</div></div>
+        <div class="sum-card"><div class="sum-head">Syntax</div><div class="sum-body">extends ก่อน implements · extends เดียว implements หลายได้</div></div>
+        <div class="sum-card"><div class="sum-head">getter/setter</div><div class="sum-body">private field + validation ใน setter + this — เฉลยเต็มใน OOP Lab 4</div></div>
+      </div>
+      <a href="slides_ch5.html" class="summary-next">→ ติวบทที่ 5: Class Diagram &amp; Relationships</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 10</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 4 — Encapsulation</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','นิยาม','ตาราง modifiers','Class modifiers','Syntax เต็มรูป','getter/setter','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

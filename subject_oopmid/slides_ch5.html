@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 5 — Class Diagram & Relationships | ติวสอบ OOP Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#4338ca;--cal:#e7e5fc;--cam:#7a6ff0;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">☕ ติวสอบ Midterm · 02204172 OOP (Java)</div>
+        <div class="cover-title">ติวบทที่ 5<br><em>Class Diagram<br>&amp; Relationships</em></div>
+        <div class="cover-subtitle">แปลง Diagram ↔ โค้ด ได้สองทาง — ข้อสอบวาด/อ่าน UML อยู่บทนี้</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Class Diagram 3 ส่วน + สัญลักษณ์ − / + / : type</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตัวอย่าง Student จากสไลด์ — แปลงเป็นโค้ด</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ Pet / Owner จากสไลด์ (Practice)</div>
+          <div class="topic-row"><div class="topic-dot"></div>เมื่อไหร่คลาสสองตัว "สัมพันธ์กัน"</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลยระบบร้านค้า lab 5 เต็ม → OOP Lab 2–7</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">J5</div>
+        <div class="cover-badge">แปลง DIAGRAM ↔ โค้ด</div>
+        <div class="cover-slides-count">11 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 diagram 3 ส่วน -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · โครงสร้าง</div>
+    <h2 class="slide-title">Class Diagram — กล่อง 3 ชั้น + สัญลักษณ์</h2>
+    <div class="two-col">
+      <div>
+        <div class="diagram">┌─────────────────────────────┐
+│         Student             │ ← ① ชื่อคลาส
+├─────────────────────────────┤
+│ - id : String               │ ← ② attribute
+│ - name : String             │   (field)
+│ - test : int                │
+├─────────────────────────────┤
+│ + Student(String, String)   │ ← ③ method
+│ + getID() : String          │
+│ + calGPA(t,m,f) : double    │
+└─────────────────────────────┘</div>
+      </div>
+      <div>
+        <div class="code-label">อ่านสัญลักษณ์ให้ครบ</div>
+        <pre class="code-block">-  หน้าชื่อ = private
++  หน้าชื่อ = public
+#  หน้าชื่อ = protected
+
+ชื่อ : ชนิด      ← attribute
+  - id : String
+  แปลว่า private String id;
+
+ชื่อ(args) : ชนิดคืน  ← method
+  + getID() : String
+  แปลว่า public String getID()
+
+<span class="cm">/* สไลด์บอก: diagram "สร้างจาก
+   มุมมองนักพัฒนา นำไปเขียน
+   โปรแกรมได้โดยตรง" */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ลำดับการสร้าง (สไลด์ให้ 4 ขั้น — เรียงได้):</b> ① กำหนดคลาสในระบบ → ② กำหนด attribute → ③ กำหนด method → ④ กำหนดความสัมพันธ์ระหว่างคลาส</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 diagram to code -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · แปลงเป็นโค้ด</div>
+    <h2 class="slide-title">Diagram → โค้ด: ตัวอย่าง Student ในสไลด์</h2>
+    <pre class="code-block"><span class="cm">// จาก diagram หน้าที่แล้ว แปลงตรงตัว:</span>
+<span class="kw">public class</span> <span class="fn">Student</span> {
+    <span class="kw">private</span> String id;         <span class="cm">// - id : String</span>
+    <span class="kw">private</span> String name;       <span class="cm">// - name : String</span>
+    <span class="kw">private int</span> test;          <span class="cm">// - test : int</span>
+    <span class="kw">private int</span> mid;
+    <span class="kw">private int</span> finals;
+
+    <span class="kw">public</span> <span class="fn">Student</span>(String id, String name) {   <span class="cm">// + Student(String, String)</span>
+        <span class="kw">this</span>.id = id;
+        <span class="kw">this</span>.name = name;
+    }
+    <span class="kw">public</span> String <span class="fn">getID</span>()   { <span class="kw">return</span> id; }     <span class="cm">// + getID() : String</span>
+    <span class="kw">public</span> String <span class="fn">getName</span>() { <span class="kw">return</span> name; }
+    <span class="kw">public double</span> <span class="fn">calGPA</span>(<span class="kw">int</span> test, <span class="kw">int</span> mid, <span class="kw">int</span> finals) {
+        <span class="kw">return</span> ...;                             <span class="cm">// + calGPA(...) : double</span>
+    }
+}</pre>
+    <div class="exam"><b>กติกาแปลง 1:1</b> — ทุกบรรทัดใน diagram ต้องมีในโค้ด ครบทั้ง modifier (−→private), ชนิด, ลำดับ parameter · ข้อสอบตรวจแบบจับคู่ ขาดบรรทัดไหนหักบรรทัดนั้น · โจทย์กลับทาง (โค้ด→diagram) ก็ใช้กติกาเดียวกัน</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 Pet Owner -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · Practice ในสไลด์</div>
+    <h2 class="slide-title">เฉลย Practice: Pet และ Owner</h2>
+    <p class="slide-lead">โจทย์ในสไลด์: สร้างคลาสสัตว์เลี้ยง (รหัส, ชื่อ, อายุ, เพศ) และเจ้าของ (รหัสประจำตัว, ชื่อ, อายุ)</p>
+    <div class="two-col">
+      <div>
+        <div class="diagram">┌──────────────────────┐
+│         Pet          │
+├──────────────────────┤
+│ - petId : String     │
+│ - name : String      │
+│ - age : int          │
+│ - gender : String    │
+├──────────────────────┤
+│ + Pet(id,n,a,g)      │
+│ + getName() : String │
+│ + getAge() : int     │
+└──────────────────────┘</div>
+      </div>
+      <div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">Pet</span> {
+    <span class="kw">private</span> String petId;
+    <span class="kw">private</span> String name;
+    <span class="kw">private int</span> age;
+    <span class="kw">private</span> String gender;
+
+    <span class="kw">public</span> <span class="fn">Pet</span>(String petId, String name,
+               <span class="kw">int</span> age, String gender) {
+        <span class="kw">this</span>.petId = petId;
+        <span class="kw">this</span>.name = name;
+        <span class="kw">this</span>.age = age;
+        <span class="kw">this</span>.gender = gender;
+    }
+    <span class="cm">// getters ตาม diagram...</span>
+}
+<span class="cm">// Owner ทำแบบเดียวกัน:
+// ownerId, name, age + constructor + getters</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ต่อยอดที่ข้อสอบชอบ:</b> "Owner มี Pet ได้หลายตัว เขียนยังไง" → เพิ่ม field <code class="inline-code">private Pet[] pets;</code> ใน Owner (has-a) — นี่คือสะพานเข้าเรื่อง relationship สไลด์ถัดไป</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 relationships -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · Relationships</div>
+    <h2 class="slide-title">คลาสสองตัว "สัมพันธ์กัน" เมื่อไหร่</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตามสไลด์ + ประเภทที่ต้องรู้</div>
+        <pre class="code-block"><span class="cm">/* สไลด์: "ระบบไม่ได้มีคลาสเดียว
+   แต่มีหลายคลาสที่ทำหน้าที่ต่างกัน
+   ประสานกันผ่าน ความสัมพันธ์" */</span>
+
+คลาส X สัมพันธ์กับ Y เมื่อ:
+• X เรียกใช้ method ของ Y
+• X มี Y เป็น field (has-a)
+• X รับ Y เป็น parameter
+• X เป็นชนิดเดียวกับ Y (is-a → บท 6)
+
+ระดับความผูกพัน (จาก lab 5):
+Association  ใช้ชั่วคราว (parameter)
+Aggregation  มีเป็นของ รับจากข้างนอก
+Composition  new เองข้างใน ตายด้วยกัน</pre>
+      </div>
+      <div>
+        <div class="code-label">ระบบร้านค้า lab 5 (จำ flow)</div>
+        <div class="diagram">Product ◀◆── InventoryCart ◀- - Cashier
+ (ของ)      (รถเข็นเก็บของ)   (ใช้รถ
+                              คิดเงิน)
+
+main: new Product ×3
+  → ic.add(p) ใส่รถ [Aggregation]
+  → c.printReceipt(ic) [Association]
+  → ดึงของออก รวมราคา → Total 450 $</div>
+        <pre class="code-block"><span class="cm">/* Unrelated classes ก็มี:
+   Book กับ Student ในสไลด์
+   — ไม่เรียกใช้กัน = ไม่สัมพันธ์
+   ← ถามได้ว่า "คู่ใดไม่สัมพันธ์" */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เฉลยโค้ดร้านค้าเต็มทั้งระบบ + Class Diagram ฉบับเต็ม</b> → วิชา <a href="../subject_oop/slides_ch5.html" style="color:var(--ca)">OOP Lab 2–7 บท Lab 5</a> — ติวเล่มนี้จำ concept + สัญลักษณ์ให้แม่นพอ</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">อ่าน diagram บรรทัดนี้แล้วเขียนเป็นโค้ด Java:<br><br>
+<code style="font-family:monospace;font-size:14px;background:var(--cal);padding:8px 16px;border-radius:8px;display:inline-block">
+# calTotal(int, double) : double
+</code><br><br>
+<em>ไล่ทีละส่วน: # คือ modifier อะไร?<br>
+วงเล็บมี parameter กี่ตัว ชนิดอะไร?<br>
+: double ท้ายสุดคืออะไร?</em><br><br>
+เฉลย: protected double calTotal(int a, double b)<br>
+— ถ้าแปลงได้ลื่นๆ แบบนี้ ข้อ diagram ทั้งชุดคือของฟรี</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · ลองข้อสอบ</div>
+    <h2 class="slide-title">"- gpa : double" ใน Class Diagram แปลว่าอะไร?</h2>
+    <div id="mc-j5" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-j5','A','C','❌ + ถึงจะเป็น public — เครื่องหมาย − คือ private')">A) public double gpa;</button>
+      <button class="mc-btn" onclick="pickMC('mc-j5','B','C','❌ มี : double กำกับชนิดชัดเจน ไม่ใช่ method (method ต้องมีวงเล็บ)')">B) private method ชื่อ gpa</button>
+      <button class="mc-btn" onclick="pickMC('mc-j5','C','C','✅ − = private · gpa = ชื่อ field · : double = ชนิด → private double gpa;')">C) private double gpa;</button>
+      <button class="mc-btn" onclick="pickMC('mc-j5','D','C','❌ # ถึงจะเป็น protected')">D) protected double gpa;</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">สัญลักษณ์:  − private · + public · # protected
+รูปแบบ:     ชื่อ : ชนิด (ไม่มีวงเล็บ = field) · ชื่อ(...) : ชนิด (มีวงเล็บ = method)</pre>
+  </div>
+</div>
+
+<!-- SLIDE 7 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 6</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① กล่อง Class Diagram ชั้นกลางเก็บอะไร (ชั้นบน=ชื่อคลาส, ชั้นล่าง=method)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj5a" placeholder="คำตอบ">
+      <button class="fill-btn" onclick="checkFill('fj5a','attribute',['field','แอททริบิวต์','ข้อมูล','attributes'],[],'✅ attribute/field — ชื่อคลาส / attribute / method จากบนลงล่าง','❌ attribute (field) — 3 ชั้น: ชื่อ, attribute, method')">ตรวจ</button>
+    </div>
+    <div id="fj5a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② เครื่องหมาย # หน้าชื่อใน diagram หมายถึง modifier ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj5b" placeholder="modifier">
+      <button class="fill-btn" onclick="checkFill('fj5b','protected',['protected'],[],'✅ # = protected · − = private · + = public','❌ protected — จำสามตัว: − private, + public, # protected')">ตรวจ</button>
+    </div>
+    <div id="fj5b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ ความสัมพันธ์ที่ new object ข้างใน constructor แล้วเกิด-ตายด้วยกัน เรียกว่า ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj5c" placeholder="ชื่อความสัมพันธ์">
+      <button class="fill-btn" onclick="checkFill('fj5c','composition',['Composition','คอมโพสิชัน'],[],'✅ Composition — ต่างจาก Aggregation ที่รับ object จากข้างนอก','❌ Composition (new เองข้างใน) — Aggregation รับจากนอก, Association ใช้ชั่วคราว')">ตรวจ</button>
+    </div>
+    <div id="fj5c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 8 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔗</div>
+      <div class="summary-title">จบติวบทที่ 5 — Class Diagram &amp; Relationships</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">กล่อง 3 ชั้น</div><div class="sum-body">ชื่อคลาส / attribute / method — เรียงจากบนลงล่าง</div></div>
+        <div class="sum-card"><div class="sum-head">สัญลักษณ์</div><div class="sum-body">− private · + public · # protected · ชื่อ : ชนิด · มีวงเล็บ = method</div></div>
+        <div class="sum-card"><div class="sum-head">แปลง 1:1</div><div class="sum-body">ทุกบรรทัด diagram ↔ ทุกบรรทัดโค้ด ครบ modifier + ชนิด</div></div>
+        <div class="sum-card"><div class="sum-head">4 ขั้นสร้าง</div><div class="sum-body">คลาส → attribute → method → ความสัมพันธ์</div></div>
+        <div class="sum-card"><div class="sum-head">สัมพันธ์เมื่อ</div><div class="sum-body">เรียกใช้ / มีเป็น field / รับเป็น parameter — Association, Aggregation, Composition</div></div>
+        <div class="sum-card"><div class="sum-head">Pet/Owner + ร้านค้า</div><div class="sum-body">เฉลย diagram + โค้ดเต็ม → วิชา OOP Lab 2–7 บท Lab 5</div></div>
+      </div>
+      <a href="slides_ch6.html" class="summary-next">→ ติวบทที่ 6: Inheritance</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 9</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 5 — Class Diagram</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','กล่อง 3 ชั้น','Diagram → โค้ด','Pet/Owner','Relationships','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

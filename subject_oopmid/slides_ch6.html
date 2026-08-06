@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 6 — Inheritance | ติวสอบ OOP Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#4338ca;--cal:#e7e5fc;--cam:#7a6ff0;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">☕ ติวสอบ Midterm · 02204172 OOP (Java)</div>
+        <div class="cover-title">ติวบทที่ 6<br><em>Inheritance</em></div>
+        <div class="cover-subtitle">หลักการเชิงวัตถุข้อที่ 2 — is-a rule, super, และข้อดี-ข้อเสียที่ออกข้อบรรยาย</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Is-A Rule ทดสอบยังไง (มีทิศทาง!)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Person / Student ตามตัวอย่างสไลด์</div>
+          <div class="topic-row"><div class="topic-dot"></div>super() + Override</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อดี 3 ข้อ / ข้อเสีย 1 ข้อ (ข้อบรรยายชัวร์)</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลย lab 6 เต็ม → OOP Lab 2–7</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">J6</div>
+        <div class="cover-badge">IS-A · SUPER · ข้อบรรยาย</div>
+        <div class="cover-slides-count">11 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 นิยาม + is-a -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · นิยาม</div>
+    <h2 class="slide-title">Inheritance + Is-A Rule — "มีทิศทาง"</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">นิยามตามสไลด์</div>
+        <pre class="code-block">"การสืบทอดคุณสมบัติ คือ
+ หลักการเชิงวัตถุประการที่ 2
+
+ ความสัมพันธ์ของคลาส 2 คลาส
+ ที่คลาสหนึ่งถ่ายทอดคุณสมบัติ
+ ให้อีกคลาส
+ เหมือนแม่ถ่ายทอดพันธุกรรมให้ลูก
+
+ คลาสแม่ = super class
+ คลาสลูก = sub class"
+
+<span class="cm">/* วิธีทดสอบ: ถามคำถาม "is-a" */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Is-A มีทิศทาง! (สไลด์เน้น)</div>
+        <pre class="code-block">✓ sub is a super:
+  Student <span class="kw">is a</span> Person       ✓
+  Monkey  <span class="kw">is an</span> Animal      ✓
+
+✗ super is NOT a sub:
+  Person <span class="kw">is not a</span> Student   ✗
+  Animal <span class="kw">is not a</span> Monkey    ✗
+
+<span class="cm">/* ทิศเดียวเท่านั้น!
+   ลูกเป็นแม่ได้ แม่เป็นลูกไม่ได้
+
+   ← ข้อ True/False สายนี้
+   หลอกด้วยการกลับทิศประจำ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ใช้ is-a ตัดสินใจ design:</b> "Student เป็น Person ไหม" ใช่ → extends ได้ · "BankAccount เป็น Date ไหม" ไม่ → ใช้ has-a (field) แทน — ข้อสอบให้ scenario แล้วถามว่าควรใช้ inheritance หรือไม่</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 Person/Student -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · ตัวอย่างสไลด์</div>
+    <h2 class="slide-title">Person / Student — โค้ดตามสไลด์อาจารย์</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">Person</span> {
+    <span class="kw">protected</span> String name;                  <span class="cm">// protected → ลูกเข้าถึงได้ (บท 4!)</span>
+    <span class="kw">protected</span> String surname;
+    <span class="kw">protected int</span> age;
+
+    <span class="kw">public</span> <span class="fn">Person</span>(String first, String last, <span class="kw">int</span> a) {
+        name = first; surname = last; age = a;
+    }
+    <span class="kw">public void</span> <span class="fn">setAge</span>(<span class="kw">int</span> age) { <span class="kw">this</span>.age = age; }
+    <span class="kw">public void</span> <span class="fn">printInfo</span>() {
+        System.out.<span class="fn">println</span>(name + <span class="st">" "</span> + surname + <span class="st">" "</span> + age);
+    }
+}
+
+<span class="kw">public class</span> <span class="fn">Student</span> <span class="kw">extends</span> Person {
+    <span class="kw">private int</span> year;
+    <span class="kw">protected</span> String tutor;
+
+    <span class="kw">public</span> <span class="fn">Student</span>(String f, String l, <span class="kw">int</span> a, <span class="kw">int</span> y, String t) {
+        <span class="kw">super</span>(f, l, a);      <span class="cm">// ① เรียก constructor แม่ — บรรทัดแรกเสมอ!</span>
+        year = y;            <span class="cm">// ② แล้วค่อยของตัวเอง</span>
+        tutor = t;
+    }
+}</pre>
+    <div class="exam"><b>3 กฎ super:</b> ① super(...) ต้องบรรทัดแรกของ constructor ② ไม่เขียน → Java แอบเรียก super() ว่าง (ถ้าแม่ไม่มีตัวว่าง = compile error!) ③ super.method() เรียกใช้ของแม่ตอน Override</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 ข้อดีข้อเสีย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · ข้อบรรยายชัวร์</div>
+    <h2 class="slide-title">ข้อดี-ข้อเสียของ Inheritance (สไลด์มีสองหน้าเต็มๆ)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ข้อดี (Advantages)</div>
+        <pre class="code-block">① ลดโค้ดซ้ำ
+   "แชร์รหัสร่วมระหว่างหลายคลาสย่อย"
+   โค้ดซ้ำใน 2 คลาส → refactor
+   ย้ายขึ้นไปไว้ที่ superclass
+
+② จัดกลุ่มวัตถุ/คลาสได้เป็นระบบ
+
+③ ยืดหยุ่นต่อการเปลี่ยนแปลง
+   คลาสที่สืบทอดจาก superclass
+   เดียวกัน "ใช้สลับกันได้"
+   (ถ้าชนิดคืนเป็น superclass)
+   ← ปูทางไป Polymorphism</pre>
+      </div>
+      <div>
+        <div class="code-label">ข้อเสีย (Disadvantage)</div>
+        <pre class="code-block">"ความสัมพันธ์แบบสืบทอดเป็น
+ ความสัมพันธ์ที่ แน่นแฟ้น
+ (tightly coupled)
+ ระหว่างแม่กับลูก
+
+ ถ้าเปลี่ยนโค้ดของคลาสแม่
+ จะมีผลต่อคลาสลูก ทั้งหมด
+ ที่สืบทอดมา"
+
+<span class="cm">/* ตอบข้อ "จงบอกข้อเสียของ
+   inheritance" ด้วยประโยคนี้
+   — มาจากสไลด์คำต่อคำ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อบรรยายสูตรสำเร็จ:</b> ถ้าโจทย์ให้ "อธิบาย inheritance พร้อมข้อดีข้อเสีย" → นิยาม (แม่ถ่ายทอดให้ลูก, is-a) + ข้อดี 3 (ลดโค้ดซ้ำ/จัดกลุ่ม/ยืดหยุ่น) + ข้อเสีย 1 (แน่นแฟ้น แก้แม่กระทบลูกทั้งหมด) — ครบ = คะแนนเต็ม</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 override + สรุป 4 เสา -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · Override + ภาพรวม</div>
+    <h2 class="slide-title">Override + ตำแหน่งของบทนี้ใน 4 เสา OOP</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Override — ลูกเขียนทับ method แม่</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">Student</span> <span class="kw">extends</span> Person {
+    <span class="cm">// เขียนทับ printInfo ของแม่</span>
+    <span class="kw">public void</span> <span class="fn">printInfo</span>() {
+        <span class="kw">super</span>.<span class="fn">printInfo</span>();  <span class="cm">// reuse แม่</span>
+        System.out.<span class="fn">println</span>(<span class="st">"Year: "</span> + year);
+    }
+}
+
+<span class="cm">/* กติกา Override:
+   ชื่อ + parameter + return type
+   ต้องเหมือนแม่เป๊ะ
+   (ต่าง parameter = Overload
+    ไม่ใช่ Override! คนละเรื่อง) */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">แผนที่ 4 เสา (สอบ midterm ถึงไหน)</div>
+        <pre class="code-block">① Encapsulation  ← บท 4 ✓
+   (ห่อหุ้ม private + getter/setter)
+② Inheritance    ← บท 6 ✓ (บทนี้)
+   (สืบทอด extends + is-a)
+③ Polymorphism   ← หลัง midterm
+   (หลายร่าง — lab 7 เป็นต้นไป)
+④ Abstraction    ← โผล่บางส่วน
+   (abstract class ในตาราง modifier)
+
+<span class="cm">/* ถาม "หลักการเชิงวัตถุข้อ 1 คือ"
+   → Encapsulation
+   "ข้อ 2 คือ" → Inheritance
+   ← เลขข้อมาจากสไลด์ตรงๆ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>คู่ที่ห้ามสับสน:</b> <b>Override</b> = ลูกทับ method แม่ (หัวเหมือนเป๊ะ) · <b>Overload</b> = method ชื่อเดียวกันหลายตัวใน "คลาสเดียวกัน" ต่าง parameter — ข้อสอบถามแยกสองคำนี้บ่อยมาก</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 โจทย์ lab6 ย่อ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · โจทย์ lab สรุปย่อ</div>
+    <h2 class="slide-title">โจทย์ lab 6 — จำ "ท่าแก้" ของแต่ละข้อ</h2>
+    <pre class="code-block"><span class="cm">/* ข้อ 1 Student / Undergrad / Graduate
+   ท่าแก้: Student มี constructor 2 ตัว (overload — ตัวไม่มีชื่อใช้ this(id,"",gpa))
+   ลูกทั้งสอง: super(id,name,gpa) บรรทัดแรก + field ตัวเอง
+   toString() Override ต่อยอดจาก super.toString()
+   จุดสอบ: println(obj) เรียก toString() ให้อัตโนมัติ! */</span>
+
+<span class="cm">/* ข้อ 2 ร้านค้า v2 — Milk/Sugar/Coffee extends Product
+   ท่าแก้: ลูกแต่ละตัว super("", ชื่อ, ราคา) + field เฉพาะ (volumn/weight)
+   จุดสอบ: Product p3 = new Coffee(250); ← ตัวแปรชนิดแม่ชี้ลูกได้ (upcasting)
+   Cart/Cashier เดิมใช้ต่อได้เพราะทุกตัว is-a Product */</span>
+
+<span class="cm">/* ข้อ 3 abstract Employee + earnings() 3 แบบ
+   ท่าแก้: ลูกทุกตัวต้อง override earnings()
+   Fixed → เงินเดือนตรงๆ · Hourly → wage×hours (20×165=3300)
+   Commission → sales×rate (95000×0.06=5700)
+   จุดสอบ: new Employee(...) ตรงๆ = error! (abstract) */</span></pre>
+    <div class="exam"><b>เฉลยโค้ดเต็มทั้ง 3 ข้อ</b> → วิชา <a href="../subject_oop/slides_ch6.html" style="color:var(--ca)">OOP Lab 2–7 บท Lab 6</a> · เกณฑ์ผ่านบทนี้: เล่าท่าแก้ทั้ง 3 ข้อได้ + ตอบข้อดีข้อเสีย inheritance ได้ครบ 4 ประเด็น</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">ข้อ True/False ตอบให้ครบ 4 ข้อ:<br><br>
+① Student is a Person → ?<br>
+② Person is a Student → ?<br>
+③ ถ้าแม่ไม่มี constructor ว่าง และลูกไม่เขียน super(...) → compile ผ่านไหม?<br>
+④ Override กับ Overload คือสิ่งเดียวกัน → ?<br><br>
+<em>เฉลย: ① T (ลูกเป็นแม่ได้) ② F (is-a มีทิศเดียว!)<br>
+③ ไม่ผ่าน — Java แอบเรียก super() ว่างแล้วหาไม่เจอ<br>
+④ F — Override ทับของแม่ / Overload ชื่อซ้ำต่าง parameter</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ข้อใดคือ "ข้อเสีย" ของ Inheritance ตามที่เรียน?</h2>
+    <div id="mc-j6" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-j6','A','C','❌ ตรงข้าม — inheritance ช่วย "ลด" โค้ดซ้ำ (เป็นข้อดี)')">A) ทำให้โค้ดซ้ำซ้อนมากขึ้น</button>
+      <button class="mc-btn" onclick="pickMC('mc-j6','B','C','❌ สืบทอดไม่ได้ทำให้ช้า — ไม่ใช่ประเด็นในสไลด์')">B) โปรแกรมทำงานช้าลง</button>
+      <button class="mc-btn" onclick="pickMC('mc-j6','C','C','✅ ตามสไลด์: ความสัมพันธ์แน่นแฟ้น (tightly coupled) — แก้โค้ดคลาสแม่กระทบคลาสลูกทั้งหมด')">C) แก้คลาสแม่แล้วกระทบคลาสลูกทั้งหมด</button>
+      <button class="mc-btn" onclick="pickMC('mc-j6','D','C','❌ Java extends ได้แม่เดียวจริง แต่นั่นเป็นข้อจำกัดของภาษา ไม่ใช่ข้อเสียที่สไลด์ระบุ')">D) สืบทอดได้เพียงคลาสเดียว</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">ข้อดี 3: ลดโค้ดซ้ำ (ย้ายขึ้น superclass) · จัดกลุ่มคลาส · ยืดหยุ่น ใช้สลับกันได้
+ข้อเสีย 1: tightly coupled — เปลี่ยนแม่ กระทบลูกทุกตัว</pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — บทสุดท้ายก่อน Cheat Sheet</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① คลาสแม่เรียกว่า ___ class (ศัพท์ตามสไลด์)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj6a" placeholder="ศัพท์">
+      <button class="fill-btn" onclick="checkFill('fj6a','super',['superclass','super class'],[],'✅ super class · ลูกคือ sub class','❌ super class (แม่) / sub class (ลูก)')">ตรวจ</button>
+    </div>
+    <div id="fj6a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② super(...) ต้องอยู่บรรทัด ___ ของ constructor ลูก</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj6b" placeholder="ตำแหน่ง">
+      <button class="fill-btn" onclick="checkFill('fj6b','แรก',['บรรทัดแรก','first','1'],[],'✅ บรรทัดแรกเสมอ — แม่ต้องสร้างเสร็จก่อน ลูกค่อยเติมของตัวเอง','❌ บรรทัดแรก — กฎเหล็กของ super(...)')">ตรวจ</button>
+    </div>
+    <div id="fj6b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ method ชื่อเดียวกันหลายตัวในคลาสเดียว ต่าง parameter เรียกว่า ___ (ไม่ใช่ Override!)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj6c" placeholder="ศัพท์">
+      <button class="fill-btn" onclick="checkFill('fj6c','overload',['overloading','โอเวอร์โหลด'],[],'✅ Overload — คลาสเดียวกัน ชื่อซ้ำ ต่าง parameter · Override คือลูกทับของแม่','❌ Overload(ing) — Override คือลูกเขียนทับ method แม่หัวเหมือนเป๊ะ')">ตรวจ</button>
+    </div>
+    <div id="fj6c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🌳</div>
+      <div class="summary-title">จบติวบทที่ 6 — Inheritance</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">นิยาม</div><div class="sum-body">หลักเชิงวัตถุข้อ 2 · แม่ (super) ถ่ายทอดให้ลูก (sub)</div></div>
+        <div class="sum-card"><div class="sum-head">Is-A มีทิศ</div><div class="sum-body">Student is a Person ✓ · Person is not a Student ✗</div></div>
+        <div class="sum-card"><div class="sum-head">super</div><div class="sum-body">super(...) บรรทัดแรก · แม่ไม่มีตัวว่าง + ลูกไม่เรียก = error</div></div>
+        <div class="sum-card"><div class="sum-head">Override ≠ Overload</div><div class="sum-body">ทับของแม่ (หัวเหมือน) vs ชื่อซ้ำต่าง parameter ในคลาสเดียว</div></div>
+        <div class="sum-card"><div class="sum-head">ข้อดี 3 / เสีย 1</div><div class="sum-body">ลดซ้ำ · จัดกลุ่ม · ยืดหยุ่น / tightly coupled แก้แม่กระทบลูก</div></div>
+        <div class="sum-card"><div class="sum-head">เฉลย lab เต็ม</div><div class="sum-body">Student 3 ระดับ, ร้านค้า v2, abstract Employee → OOP Lab 6</div></div>
+      </div>
+      <a href="slides_final.html" class="summary-next">→ ด่านสุดท้าย: Cheat Sheet ก่อนเข้าห้องสอบ</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 10</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 6 — Inheritance</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Is-A Rule','Person/Student','ข้อดี-ข้อเสีย','Override + 4 เสา','โจทย์ lab ย่อ','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

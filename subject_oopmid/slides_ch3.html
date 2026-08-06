@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 3 — Object & Class | ติวสอบ OOP Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#4338ca;--cal:#e7e5fc;--cam:#7a6ff0;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.8;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">☕ ติวสอบ Midterm · 02204172 OOP (Java)</div>
+        <div class="cover-title">ติวบทที่ 3<br><em>Object &amp; Class</em></div>
+        <div class="cover-subtitle">หัวใจข้อสอบทฤษฎี — ตัวแปร/วัตถุ 4 รูปแบบจากสไลด์อาจารย์ + == vs equals + GC</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>วงจรชีวิตวัตถุ: สร้าง → ใช้ → ทำลาย</div>
+          <div class="topic-row"><div class="topic-dot"></div>4 รูปแบบตัวแปร-วัตถุ (สไลด์อาจารย์ตรงๆ)</div>
+          <div class="topic-row"><div class="topic-dot"></div>== vs equals — วาดรูปแล้วตอบได้เสมอ</div>
+          <div class="topic-row"><div class="topic-dot"></div>Garbage Collector ทำงานยังไง</div>
+          <div class="topic-row"><div class="topic-dot"></div>Class = พิมพ์เขียว + constructor</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">J3</div>
+        <div class="cover-badge">หัวใจข้อสอบทฤษฎี</div>
+        <div class="cover-slides-count">12 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 วงจรชีวิต -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · นิยาม</div>
+    <h2 class="slide-title">วัตถุคืออะไร + วงจรชีวิต 3 ช่วง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">นิยามตามสไลด์</div>
+        <pre class="code-block">"วัตถุ คือ สิ่งๆ หนึ่งที่มีตัวตน
+ มีข้อมูลและพฤติกรรม"
+
+ข้อมูล     = field / attribute
+พฤติกรรม  = method
+
+วงจรชีวิตของวัตถุ (เรียงได้):
+① สร้างและตั้งค่าเริ่มต้น (new + constructor)
+② ใช้งาน (เรียก method / เข้าถึงข้อมูล)
+③ ทำลาย (garbage collector เก็บกวาด)</pre>
+      </div>
+      <div>
+        <div class="code-label">สร้างด้วย new (ตัวอย่างสไลด์)</div>
+        <pre class="code-block"><span class="kw">new</span> <span class="fn">String</span>(<span class="st">"ABC"</span>)
+<span class="kw">new</span> <span class="fn">Date</span>()
+<span class="kw">new</span> <span class="fn">Integer</span>(<span class="nm">1</span>)
+
+<span class="cm">/* ประโยคสำคัญในสไลด์:
+   "วัตถุทุกตัวต้องมีชนิด
+    และชนิดมันก็คือ คลาส"
+
+   String s = new String("ABC");
+   // s "อ้างถึง" วัตถุ ← คำนี้สำคัญ
+   Date deadline;
+   // ยังไม่อ้างถึงวัตถุใด (null) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ศัพท์ที่ต้องใช้ให้ตรง:</b> ตัวแปร "อ้างถึง (reference)" วัตถุ — ตัวแปรไม่ใช่ตัววัตถุ! ความเข้าใจนี้คือกุญแจของ 4 รูปแบบในสไลด์ถัดไป ซึ่งเป็นข้อสอบทฤษฎีตัวเป้งของบทนี้</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 4 รูปแบบ (1) -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · หัวใจของบท (1/2)</div>
+    <h2 class="slide-title">4 รูปแบบตัวแปร-วัตถุ — แบบ ① และ ②</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① 1 ตัวแปร 1 วัตถุ (ปกติ)</div>
+        <pre class="code-block">String s = <span class="kw">new</span> <span class="fn">String</span>(<span class="st">"abc"</span>);
+s.<span class="fn">length</span>() == <span class="nm">3</span>;
+s.<span class="fn">equals</span>(<span class="st">"abc"</span>);  <span class="cm">// true</span></pre>
+        <div class="diagram">s ───▶ ["abc"]</div>
+      </div>
+      <div>
+        <div class="code-label">② 2 ตัวแปร 1 วัตถุ (ตัวหลอก!)</div>
+        <pre class="code-block">String s1 = <span class="kw">new</span> <span class="fn">String</span>(<span class="st">"abc"</span>);
+String s2;
+s2 = s1;      <span class="cm">// ชี้วัตถุเดียวกัน!</span>
+s1 = <span class="kw">null</span>;   <span class="cm">// s1 ปล่อยมือ</span>
+
+s2.<span class="fn">equals</span>(<span class="st">"abc"</span>);  <span class="cm">// ยัง true!</span>
+<span class="cm">// วัตถุยังอยู่ เพราะ s2 ยังชี้</span></pre>
+        <div class="diagram">s1 ──╳   ┌▶ ["abc"]
+s2 ──────┘  ยังเข้าถึงได้ผ่าน s2</div>
+      </div>
+    </div>
+    <div class="exam"><b>จุดสอบของแบบ ②:</b> s2 = s1 <b>ไม่ได้ copy วัตถุ</b> — แค่เพิ่มตัวชี้ · แล้วต่อให้ s1 = null วัตถุก็ยังไม่หาย เพราะยังมี s2 ชี้อยู่ (โยงถึง GC สไลด์หน้า)</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 4 รูปแบบ (2) -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · หัวใจของบท (2/2)</div>
+    <h2 class="slide-title">แบบ ③ และ ④ — == vs equals โผล่ตรงนี้</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">③ 2 ตัวแปร 2 วัตถุ (ข้อสอบชอบสุด)</div>
+        <pre class="code-block">String s1 = <span class="kw">new</span> <span class="fn">String</span>(<span class="st">"abc"</span>);
+String s2 = <span class="kw">new</span> <span class="fn">String</span>(<span class="st">"abc"</span>);
+
+s2.<span class="fn">equals</span>(s1) == <span class="kw">true</span>;  <span class="cm">// เนื้อหาเท่า</span>
+(s1 == s2) == <span class="kw">false</span>;    <span class="cm">// คนละวัตถุ!</span></pre>
+        <div class="diagram">s1 ───▶ ["abc"]   ← สองกล่อง
+s2 ───▶ ["abc"]     เนื้อเหมือนกัน</div>
+      </div>
+      <div>
+        <div class="code-label">④ 1 ตัวแปร 2 วัตถุ (วัตถุกำพร้า)</div>
+        <pre class="code-block">String s1 = <span class="kw">new</span> <span class="fn">String</span>(<span class="st">"abc"</span>);
+s1 = <span class="kw">new</span> <span class="fn">String</span>(<span class="st">"cba"</span>);
+
+<span class="cm">/* สไลด์เขียนว่า:
+   "ไม่มีตัวแปรใดเข้าถึงข้อความ
+    abc ได้อีก"
+   → "abc" กลายเป็นขยะ
+   รอ garbage collector เก็บ */</span></pre>
+        <div class="diagram">s1 ──╳ ["abc"] ← ขยะ ไม่มีใครชี้
+   └───▶ ["cba"]</div>
+      </div>
+    </div>
+    <div class="exam"><b>สูตรตอบข้อ == vs equals:</b> วาดกล่อง! ลูกศรชี้กล่องเดียวกัน → == true · กล่องคนละใบเนื้อเหมือนกัน → == false แต่ equals true — วาด 10 วินาที ไม่มีทางตอบผิด</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 GC -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · Garbage Collector</div>
+    <h2 class="slide-title">Object Destruction — GC ทำงานยังไง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตามสไลด์</div>
+        <pre class="code-block">การคืนหน่วยความจำมี 2 วิธี:
+① manual   → C++ (โปรแกรมเมอร์ delete เอง)
+② อัตโนมัติ → Java!
+
+"JRE มี garbage collector
+ ไว้สำหรับคืนพื้นที่หน่วยความจำ
+
+ ทำงานโดยวิ่งหาวัตถุที่
+ เข้าถึงไม่ได้แล้ว (unreachable)
+ แล้วทำการกำจัด
+ คืนพื้นที่ให้ระบบปฏิบัติการ"</pre>
+      </div>
+      <div>
+        <div class="code-label">เชื่อมกับ 4 รูปแบบ</div>
+        <pre class="code-block"><span class="cm">/* วัตถุไหนถูกเก็บ?
+   → ตัวที่ "ไม่มีตัวแปรใดชี้ถึง"
+
+   แบบ ②: s1=null แต่ s2 ยังชี้
+   → ยังไม่ถูกเก็บ ✗
+   แบบ ④: "abc" ไม่มีใครชี้
+   → ถูกเก็บ ✓
+
+   คำถามยอดฮิต:
+   "Java ต่างจาก C++ เรื่อง
+    หน่วยความจำอย่างไร"
+   → Java มี GC อัตโนมัติ
+     C++ ต้อง delete เอง */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เงื่อนไขเดียวที่ GC ใช้:</b> วัตถุ unreachable (ไม่มี reference ชี้ถึง) — ไม่ใช่ "วัตถุเก่า" ไม่ใช่ "วัตถุใหญ่" · ตอบเกินจากนี้คือผิด</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 Class -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · Class</div>
+    <h2 class="slide-title">Class = พิมพ์เขียว · โรงงานผลิตวัตถุ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">นิยาม + เขียนคลาสแรก</div>
+        <pre class="code-block"><span class="cm">/* สไลด์: "คลาสคือรูปแบบหรือ
+   พิมพ์เขียว (blueprint) ของวัตถุ
+   จัดกลุ่มวัตถุที่มีคุณสมบัติร่วมกัน
+   โรงงานผลิตวัตถุตามพิมพ์เขียว" */</span>
+
+<span class="kw">public class</span> <span class="fn">Book</span> {
+    String name;      <span class="cm">// field</span>
+    <span class="kw">double</span> price;
+
+    <span class="kw">public</span> <span class="fn">Book</span>(String n, <span class="kw">double</span> p) {
+        name = n;     <span class="cm">// constructor</span>
+        price = p;
+    }
+    <span class="kw">public void</span> <span class="fn">show</span>() {   <span class="cm">// method</span>
+        System.out.<span class="fn">println</span>(name);
+    }
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">กฎ constructor (ทวนจาก lab 3)</div>
+        <pre class="code-block">① ชื่อ = ชื่อคลาสเป๊ะๆ
+② ไม่มี return type (void ก็ห้ามใส่)
+③ ถูกเรียกอัตโนมัติตอน new
+④ ไม่เขียนเลย → Java แถม
+   default constructor ว่างๆ ให้
+⑤ เขียนเองแล้ว → ตัวแถมหายทันที!
+   new Book() จะ error ถ้าไม่มี
+   constructor ว่างเขียนไว้
+⑥ overload ได้ (หลายตัว
+   ต่าง parameter)
+
+<span class="cm">/* เฉลย lab 3 เต็ม (Book, Box,
+   Vector) → วิชา OOP Lab 2–7 */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อกฎ ⑤ คือกับดักที่คนพลาดมากสุดในข้อเขียนโค้ด</b> — ถ้าโจทย์ให้เขียน constructor รับค่า อย่าลืมว่า new Book() แบบว่างจะพังทันที เว้นแต่เขียนเพิ่มอีกตัว</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 pass reference -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · โยง lab</div>
+    <h2 class="slide-title">ส่ง object เข้า method = ส่ง "รีโมท" ตัวเดียวกัน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์ resizeBox จาก lab 3</div>
+        <pre class="code-block"><span class="kw">static void</span> <span class="fn">resizeBox</span>(Box b, <span class="kw">int</span> fold) {
+    b.width  *= fold;
+    b.height *= fold;
+    b.depth  *= fold;
+}
+
+Box b2 = <span class="kw">new</span> <span class="fn">Box</span>(<span class="nm">3</span>,<span class="nm">4</span>,<span class="nm">5</span>);  <span class="cm">// vol 60</span>
+<span class="fn">resizeBox</span>(b2, <span class="nm">2</span>);
+b2.<span class="fn">getVolume</span>();          <span class="cm">// 480!</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ทำไมของจริงเปลี่ยน</div>
+        <div class="diagram">main:   b2 ──┐
+             ├──▶ [Box 3×4×5]
+method:  b ──┘   ตัวเดียวกัน!</div>
+        <pre class="code-block"><span class="cm">/* Java ส่ง "ค่าของ reference"
+   b กับ b2 ชี้ Box ก้อนเดียวกัน
+   แก้ผ่าน b = แก้ของจริง
+
+   และ ×2 ทุกด้าน → ปริมาตร
+   ×2³ = ×8 (60→480) ไม่ใช่ ×2!
+   ← จุดสอบเลขที่คนพลาดประจำ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เชื่อม 4 รูปแบบ:</b> การส่ง object เข้า method คือ "2 ตัวแปร 1 วัตถุ" (แบบ ②) ชั่วคราวนั่นเอง — ทฤษฎีบทนี้อธิบายพฤติกรรมโค้ดใน lab ได้หมด</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โค้ดนี้ มีการสร้างวัตถุกี่ตัว? และสุดท้ายเหลือวัตถุที่เข้าถึงได้กี่ตัว?<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+String a = new String("x");<br>
+String b = new String("y");<br>
+String c = a;<br>
+a = new String("z");<br>
+b = null;
+</code><br><br>
+<em>ใบ้: new ทั้งหมด 3 ครั้ง = 3 วัตถุ ("x","y","z")<br>
+ไล่ดูทีละตัว: "x" มีใครชี้? (c!) · "y" มีใครชี้? · "z" มีใครชี้?<br>
+วัตถุที่ไม่มีใครชี้ = อาหารของ GC</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ผลของโค้ดนี้คือ?</h2>
+    <pre class="code-block" style="margin-bottom:14px">String s1 = <span class="kw">new</span> <span class="fn">String</span>(<span class="st">"abc"</span>);
+String s2 = <span class="kw">new</span> <span class="fn">String</span>(<span class="st">"abc"</span>);
+System.out.<span class="fn">println</span>(s1 == s2);
+System.out.<span class="fn">println</span>(s1.<span class="fn">equals</span>(s2));</pre>
+    <div id="mc-j3" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-j3','A','C','❌ true true จะเกิดเมื่อชี้วัตถุเดียวกัน — แต่ new สองครั้ง = สองวัตถุ')">A) true / true</button>
+      <button class="mc-btn" onclick="pickMC('mc-j3','B','C','❌ equals เทียบเนื้อหา — "abc" กับ "abc" เท่ากันแน่นอน')">B) false / false</button>
+      <button class="mc-btn" onclick="pickMC('mc-j3','C','C','✅ new สองครั้ง = คนละวัตถุ → == false · เนื้อหาเหมือนกัน → equals true (แบบ ③ ในสไลด์อาจารย์เป๊ะ)')">C) false / true</button>
+      <button class="mc-btn" onclick="pickMC('mc-j3','D','C','❌ กลับด้าน — == เทียบตัวชี้ (false), equals เทียบเนื้อหา (true)')">D) true / false</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">s1 ───▶ ["abc"]     ← กล่องคนละใบ (new 2 ครั้ง)
+s2 ───▶ ["abc"]
+== ถามว่า "ลูกศรชี้กล่องเดียวกันไหม" → false
+equals ถามว่า "ในกล่องเขียนเหมือนกันไหม" → true</pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 4</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① เปรียบเทียบ "เนื้อหา" ของ String สองตัว ใช้ method ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj3a" placeholder="method">
+      <button class="fill-btn" onclick="checkFill('fj3a','equals',['equals()','.equals'],[],'✅ equals เทียบเนื้อหา · == เทียบว่าชี้วัตถุเดียวกันไหม','❌ equals — ส่วน == เทียบ reference')">ตรวจ</button>
+    </div>
+    <div id="fj3a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② GC จะเก็บวัตถุที่มีสถานะ ___ (ภาษาอังกฤษหรือไทยก็ได้)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj3b" placeholder="สถานะ">
+      <button class="fill-btn" onclick="checkFill('fj3b','unreachable',['เข้าถึงไม่ได้','ไม่มีใครชี้','ไม่มี reference','เข้าถึงไม่ได้แล้ว'],[],'✅ unreachable — ไม่มี reference ใดชี้ถึง','❌ unreachable (เข้าถึงไม่ได้แล้ว) — เงื่อนไขเดียวของ GC')">ตรวจ</button>
+    </div>
+    <div id="fj3b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ s2 = s1; ทำให้เกิดรูปแบบ "___ ตัวแปร ___ วัตถุ" (ตอบเลขสองตัว เช่น 1 1)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj3c" placeholder="เลขสองตัว">
+      <button class="fill-btn" onclick="checkFill('fj3c','2 1',['2ตัวแปร1วัตถุ','2 ตัวแปร 1 วัตถุ','2,1'],[],'✅ 2 ตัวแปร 1 วัตถุ — assignment ไม่ copy วัตถุ แค่เพิ่มตัวชี้','❌ 2 ตัวแปร 1 วัตถุ — s1 กับ s2 ชี้ก้อนเดียวกัน')">ตรวจ</button>
+    </div>
+    <div id="fj3c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">📦</div>
+      <div class="summary-title">จบติวบทที่ 3 — Object &amp; Class</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">วัตถุ</div><div class="sum-body">มีข้อมูล (field) + พฤติกรรม (method) · วงจร: สร้าง→ใช้→ทำลาย</div></div>
+        <div class="sum-card"><div class="sum-head">4 รูปแบบ</div><div class="sum-body">1-1 ปกติ · 2-1 ชี้ร่วม · 2-2 คนละก้อน · 1-2 เกิดขยะ</div></div>
+        <div class="sum-card"><div class="sum-head">== vs equals</div><div class="sum-body">== ลูกศรชี้กล่องเดียวกัน? · equals ในกล่องเหมือนกัน? — วาดรูปเสมอ</div></div>
+        <div class="sum-card"><div class="sum-head">GC</div><div class="sum-body">Java คืน memory อัตโนมัติ — เก็บเฉพาะวัตถุ unreachable (C++ ต้อง delete เอง)</div></div>
+        <div class="sum-card"><div class="sum-head">Constructor</div><div class="sum-body">ชื่อ = คลาส ไม่มี return type · เขียนเองแล้ว default หาย!</div></div>
+        <div class="sum-card"><div class="sum-head">ส่ง object</div><div class="sum-body">= ส่ง reference — method แก้ของจริงได้ (resizeBox: 60→480)</div></div>
+      </div>
+      <a href="slides_ch4.html" class="summary-next">→ ติวบทที่ 4: Encapsulation</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 3 — Object &amp; Class</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','วงจรชีวิตวัตถุ','4 รูปแบบ ①②','4 รูปแบบ ③④','Garbage Collector','Class + Constructor','ส่ง object','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

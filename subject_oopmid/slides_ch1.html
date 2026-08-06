@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 1 — Java พื้นฐาน | ติวสอบ OOP Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#4338ca;--cal:#e7e5fc;--cam:#7a6ff0;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">☕ ติวสอบ Midterm · 02204172 OOP (Java)</div>
+        <div class="cover-title">ติวบทที่ 1<br><em>Java พื้นฐาน</em></div>
+        <div class="cover-subtitle">JVM, bytecode, javac/java — ทฤษฎีที่ชอบออกปรนัย + เฉลยโจทย์เขียนโปรแกรม Lab 1 ครบ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Java คืออะไร ทำไม platform-independent</div>
+          <div class="topic-row"><div class="topic-dot"></div>bytecode → JVM → JRE → JDK (แยกให้ออก)</div>
+          <div class="topic-row"><div class="topic-dot"></div>javac / java + โครง main ที่ต้องเขียนได้หลับตา</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลย Lab1: พื้นที่ผิวปริซึมสามเหลี่ยม</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลย Lab1: จตุภาค (quadrant)</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">J1</div>
+        <div class="cover-badge">ทฤษฎี + เฉลย LAB 1</div>
+        <div class="cover-slides-count">12 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 Java คืออะไร -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · ทฤษฎี</div>
+    <h2 class="slide-title">Java คืออะไร — ตอบตามสไลด์อาจารย์</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ประวัติ + จุดขาย (ปรนัยสายจำ)</div>
+        <pre class="code-block">พัฒนาโดย: Sun Microsystems (1991)
+แรงบันดาลใจ: platform-independent
+  สำหรับ embedded systems
+  → ภายหลังปรับใช้กับ www
+
+จุดขายที่สไลด์ list ไว้:
+• ง่ายที่จะเรียนและเขียน
+• Pure object-oriented
+• Portable (เขียนครั้งเดียว รันได้ทุกที่)
+• Multithreading, networking, security
+• Versatile: desktop / server /
+  browser / embedded</pre>
+      </div>
+      <div>
+        <div class="code-label">Java = มากกว่าภาษา → "Platform"</div>
+        <pre class="code-block">Java Platform ประกอบด้วย:
+
+① ภาษา Java (ตัว syntax)
+
+② JVM — Java Virtual Machine
+   "เครื่องสมมติ" ที่ทำงานเหมือน
+   คอมพิวเตอร์จริง (จัดการชุดคำสั่ง
+   และหน่วยความจำ)
+
+③ Java API — library สำเร็จรูป
+   เช่น Lists, Maps, Queues,
+   Image I/O, เสียง
+
+← สามส่วนนี้คือคำตอบข้อ
+  "Java platform ประกอบด้วยอะไร"</pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดที่นิยมถาม:</b> "ทำไม Java จึง platform-independent?" → เพราะ compile เป็น <b>bytecode</b> (ไม่ใช่ machine code) แล้วให้ <b>JVM ของแต่ละเครื่อง</b>เป็นตัวแปลอีกที — โค้ดเดียวรันได้ทุก OS ที่มี JVM</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 bytecode flow -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · หัวใจทฤษฎี</div>
+    <h2 class="slide-title">เส้นทางของโค้ด: .java → .class → รัน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">flow ที่ต้องวาดได้</div>
+        <pre class="code-block">HelloWorld.java   (source code)
+      │
+      │  javac  ← compiler
+      ▼
+HelloWorld.class  (bytecode)
+      │
+      │  java   ← เรียก JVM มาแปล
+      ▼            (interpreter)
+ผลลัพธ์บนหน้าจอ
+
+<span class="cm">/* bytecode "เหมือนกันทุกเครื่อง"
+   JVM "ต่างกันตามเครื่อง"
+   ← ประโยคนี้คือคำตอบหลายข้อ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ข้อเสียที่สไลด์เขียนไว้ (ถามได้)</div>
+        <pre class="code-block"><span class="cm">/* "interpreted bytecode ทำงาน
+   ช้ากว่า machine code
+   โดยเฉพาะเมื่อโค้ดซับซ้อน"
+
+   ← ข้อเสียของแนวทาง JVM
+   แลกกับความ portable
+
+   เทียบ C: compile ตรงเป็น
+   machine code → เร็วกว่า
+   แต่ต้อง compile ใหม่ทุก platform */</span>
+
+คำสั่งที่ใช้จริง (Lab 1):
+javac HelloWorld.java  → ได้ .class
+java  HelloWorld       → รัน
+java -jar app.jar      → รันไฟล์ jar</pre>
+      </div>
+    </div>
+    <div class="exam"><b>เขียนตอบสั้นๆ ให้ครบ:</b> javac = compiler แปลง .java → .class (bytecode) · java = loader เรียก JVM รัน bytecode — สลับหน้าที่สองตัวนี้คือจุดหลอกอันดับหนึ่งของบท</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 JVM JRE JDK -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · แยกศัพท์</div>
+    <h2 class="slide-title">JVM ⊂ JRE ⊂ JDK — สามวงกลมซ้อนกัน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">นิยามตามสไลด์</div>
+        <pre class="code-block">JVM  = เครื่องสมมติที่รัน bytecode
+
+JRE  = JVM + Java API
+       "ใช้สำหรับ รัน โปรแกรม"
+       (รัน .class หรือ .jar)
+
+JDK  = JRE + เครื่องมือพัฒนา:
+       java    (loader)
+       javac   (compiler)
+       jar     (archiver)
+       javadoc (documentation)
+       "ใช้สำหรับ พัฒนา โปรแกรม"</pre>
+      </div>
+      <div>
+        <div class="code-label">Java Editions (สไลด์มีตาราง)</div>
+        <pre class="code-block">Java SE  Standard Edition
+         → พื้นฐาน applications
+Java EE  Enterprise Edition
+         → เพิ่ม libraries ฝั่ง server
+Java ME  Micro Edition
+         → VM เล็กสำหรับ embedded
+Java Cards → smart card
+
+<span class="cm">/* วิธีจำ: SE มาตรฐาน ·
+   EE องค์กร(server) ·
+   ME จิ๋ว(ฝังตัว) · Card บัตร */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อสอบสายนี้ตอบด้วยสูตรเดียว:</b> "อยากแค่รันโปรแกรม Java ต้องมีอะไร" → JRE · "อยากเขียนโปรแกรม Java ต้องมีอะไร" → JDK · "ตัวที่รัน bytecode จริงๆ คือ" → JVM</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 โครง main -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · โครงโปรแกรม</div>
+    <h2 class="slide-title">โครง main — เขียนได้หลับตา + อธิบายได้ทุกคำ</h2>
+    <pre class="code-block"><span class="kw">class</span> <span class="fn">HelloWorldApp</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        System.out.<span class="fn">println</span>(<span class="st">"Hello World!"</span>);
+    }
+}</pre>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แต่ละคำแปลว่าอะไร (ถามได้ทุกคำ)</div>
+        <pre class="code-block">public  → JVM เรียกจากภายนอกได้
+static  → เรียกได้โดยไม่ต้อง new object
+          (JVM ยังไม่มี object ตอนเริ่ม!)
+void    → ไม่คืนค่า
+main    → ชื่อ "จุดเข้าโปรแกรม"
+          (entry point) — สะกดต้องเป๊ะ
+String[] args → รับ argument
+          จาก command line</pre>
+      </div>
+      <div>
+        <div class="code-label">เกร็ดจากสไลด์</div>
+        <pre class="code-block"><span class="cm">/* สไลด์เน้น:
+   "Function ใน object-oriented
+    program เรียกว่า method"
+   ← ศัพท์ต้องใช้คำว่า method
+
+   ไฟล์ .java 1 ไฟล์
+   ชื่อไฟล์ต้องตรงกับชื่อ
+   public class ในไฟล์
+   HelloWorldApp.java
+   ↔ class HelloWorldApp */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อเขียนสายเปิด:</b> "จงเขียนโปรแกรม Java แสดงข้อความ..." — โครง 4 บรรทัดนี้คือคะแนนฟรี ฝึกเขียนจนไม่ต้องคิด (พิมพ์ผิดตรง <code class="inline-code">String[] args</code> กันเยอะ)</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 Scanner + printf -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · เตรียมทำโจทย์</div>
+    <h2 class="slide-title">รับ input + จัดทศนิยม — ท่าที่โจทย์ Lab 1 ต้องใช้</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Scanner (จาก Lab 2 แต่ใช้ตั้งแต่ Lab 1)</div>
+        <pre class="code-block"><span class="kw">import</span> java.util.Scanner;
+
+Scanner sc = <span class="kw">new</span> <span class="fn">Scanner</span>(System.in);
+<span class="kw">int</span>    n = sc.<span class="fn">nextInt</span>();
+<span class="kw">double</span> d = sc.<span class="fn">nextDouble</span>();
+String s = sc.<span class="fn">nextLine</span>();</pre>
+      </div>
+      <div>
+        <div class="code-label">printf จัดทศนิยม 2 ตำแหน่ง</div>
+        <pre class="code-block">System.out.<span class="fn">printf</span>(<span class="st">"%.2f%n"</span>, <span class="nm">138.6532</span>);
+<span class="cm">// 138.65</span>
+
+<span class="cm">/* โจทย์ปริซึมให้ผลลัพธ์ 2 ตำแหน่ง
+   เช่น 138.65, 44.88, 426.23
+   → ต้องใช้ %.2f ไม่ใช่ println
+   ค่าคณิต: Math.sqrt(3), Math.pow(a,2) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เช็คก่อนไปหน้าเฉลย:</b> import Scanner แล้วหรือยัง · %.2f จัดทศนิยม · Math.sqrt/Math.pow เรียกจาก class Math ตรงๆ (static method — ไม่ต้อง new)</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 เฉลยปริซึม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · เฉลย Lab1 ข้อ 3</div>
+    <h2 class="slide-title">เฉลย: พื้นที่ผิวปริซึมสามเหลี่ยมด้านเท่า</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คิดสูตรก่อนเขียนโค้ด</div>
+        <pre class="code-block">พื้นที่ผิว = หน้าตัด 2 หน้า + ผิวข้าง 3 ด้าน
+
+หน้าตัด (สามเหลี่ยมด้านเท่า):
+  A = (√3/4) × ด้าน²   ← โจทย์ให้สูตร
+ผิวข้าง: สี่เหลี่ยม 3 แผ่น
+  = 3 × ด้าน × ยาว
+
+Surface = 2·(√3/4)·a² + 3·a·L
+
+เช็คตัวอย่าง 1: a=5, L=7.8
+  2×(√3/4)×25 = 21.65
+  3×5×7.8     = 117.00
+  รวม         = 138.65 ✓ ตรงโจทย์</pre>
+      </div>
+      <div>
+        <div class="code-label">โค้ดเต็ม</div>
+        <pre class="code-block"><span class="kw">import</span> java.util.Scanner;
+
+<span class="kw">public class</span> <span class="fn">Prism</span> {
+  <span class="kw">public static void</span> <span class="fn">main</span>(String[] a) {
+    Scanner sc = <span class="kw">new</span> <span class="fn">Scanner</span>(System.in);
+
+    System.out.<span class="fn">print</span>(<span class="st">"Enter triangle side: "</span>);
+    <span class="kw">double</span> side = sc.<span class="fn">nextDouble</span>();
+    System.out.<span class="fn">print</span>(<span class="st">"Enter prism length: "</span>);
+    <span class="kw">double</span> len = sc.<span class="fn">nextDouble</span>();
+
+    <span class="kw">double</span> area =
+        <span class="nm">2</span> * (Math.<span class="fn">sqrt</span>(<span class="nm">3</span>)/<span class="nm">4</span>) * side * side
+      + <span class="nm">3</span> * side * len;
+
+    System.out.<span class="fn">printf</span>(
+      <span class="st">"Surface area of prism is %.2f%n"</span>, area);
+  }
+}
+<span class="cm">/* a=2.25, L=6   → 44.88  ✓
+   a=10.5, L=10.5 → 426.23 ✓ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>บทเรียนจากข้อนี้:</b> โจทย์เลขในวิชานี้ให้สูตรมาเสมอ — งานจริงคือ ① แปลงสูตรเป็นนิพจน์ Java ให้ถูกลำดับ ② จัดทศนิยมตามตัวอย่าง — เช็คกับตัวอย่างที่โจทย์ให้ทุกครั้งก่อนส่ง</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 เฉลย quadrant -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · เฉลย Lab1 ข้อ 4</div>
+    <h2 class="slide-title">เฉลย: พิกัดอยู่จตุภาคใด (quadrant)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แยกเคสก่อน — ลำดับสำคัญ!</div>
+        <pre class="code-block">เคสพิเศษเช็คก่อนเสมอ:
+① x==0 && y==0 → origin
+② x==0         → y-intercept
+   (จุดบนแกน y เช่น (0,5))
+③ y==0         → x-intercept
+   (จุดบนแกน x เช่น (-2,0))
+
+แล้วค่อยแยก 4 จตุภาค:
+Q1: x>0, y>0     Q2: x&lt;0, y>0
+Q3: x&lt;0, y&lt;0     Q4: x>0, y&lt;0
+
+<span class="cm">/* ถ้าเช็ค Q1-Q4 ก่อน
+   (0,5) จะไม่เข้าเงื่อนไขไหนเลย
+   → เคสพิเศษต้องมาก่อน! */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">โค้ดเต็ม</div>
+        <pre class="code-block"><span class="kw">import</span> java.util.Scanner;
+
+<span class="kw">public class</span> <span class="fn">Quadrant</span> {
+  <span class="kw">public static void</span> <span class="fn">main</span>(String[] a) {
+    Scanner sc = <span class="kw">new</span> <span class="fn">Scanner</span>(System.in);
+    <span class="kw">int</span> x = sc.<span class="fn">nextInt</span>();
+    <span class="kw">int</span> y = sc.<span class="fn">nextInt</span>();
+    String ans;
+
+    <span class="kw">if</span> (x == <span class="nm">0</span> && y == <span class="nm">0</span>) ans = <span class="st">"origin"</span>;
+    <span class="kw">else if</span> (x == <span class="nm">0</span>) ans = <span class="st">"y-intercept"</span>;
+    <span class="kw">else if</span> (y == <span class="nm">0</span>) ans = <span class="st">"x-intercept"</span>;
+    <span class="kw">else if</span> (x > <span class="nm">0</span> && y > <span class="nm">0</span>) ans = <span class="st">"Q1"</span>;
+    <span class="kw">else if</span> (x &lt; <span class="nm">0</span> && y > <span class="nm">0</span>) ans = <span class="st">"Q2"</span>;
+    <span class="kw">else if</span> (x &lt; <span class="nm">0</span> && y &lt; <span class="nm">0</span>) ans = <span class="st">"Q3"</span>;
+    <span class="kw">else</span> ans = <span class="st">"Q4"</span>;
+
+    System.out.<span class="fn">printf</span>(
+      <span class="st">"coordinates(%d,%d) = %s%n"</span>, x, y, ans);
+  }
+}</pre>
+      </div>
+    </div>
+    <div class="exam"><b>หลักที่ใช้ได้ทุกโจทย์ if-else:</b> เคสแคบ/พิเศษต้องเช็คก่อนเคสกว้าง — origin ⊂ intercept ⊂ quadrant · เรียงผิดลำดับ = ผลผิดโดย compile ผ่าน (bug เงียบ)</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 jar + IDE -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · ปิดท้าย Lab</div>
+    <h2 class="slide-title">เกร็ดจาก Lab 1 ที่เอาไปออกปรนัยได้</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ลำดับใน Lab (เรียงขั้นตอนได้)</div>
+        <pre class="code-block">① ติดตั้ง JDK + ตั้ง PATH ถึง /bin
+② ทดสอบด้วยคำสั่ง javac ใน cmd
+③ เขียน HelloWorld.java ใน notepad
+④ javac HelloWorld.java → .class
+⑤ java HelloWorld → รัน
+⑥ ติดตั้ง IDE (Eclipse/NetBeans/
+   IntelliJ) สร้าง project/package/class
+⑦ export เป็น JAR →
+   java -jar ชื่อไฟล์.jar</pre>
+      </div>
+      <div>
+        <div class="code-label">ศัพท์ที่โผล่ใน Lab</div>
+        <pre class="code-block">PATH     ให้ OS หาคำสั่ง javac เจอ
+package  โฟลเดอร์จัดกลุ่มคลาส
+         เช่น th.ac.ku.kps.cpe
+JAR      ไฟล์รวบรวม .class
+         (Java ARchive) รันด้วย
+         java -jar ต้องระบุ class
+         ที่มี main ตอน export
+
+<span class="cm">/* ถาม: "รันไฟล์ jar ใช้คำสั่งใด"
+   → java -jar ชื่อไฟล์.jar */</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">เพื่อนรันคำสั่งแล้ว error แบบนี้:<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.8">
+&gt; java HelloWorld.java<br>
+error: class not found
+</code><br><br>
+ผิดตรงไหน?<br><br>
+<em>ใบ้: คำสั่ง java รับ "ชื่อคลาส" ไม่ใช่ชื่อไฟล์<br>
+ลำดับที่ถูก: javac HelloWorld.java (ได้ .class)<br>
+แล้ว java HelloWorld (ไม่มีนามสกุล!)</em><br><br>
+จุดนี้คือคำถามแยก javac/java ที่เจอบ่อยสุด</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ข้อใดอธิบาย bytecode ถูกต้อง?</h2>
+    <div id="mc-j1" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-j1','A','C','❌ bytecode ไม่ใช่ machine code — ต้องผ่าน JVM แปลอีกชั้น')">A) โค้ดที่ CPU รันได้โดยตรง</button>
+      <button class="mc-btn" onclick="pickMC('mc-j1','B','C','❌ นั่นคือ source code (.java) — bytecode คือผลจากการ compile แล้ว')">B) โค้ดภาษา Java ที่คนเขียน</button>
+      <button class="mc-btn" onclick="pickMC('mc-j1','C','C','✅ bytecode (.class) คือผลจาก javac — เหมือนกันทุก platform แล้วให้ JVM ของแต่ละเครื่องแปลตอนรัน')">C) ผลจากการ compile (.class) ที่ JVM นำไปแปลรัน</button>
+      <button class="mc-btn" onclick="pickMC('mc-j1','D','C','❌ JAR คือไฟล์รวบรวม .class หลายไฟล์ — ไม่ใช่นิยามของ bytecode')">D) ไฟล์ .jar ที่ export จาก IDE</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">.java ──javac──▶ .class (bytecode, เหมือนกันทุกเครื่อง) ──java/JVM──▶ รัน (JVM ต่างกันตามเครื่อง)
+
+ประโยคเดียวจบ: "compile ครั้งเดียว รันได้ทุกที่ เพราะ JVM รับหน้าที่ความต่างของแต่ละ platform"</pre>
+  </div>
+</div>
+
+<!-- SLIDE 11 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 2</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① คำสั่ง compile ไฟล์ HelloWorld.java คือ ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj1a" placeholder="คำสั่ง">
+      <button class="fill-btn" onclick="checkFill('fj1a','javac HelloWorld.java',['javac helloworld.java','javac'],[],'✅ javac HelloWorld.java → ได้ HelloWorld.class','❌ javac HelloWorld.java (javac = compiler)')">ตรวจ</button>
+    </div>
+    <div id="fj1a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② JRE = JVM + ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj1b" placeholder="อะไร?">
+      <button class="fill-btn" onclick="checkFill('fj1b','Java API',['api','java api','library','libraries'],[],'✅ JRE = JVM + Java API — ไว้รันโปรแกรม · JDK = JRE + เครื่องมือพัฒนา','❌ Java API — JRE ไว้รัน, JDK ไว้พัฒนา')">ตรวจ</button>
+    </div>
+    <div id="fj1b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ main ต้องเป็น static เพราะ JVM เรียกโดยไม่ต้อง ___ object ก่อน</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj1c" placeholder="keyword">
+      <button class="fill-btn" onclick="checkFill('fj1c','new',['new','สร้าง'],[],'✅ ไม่ต้อง new — ตอนโปรแกรมเริ่ม ยังไม่มี object ใดเลย','❌ new (สร้าง object) — static เรียกผ่านคลาสได้เลย')">ตรวจ</button>
+    </div>
+    <div id="fj1c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 12 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">☕</div>
+      <div class="summary-title">จบติวบทที่ 1 — Java พื้นฐาน</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Flow</div><div class="sum-body">.java —javac→ .class (bytecode) —JVM→ รัน · bytecode เหมือนกันทุกเครื่อง</div></div>
+        <div class="sum-card"><div class="sum-head">JVM/JRE/JDK</div><div class="sum-body">JVM รัน bytecode · JRE = JVM+API (รัน) · JDK = JRE+เครื่องมือ (พัฒนา)</div></div>
+        <div class="sum-card"><div class="sum-head">main</div><div class="sum-body">public static void main(String[] args) — อธิบายได้ทุกคำ</div></div>
+        <div class="sum-card"><div class="sum-head">เฉลยปริซึม</div><div class="sum-body">2·(√3/4)a² + 3aL · printf %.2f · เช็คกับตัวอย่างโจทย์เสมอ</div></div>
+        <div class="sum-card"><div class="sum-head">เฉลยจตุภาค</div><div class="sum-body">เคสพิเศษ (origin/intercept) ต้องเช็คก่อน Q1-Q4</div></div>
+        <div class="sum-card"><div class="sum-head">JAR</div><div class="sum-body">รวม .class · รันด้วย java -jar · ระบุ class ที่มี main ตอน export</div></div>
+      </div>
+      <a href="slides_ch2.html" class="summary-next">→ ติวบทที่ 2: Array &amp; String</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 1 — Java พื้นฐาน</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Java คืออะไร','bytecode flow','JVM/JRE/JDK','โครง main','Scanner + printf','เฉลยปริซึม','เฉลยจตุภาค','เกร็ด Lab','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
