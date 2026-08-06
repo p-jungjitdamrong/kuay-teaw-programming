@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 8 — Tree & Binary Tree | ติวสอบ Data Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#6d1f7e;--cal:#f6e8fa;--cam:#a55cb5;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🌲 ติวสอบ Final · 02204231 Data Structures</div>
+        <div class="cover-title">ติวบทที่ 8<br><em>Tree &amp; Binary Tree</em></div>
+        <div class="cover-subtitle">ฐานของ 3 บทถัดไป — ศัพท์, การท่อง 3 แบบ, Expression Tree และ recursion</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ศัพท์ต้นไม้ครบ: root, leaf, degree, level, height</div>
+          <div class="topic-row"><div class="topic-dot"></div>ท่อง Pre-order / In-order / Post-order</div>
+          <div class="topic-row"><div class="topic-dot"></div>Expression Tree → อ่านได้ 3 แบบ (เฉลย practice)</div>
+          <div class="topic-row"><div class="topic-dot"></div>เก็บ Binary Tree ใน Array</div>
+          <div class="topic-row"><div class="topic-dot"></div>ฟังก์ชัน recursive นับโหนด (เฉลย practice ข้อ 3)</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">F8</div>
+        <div class="cover-badge">ฐานของ BST/AVL/HEAP</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 ศัพท์ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · ศัพท์</div>
+    <h2 class="slide-title">ศัพท์ต้นไม้ — ตอบปรนัยได้ทั้งชุด</h2>
+    <div class="two-col">
+      <div>
+        <div class="diagram">ระดับ 0          a        ← Root
+               ╱   ╲
+ระดับ 1       b     c     ← Branch node
+             ╱ ╲   ╱ ╲
+ระดับ 2     d   e f   g
+               │
+ระดับ 3        i          ← Leaf (และ d,f,g)</div>
+      </div>
+      <div>
+        <pre class="code-block">Root      โหนดแรก ไม่มีแม่
+Branch    โหนดกลาง มีทั้งแม่และลูก
+Leaf      โหนดปลาย ไม่มีลูก
+Parent/Child  ความสัมพันธ์แม่-ลูก
+Level     ระดับ (root = 0)
+Height    ความสูง = จำนวนระดับ
+Degree    จำนวนลูกของโหนด
+
+<span class="cm">/* Tree = ไม่เชิงเส้น (Non-linear)
+   แทนข้อมูลแบบลำดับชั้น
+   (Hierarchical) เช่น โฟลเดอร์
+
+   ถ้าเส้นเชื่อมทำให้เกิด "วงจรปิด"
+   → ไม่ใช่ tree แล้ว เป็น graph!
+   ← ประโยคในสไลด์ ออกปรนัยได้ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>Binary Tree</b> = tree ที่ทุกโหนดมีลูกได้ <b>ไม่เกิน 2</b> (ซ้าย/ขวา) — บทนี้ + BST + AVL + Heap ทั้งหมดคือ binary tree ที่เพิ่มกฎต่างกัน</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 traversal -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · หัวใจของบท</div>
+    <h2 class="slide-title">ท่อง 3 แบบ — ตำแหน่งของ "ราก" คือชื่อ</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block">Pre-order:   <b>ราก</b> → ซ้าย → ขวา
+In-order:    ซ้าย → <b>ราก</b> → ขวา
+Post-order:  ซ้าย → ขวา → <b>ราก</b>
+
+<span class="cm">/* Pre = รากก่อน (ก่อน=pre)
+   In  = รากอยู่กลาง (ใน=in)
+   Post = รากทีหลัง (หลัง=post)
+   ← ชื่อบอกตำแหน่งรากเอง! */</span>
+
+<span class="cm">/* โค้ด recursive 3 บรรทัดสลับที่: */</span>
+<span class="kw">void</span> <span class="fn">inorder</span>(Node *r) {
+    <span class="kw">if</span> (r == <span class="nm">NULL</span>) <span class="kw">return</span>;
+    <span class="fn">inorder</span>(r->left);
+    <span class="fn">printf</span>(<span class="st">"%d "</span>, r->data);  <span class="cm">/* กลาง */</span>
+    <span class="fn">inorder</span>(r->right);
+}</pre>
+      </div>
+      <div>
+        <div class="diagram">        A
+      ╱   ╲
+     B     C
+    ╱ ╲     ╲
+   D   E     F
+
+Pre:  A B D E C F
+In:   D B E A C F
+Post: D E B F C A</div>
+        <pre class="code-block"><span class="cm">/* วิธีทำไม่พลาด: ทำทีละต้นย่อย
+   In-order ของ A =
+   in(ซ้ายของA) + A + in(ขวาของA)
+   = (D B E) + A + (C F แบบ in)
+   แตกลงไปเรื่อยๆ จนถึงใบ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อสอบวาดต้นไม้ให้ แล้วสั่ง "เขียนผลการท่องทั้ง 3 แบบ"</b> — ฝึกกับต้นไม้ 6-9 โหนดจนทำได้ใน 3 นาที · เช็คตัวเอง: ทั้งสามแบบต้องมีโหนดครบทุกตัวเท่ากัน</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 expression tree -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · เฉลยใบ practice ข้อ 1</div>
+    <h2 class="slide-title">Expression Tree — อ่าน 3 แบบ ได้ 3 notation</h2>
+    <div class="two-col">
+      <div>
+        <div class="diagram">ตัวอย่าง: ต้นไม้ของ (a+b)*(c-d)
+
+          *
+        ╱   ╲
+       +     −
+      ╱ ╲   ╱ ╲
+     a   b c   d</div>
+        <pre class="code-block">In-order   → a + b * c − d
+  (ต้องเติมวงเล็บเอง: (a+b)*(c−d))
+Pre-order  → * + a b − c d  = Prefix!
+Post-order → a b + c d − *  = Postfix!</pre>
+      </div>
+      <div>
+        <div class="code-label">ความเชื่อมโยงสุดสวย (ออกสอบ)</div>
+        <pre class="code-block"><span class="cm">/* Expression Tree:
+   - โหนดใน = operator
+   - โหนดใบ = operand (ตัวเลข/ตัวแปร)
+
+   ท่อง In-order   → Infix
+   ท่อง Pre-order  → Prefix
+   ท่อง Post-order → Postfix
+
+   ← บทที่ 7 (postfix) กับบทนี้
+   คือเรื่องเดียวกันคนละมุม!
+   ข้อสอบชอบให้ tree แล้วถาม
+   ทั้ง 3 แบบ (ใบ practice ข้อ 1) */</span>
+
+<span class="cm">/* ระวัง: in-order อ่านตรงๆ
+   "ไม่มีวงเล็บ" — ถ้าโจทย์ให้เขียน
+   infix ที่ถูกต้อง ต้องใส่วงเล็บ
+   ตามโครงต้นไม้ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>สูตรจำข้อนี้:</b> ต้นไม้เดียว ตอบได้ 3 notation ตามวิธีท่อง — Pre=Prefix, In=Infix(เติมวงเล็บ), Post=Postfix · แค่จำ mapping นี้ ข้อ 1 ของ practice คือของฟรี</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 array representation -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · เฉลยใบ practice ข้อ 2</div>
+    <h2 class="slide-title">เก็บ Binary Tree ใน Array</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กติกา index (เริ่มที่ 1 ตามสไลด์)</div>
+        <pre class="code-block">root อยู่ index 1
+ลูกซ้ายของ i  → 2i
+ลูกขวาของ i  → 2i + 1
+แม่ของ i     → i / 2
+
+<span class="cm">/* บางตำราเริ่ม 0:
+   ลูก = 2i+1, 2i+2 · แม่ = (i-1)/2
+   → ทำตามแบบที่อาจารย์สอน
+   (สไลด์ heap ใช้เริ่ม 1) */</span></pre>
+      </div>
+      <div>
+        <div class="diagram">        *            idx: 1  2  3  4  5  6  7
+      ╱   ╲          ค่า: *  +  −  a  b  c  d
+     +     −
+    ╱ ╲   ╱ ╲        ตำแหน่งว่าง (ต้นไม้ไม่เต็ม)
+   a   b c   d       → เว้นช่องว่างไว้!</div>
+        <pre class="code-block"><span class="cm">/* จุดหลอก: ต้นไม้เบี้ยว (skew)
+   โหนดขวาลึกๆ index กระโดดไกล
+   n โหนดอาจใช้ array ถึง 2ⁿ ช่อง
+   → เปลือง! นี่คือเหตุผลที่
+   tree ทั่วไปใช้ pointer
+   แต่ heap (บท 11) ใช้ array ได้
+   เพราะ complete เสมอ ไม่มีรู */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>practice ข้อ 2 สั่ง "วาดโครงสร้าง array จากต้นไม้ข้อ 1"</b> — ไล่ index 1,2,3,... แถวบนลงล่าง ซ้ายไปขวา ช่องไหนไม่มีโหนดให้เว้นว่าง</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 recursive count -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · เฉลยใบ practice ข้อ 3</div>
+    <h2 class="slide-title">เฉลยจริง: ฟังก์ชัน xxx ทำอะไร?</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์จากใบ practice</div>
+        <pre class="code-block"><span class="kw">int</span> <span class="fn">xxx</span>(<span class="kw">struct</span> Treenode *r)
+{
+    <span class="kw">if</span> (r == <span class="nm">NULL</span>)
+        <span class="kw">return</span> <span class="nm">0</span>;
+    <span class="kw">return</span> <span class="nm">1</span> + <span class="fn">xxx</span>(r->leftChild)
+             + <span class="fn">xxx</span>(r->rightChild);
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">คำตอบ 3.1 + วิธีอ่าน</div>
+        <pre class="code-block"><span class="cm">/* อ่าน recursive แบบ "แปลสมการ":
+   ต้นไม้ว่าง → 0 โหนด
+   ไม่ว่าง → ตัวเอง (1)
+            + โหนดฝั่งซ้ายทั้งหมด
+            + โหนดฝั่งขวาทั้งหมด
+
+   ∴ ฟังก์ชันนี้ "นับจำนวนโหนด
+     ทั้งหมดในต้นไม้" (count nodes)
+
+   3.2: printf("%d", xxx(Root));
+   → พิมพ์จำนวนโหนดของต้นไม้
+     ที่สร้างใน Lab (นับจากรูป
+     ต้นไม้ของ Lab แล้วตอบตัวเลข) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>Pattern ข้อ "ฟังก์ชันนี้ทำอะไร":</b> เปลี่ยน return เป็นสมการ — 1+ซ้าย+ขวา = นับโหนด · ถ้าเป็น max(ซ้าย,ขวา)+1 = หาความสูง · ถ้า if(leaf) return 1 = นับใบ — สามตัวนี้คือญาติกัน ออกสลับกันได้</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">แก้ฟังก์ชัน xxx จากใบ practice ให้กลายเป็น "หาความสูงของต้นไม้"<br><br>
+<em>ใบ้: จาก 1 + ซ้าย + ขวา (นับรวมทุกโหนด)<br>
+เปลี่ยนเป็น 1 + "ตัวที่มากกว่า" ระหว่างซ้ายกับขวา<br><br>
+return 1 + max(xxx(r-&gt;leftChild), xxx(r-&gt;rightChild));</em><br><br>
+แล้วถ้าอยาก "นับเฉพาะโหนดใบ" ล่ะ?<br>
+(เพิ่มเงื่อนไข: ซ้ายและขวาเป็น NULL ทั้งคู่ → return 1)<br><br>
+สามฟังก์ชันนี้คือชุดข้อสอบ recursive ยอดฮิตของบทต้นไม้</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ต้นไม้นี้ In-order ได้อะไร?</h2>
+    <div class="diagram" style="margin-bottom:12px">      8
+    ╱   ╲
+   3     10
+  ╱ ╲      ╲
+ 1   6      14</div>
+    <div id="mc-f8" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-f8','A','A','✅ ซ้าย→ราก→ขวา: (1 3 6) 8 (10 14) = 1 3 6 8 10 14 — เรียงจากน้อยไปมาก! (เพราะต้นนี้เป็น BST — ปูทางบท 9)')">A) 1 3 6 8 10 14</button>
+      <button class="mc-btn" onclick="pickMC('mc-f8','B','A','❌ 8 3 1 6 10 14 คือ Pre-order (รากก่อน)')">B) 8 3 1 6 10 14</button>
+      <button class="mc-btn" onclick="pickMC('mc-f8','C','A','❌ 1 6 3 14 10 8 คือ Post-order (รากทีหลัง)')">C) 1 6 3 14 10 8</button>
+      <button class="mc-btn" onclick="pickMC('mc-f8','D','A','❌ นั่นคืออ่านทีละชั้น (level-order) — ไม่ใช่ in-order')">D) 8 3 10 1 6 14</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">In-order = ซ้าย → ราก → ขวา: in(3) + 8 + in(10) = (1 3 6) 8 (10 14)
+
+สังเกต: ผลเรียงจากน้อยไปมาก! เพราะต้นไม้นี้เป็น Binary Search Tree
+"in-order ของ BST = ข้อมูลเรียงลำดับ" ← ประโยคทองของบท 9</pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 9</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① โหนดที่ไม่มีลูกเลย เรียกว่าโหนด ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff8a" placeholder="ชื่อ">
+      <button class="fill-btn" onclick="checkFill('ff8a','ใบ',['leaf','leaf node','โหนดใบ'],[],'✅ Leaf node — ปลายสุด ไม่มีลูก · Root ไม่มีแม่ · Branch มีทั้งคู่','❌ โหนดใบ (Leaf) — ไม่มีโหนดลูก')">ตรวจ</button>
+    </div>
+    <div id="ff8a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② ท่อง Expression Tree แบบ ___ จะได้ Postfix</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff8b" placeholder="วิธีท่อง">
+      <button class="fill-btn" onclick="checkFill('ff8b','post-order',['postorder','post order','โพสต์ออเดอร์'],[],'✅ Post-order → Postfix · Pre-order → Prefix · In-order → Infix','❌ Post-order (ซ้าย→ขวา→ราก) — ชื่อคู่กันเป๊ะ')">ตรวจ</button>
+    </div>
+    <div id="ff8b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ เก็บ tree ใน array (เริ่ม index 1) ลูกซ้ายของ index i อยู่ที่ ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff8c" placeholder="สูตร">
+      <button class="fill-btn" onclick="checkFill('ff8c','2i',['2*i','2i','สองไอ'],[],'✅ 2i (ลูกขวา 2i+1, แม่ i/2) — สูตรนี้ใช้อีกทีตอน Heap บท 11','❌ 2i — ลูกขวา 2i+1 · แม่ i/2')">ตรวจ</button>
+    </div>
+    <div id="ff8c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🌳</div>
+      <div class="summary-title">จบติวบทที่ 8 — Tree &amp; Binary Tree</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">ศัพท์</div><div class="sum-body">Root ไม่มีแม่ · Leaf ไม่มีลูก · Level เริ่ม 0 · Degree = จำนวนลูก</div></div>
+        <div class="sum-card"><div class="sum-head">ท่อง 3 แบบ</div><div class="sum-body">ชื่อบอกตำแหน่งราก: Pre ก่อน · In กลาง · Post หลัง</div></div>
+        <div class="sum-card"><div class="sum-head">Expression Tree</div><div class="sum-body">Pre→Prefix · In→Infix(+วงเล็บ) · Post→Postfix — โยงบท 7</div></div>
+        <div class="sum-card"><div class="sum-head">Array</div><div class="sum-body">ลูก 2i, 2i+1 · แม่ i/2 · ต้นเบี้ยวเปลืองช่อง — heap เท่านั้นที่เหมาะ</div></div>
+        <div class="sum-card"><div class="sum-head">Recursive ชุดฮิต</div><div class="sum-body">1+ซ้าย+ขวา = นับโหนด · 1+max = ความสูง · เช็คใบ = นับใบ</div></div>
+        <div class="sum-card"><div class="sum-head">ประโยคทอง</div><div class="sum-body">In-order ของ BST = เรียงจากน้อยไปมาก (บท 9 ใช้เต็มๆ)</div></div>
+      </div>
+      <a href="slides_ch9.html" class="summary-next">→ ติวบทที่ 9: Binary Search Tree</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 10</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 8 — Tree &amp; Binary Tree</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ศัพท์ต้นไม้','ท่อง 3 แบบ','Expression Tree','เก็บใน Array','ฟังก์ชันนับโหนด','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

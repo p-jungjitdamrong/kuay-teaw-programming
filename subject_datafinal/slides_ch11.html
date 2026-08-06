@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 11 — Heap + Huffman | ติวสอบ Data Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#6d1f7e;--cal:#f6e8fa;--cam:#a55cb5;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🌲 ติวสอบ Final · 02204231 Data Structures</div>
+        <div class="cover-title">ติวบทที่ 11<br><em>Heap + Huffman</em></div>
+        <div class="cover-subtitle">MaxHeap สองวิธีสร้าง (Top-down / Bottom-up) + deleteMax + Huffman coding</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>กฎ Heap 2 ข้อ: Completeness + Heapness</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลย practice: insert 1,8,6,5,3,7,4 Top-down</div>
+          <div class="topic-row"><div class="topic-dot"></div>Bottom-up (heapify) + เช็คว่าเป็น heap ไหม</div>
+          <div class="topic-row"><div class="topic-dot"></div>deleteMax + Priority Queue + Heap Sort</div>
+          <div class="topic-row"><div class="topic-dot"></div>Huffman coding — บีบอัดข้อมูลด้วย heap</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">F11</div>
+        <div class="cover-badge">ข้อวาด heap สองวิธี</div>
+        <div class="cover-slides-count">14 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 กฎ heap -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · กฎ</div>
+    <h2 class="slide-title">Binary Heap — กฎ 2 ข้อ ขาดข้อเดียวก็ไม่ใช่ heap</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block">① Completeness
+   เป็น binary tree แบบ "บริบูรณ์
+   หรือเกือบบริบูรณ์" — เต็มทีละชั้น
+   ชั้นล่างสุดชิดซ้าย ห้ามมีรู
+
+② Heapness (Order property)
+   MaxHeap: ราก ≥ ลูกทั้งสอง (ทุกต้นย่อย)
+   MinHeap: ราก ≤ ลูกทั้งสอง (ทุกต้นย่อย)
+
+<span class="cm">/* เทียบ BST: heap ไม่สนซ้ายขวา
+   แค่ "แม่ชนะลูก" — ลูกซ้าย
+   ไม่จำเป็นต้องน้อยกว่าลูกขวา!
+
+   ความสูง = ⌊log₂n⌋+1 เสมอ
+   (complete = สมดุลโดยธรรมชาติ) */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">เก็บใน array (สูตรบท 8 กลับมา)</div>
+        <div class="diagram">        8         idx: 1  2  3  4  5  6  7
+      ╱   ╲       ค่า: 8  5  7  1  3  6  4
+     5     7
+    ╱ ╲   ╱ ╲     ลูกของ i → 2i, 2i+1
+   1   3 6   4    แม่ของ i → i/2
+
+complete → array ไม่มีรู
+→ heap คือโครงสร้างเดียวในคอร์สนี้
+  ที่ "เกิดมาเพื่ออยู่ใน array"</div>
+        <pre class="code-block"><span class="cm">/* ข้อ "Heap or Not a Heap?"
+   เช็คทั้ง 2 กฎ:
+   มีรู → ไม่ใช่ (ผิด complete)
+   ลูกชนะแม่ → ไม่ใช่ (ผิด order) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ปรนัยเก็ง:</b> "heap ต่างจาก BST อย่างไร" → BST เรียงซ้ายน้อยขวามาก ใช้ค้นหา · Heap แค่แม่ชนะลูก + complete ใช้หา max/min เร็ว — heap "ค้นหาค่าทั่วไปไม่เก่ง" O(n)</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 top-down insert -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · เฉลยใบ practice ข้อ 1</div>
+    <h2 class="slide-title">เฉลยจริง: MaxHeap insert 1,8,6,5,3,7,4 แบบ Top-down</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กติกา + 4 ค่าแรก</div>
+        <pre class="code-block">Top-down insert:
+① วางท้ายสุด (ช่องถัดไปของ array)
+② "ลอยขึ้น" (swap กับแม่)
+   จนแม่ใหญ่กว่า หรือถึงราก
+
+1: [1]
+8: วางเป็นลูก 1 → 8&gt;1 ลอยขึ้น
+   → [8,1]
+6: วางลูกขวา → 6&lt;8 อยู่เฉย
+   → [8,1,6]
+5: วางลูกของ 1 → 5&gt;1 ลอย
+   → [8,5,6,1]</pre>
+      </div>
+      <div>
+        <div class="code-label">3 ค่าสุดท้าย + ผล</div>
+        <pre class="code-block">3: วางลูกของ 5 → 3&lt;5 เฉย
+   → [8,5,6,1,3]
+7: วางลูกของ 6 → 7&gt;6 ลอย → 7&lt;8 หยุด
+   → [8,5,7,1,3,6]
+4: วางลูกของ 7 → 4&lt;7 เฉย
+   → [8,5,7,1,3,6,4]</pre>
+        <div class="diagram">        8
+      ╱   ╲
+     5     7
+    ╱ ╲   ╱ ╲
+   1   3 6   4   ✓ ทุกต้นย่อยแม่ชนะ</div>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อสอบสั่ง "วาดทีละค่า":</b> วาด 7 รูป — รูปไหนมีการลอยขึ้น เขียนลูกศร/ขีดบอกว่า swap กับใคร · จุดพลาด: ลืมว่าต้องวาง "ท้ายสุด" ก่อนเสมอ (ห้ามวางตำแหน่งอื่นเด็ดขาด — complete จะพัง)</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 bottom-up -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · เฉลยใบ practice ข้อ 2-3</div>
+    <h2 class="slide-title">Bottom-up (Heapify) — เร็วกว่า และข้อสอบชอบให้เทียบ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ข้อ 2: ชุดเดิมแบบ Bottom-up</div>
+        <pre class="code-block">① เรียงทั้งชุดลง array ตรงๆ ก่อน:
+   [1,8,6,5,3,7,4]
+② heapify จากโหนดกลาง (n/2)
+   ย้อนขึ้นไปหาราก — "จมลง" ทีละต้น
+
+idx3(6): ลูก 7,4 → 7 ชนะ → swap
+   [1,8,7,5,3,6,4]
+idx2(8): ลูก 5,3 → 8 ใหญ่สุด เฉย
+idx1(1): ลูก 8,7 → 8 ชนะ → swap
+   → 1 จมต่อ: ลูก 5,3 → 5 ชนะ
+   [8,5,7,1,3,6,4]
+
+ผลเหมือน Top-down พอดี (บังเอิญ —
+โดยทั่วไปได้ heap คนละทรงแต่ถูกทั้งคู่!)</pre>
+      </div>
+      <div>
+        <div class="code-label">ข้อ 3: เช็ค 23,17,14,6,13,20,10,11,5,7,12</div>
+        <pre class="code-block">วาดเป็นต้นไม้แล้วเช็ค heapness:
+idx3(14): ลูก 20,10
+→ 20 &gt; 14 ลูกชนะแม่!
+∴ "ไม่เป็น MaxHeap"
+
+ซ่อมแบบ bottom-up:
+idx6(6): ลูก 11,5 → swap 6↔11
+idx3(14): ลูก 20,10 → swap 14↔20
+เช็คที่เหลือผ่านหมด
+ผล: [23,17,20,11,13,14,10,6,5,7,12]
+(idx เริ่ม 1)</pre>
+      </div>
+    </div>
+    <div class="exam"><b>ตอบข้อ "เป็น heap ไหม" ให้ครบ:</b> ชี้ "คู่ที่ผิด" ให้ชัด (20&gt;14 ที่ตำแหน่งไหน) — ตอบแค่ "ไม่ใช่" ไม่พอ · แล้วซ่อมด้วย heapify จากล่างขึ้นบน</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 deleteMax -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · เฉลยใบ practice ข้อ 4</div>
+    <h2 class="slide-title">deleteMax — เอารากออก แล้ว "ตัวท้ายขึ้นไปจม"</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block">ขั้นตอน (ท่องเป็นประโยคเดียว):
+"เอารากออก → ยกตัวท้ายสุดขึ้นราก
+ → จมลงฝั่งลูกที่ใหญ่กว่า จนหยุด"
+
+① max = ราก (ตัวที่ถูกลบ/คืนค่า)
+② ย้ายตัว "ท้ายสุดของ array"
+   ขึ้นไปเป็นราก (รักษา complete!)
+③ sift-down: เทียบกับลูกทั้งสอง
+   swap กับ "ลูกที่ใหญ่กว่า"
+   ทำซ้ำจนแม่ชนะหรือถึงใบ</pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่างกับ heap เมื่อกี้</div>
+        <div class="diagram">[8,5,7,1,3,6,4] → deleteMax (8 ออก)
+
+ยก 4 (ตัวท้าย) ขึ้นราก:
+        4
+      ╱   ╲        ลูก 5,7 → 7 ใหญ่กว่า
+     5     7       → swap 4↔7
+    ╱ ╲   ╱
+   1   3 6         4 มีลูก 6 → swap 4↔6
+
+ผล:     7
+      ╱   ╲
+     5     6      [7,5,6,1,3,4] ✓
+    ╱ ╲   ╱
+   1   3 4</div>
+      </div>
+    </div>
+    <div class="exam"><b>จุดพลาดอันดับ 1:</b> จมลงต้อง swap กับ "ลูกที่ใหญ่กว่า" เสมอ ไม่ใช่ลูกซ้าย — swap ผิดตัวแล้ว heapness พังเงียบๆ ตรวจไม่เจอจนเสียคะแนน</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 applications -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · Applications</div>
+    <h2 class="slide-title">Heap ใช้ทำอะไร — 3 อย่างตามสไลด์</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block">① Priority Queue
+   enqueue = insert (ลอยขึ้น)
+   dequeue = deleteMax (ตัวสำคัญสุด
+   ออกก่อน) — O(log n) ทั้งคู่
+   ← เทียบ multiple queue ใน
+     midterm บท 6: heap ทำได้
+     ทั่วไปกว่า priority กี่ระดับก็ได้
+
+② Heap Sort
+   build heap → deleteMax ทีละตัว
+   n ครั้ง × O(log n) = O(n log n)
+   ทุกกรณี — ไม่มี worst O(n²)!</pre>
+      </div>
+      <div>
+        <div class="code-label">③ Huffman Coding (part 2)</div>
+        <pre class="code-block">บีบอัดข้อมูล: ตัวอักษรที่เจอบ่อย
+→ รหัสสั้น · เจอน้อย → รหัสยาว
+(แทน ASCII ที่ยาว 8 bit คงที่)
+
+สร้างด้วย MinHeap ของความถี่:
+① ทุกตัวอักษรเป็นโหนด ใส่ heap
+② ดึง 2 ตัว "ความถี่น้อยสุด" ออก
+③ รวมเป็นโหนดใหม่ (ผลบวกความถี่)
+   ใส่กลับ heap
+④ ทำซ้ำจนเหลือต้นเดียว = Huffman tree
+⑤ ทางซ้าย = 0, ทางขวา = 1
+   อ่านจากรากถึงใบ = รหัสของตัวอักษร</pre>
+      </div>
+    </div>
+    <div class="exam"><b>คุณสมบัติทองของ Huffman:</b> รหัสเป็น prefix-free (ไม่มีรหัสใครเป็นหัวของใคร เพราะตัวอักษรอยู่ที่ "ใบ" เท่านั้น) → ถอดรหัสไม่กำกวม · ตัวอักษรความถี่สูงอยู่ตื้น = รหัสสั้น</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">ตัวอักษร a:45, b:13, c:12, d:16, e:9, f:5 (ความถี่)<br>
+สร้าง Huffman tree — สองตัวแรกที่ถูกจับรวมกันคือใคร?<br><br>
+<em>ไล่: ดึงความถี่น้อยสุด 2 ตัว = f(5) กับ e(9) → รวมเป็น 14<br>
+รอบถัดไป: c(12) กับ b(13) → 25 · แล้ว 14 กับ d(16) → 30<br>
+แล้ว 25+30 → 55 · สุดท้าย a(45)+55 → 100</em><br><br>
+สังเกต: a ความถี่สูงสุด ถูกจับ "ท้ายสุด" → อยู่ตื้นสุด → รหัสสั้นสุด (1 bit!)<br>
+นี่แหละหัวใจของการบีบอัด</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · ลองข้อสอบ</div>
+    <h2 class="slide-title">deleteMax แล้ว ใครขึ้นไปแทนที่รากเป็นคนแรก?</h2>
+    <div id="mc-f11" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-f11','A','C','❌ ลูกที่ใหญ่กว่าคือคนที่ "swap ระหว่างจม" — แต่คนแรกที่ขึ้นรากคือตัวท้าย')">A) ลูกตัวที่ใหญ่กว่าของราก</button>
+      <button class="mc-btn" onclick="pickMC('mc-f11','B','C','❌ ตัวใหญ่อันดับสองจะขึ้นรากเอง "หลังจม" — ไม่ใช่ขั้นแรก')">B) ค่าที่ใหญ่เป็นอันดับสอง</button>
+      <button class="mc-btn" onclick="pickMC('mc-f11','C','C','✅ ตัวท้ายสุดของ array ขึ้นไปแทนก่อน (รักษา completeness) แล้วค่อยจมลงหาที่ที่ถูก')">C) ตัวท้ายสุดของ heap</button>
+      <button class="mc-btn" onclick="pickMC('mc-f11','D','C','❌ min ไม่เกี่ยว — MaxHeap ไม่รู้ด้วยซ้ำว่า min อยู่ไหน')">D) ค่าน้อยที่สุด</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">ทำไมต้องตัวท้าย? — เพราะกฎ Completeness: ช่องที่หายไปต้องเป็น "ช่องท้ายสุด" เท่านั้น
+เอาตัวท้ายขึ้นก่อน (ผิด order ชั่วคราว) แล้วจมลงแก้ order — สองกฎครบทั้งคู่</pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 12</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Heap ต้องมีคุณสมบัติ Completeness และ ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff11a" placeholder="คุณสมบัติ">
+      <button class="fill-btn" onclick="checkFill('ff11a','heapness',['order','order property','heapness (order)'],[],'✅ Heapness (Order property) — MaxHeap แม่ ≥ ลูก ทุกต้นย่อย','❌ Heapness / Order property — แม่ชนะลูกทุกต้นย่อย')">ตรวจ</button>
+    </div>
+    <div id="ff11a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Top-down insert วางตัวใหม่ที่ ___ ก่อน แล้วลอยขึ้น</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff11b" placeholder="ตำแหน่ง">
+      <button class="fill-btn" onclick="checkFill('ff11b','ท้ายสุด',['ท้าย','ตำแหน่งท้ายสุด','ช่องถัดไป','last'],[],'✅ ท้ายสุดเสมอ (รักษา complete) แล้ว swap ขึ้นจนแม่ใหญ่กว่า','❌ ท้ายสุดของ array — complete ห้ามมีรู')">ตรวจ</button>
+    </div>
+    <div id="ff11b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Huffman coding ดึง 2 โหนดที่มีความถี่ ___ มารวมกันก่อนเสมอ</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff11c" placeholder="แบบไหน">
+      <button class="fill-btn" onclick="checkFill('ff11c','น้อยสุด',['น้อยที่สุด','ต่ำสุด','min'],[],'✅ น้อยสุด 2 ตัว (ใช้ MinHeap) — ตัวถี่น้อยจมลึก รหัสยาว ตัวถี่มากอยู่ตื้น รหัสสั้น','❌ น้อยที่สุด — ดึงจาก MinHeap รวมแล้วใส่กลับ ทำจนเหลือต้นเดียว')">ตรวจ</button>
+    </div>
+    <div id="ff11c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">⛰️</div>
+      <div class="summary-title">จบติวบทที่ 11 — Heap + Huffman</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">กฎ 2 ข้อ</div><div class="sum-body">Completeness (เต็มชิดซ้าย ไม่มีรู) + Heapness (แม่ชนะลูก)</div></div>
+        <div class="sum-card"><div class="sum-head">Insert Top-down</div><div class="sum-body">วางท้ายสุด → ลอยขึ้นจนแม่ใหญ่กว่า · O(log n)</div></div>
+        <div class="sum-card"><div class="sum-head">Bottom-up</div><div class="sum-body">เรียงลง array → heapify จาก n/2 ย้อนขึ้น (จมลง) — ได้ heap ต่างทรงแต่ถูก</div></div>
+        <div class="sum-card"><div class="sum-head">deleteMax</div><div class="sum-body">รากออก → ตัวท้ายขึ้น → จมลงฝั่ง "ลูกที่ใหญ่กว่า"</div></div>
+        <div class="sum-card"><div class="sum-head">ใช้ทำ</div><div class="sum-body">Priority Queue · Heap Sort O(n log n) ทุกกรณี · Huffman</div></div>
+        <div class="sum-card"><div class="sum-head">Huffman</div><div class="sum-body">รวมความถี่น้อยสุด 2 ตัวซ้ำๆ · ซ้าย 0 ขวา 1 · prefix-free</div></div>
+      </div>
+      <a href="slides_ch12.html" class="summary-next">→ ติวบทที่ 12: Graph</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 10</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 11 — Heap + Huffman</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','กฎ 2 ข้อ','เฉลย Top-down','Bottom-up + เช็ค','deleteMax','Applications + Huffman','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 7 — Stack | ติวสอบ Data Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#6d1f7e;--cal:#f6e8fa;--cam:#a55cb5;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.st{border-collapse:collapse;font-family:var(--mono);font-size:12px;margin:6px 0;}
+.st th{background:var(--ca);color:#fff;padding:4px 9px;font-weight:600;}
+.st td{padding:4px 9px;border:1px solid var(--line);text-align:center;min-width:44px;}
+.st td.ok{background:#d4edda;color:#155724;font-weight:700;}
+.st td.hl{background:var(--cal);color:var(--ca);font-weight:700;}
+.st td.x{color:#c0392b;font-weight:700;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🌲 ติวสอบ Final · 02204231 Data Structures</div>
+        <div class="cover-title">ติวบทที่ 7<br><em>Stack</em></div>
+        <div class="cover-subtitle">LIFO เข้า-ออกทางเดียว — trace ลงตาราง + แปลง Infix → Postfix ให้คล่องมือ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>LIFO + Push/Pop/Peek/isEmpty/isFull</div>
+          <div class="topic-row"><div class="topic-dot"></div>Stack ด้วย Array (Top) และ Linked List</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลย practice: trace S[4] ทีละ operation</div>
+          <div class="topic-row"><div class="topic-dot"></div>Infix → Postfix ด้วย stack (เฉลย (7*3+8)/9)</div>
+          <div class="topic-row"><div class="topic-dot"></div>คำนวณค่า Postfix ด้วย stack</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">F7</div>
+        <div class="cover-badge">ใบ practice 2 ใบเต็ม</div>
+        <div class="cover-slides-count">14 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 LIFO -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · แนวคิด</div>
+    <h2 class="slide-title">Stack = ตั้งจานซ้อน — LIFO เข้าหลังออกก่อน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กฎเดียวของ Stack</div>
+        <pre class="code-block">เข้า (Push) และ ออก (Pop)
+ทำที่ "ด้านบน" (Top) ที่เดียวเท่านั้น
+
+     │ 90 │ ← Top (เข้า-ออกตรงนี้)
+     │250 │
+     │534 │
+     └────┘
+
+Last In First Out (LIFO)
+"เข้าทีหลัง ออกก่อน"
+
+<span class="cm">/* เทียบกับ Queue (midterm บท 6):
+   Queue = FIFO เข้าท้ายออกหัว
+   Stack = LIFO เข้าออกทางเดียว
+   ← ข้อเทียบสองตัวนี้ออกชัวร์ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">5 Operations</div>
+        <pre class="code-block">① Push  เพิ่มที่ Top → เช็ค isFull
+② Pop   เอาตัว Top ออก → เช็ค isEmpty
+③ Peek  ดูค่า Top "ไม่เอาออก"
+④ isEmpty  ว่าง? (Top == -1)
+⑤ isFull   เต็ม? (Top == maxsize-1)
+
+<span class="cm">/* Array: ตัวแปรเดียวคือ Top
+   เริ่มต้น Top = -1 (ว่าง)
+   Push: Top++ แล้ว S[Top]=x
+   Pop:  ได้ S[Top] แล้ว Top--
+
+   Linked List: push/pop ที่หัวลิสต์
+   (insertFront/deleteFront บท 4!)
+   → ไม่มีวันเต็ม ไม่ต้องมี isFull */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>คู่จำ:</b> Push↔isFull · Pop/Peek↔isEmpty — เหมือน Queue เป๊ะ แค่เปลี่ยนจาก Front/Rear เป็น Top ตัวเดียว</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 practice trace -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · เฉลยใบ practice ข้อ 1</div>
+    <h2 class="slide-title">เฉลยจริง: S[4], Top=−1 — trace ทีละ operation</h2>
+    <p class="slide-lead">ลำดับ: push(534) → push(250) → push(90) → pop() → pop() → push(peek()+2)</p>
+    <table class="st">
+      <thead><tr><th>Operation</th><th>Top</th><th>S[0]</th><th>S[1]</th><th>S[2]</th><th>S[3]</th><th>หมายเหตุ</th></tr></thead>
+      <tbody>
+        <tr><td>push(534)</td><td>0</td><td class="ok">534</td><td>·</td><td>·</td><td>·</td><td>Top −1→0</td></tr>
+        <tr><td>push(250)</td><td>1</td><td class="ok">534</td><td class="ok">250</td><td>·</td><td>·</td><td></td></tr>
+        <tr><td>push(90)</td><td>2</td><td class="ok">534</td><td class="ok">250</td><td class="ok">90</td><td>·</td><td></td></tr>
+        <tr><td>pop()</td><td class="hl">1</td><td class="ok">534</td><td class="ok">250</td><td class="x">90</td><td>·</td><td>ได้ 90 ออก · Top--</td></tr>
+        <tr><td>pop()</td><td class="hl">0</td><td class="ok">534</td><td class="x">250</td><td>·</td><td>·</td><td>ได้ 250 ออก</td></tr>
+        <tr><td>push(peek()+2)</td><td class="hl">1</td><td class="ok">534</td><td class="hl">536</td><td>·</td><td>·</td><td>peek()=534 → push(536)</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>จุดหลอกของข้อนี้:</b> peek() ไม่เอาของออก! peek()+2 = 534+2 = 536 แล้วค่อย push — ใครคิดว่า peek เหมือน pop จะได้ Top ผิดทั้งแถว · ส่วนข้อ 2 ของใบ practice เริ่มด้วย pop() ตอนว่าง → ตอบ "Stack is Empty / Underflow" แล้วสถานะไม่เปลี่ยน</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 3 notations -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · Expression</div>
+    <h2 class="slide-title">นิพจน์ 3 แบบ — Infix / Prefix / Postfix</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตามสไลด์อาจารย์</div>
+        <pre class="code-block">Infix:   เครื่องหมายอยู่ "ระหว่าง"
+         A+B*C-D/E   ← คนอ่านง่าย
+
+Prefix:  เครื่องหมายอยู่ "ก่อน"
+         -+A*BC/DE
+
+Postfix: เครื่องหมายอยู่ "หลัง"
+         ABC*+DE/-   ← เครื่องคำนวณง่าย
+
+<span class="cm">/* ทำไมคอมพิวเตอร์ชอบ postfix?
+   ไม่ต้องมีวงเล็บ ไม่ต้องดู
+   ลำดับความสำคัญ — อ่านซ้ายไปขวา
+   เจอเครื่องหมายก็คำนวณเลย */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ลำดับความสำคัญ (precedence)</div>
+        <pre class="code-block">สูง →  ( )        ในวงเล็บทำก่อน
+       * /        คูณหาร
+ต่ำ →  + -        บวกลบ
+
+เท่ากัน → ทำจากซ้ายไปขวา
+
+<span class="cm">/* กติกาแปลง infix→postfix
+   ด้วย stack (ท่องให้ขึ้นใจ):
+   ตัวเลข/ตัวแปร → ออก output เลย
+   (          → push
+   )          → pop จนเจอ ( ทิ้งวงเล็บ
+   operator   → pop ตัวที่สำคัญ
+                ≥ ตัวเอง ออกก่อน
+                แล้วค่อย push ตัวเอง
+   จบนิพจน์   → pop ที่เหลือทั้งหมด */</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4 infix to postfix เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · เฉลยใบ practice 2 ข้อ 1</div>
+    <h2 class="slide-title">เฉลยจริง: (7*3+8)/9 → Postfix ทีละอักขระ</h2>
+    <table class="st">
+      <thead><tr><th>อักขระ</th><th>ทำอะไร</th><th>Stack (ล่าง→บน)</th><th>Postfix สะสม</th></tr></thead>
+      <tbody>
+        <tr><td>(</td><td>push</td><td>(</td><td>—</td></tr>
+        <tr><td>7</td><td>ออก output</td><td>(</td><td>7</td></tr>
+        <tr><td>*</td><td>push (ใน ( ไม่มีใครสำคัญกว่า)</td><td>( *</td><td>7</td></tr>
+        <tr><td>3</td><td>ออก output</td><td>( *</td><td>7 3</td></tr>
+        <tr><td>+</td><td>pop * (สำคัญกว่า +) แล้ว push +</td><td>( +</td><td>7 3 *</td></tr>
+        <tr><td>8</td><td>ออก output</td><td>( +</td><td>7 3 * 8</td></tr>
+        <tr><td>)</td><td>pop จนเจอ ( → + ออก, ทิ้ง (</td><td>ว่าง</td><td>7 3 * 8 +</td></tr>
+        <tr><td>/</td><td>push</td><td>/</td><td>7 3 * 8 +</td></tr>
+        <tr><td>9</td><td>ออก output</td><td>/</td><td>7 3 * 8 + 9</td></tr>
+        <tr><td>จบ</td><td>pop ที่เหลือ</td><td>ว่าง</td><td class="ok">7 3 * 8 + 9 /</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>คำตอบ: 7 3 * 8 + 9 /</b> · ข้อ 2 ของใบ (a+(b−c*d)/e) ใช้กติกาเดียวกัน — เฉลย: <b>a b c d * − e / +</b> ลอง trace เองแล้วเทียบ · เขียนตารางแบบนี้ในห้องสอบ = คะแนนวิธีทำครบ</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 eval postfix -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · คำนวณค่า</div>
+    <h2 class="slide-title">คำนวณค่า Postfix ด้วย Stack</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กติกา (ง่ายกว่าแปลงอีก)</div>
+        <pre class="code-block">อ่านซ้าย → ขวา:
+• เจอตัวเลข → push
+• เจอ operator →
+  pop 2 ตัว (ตัวหลัง=ขวา ตัวแรก=ซ้าย!)
+  คำนวณ แล้ว push ผลกลับ
+จบ → ค่าใน stack ตัวเดียว = คำตอบ
+
+<span class="cm">/* ⚠️ ลำดับ operand:
+   pop ได้ b ก่อน แล้วได้ a
+   ต้องคำนวณ a - b ไม่ใช่ b - a!
+   สำคัญมากกับ - และ / */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่าง: 7 3 * 8 + 9 /</div>
+        <pre class="code-block">7      push       [7]
+3      push       [7,3]
+*      3,7→21     [21]
+8      push       [21,8]
++      8,21→29    [29]
+9      push       [29,9]
+/      9,29→29/9  [3.22]
+
+= (7×3+8)/9 = 29/9 ≈ 3.22 ✓
+ตรงกับ infix เดิมเป๊ะ
+← ใช้เช็คคำตอบข้อแปลงได้ด้วย!</pre>
+      </div>
+    </div>
+    <div class="exam"><b>เทคนิคตรวจ:</b> แปลง infix→postfix เสร็จ ลอง eval postfix ดู — ได้ค่าเท่า infix เดิม = แปลงถูก · ได้ไม่เท่า = ผิดที่ไหนสักขั้น หาให้เจอก่อนส่ง</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 code -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · โค้ด C</div>
+    <h2 class="slide-title">โค้ด Stack Array — เติมช่องว่าง Lab ได้</h2>
+    <pre class="code-block"><span class="pp">#define</span> maxsize <span class="nm">10</span>
+<span class="kw">int</span> S[maxsize];
+<span class="kw">int</span> Top = -<span class="nm">1</span>;
+
+<span class="kw">void</span> <span class="fn">push</span>(<span class="kw">int</span> data) {
+    <span class="kw">if</span> (Top == maxsize - <span class="nm">1</span>)          <span class="cm">/* เต็ม? */</span>
+        <span class="fn">printf</span>(<span class="st">"Stack is Full\n"</span>);
+    <span class="kw">else</span> {
+        Top++;                        <span class="cm">/* ขยับก่อน */</span>
+        S[Top] = data;                <span class="cm">/* แล้วใส่ */</span>
+    }
+}
+
+<span class="kw">int</span> <span class="fn">pop</span>() {
+    <span class="kw">if</span> (Top == -<span class="nm">1</span>) {                 <span class="cm">/* ว่าง? */</span>
+        <span class="fn">printf</span>(<span class="st">"Stack is Empty\n"</span>);
+        <span class="kw">return</span> -<span class="nm">1</span>;
+    }
+    <span class="kw">int</span> data = S[Top];                <span class="cm">/* เอาค่าก่อน */</span>
+    Top--;                            <span class="cm">/* แล้วขยับลง */</span>
+    <span class="kw">return</span> data;
+}
+
+<span class="kw">int</span> <span class="fn">peek</span>() {
+    <span class="kw">if</span> (Top == -<span class="nm">1</span>) { <span class="fn">printf</span>(<span class="st">"Empty\n"</span>); <span class="kw">return</span> -<span class="nm">1</span>; }
+    <span class="kw">return</span> S[Top];                    <span class="cm">/* ไม่แตะ Top! */</span>
+}</pre>
+    <div class="exam"><b>ลำดับห้ามสลับ:</b> push = Top++ ก่อนใส่ · pop = เอาค่าก่อนแล้ว Top-- · peek ไม่แตะ Top เลย — สลับเมื่อไหร่ off-by-one ทันที</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โจทย์ Lab: อ่าน string แล้วเช็ควงเล็บสมดุล ( ) { } [ ]<br>
+เช่น "({[]})" สมดุล · "([)]" ไม่สมดุล<br><br>
+ใช้ stack แก้ยังไง?<br><br>
+<em>ใบ้: เจอวงเล็บเปิด → push<br>
+เจอวงเล็บปิด → pop แล้วเช็คว่า "คู่กัน" ไหม<br>
+จบ string แล้ว stack ต้องว่างพอดี<br><br>
+สามเงื่อนไขที่ทำให้ "ไม่สมดุล": pop ตอนว่าง / คู่ไม่ตรง / จบแล้วไม่ว่าง</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · ลองข้อสอบ</div>
+    <h2 class="slide-title">a+b*c เป็น postfix คือ?</h2>
+    <div id="mc-f7" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-f7','A','B','❌ ab+c* คือ (a+b)*c — บวกก่อนคูณ ผิดลำดับความสำคัญ')">A) a b + c *</button>
+      <button class="mc-btn" onclick="pickMC('mc-f7','B','B','✅ * สำคัญกว่า + → b*c ทำก่อน → a bc* + = a b c * +')">B) a b c * +</button>
+      <button class="mc-btn" onclick="pickMC('mc-f7','C','B','❌ นี่ยังเป็น infix อยู่เลย')">C) a + b c *</button>
+      <button class="mc-btn" onclick="pickMC('mc-f7','D','B','❌ + อยู่หน้า = prefix ไม่ใช่ postfix')">D) + a * b c</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">a → out "a" · + → push · b → out "ab" · * → * สำคัญกว่า + บน stack → push
+c → out "abc" · จบ → pop * แล้ว + → <b>a b c * +</b>
+เช็ค: eval ได้ a+(b×c) ตรง infix ✓</pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 8</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Stack ทำงานแบบ ___ (ตัวย่อ 4 ตัวอักษร)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff7a" placeholder="ตัวย่อ">
+      <button class="fill-btn" onclick="checkFill('ff7a','LIFO',['lifo','last in first out'],[],'✅ LIFO — เข้าทีหลังออกก่อน · Queue คือ FIFO','❌ LIFO (Last In First Out)')">ตรวจ</button>
+    </div>
+    <div id="ff7a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② การคำนวณ postfix เจอ operator ต้อง pop กี่ตัว</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff7b" placeholder="จำนวน">
+      <button class="fill-btn" onclick="checkFill('ff7b','2',['สอง','2 ตัว'],[],'✅ pop 2 ตัว — ตัวหลังเป็นขวา ตัวแรกเป็นซ้าย (สำคัญกับ − และ /)','❌ 2 ตัว — ระวังลำดับ: pop ได้ b ก่อน a → คำนวณ a op b')">ตรวจ</button>
+    </div>
+    <div id="ff7b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ แปลง infix→postfix เจอ ) ต้อง pop จนเจอ ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff7c" placeholder="อะไร?">
+      <button class="fill-btn" onclick="checkFill('ff7c','(',['วงเล็บเปิด','( วงเล็บเปิด'],[],'✅ pop ทุกตัวออก output จนเจอ ( แล้วทิ้งวงเล็บทั้งคู่ (ไม่ออก output)','❌ วงเล็บเปิด ( — pop ออกจนเจอ แล้วทิ้ง ไม่เอาวงเล็บลง postfix')">ตรวจ</button>
+    </div>
+    <div id="ff7c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">📚</div>
+      <div class="summary-title">จบติวบทที่ 7 — Stack</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">LIFO</div><div class="sum-body">เข้า-ออกที่ Top ทางเดียว · Push↔isFull · Pop/Peek↔isEmpty</div></div>
+        <div class="sum-card"><div class="sum-head">Array</div><div class="sum-body">Top เริ่ม −1 · push: Top++ ก่อนใส่ · pop: เอาค่าก่อน Top--</div></div>
+        <div class="sum-card"><div class="sum-head">peek</div><div class="sum-body">ดูเฉยๆ ไม่แตะ Top — จุดหลอกข้อ push(peek()+2)</div></div>
+        <div class="sum-card"><div class="sum-head">Infix→Postfix</div><div class="sum-body">เลขออกเลย · ( push · ) pop จนเจอ ( · operator pop ตัว ≥ ก่อน push</div></div>
+        <div class="sum-card"><div class="sum-head">Eval Postfix</div><div class="sum-body">เลข push · operator pop 2 คำนวณ push กลับ — ใช้เช็คคำตอบได้</div></div>
+        <div class="sum-card"><div class="sum-head">เฉลย practice</div><div class="sum-body">(7*3+8)/9 → 7 3 * 8 + 9 / · a+(b−c*d)/e → a b c d * − e / +</div></div>
+      </div>
+      <a href="slides_ch8.html" class="summary-next">→ ติวบทที่ 8: Tree &amp; Binary Tree</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 7 — Stack</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','LIFO + Operations','เฉลย trace S[4]','นิพจน์ 3 แบบ','เฉลย Infix→Postfix','Eval Postfix','โค้ด C','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

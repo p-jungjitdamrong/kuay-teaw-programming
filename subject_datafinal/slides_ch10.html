@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 10 — AVL Tree | ติวสอบ Data Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#6d1f7e;--cal:#f6e8fa;--cam:#a55cb5;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🌲 ติวสอบ Final · 02204231 Data Structures</div>
+        <div class="cover-title">ติวบทที่ 10<br><em>AVL Tree</em></div>
+        <div class="cover-subtitle">BST ที่หมุนตัวเองให้สมดุล — Balance Factor + การหมุน 4 แบบ จำง่ายกว่าที่คิด</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ทำไมต้องมี AVL (ปัญหาต้นเบี้ยวจากบท 9)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Balance Factor — คำนวณให้เป็น</div>
+          <div class="topic-row"><div class="topic-dot"></div>การหมุน 4 แบบ: LL RR LR RL</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลย practice: insert ชุดเดียวกับ BST แล้วดูว่าหมุนตรงไหน</div>
+          <div class="topic-row"><div class="topic-dot"></div>เทคนิคหาแบบการหมุนใน 5 วินาที</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">F10</div>
+        <div class="cover-badge">ข้อหมุนต้นไม้</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 BF -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · Balance Factor</div>
+    <h2 class="slide-title">AVL = BST + กฎสมดุล · BF ∈ {−1, 0, 1}</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block">AVL Tree = Binary Search Tree
+         + กฎความสูงสมดุล
+
+Balance Factor ของโหนด X:
+BF(X) = ความสูงต้นย่อยซ้าย
+      − ความสูงต้นย่อยขวา
+
+ทุกโหนดต้องมี BF ∈ {−1, 0, +1}
+
+BF = +2 → ซ้ายหนักเกิน → ต้องหมุน!
+BF = −2 → ขวาหนักเกิน → ต้องหมุน!
+
+<span class="cm">/* ต้นย่อยว่าง สูง = 0 (หรือ -1
+   แล้วแต่นิยาม — ใช้ตามอาจารย์
+   ค่า BF ที่ได้เหมือนกัน) */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่างคำนวณ BF</div>
+        <div class="diagram">        12 (BF = 2−2 = 0 ✓)
+      ╱    ╲
+     5      18 (BF = 1−1 = 0 ✓)
+    ╱ ╲    ╱  ╲
+   3  10  15   20
+  (ใบ BF = 0 ทุกตัว ✓)
+
+แต่ถ้า:   15 (BF = 2−0 = +2 ✗!)
+        ╱
+       5
+      ╱
+     3        ← ซ้ายหนัก ต้องหมุน</div>
+      </div>
+    </div>
+    <div class="exam"><b>ทำไมต้องรักษาสมดุล:</b> BST เบี้ยว H = n ทำทุกอย่าง O(n) — AVL หมุนทุกครั้งที่เสียสมดุล ให้ H ≈ log₂n → การันตี <b>O(log n) เสมอ</b> · นี่คือคำตอบข้อ "AVL ดีกว่า BST อย่างไร"</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 4 rotations -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · หัวใจของบท</div>
+    <h2 class="slide-title">การหมุน 4 แบบ — ดู "เส้นทาง 2 ก้าว" จากโหนดที่เสียสมดุล</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เคสตรง (หมุนครั้งเดียว)</div>
+        <div class="diagram">LL (ซ้าย-ซ้าย) → หมุนขวา 1 ครั้ง
+    C(+2)          B
+   ╱              ╱ ╲
+  B        →     A   C
+ ╱
+A
+
+RR (ขวา-ขวา) → หมุนซ้าย 1 ครั้ง
+A(−2)              B
+ ╲                ╱ ╲
+  B        →     A   C
+   ╲
+    C</div>
+      </div>
+      <div>
+        <div class="code-label">เคสหักศอก (หมุนสองครั้ง)</div>
+        <div class="diagram">LR (ซ้าย-ขวา) → หมุนคู่
+  C(+2)        C           B
+ ╱            ╱           ╱ ╲
+A      →     B      →    A   C
+ ╲          ╱
+  B        A
+(หมุน A ซ้ายก่อน → กลายเป็น LL → หมุนขวา)
+
+RL (ขวา-ซ้าย) → หมุนคู่ (กระจกของ LR)
+A(−2)                      B
+ ╲                        ╱ ╲
+  C        →       →     A   C
+ ╱
+B</div>
+      </div>
+    </div>
+    <div class="exam"><b>เทคนิค 5 วินาที:</b> ยืนที่โหนด BF=±2 เดินลงไปทาง "ฝั่งที่หนัก" 2 ก้าว → ได้ชื่อเคสเลย (ซ้าย-ซ้าย = LL ฯลฯ) · เคสตรง (LL/RR) หมุนครั้งเดียว · เคสหักศอก (LR/RL) หมุนสองครั้ง · ผลลัพธ์สุดท้าย <b>ตัวกลางของ 3 โหนดขึ้นเป็นราก</b>เสมอ!</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 insert trace 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · เฉลยใบ practice ข้อ 1 (1/2)</div>
+    <h2 class="slide-title">เฉลยจริง: insert 15, 5, 12, 20, 3, 18, 10, 19 — ครึ่งแรก</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">15, 5, 12 — เจอ LR ทันที!</div>
+        <div class="diagram">15 → 5 →   15(BF+2)
+           ╱
+          5      ← เดิน 2 ก้าว:
+           ╲       ซ้าย แล้ว ขวา = LR!
+           12
+
+หมุนคู่ → ตัวกลาง (12) ขึ้นเป็นราก:
+
+           12
+          ╱  ╲
+         5    15   ✓ สมดุล</div>
+      </div>
+      <div>
+        <div class="code-label">20, 3 — ไม่ต้องหมุน</div>
+        <div class="diagram">เพิ่ม 20 (ขวาของ 15), 3 (ซ้ายของ 5):
+
+           12 (BF 2−2=0 ✓)
+          ╱  ╲
+         5    15 (BF −1 ✓)
+        ╱       ╲
+       3         20
+
+ทุกโหนด BF ∈ {−1,0,1} → ผ่าน
+← ข้อสอบต้องเขียน BF กำกับให้เห็น
+  ว่าเช็คแล้วไม่ต้องหมุน</div>
+      </div>
+    </div>
+    <div class="exam"><b>สังเกต:</b> ชุดข้อมูลเดียวกับ BST บท 9 แต่ต้นไม้ "คนละทรง" — BST ได้ 15 เป็นราก AVL ได้ 12 เป็นราก · ข้อสอบชอบให้ทำคู่กันแล้วเทียบ</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 insert trace 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · เฉลยใบ practice ข้อ 1 (2/2)</div>
+    <h2 class="slide-title">ครึ่งหลัง: 18 ทำให้เกิด RL — แล้วจบสวย</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เพิ่ม 18 → 15 เสียสมดุล (RL)</div>
+        <div class="diagram">           12
+          ╱  ╲
+         5    15 (BF 0−2 = −2 ✗)
+        ╱       ╲
+       3         20
+                ╱
+               18
+จาก 15 เดิน 2 ก้าว: ขวา(20) แล้ว
+ซ้าย(18) = RL → หมุนคู่
+ตัวกลางของ {15,20,18} คือ 18 ขึ้น:
+
+           12
+          ╱  ╲
+         5    18
+        ╱    ╱  ╲
+       3   15    20   ✓</div>
+      </div>
+      <div>
+        <div class="code-label">เพิ่ม 10, 19 — จบไม่ต้องหมุน</div>
+        <div class="diagram">10 → ขวาของ 5 · 19 → ซ้ายของ 20
+
+           12
+          ╱  ╲
+         5     18
+        ╱ ╲   ╱  ╲
+       3  10 15   20
+                 ╱
+                19
+
+เช็ค BF: 20(+1) 18(−1) 5(0) 12(0)
+ทุกตัวผ่าน ✓ — ต้นไม้สุดท้าย
+in-order: 3 5 10 12 15 18 19 20 ✓
+(เรียงเหมือน BST เพราะยังเป็น BST!)</div>
+      </div>
+    </div>
+    <div class="exam"><b>เทียบผลกับ BST บท 9:</b> ชุดเดียวกัน BST สูง 4 / AVL สูง 4 แต่แน่นกว่าและ "การันตี" ไม่มีวันเบี้ยว · practice ข้อ 3 (54 45 63 ...) ใช้วิธีเดียวกัน — เดิน 2 ก้าวหาเคส หมุนตัวกลางขึ้น</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 delete note -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · Delete</div>
+    <h2 class="slide-title">ลบใน AVL = ลบแบบ BST แล้ว "เช็คสมดุลขึ้นไปถึงราก"</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block">ขั้นตอน:
+① ลบตามกฎ BST ปกติ (3 กรณีบท 9)
+② เดินจากจุดที่ลบ "ขึ้นไปหาราก"
+   เช็ค BF ทุกโหนดที่ผ่าน
+③ เจอ BF = ±2 → หมุนตามเคส
+   (ดู 2 ก้าวฝั่งที่หนัก เหมือนเดิม)
+④ หมุนแล้วอาจทำให้ข้างบน
+   เสียสมดุลต่อ → เช็คต่อจนถึงราก!
+
+<span class="cm">/* ต่างจาก insert:
+   insert หมุนจุดเดียวจบ
+   delete อาจหมุนหลายจุด */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">แนว practice ข้อ 2 (ลบ 72)</div>
+        <pre class="code-block"><span class="cm">/* โจทย์ให้ต้นไม้มา แล้วสั่งลบ 1 ค่า
+   วิธีเขียนตอบ:
+   ① วาดต้นไม้หลังลบ (ตามกฎ BST)
+   ② เขียน BF กำกับโหนดที่เปลี่ยน
+   ③ ถ้ามี ±2 → บอกเคส (LL/RR/LR/RL)
+     แล้ววาดต้นไม้หลังหมุน
+   ④ เช็ค in-order ยังเรียง = ถูก
+
+   ข้อ 3 (ลบ 52,36,61 ตามลำดับ)
+   ทำทีละตัว วาดทีละรูป อย่ารวบ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>กันพลาด:</b> ลบเสร็จอย่าลืมเช็คสมดุล "ทุกชั้น" ขึ้นไปถึงราก — จุดที่คนโดนหักบ่อยสุดคือหมุนชั้นล่างแล้วลืมดูชั้นบน</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">insert 1, 2, 3, 4, 5 ลง AVL ตามลำดับ (ชุดที่ทำ BST เบี้ยวในบท 9)<br><br>
+① เกิดการหมุนกี่ครั้ง? แบบไหนบ้าง?<br>
+② ต้นไม้สุดท้ายสูงเท่าไหร่?<br><br>
+<em>ไล่เอง: 1,2 ปกติ · 3 → RR ที่ 1 (หมุน 2 ขึ้น) ·<br>
+4 ปกติ · 5 → RR ที่ 3 (หมุน 4 ขึ้น)<br>
+สุดท้าย: 2(1, 4(3,5)) สูง 3 — เทียบ BST เบี้ยวสูง 5!<br><br>
+นี่คือคำตอบเต็มๆ ของ "AVL แก้ปัญหาอะไรของ BST"</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · ลองข้อสอบ</div>
+    <h2 class="slide-title">โหนด X มี BF = −2 และลูกขวาของ X มี BF = +1 — หมุนแบบใด?</h2>
+    <div id="mc-f10" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-f10','A','C','❌ LL คือซ้ายหนักสองก้าว — BF ของ X เป็นลบ แปลว่าขวาหนัก')">A) LL (หมุนขวาครั้งเดียว)</button>
+      <button class="mc-btn" onclick="pickMC('mc-f10','B','C','❌ RR ต้องเป็นขวา-ขวา (ลูกขวา BF ≤ 0) — แต่ลูกขวา BF=+1 คือหนักไปทางซ้าย')">B) RR (หมุนซ้ายครั้งเดียว)</button>
+      <button class="mc-btn" onclick="pickMC('mc-f10','C','C','✅ X ขวาหนัก (−2) → ก้าวแรกขวา · ลูกขวาซ้ายหนัก (+1) → ก้าวสองซ้าย = RL → หมุนคู่')">C) RL (หมุนสองครั้ง)</button>
+      <button class="mc-btn" onclick="pickMC('mc-f10','D','C','❌ LR คือ ซ้ายแล้วขวา — กลับทิศกับข้อนี้พอดี')">D) LR (หมุนสองครั้ง)</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">อ่านจาก BF ได้เลย: BF(X) = −2 → ก้าวแรก "ขวา" · BF(ลูกขวา) = +1 → ก้าวสอง "ซ้าย" → RL
+สรุปวิธีอ่าน: เครื่องหมาย BF บอกทิศ (+ = ซ้ายหนัก, − = ขวาหนัก) สองชั้นต่อกันคือชื่อเคส</pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 11</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① BF(X) = ความสูงซ้าย − ความสูงขวา ต้องอยู่ในช่วง ___ (ตอบเป็นเซต)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff10a" placeholder="เซตค่า">
+      <button class="fill-btn" onclick="checkFill('ff10a','-1 0 1',['{-1,0,1}','-1,0,1','−1 0 1','-1 ถึง 1'],[],'✅ {−1, 0, +1} — เกินนี้ (±2) ต้องหมุนทันที','❌ {−1, 0, +1} — BF = ±2 คือสัญญาณต้องหมุน')">ตรวจ</button>
+    </div>
+    <div id="ff10a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② เคส LR และ RL ต้องหมุนกี่ครั้ง</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff10b" placeholder="จำนวน">
+      <button class="fill-btn" onclick="checkFill('ff10b','2',['สอง','2 ครั้ง','สองครั้ง'],[],'✅ 2 ครั้ง (double rotation) — เคสหักศอก · LL/RR หมุนครั้งเดียว','❌ 2 ครั้ง — เคสตรง (LL/RR) 1 ครั้ง เคสหักศอก (LR/RL) 2 ครั้ง')">ตรวจ</button>
+    </div>
+    <div id="ff10b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ หลังหมุน โหนดที่ขึ้นเป็นรากของกลุ่มคือตัว ___ ของสามโหนด</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff10c" placeholder="ตัวไหน">
+      <button class="fill-btn" onclick="checkFill('ff10c','กลาง',['ตัวกลาง','middle','ค่ากลาง'],[],'✅ ตัวกลางเสมอ — เพราะกฎ BST บังคับ ซ้าย<กลาง<ขวา','❌ ตัวกลาง — ใช้เช็คคำตอบหลังหมุนได้ทุกครั้ง')">ตรวจ</button>
+    </div>
+    <div id="ff10c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">⚖️</div>
+      <div class="summary-title">จบติวบทที่ 10 — AVL Tree</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">คือ</div><div class="sum-body">BST + กฎสมดุล — การันตี O(log n) แก้ปัญหาต้นเบี้ยว</div></div>
+        <div class="sum-card"><div class="sum-head">BF</div><div class="sum-body">สูงซ้าย − สูงขวา ∈ {−1,0,1} · ±2 = ต้องหมุน · + ซ้ายหนัก − ขวาหนัก</div></div>
+        <div class="sum-card"><div class="sum-head">หาเคส 5 วิ</div><div class="sum-body">เดิน 2 ก้าวฝั่งหนัก: LL RR ตรง (1 หมุน) · LR RL หักศอก (2 หมุน)</div></div>
+        <div class="sum-card"><div class="sum-head">ผลหมุน</div><div class="sum-body">ตัวกลางของ 3 โหนดขึ้นเป็นรากเสมอ — ใช้ตรวจคำตอบ</div></div>
+        <div class="sum-card"><div class="sum-head">Delete</div><div class="sum-body">ลบแบบ BST → เช็ค BF ขึ้นถึงราก อาจหมุนหลายจุด</div></div>
+        <div class="sum-card"><div class="sum-head">ตรวจท้ายสุด</div><div class="sum-body">in-order ต้องเรียง + BF ทุกโหนดผ่าน — สองเช็คนี้จับผิดได้หมด</div></div>
+      </div>
+      <a href="slides_ch11.html" class="summary-next">→ ติวบทที่ 11: Heap + Huffman</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 10</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 10 — AVL Tree</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Balance Factor','หมุน 4 แบบ','เฉลย insert 1/2','เฉลย insert 2/2','Delete','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 9 — Binary Search Tree | ติวสอบ Data Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#6d1f7e;--cal:#f6e8fa;--cam:#a55cb5;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🌲 ติวสอบ Final · 02204231 Data Structures</div>
+        <div class="cover-title">ติวบทที่ 9<br><em>Binary Search Tree</em></div>
+        <div class="cover-subtitle">ซ้ายน้อย ขวามาก — วาด BST ทีละค่าให้ถูก แล้ว Delete 3 กรณีให้เป็น</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>กฎ BST + valid/invalid</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลย practice: insert 15 5 12 20 3 18 10 19</div>
+          <div class="topic-row"><div class="topic-dot"></div>Search / FindMin / FindMax</div>
+          <div class="topic-row"><div class="topic-dot"></div>Delete 3 กรณี (ใบ / ลูกเดียว / สองลูก)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Tree Sort + Best/Worst (เฉลย practice ข้อ 2)</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">F9</div>
+        <div class="cover-badge">ข้อวาดต้นไม้ทีละค่า</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 กฎ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · กฎ</div>
+    <h2 class="slide-title">กฎ BST — "ทุกโหนด" ไม่ใช่แค่ลูกตรง</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block">สำหรับโหนด X ใดๆ:
+• "ทุกโหนด" ในต้นย่อยซ้าย &lt; X
+• "ทุกโหนด" ในต้นย่อยขวา &gt; X
+• ต้นย่อยทุกต้นเป็น BST ด้วย
+
+<span class="cm">/* จุดหลอก valid/invalid:
+        7
+      ╱   ╲
+     2     9
+      ╲
+       8   ← ลูกขวาของ 2 คือ 8
+   8 &gt; 2 ✓ แต่ 8 อยู่ "ฝั่งซ้ายของ 7"
+   ต้อง &lt; 7 → 8 &gt; 7 = ผิดกฎ! Invalid
+   ← เช็คกับบรรพบุรุษทุกชั้น */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ความสูง = ทุกอย่าง (จากสไลด์)</div>
+        <pre class="code-block">n โหนดเดียวกัน สร้าง BST ได้หลายทรง:
+
+สมดุล:   H = ⌊log₂n⌋+1 → ops O(log n)
+เบี้ยว:   H = n          → ops O(n)!
+
+⌊log₂n⌋+1 ≤ H ≤ n
+
+<span class="cm">/* ทุก operation (search/insert/
+   delete) = O(H)
+   ทรงดี → เร็ว · ทรงเบี้ยว → ช้า
+   ← ปัญหานี้คือเหตุผลให้เกิด
+     AVL Tree ในบท 10! */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ประโยคทองจากบท 8:</b> in-order ของ BST = ข้อมูลเรียงจากน้อยไปมากเสมอ — ใช้เช็คทุกครั้งหลังวาดเสร็จว่า BST เราถูกไหม</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 insert เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · เฉลยใบ practice ข้อ 1</div>
+    <h2 class="slide-title">เฉลยจริง: insert 15, 5, 12, 20, 3, 18, 10, 19</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กติกา insert + 4 ค่าแรก</div>
+        <pre class="code-block">เริ่มที่ root: น้อยกว่า→ไปซ้าย
+มากกว่า→ไปขวา จนเจอที่ว่าง → วาง
+
+15: root
+5:  5&lt;15 → ซ้ายของ 15
+12: 12&lt;15 ซ้าย → 12&gt;5 → ขวาของ 5
+20: 20&gt;15 → ขวาของ 15</pre>
+        <div class="diagram">      15
+     ╱  ╲
+    5    20
+     ╲
+     12</div>
+      </div>
+      <div>
+        <div class="code-label">อีก 4 ค่า + ต้นไม้สุดท้าย</div>
+        <pre class="code-block">3:  3&lt;15, 3&lt;5 → ซ้ายของ 5
+18: 18&gt;15, 18&lt;20 → ซ้ายของ 20
+10: 10&lt;15, 10&gt;5, 10&lt;12 → ซ้ายของ 12
+19: 19&gt;15, 19&lt;20, 19&gt;18 → ขวาของ 18</pre>
+        <div class="diagram">        15
+      ╱    ╲
+     5      20
+    ╱ ╲    ╱
+   3  12  18
+     ╱      ╲
+    10       19</div>
+      </div>
+    </div>
+    <div class="exam"><b>ตรวจคำตอบ:</b> in-order = 3 5 10 12 15 18 19 20 — เรียงจากน้อยไปมาก ✓ · ข้อสอบให้วาด "ทีละค่า" ต้องวาดครบ 8 รูป อย่าวาดแค่รูปสุดท้าย (คะแนนอยู่ที่ขั้นตอน!)</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 search min max -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · Search/Min/Max</div>
+    <h2 class="slide-title">Search / FindMin / FindMax — สามท่าง่าย</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Search (เหมือน insert แต่ไม่วาง)</div>
+        <pre class="code-block"><span class="cm">/* หา 10 ในต้นไม้เมื่อกี้:
+   15 → 10&lt;15 ซ้าย
+   5  → 10&gt;5 ขวา
+   12 → 10&lt;12 ซ้าย
+   10 → เจอ! (4 ครั้ง)
+
+   ไม่เจอ = เดินจนตกต้นไม้ (NULL)
+   จำนวนครั้งเปรียบเทียบ = ความลึก
+   ← ข้อสอบให้นับจำนวนครั้งด้วย */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Min / Max — เดินข้างเดียวสุดทาง</div>
+        <pre class="code-block">FindMin: เดิน "ซ้าย" สุดทาง
+  15 → 5 → 3   ∴ min = 3
+FindMax: เดิน "ขวา" สุดทาง
+  15 → 20      ∴ max = 20
+
+<span class="cm">/* ไม่ต้องดูค่าเลย แค่เดินสุดทาง
+   min อยู่ซ้ายล่างสุดเสมอ
+   max อยู่ขวาล่างสุดเสมอ
+
+   FindMin จะโผล่อีกทีตอน
+   delete แบบสองลูก! */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ทุก operation ของ BST เดินจาก root ลงทางเดียว</b> ไม่มีถอยหลัง ไม่มีแยกสองทาง — เวลาจึงเป็น O(H) เสมอ</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 delete -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · Delete</div>
+    <h2 class="slide-title">Delete 3 กรณี — กรณี 3 คือจุดวัดคน</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">/* กรณี 1: โหนดใบ (ไม่มีลูก)
+   → ตัดทิ้งเลย จบ
+
+   กรณี 2: มีลูกเดียว
+   → ให้ลูกขึ้นมาแทนที่ (ต่อสะพาน)
+
+   กรณี 3: มีสองลูก
+   → หา "ตัวแทน" มาสวมแทน:
+   ① หา min ของต้นย่อยขวา
+     (ตัวถัดไปตามลำดับ - successor)
+   ② copy ค่ามาทับโหนดที่ลบ
+   ③ ไปลบตัว min นั้นแทน
+     (มันมีลูกได้มากสุด 1 → กลับ
+      ไปเป็นกรณี 1 หรือ 2 แน่นอน) */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่าง: ลบ 15 (root สองลูก)</div>
+        <div class="diagram">ก่อน:      15          หลัง:    18
+         ╱    ╲               ╱    ╲
+        5      20            5      20
+       ╱ ╲    ╱             ╱ ╲    ╱
+      3  12  18            3  12  19
+        ╱      ╲             ╱
+       10       19          10
+
+min ของฝั่งขวา (20,18,19) = 18
+→ เอา 18 มาทับ 15
+→ ลบ 18 ตัวเดิม (มีลูกขวา 19
+  → กรณี 2: 19 ขึ้นแทน)</div>
+      </div>
+    </div>
+    <div class="exam"><b>ตรวจเสมอ:</b> ลบเสร็จ in-order ต้องยังเรียงอยู่ (3 5 10 12 18 19 20 ✓) · บางตำราใช้ max ของฝั่งซ้าย (predecessor) แทน — ทำตามแบบที่อาจารย์สอนใน lecture</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 tree sort -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · เฉลยใบ practice ข้อ 2</div>
+    <h2 class="slide-title">เฉลยจริง: Tree-Sort — pseudocode ในใบ practice</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์ + 2.1-2.2</div>
+        <pre class="code-block">Tree-Sort(A):
+  for i ← 1 to n
+      Tree-insert(A[i])
+  inorder(RootofTree)
+
+<span class="cm">/* 2.1 ทำงานยังไง:
+   เอาข้อมูลทุกตัวใน array
+   insert ลง BST ทีละตัว
+   แล้วท่อง in-order
+   → ได้ข้อมูล "เรียงลำดับ"
+   = อัลกอริทึมจัดเรียงข้อมูล!
+
+   2.2 ผลกับชุด 15 5 12 20 3 18 10 19:
+   → 3 5 10 12 15 18 19 20 */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">2.3-2.4 Best/Worst + เทียบ sort อื่น</div>
+        <pre class="code-block">Best:  ข้อมูลกระจายดี ต้นไม้สมดุล
+       insert ตัวละ O(log n)
+       → O(n log n)
+
+Worst: ข้อมูลเรียงอยู่แล้ว!
+       ต้นไม้เบี้ยวเป็นเส้นตรง
+       insert ตัวละ O(n)
+       → O(n²)
+
+<span class="cm">/* 2.4 เทียบ (ใช้ความรู้ midterm บท 3):
+   Best เทียบเท่า Merge/Quick O(n log n)
+   Worst เท่า Bubble/Insertion O(n²)
+   จุดพลิก: ข้อมูลเรียงแล้ว
+   Insertion sort ได้ Best O(n)
+   แต่ Tree sort ได้ Worst O(n²)! */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ย้ำจุดพลิกที่ชอบออก:</b> "ข้อมูลเรียงอยู่แล้ว" คือ <b>Worst case ของ BST/Tree sort</b> (ต้นเบี้ยว) แต่เป็น Best case ของ Insertion sort — สลับกันพอดี ข้อสอบชอบถามคู่นี้</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">insert ค่า 1, 2, 3, 4, 5 ลง BST ตามลำดับ<br><br>
+① ต้นไม้หน้าตาเป็นยังไง? ความสูงเท่าไหร่?<br>
+② search หาค่า 5 ใช้กี่ครั้ง?<br>
+③ ต้นไม้แบบนี้เรียกว่าอะไร?<br><br>
+<em>เฉลย: เบี้ยวขวาเป็นเส้นตรง (skewed) สูง H = n = 5<br>
+search 5 ต้องเดิน 5 ครั้ง = O(n)<br>
+นี่แหละปัญหาที่ AVL Tree (บทหน้า) เกิดมาแก้ —<br>
+มันจะ "หมุน" ต้นไม้ให้กลับมาสมดุลอัตโนมัติ</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ลบโหนดที่มีลูกสองตัวออกจาก BST ต้องทำอย่างไร?</h2>
+    <div id="mc-f9" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-f9','A','C','❌ ตัดทิ้งเลยได้เฉพาะโหนดใบ (กรณี 1) — สองลูกทำแบบนั้นต้นไม้ขาด')">A) ตัดโหนดทิ้งได้เลย</button>
+      <button class="mc-btn" onclick="pickMC('mc-f9','B','C','❌ เอาลูกซ้ายขึ้นแทนตรงๆ ไม่ได้ — ลูกขวาของโหนดที่ลบจะไม่มีที่อยู่')">B) เอาลูกซ้ายขึ้นมาแทนที่ทันที</button>
+      <button class="mc-btn" onclick="pickMC('mc-f9','C','C','✅ หา min ของต้นย่อยขวา (successor) มาทับค่า แล้วไปลบตัว min เดิม ซึ่งเหลือกรณีง่ายแน่นอน')">C) เอา min ของต้นย่อยขวามาแทน แล้วลบตัวนั้น</button>
+      <button class="mc-btn" onclick="pickMC('mc-f9','D','C','❌ ไม่ต้องสร้างใหม่ทั้งต้น — แทนที่จุดเดียวพอ')">D) สร้างต้นไม้ใหม่ทั้งหมด</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">ทำไมต้อง min ของฝั่งขวา? — มันคือ "ตัวถัดไปตามลำดับ" (successor)
+เอามาสวมแล้วกฎ ซ้าย&lt;ราก&lt;ขวา ยังจริงเป๊ะ และตัว min ไม่มีลูกซ้ายแน่นอน (ลบง่าย)</pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 10</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① FindMin ของ BST ทำโดยเดินไปทาง ___ สุดทาง</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff9a" placeholder="ทิศ">
+      <button class="fill-btn" onclick="checkFill('ff9a','ซ้าย',['left','ซ้ายสุด'],[],'✅ ซ้ายสุดทาง = min · ขวาสุดทาง = max','❌ ซ้าย — min อยู่ซ้ายล่างสุดเสมอ')">ตรวจ</button>
+    </div>
+    <div id="ff9a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Tree sort กับข้อมูลที่ "เรียงอยู่แล้ว" ใช้เวลา O(___) เพราะต้นไม้เบี้ยว</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff9b" placeholder="complexity">
+      <button class="fill-btn" onclick="checkFill('ff9b','n^2',['n²','n2','O(n²)','O(n^2)'],[],'✅ O(n²) — ต้นเบี้ยวเป็นเส้น insert ตัวละ O(n) · นี่คือ Worst case!','❌ O(n²) — ข้อมูลเรียงแล้ว = worst ของ BST (ต้นเบี้ยว H=n)')">ตรวจ</button>
+    </div>
+    <div id="ff9b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ ท่อง BST แบบใดได้ข้อมูลเรียงจากน้อยไปมาก</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff9c" placeholder="วิธีท่อง">
+      <button class="fill-btn" onclick="checkFill('ff9c','in-order',['inorder','in order','อินออเดอร์'],[],'✅ in-order (ซ้าย→ราก→ขวา) — ประโยคทองที่ใช้ตรวจทุกคำตอบ BST','❌ in-order — ซ้าย→ราก→ขวา ให้ลำดับน้อยไปมากเสมอ')">ตรวจ</button>
+    </div>
+    <div id="ff9c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔍</div>
+      <div class="summary-title">จบติวบทที่ 9 — Binary Search Tree</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">กฎ</div><div class="sum-body">"ทุกโหนด" ซ้าย &lt; X &lt; "ทุกโหนด" ขวา — เช็คถึงบรรพบุรุษ</div></div>
+        <div class="sum-card"><div class="sum-head">Insert/Search</div><div class="sum-body">เดินจาก root ทางเดียว O(H) · นับครั้ง = ความลึก</div></div>
+        <div class="sum-card"><div class="sum-head">Min/Max</div><div class="sum-body">ซ้ายสุด = min · ขวาสุด = max — ไม่ต้องเทียบค่า</div></div>
+        <div class="sum-card"><div class="sum-head">Delete 3 กรณี</div><div class="sum-body">ใบตัดเลย · ลูกเดียวต่อสะพาน · สองลูกใช้ min ฝั่งขวาสวม</div></div>
+        <div class="sum-card"><div class="sum-head">Tree Sort</div><div class="sum-body">insert ทั้งหมด + in-order · Best O(n log n) · Worst O(n²) เรียงแล้ว!</div></div>
+        <div class="sum-card"><div class="sum-head">ปัญหาค้าง</div><div class="sum-body">ต้นเบี้ยว H=n ทำทุกอย่างช้า → AVL บทหน้ามาแก้ด้วย "การหมุน"</div></div>
+      </div>
+      <a href="slides_ch10.html" class="summary-next">→ ติวบทที่ 10: AVL Tree</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 10</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 9 — Binary Search Tree</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','กฎ BST','เฉลย insert 8 ค่า','Search/Min/Max','Delete 3 กรณี','Tree Sort','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

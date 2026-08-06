@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheat Sheet ก่อนเข้าห้องสอบ | ติวสอบ Data Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#6d1f7e;--cal:#f6e8fa;--cam:#a55cb5;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.cs{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.cs th{background:var(--ca);color:#fff;padding:5px 9px;text-align:left;font-weight:600;}
+.cs td{padding:5px 9px;border:1px solid var(--line);font-family:var(--mono);}
+.cs td:first-child{font-family:var(--sans);font-weight:600;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🌲 ติวสอบ Final · 02204231 Data Structures</div>
+        <div class="cover-title">ด่านสุดท้าย<br><em>Cheat Sheet</em></div>
+        <div class="cover-subtitle">ทวนรอบสุดท้ายก่อนเข้าห้องสอบ Final — ทุกกติกาในที่เดียว</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>กติกาทุกบท (7–12) ในหน้าเดียว</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตาราง Big-O ของทุกโครงสร้าง</div>
+          <div class="topic-row"><div class="topic-dot"></div>10 จุดพลาดตอน trace/วาดรูป</div>
+          <div class="topic-row"><div class="topic-dot"></div>แผนคืนก่อนสอบ + ในห้องสอบ</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">✓</div>
+        <div class="cover-badge">ทวน 30 นาทีจบ</div>
+        <div class="cover-slides-count">9 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 กติการวม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · กติกา</div>
+    <h2 class="slide-title">กติกาทุกบทในหน้าเดียว</h2>
+    <table class="cs">
+      <thead><tr><th>บท</th><th>กติกาสั้นที่สุดที่ยังครบ</th></tr></thead>
+      <tbody>
+        <tr><td>7 Stack</td><td>LIFO · push: Top++ ก่อนใส่ · pop: เอาค่าก่อน Top−− · peek ไม่แตะ Top</td></tr>
+        <tr><td>7 Postfix</td><td>เลขออกเลย · ( push · ) pop ถึง ( · op: pop ตัว ≥ ก่อน push · eval: pop 2 คำนวณ push</td></tr>
+        <tr><td>8 Traverse</td><td>ชื่อบอกที่ราก: Pre ก่อน / In กลาง / Post หลัง · Pre→Prefix In→Infix Post→Postfix</td></tr>
+        <tr><td>8 Array</td><td>ลูกของ i = 2i, 2i+1 · แม่ = i/2 (เริ่ม index 1)</td></tr>
+        <tr><td>9 BST</td><td>ทุกโหนดซ้าย &lt; X &lt; ทุกโหนดขวา · in-order = เรียงเสมอ · ลบ 2 ลูก → min ฝั่งขวาสวม</td></tr>
+        <tr><td>10 AVL</td><td>BF = สูงซ้าย−สูงขวา ∈ {−1,0,1} · เดิน 2 ก้าวฝั่งหนักได้ชื่อเคส · ตัวกลางขึ้นเป็นราก</td></tr>
+        <tr><td>11 Heap</td><td>Complete + แม่ชนะลูก · insert: วางท้าย ลอยขึ้น · deleteMax: ตัวท้ายขึ้นราก จมฝั่งลูกใหญ่</td></tr>
+        <tr><td>11 Huffman</td><td>รวมความถี่น้อยสุด 2 ตัวซ้ำๆ · ซ้าย 0 ขวา 1 · ถี่มาก = รหัสสั้น</td></tr>
+        <tr><td>12 Graph</td><td>สมมาตร = undirected · แถว k = out, คอลัมน์ k = in · BFS=Queue DFS=Stack</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>วิธีใช้:</b> คืนก่อนสอบเขียนตารางนี้จากความจำ — แถวไหนเขียนไม่ได้ กลับไปบทนั้น</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 Big-O -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · Big-O</div>
+    <h2 class="slide-title">ตาราง Big-O รวมทุกโครงสร้าง (midterm + final)</h2>
+    <table class="cs">
+      <thead><tr><th>โครงสร้าง / Operation</th><th>เฉลี่ย</th><th>แย่สุด</th><th>หมายเหตุ</th></tr></thead>
+      <tbody>
+        <tr><td>Stack / Queue (push pop enq deq)</td><td>O(1)</td><td>O(1)</td><td>แตะปลายที่เดียว</td></tr>
+        <tr><td>BST (search/insert/delete)</td><td>O(log n)</td><td>O(n)</td><td>worst = ต้นเบี้ยว (ข้อมูลเรียงแล้ว!)</td></tr>
+        <tr><td>AVL (search/insert/delete)</td><td>O(log n)</td><td>O(log n)</td><td>การันตีด้วยการหมุน</td></tr>
+        <tr><td>Heap (insert/deleteMax)</td><td>O(log n)</td><td>O(log n)</td><td>ลอยขึ้น/จมลง ตามความสูง</td></tr>
+        <tr><td>Heap: ดู max (peek)</td><td>O(1)</td><td>O(1)</td><td>อยู่ที่รากเสมอ</td></tr>
+        <tr><td>Tree Sort</td><td>O(n log n)</td><td>O(n²)</td><td>worst เมื่อเรียงแล้ว</td></tr>
+        <tr><td>Heap Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>ไม่มีเคสร้าย</td></tr>
+        <tr><td>Graph Matrix: เช็คเส้น / memory</td><td>O(1) / O(V²)</td><td>—</td><td>dense เหมาะ</td></tr>
+        <tr><td>Graph List: memory</td><td>O(V+E)</td><td>—</td><td>sparse เหมาะ</td></tr>
+        <tr><td>BFS / DFS</td><td colspan="2">O(V+E) กับ list</td><td>ทุกโหนด+ทุกเส้นครั้งเดียว</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SLIDE 3 จุดพลาด 1-5 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ห้ามพลาด</div>
+    <h2 class="slide-title">10 จุดพลาดตอน trace (ข้อ 1–5)</h2>
+    <pre class="code-block"><span class="cm">① peek ≠ pop</span>
+   push(peek()+2): peek ไม่เอาของออก — Top ไม่เปลี่ยนตอน peek
+
+<span class="cm">② eval postfix: ลำดับ operand</span>
+   pop ได้ b ก่อน a → คำนวณ a−b ไม่ใช่ b−a (พังกับ − และ / ทันที)
+
+<span class="cm">③ วงเล็บใน postfix</span>
+   ( และ ) "ไม่ลง output" เด็ดขาด — pop ถึง ( แล้วทิ้งทั้งคู่
+
+<span class="cm">④ BST valid/invalid เช็คถึงบรรพบุรุษ</span>
+   ลูกขวาของโหนดฝั่งซ้าย ต้องน้อยกว่า "รากใหญ่" ด้วย ไม่ใช่แค่แม่ตรง
+
+<span class="cm">⑤ ลบโหนดสองลูก</span>
+   ใช้ min ของฝั่งขวามาสวม (ไม่ใช่ลูกซ้าย/ขวาขึ้นตรงๆ) แล้วไปลบตัว min เดิม</pre>
+  </div>
+</div>
+
+<!-- SLIDE 4 จุดพลาด 6-10 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ห้ามพลาด</div>
+    <h2 class="slide-title">10 จุดพลาดตอน trace (ข้อ 6–10)</h2>
+    <pre class="code-block"><span class="cm">⑥ AVL: หมุนแล้วลืมเช็คชั้นบน (ตอน delete)</span>
+   delete ต้องไล่ BF ขึ้นถึงราก อาจหมุนหลายจุด — insert หมุนจุดเดียวจบ
+
+<span class="cm">⑦ AVL: จำเคสจากเครื่องหมาย BF</span>
+   + ซ้ายหนัก · − ขวาหนัก · สองชั้นต่อกัน = ชื่อเคส (−2 แล้ว +1 = RL)
+
+<span class="cm">⑧ Heap insert วางผิดที่</span>
+   ต้องวาง "ท้ายสุด" เท่านั้นแล้วลอยขึ้น — วางที่อื่น complete พัง
+
+<span class="cm">⑨ Heap จมลง swap ผิดลูก</span>
+   ต้อง swap กับ "ลูกที่ใหญ่กว่า" เสมอ (MaxHeap) ไม่ใช่ลูกซ้าย
+
+<span class="cm">⑩ BFS/DFS ลืม visited + ลำดับเพื่อนบ้าน</span>
+   ไม่ mark = วนไม่รู้จบ · ไล่เพื่อนบ้านตามลำดับที่โจทย์กำหนด (มักเรียงตามอักษร)</pre>
+    <div class="exam"><b>ตรวจคำตอบสารพัดประโยชน์:</b> BST/AVL → in-order ต้องเรียง · AVL → BF ทุกโหนดผ่าน · Heap → แม่ชนะลูกทุกคู่ + ไม่มีรู · Postfix → eval แล้วต้องได้ค่าเท่า infix</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 ผังเลือกโครงสร้าง -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ข้อเลือกโครงสร้าง</div>
+    <h2 class="slide-title">โจทย์ "ควรใช้โครงสร้างใด" — ตอบตามสถานการณ์</h2>
+    <table class="cs">
+      <thead><tr><th>สถานการณ์</th><th>ใช้</th><th>เหตุผลสั้นๆ</th></tr></thead>
+      <tbody>
+        <tr><td>ย้อนกลับ / undo / เช็ควงเล็บ / แปลงนิพจน์</td><td>Stack</td><td>LIFO — ของล่าสุดออกก่อน</td></tr>
+        <tr><td>ต่อแถวรอคิว / BFS / round-robin</td><td>Queue</td><td>FIFO — มาก่อนได้ก่อน</td></tr>
+        <tr><td>ค้นหา + เพิ่มลบบ่อย (ข้อมูลไม่เรียง)</td><td>BST</td><td>O(log n) เฉลี่ย + in-order ได้ลำดับ</td></tr>
+        <tr><td>ค้นหาแบบ "การันตี" ความเร็ว</td><td>AVL</td><td>หมุนรักษาสมดุล O(log n) เสมอ</td></tr>
+        <tr><td>เอาตัว "สำคัญสุด" ออกซ้ำๆ</td><td>Heap (PQ)</td><td>max อยู่ราก O(1) ดู / O(log n) ลบ</td></tr>
+        <tr><td>บีบอัดข้อมูล</td><td>Huffman + MinHeap</td><td>ถี่มากรหัสสั้น prefix-free</td></tr>
+        <tr><td>ความสัมพันธ์โยงใยหลายทาง / เครือข่าย</td><td>Graph</td><td>V+E มี cycle ได้</td></tr>
+        <tr><td>ลำดับชั้น (โฟลเดอร์/องค์กร)</td><td>Tree</td><td>แม่-ลูก ไม่มี cycle</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>วิธีคิด:</b> ฟัง keyword ของโจทย์ — "ล่าสุดก่อน"=Stack · "ตามคิว"=Queue · "สำคัญสุดก่อน"=Heap · "ค้นหาเร็ว"=BST/AVL · "โยงใย"=Graph</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 แผน -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · แผน</div>
+    <h2 class="slide-title">แผนคืนก่อนสอบ + ในห้องสอบ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คืนก่อนสอบ (2.5 ชั่วโมง)</div>
+        <pre class="code-block">□ 20 นาที: เขียนตารางกติกา
+  หน้าแรกจากความจำ
+□ 30 นาที: แปลง (7*3+8)/9 → postfix
+  + eval — ไม่เปิดเฉลย
+□ 30 นาที: BST + AVL ชุด
+  15 5 12 20 3 18 10 19 ทั้งสองแบบ
+  วาดเทียบกัน
+□ 30 นาที: MaxHeap 1,8,6,5,3,7,4
+  สองวิธี + deleteMax หนึ่งครั้ง
+□ 20 นาที: matrix → รูปกราฟ → list
+  + BFS/DFS หนึ่งรอบ
+□ 20 นาที: อ่าน 10 จุดพลาด
+□ นอน!</pre>
+      </div>
+      <div>
+        <div class="code-label">ในห้องสอบ</div>
+        <pre class="code-block">① กวาดทั้งฉบับ 2 นาที — ข้อ trace/
+   วาดรูปทำก่อน (คะแนนตามขั้นตอน)
+② วาด "ทุกขั้น" ที่โจทย์สั่ง
+   อย่ารวบเหลือรูปเดียว
+③ เขียนเหตุผลกำกับทุกการหมุน/
+   swap (เคสอะไร เพราะอะไร)
+④ เหลือเวลา ใช้ตัวตรวจ:
+   - in-order เรียงไหม (BST/AVL)
+   - BF ผ่านทุกโหนดไหม (AVL)
+   - แม่ชนะลูกทุกคู่ไหม (Heap)
+   - eval postfix = ค่า infix ไหม</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 MCQ รวม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ข้อสุดท้าย</div>
+    <h2 class="slide-title">ข้อรวบยอด — เลือกโครงสร้างข้ามบท</h2>
+    <p class="slide-lead">โรงพยาบาลต้องเรียกคิวคนไข้ตาม "ระดับความฉุกเฉิน" (วิกฤตก่อนเสมอ) มีคนไข้เข้า-ออกตลอดเวลา — ใช้โครงสร้างใดเหมาะสุด?</p>
+    <div id="mc-ff" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-ff','A','C','❌ Queue ธรรมดา = มาก่อนได้ก่อน — คนไข้วิกฤตที่มาทีหลังจะไม่ถูกเรียกก่อน')">A) Queue ธรรมดา</button>
+      <button class="mc-btn" onclick="pickMC('mc-ff','B','C','❌ BST ค้นหาเก่ง แต่ "เอาตัว max ออกซ้ำๆ" heap ทำได้ตรงกว่าและ max อยู่รากตลอด')">B) Binary Search Tree</button>
+      <button class="mc-btn" onclick="pickMC('mc-ff','C','C','✅ Priority Queue ที่สร้างด้วย MaxHeap — ตัวฉุกเฉินสุดอยู่รากเสมอ ดู O(1) เอาออก O(log n) เพิ่มคนไข้ใหม่ O(log n)')">C) Priority Queue (MaxHeap)</button>
+      <button class="mc-btn" onclick="pickMC('mc-ff','D','C','❌ Stack = ล่าสุดออกก่อน — คนไข้มาใหม่แซงคนวิกฤตที่รอนาน ไม่ตรงโจทย์')">D) Stack</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">keyword "สำคัญสุด/ฉุกเฉินสุดออกก่อน" + "เพิ่มลบตลอดเวลา" → Priority Queue → Heap
+(เทียบ multiple queue ของ midterm: ได้แค่ priority ไม่กี่ระดับ — heap ทำได้ละเอียดกว่า)</pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Final -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🏆</div>
+      <div class="summary-title">พร้อมสอบ Final แล้ว — ปิดเกมวิชานี้กัน</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">บท 7</div><div class="sum-body">LIFO · infix→postfix เขียนตาราง · eval เช็คคำตอบ</div></div>
+        <div class="sum-card"><div class="sum-head">บท 8</div><div class="sum-body">ท่อง 3 แบบ ชื่อบอกที่ราก · Expression tree = 3 notations</div></div>
+        <div class="sum-card"><div class="sum-head">บท 9</div><div class="sum-body">ซ้ายน้อยขวามาก · in-order เรียง · ลบสองลูกใช้ min ขวา</div></div>
+        <div class="sum-card"><div class="sum-head">บท 10</div><div class="sum-body">BF ±2 หมุน · เดิน 2 ก้าว = ชื่อเคส · ตัวกลางขึ้นราก</div></div>
+        <div class="sum-card"><div class="sum-head">บท 11</div><div class="sum-body">วางท้ายลอยขึ้น · ตัวท้ายขึ้นรากจมลง · Huffman รวมน้อยสุด</div></div>
+        <div class="sum-card"><div class="sum-head">บท 12</div><div class="sum-body">สมมาตร=undirected · แถว out คอลัมน์ in · BFS คิว DFS สแตค</div></div>
+      </div>
+      <a href="index.html" class="summary-next">🏠 กลับหน้าหลัก — ทวนบทไหนอีกรอบก็ได้ สู้ๆ 💪</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 9</span>
+      <span class="nav-chapter" id="chapterLabel">Cheat Sheet ก่อนเข้าห้องสอบ</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','กติกาทุกบท','ตาราง Big-O','จุดพลาด 1-5','จุดพลาด 6-10','เลือกโครงสร้าง','แผนก่อนสอบ','ข้อรวบยอด','พร้อมสอบแล้ว'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
