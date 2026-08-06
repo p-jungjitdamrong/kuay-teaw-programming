@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 7 — Polymorphism + Interface | ติวสอบ OOP Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#0f766e;--cal:#dcf5f2;--cam:#3fa89e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.ct{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.ct th{background:var(--ca);color:#fff;padding:5px 9px;text-align:left;font-weight:600;}
+.ct td{padding:5px 9px;border:1px solid var(--line);}
+.ct td:first-child{font-weight:600;color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🎭 ติวสอบ Final · 02204172 OOP (Java)</div>
+        <div class="cover-title">ติวบทที่ 7<br><em>Polymorphism<br>+ Interface</em></div>
+        <div class="cover-subtitle">รากของทุกบทที่เหลือ — หลายรูปแบบ, Dynamic Binding และสัญญาที่ชื่อ interface</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Polymorphism = poly (หลาย) + morph (รูปแบบ)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Overloading vs Overriding — ตารางเทียบ</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตัวอย่าง Dispatch จากสไลด์ (r = a, b, c)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Interface — กฎ 5 ข้อที่ออกสอบ</div>
+          <div class="topic-row"><div class="topic-dot"></div>abstract class vs interface เลือกใช้เมื่อไหร่</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">O7</div>
+        <div class="cover-badge">รากของบท 8–13</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 นิยาม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · นิยาม</div>
+    <h2 class="slide-title">Polymorphism — นิยามตามสไลด์อาจารย์</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คำนิยาม (ตอบข้อบรรยายได้เลย)</div>
+        <pre class="code-block">"polymorphism คือ การที่วัตถุต่างกัน
+ ตอบสนองกับข่าวสารเดียวกัน
+ ในแบบที่ต่างกัน"
+
+poly  = หลาย
+morph = รูปแบบ
+∴ polymorphism = หลายรูปแบบ
+
+<span class="cm">/* ตัวอย่างในสไลด์:
+   วัตถุ "รถ" "เรือ" "เครื่องบิน"
+   มี method moveTo() เหมือนกัน
+   แต่ตอบสนองต่างกัน
+   (วิ่ง / แล่น / บิน) */</span>
+
+← หลักการเชิงวัตถุ 1 ใน 3 ประการ</pre>
+      </div>
+      <div>
+        <div class="code-label">มาได้ 2 รูปแบบ (สไลด์บอกชัด)</div>
+        <pre class="code-block">① Overloading
+   method ชื่อเดียวกัน "ในคลาสเดียวกัน"
+   แต่ parameters ต่างกัน
+
+② Overriding
+   method ชื่อเดียวกัน
+   "message signature เหมือนกันทุกประการ"
+   ระหว่างคลาสแม่และคลาสลูก
+
+<span class="cm">/* JVM ตัดสินว่าเรียกตัวไหน:
+   Overloading → ดูที่ "ลิสต์ของ parameter"
+   Overriding  → ตรวจสอบตอน run-time
+     วัตถุเป็นคลาสใด เรียก method คลาสนั้น
+     ถ้าคลาสลูกไม่ได้ประกาศ → ใช้ของแม่ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อดีที่สไลด์ระบุ:</b> "ทำให้เขียนโปรแกรมได้ง่ายขึ้น พัฒนาและต่อยอดได้อย่างรวดเร็ว" — เพราะโค้ดที่เรียกใช้ไม่ต้องรู้จักคลาสลูกทุกตัว เพิ่มคลาสใหม่ได้โดยไม่แก้ของเดิม</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 ตารางเทียบ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · ตารางบังคับจำ</div>
+    <h2 class="slide-title">Overloading vs Overriding — ข้อสอบถามแยกทุกปี</h2>
+    <table class="ct">
+      <thead><tr><th></th><th>Overloading</th><th>Overriding</th></tr></thead>
+      <tbody>
+        <tr><td>อยู่ที่ไหน</td><td>คลาส<b>เดียวกัน</b></td><td>คลาสแม่ ↔ คลาส<b>ลูก</b></td></tr>
+        <tr><td>ชื่อ method</td><td>เหมือนกัน</td><td>เหมือนกัน</td></tr>
+        <tr><td>Parameter</td><td><b>ต้องต่างกัน</b> (จำนวน/ชนิด/ลำดับ)</td><td><b>ต้องเหมือนเป๊ะ</b></td></tr>
+        <tr><td>Return type</td><td>ต่างได้ (ไม่ใช่ตัวแยก)</td><td>ต้องเหมือน</td></tr>
+        <tr><td>ตัดสินเมื่อไหร่</td><td>Compile time (ดู parameter list)</td><td><b>Run time</b> (ดูชนิดวัตถุจริง)</td></tr>
+        <tr><td>ต้องมี inheritance ไหม</td><td>ไม่ต้อง</td><td>ต้องมี (extends/implements)</td></tr>
+        <tr><td>ชื่อเรียกอีกอย่าง</td><td>Static / Compile-time polymorphism</td><td>Dynamic / Runtime polymorphism</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>ท่องประโยคเดียวจบ:</b> Overload = <b>ชื่อซ้ำ พารามิเตอร์ต่าง ในคลาสเดียว</b> · Override = <b>ลูกเขียนทับของแม่ หัวเหมือนเป๊ะ</b> — คำว่า "signature เหมือนกันทุกประการ" ในสไลด์คือคีย์เวิร์ดของ Override</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 Dispatch -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · ตัวอย่างในสไลด์</div>
+    <h2 class="slide-title">เฉลย: คลาส Dispatch — ข้อ "โปรแกรมนี้พิมพ์อะไร"</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โค้ดจากสไลด์อาจารย์</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">A</span> {
+  <span class="kw">public void</span> <span class="fn">callme</span>() {
+    System.out.<span class="fn">println</span>(<span class="st">"A's callme"</span>);
+  }
+}
+<span class="kw">public class</span> <span class="fn">B</span> <span class="kw">extends</span> A {
+  <span class="kw">public void</span> <span class="fn">callme</span>() {
+    System.out.<span class="fn">println</span>(<span class="st">"B's callme"</span>);
+  }
+}
+<span class="kw">public class</span> <span class="fn">C</span> <span class="kw">extends</span> A {
+  <span class="kw">public void</span> <span class="fn">callme</span>() {
+    System.out.<span class="fn">println</span>(<span class="st">"C's callme"</span>);
+  }
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">main + เฉลย</div>
+        <pre class="code-block">A a = <span class="kw">new</span> <span class="fn">A</span>();
+B b = <span class="kw">new</span> <span class="fn">B</span>();
+C c = <span class="kw">new</span> <span class="fn">C</span>();
+A r;                <span class="cm">// ตัวแปรชนิดแม่ตัวเดียว</span>
+
+r = a;  r.<span class="fn">callme</span>();   <span class="cm">// A's callme</span>
+r = b;  r.<span class="fn">callme</span>();   <span class="cm">// B's callme</span>
+r = c;  r.<span class="fn">callme</span>();   <span class="cm">// C's callme</span>
+
+<span class="cm">/* r ประกาศเป็น A ตลอด
+   แต่ผลลัพธ์เปลี่ยนตาม
+   "วัตถุจริง" ที่ r ชี้อยู่
+
+   ← นี่คือ Dynamic Binding
+   ตัดสินตอน run-time ไม่ใช่
+   ตอน compile */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>กฎทองสำหรับข้อ "พิมพ์อะไร":</b> ดูที่ <b>ฝั่งขวาของ new</b> (วัตถุจริง) ไม่ใช่ชนิดตัวแปรฝั่งซ้าย · ชนิดตัวแปรมีผลแค่ตอน compile ว่า "เรียก method นี้ได้ไหม" เท่านั้น</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 Overload example -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · ตัวอย่างในสไลด์</div>
+    <h2 class="slide-title">เฉลย: OverloadTest — show() กับ show(String)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โค้ดจากสไลด์</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">A</span> {
+  <span class="kw">private int</span> i, j;
+  <span class="kw">public</span> <span class="fn">A</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) { i=a; j=b; }
+  <span class="kw">public void</span> <span class="fn">show</span>() {
+    System.out.<span class="fn">println</span>(<span class="st">"i:"</span>+i);
+    System.out.<span class="fn">println</span>(<span class="st">"j:"</span>+j);
+  }
+}
+<span class="kw">public class</span> <span class="fn">B</span> <span class="kw">extends</span> A {
+  <span class="kw">private int</span> k;
+  <span class="kw">public</span> <span class="fn">B</span>(<span class="kw">int</span> a,<span class="kw">int</span> b,<span class="kw">int</span> c) {
+    <span class="kw">super</span>(a,b); k=c;
+  }
+  <span class="kw">public void</span> <span class="fn">show</span>(String msg) {   <span class="cm">// Overload!</span>
+    System.out.<span class="fn">println</span>(msg + k);
+  }
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">เฉลยผลลัพธ์</div>
+        <pre class="code-block">B subOb = <span class="kw">new</span> <span class="fn">B</span>(<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>);
+subOb.<span class="fn">show</span>(<span class="st">"This is k: "</span>);
+subOb.<span class="fn">show</span>();
+
+<span class="cm">/* ผลลัพธ์:
+   This is k: 3     ← show(String) ของ B
+   i:1              ← show() ของ A
+   j:2                (ตกทอดมา ไม่ได้ถูกทับ) */</span>
+
+<span class="cm">/* จุดสำคัญ:
+   show(String) ของ B "ไม่ได้ทับ"
+   show() ของ A — เพราะ parameter
+   ต่างกัน = Overload ไม่ใช่ Override
+   → B มี show() สองตัวให้เลือกใช้ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดหลอกของข้อนี้:</b> คนที่จำสับ Override/Overload จะคิดว่า show() ของ A หายไป — ที่จริงยังอยู่ครบ เพราะ parameter ต่างกันจึงเป็นคนละ method · เรียก subOb.show() ได้ปกติ</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 interface -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · Interface</div>
+    <h2 class="slide-title">Interface — "บอกสิ่งที่คลาสจะต้องทำ แต่ไม่บอกว่าทำอย่างไร"</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กฎ 5 ข้อจากสไลด์ (ออกปรนัยแน่)</div>
+        <pre class="code-block">① method เป็น public เสมอ
+   และ "ไม่มี body"
+   → ไม่เขียน modifier ก็เป็น
+     public อัตโนมัติ
+
+② attribute เป็นได้เฉพาะ
+   "ค่าคงที่ + static"
+   → ไม่เขียน final/static ก็เป็นให้เอง
+   → ต้องกำหนดค่าเสมอ!
+
+③ modifier ของ interface
+   เป็นได้แค่ public หรือ default
+
+④ interface "instantiate ไม่ได้"
+   new InterfaceName(); ❌
+
+⑤ คลาสที่ implement ต้องเขียน
+   method "ทุกอัน" ที่ interface ประกาศ
+   โดย signature เหมือนกันทุกประการ</pre>
+      </div>
+      <div>
+        <div class="code-label">Syntax</div>
+        <pre class="code-block"><span class="kw">interface</span> <span class="fn">Rollable</span> {
+    <span class="kw">int</span> MAX = <span class="nm">100</span>;    <span class="cm">// = public static final!</span>
+    <span class="kw">void</span> <span class="fn">roll</span>();        <span class="cm">// = public abstract</span>
+}
+
+<span class="cm">// interface สืบทอด interface ได้ (หลายตัว)</span>
+<span class="kw">interface</span> <span class="fn">X</span> <span class="kw">extends</span> A, B { ... }
+
+<span class="cm">// class ทำสัญญาด้วย implements</span>
+<span class="kw">public class</span> <span class="fn">BallA</span> <span class="kw">extends</span> Ball
+                   <span class="kw">implements</span> Rollable {
+    <span class="kw">public void</span> <span class="fn">roll</span>() { ... }  <span class="cm">// ต้องมี!</span>
+}
+
+<span class="cm">/* ลำดับ: extends มาก่อน implements
+   extends ได้แม่เดียว
+   implements ได้หลายตัว คั่นด้วย , */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อหลอกที่ชอบออก:</b> "interface ประกาศ int x; ได้ไหม" → <b>ไม่ได้</b> ต้องกำหนดค่าเสมอ (เพราะเป็น final) · "interface มี constructor ได้ไหม" → ไม่ได้ (instantiate ไม่ได้)</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 abstract vs interface -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · เลือกใช้</div>
+    <h2 class="slide-title">abstract class vs interface</h2>
+    <table class="ct">
+      <thead><tr><th></th><th>abstract class</th><th>interface</th></tr></thead>
+      <tbody>
+        <tr><td>คีย์เวิร์ด</td><td>extends</td><td>implements</td></tr>
+        <tr><td>ได้กี่ตัว</td><td><b>แม่เดียว</b></td><td><b>หลายตัว</b></td></tr>
+        <tr><td>field</td><td>มีได้ทุกแบบ (private, ตัวแปรปกติ)</td><td>ค่าคงที่ (public static final) เท่านั้น</td></tr>
+        <tr><td>method มี body</td><td>มีได้</td><td>ไม่มี (แบบดั้งเดิมในสไลด์)</td></tr>
+        <tr><td>constructor</td><td>มีได้ (ลูกเรียก super)</td><td>ไม่มี</td></tr>
+        <tr><td>new ตรงๆ</td><td>ไม่ได้</td><td>ไม่ได้</td></tr>
+        <tr><td>ความหมาย</td><td><b>"เป็นอะไร" (is-a)</b> สายเลือด</td><td><b>"ทำอะไรได้" (can-do)</b> ใบรับรอง</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>วิธีตัดสินใจในข้อออกแบบ:</b> ถ้าคลาสลูกๆ "เป็นของตระกูลเดียวกัน + แชร์โค้ดกันได้" → abstract class · ถ้าแค่ "ต้องทำอะไรได้เหมือนกัน แต่คนละตระกูล" → interface (เช่น Withdrawable ที่ทั้งบัญชีและบัตรทำได้)</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 lab -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · เฉลย lab</div>
+    <h2 class="slide-title">เฉลย lab 7: Ball + Rollable — ท่าแก้ย่อ</h2>
+    <pre class="code-block"><span class="kw">public abstract class</span> <span class="fn">Ball</span> {
+    <span class="kw">public abstract void</span> <span class="fn">inflate</span>(<span class="kw">double</span> volume);   <span class="cm">// สัญญา: ต้องสูบลมได้</span>
+}
+<span class="kw">public interface</span> <span class="fn">Rollable</span> { <span class="kw">void</span> <span class="fn">roll</span>(); }        <span class="cm">// สัญญา: ต้องกลิ้งได้</span>
+
+<span class="kw">public class</span> <span class="fn">BallA</span> <span class="kw">extends</span> Ball <span class="kw">implements</span> Rollable {  <span class="cm">// เป็น Ball + กลิ้งได้</span>
+    <span class="kw">public void</span> <span class="fn">inflate</span>(<span class="kw">double</span> v) { System.out.<span class="fn">println</span>(<span class="st">"BallA inflate "</span>+v); }
+    <span class="kw">public void</span> <span class="fn">roll</span>()  { System.out.<span class="fn">println</span>(<span class="st">"BallA is rolling"</span>); }
+}
+<span class="kw">public class</span> <span class="fn">BallB</span> <span class="kw">extends</span> BallA {                     <span class="cm">// Override เฉพาะ roll</span>
+    <span class="kw">public void</span> <span class="fn">roll</span>() { System.out.<span class="fn">println</span>(<span class="st">"BallB is rolling"</span>); }
+}
+<span class="kw">public class</span> <span class="fn">BallC</span> <span class="kw">extends</span> BallA {                     <span class="cm">// Override เฉพาะ inflate</span>
+    <span class="kw">public void</span> <span class="fn">inflate</span>(<span class="kw">double</span> v) { System.out.<span class="fn">println</span>(<span class="st">"BallC inflate "</span>+v); }
+}
+
+<span class="kw">public static void</span> <span class="fn">TestBall</span>(Ball b) {          <span class="cm">// รับชนิดแม่ → รับลูกได้ทุกตัว</span>
+    b.<span class="fn">inflate</span>(<span class="nm">100</span>);                            <span class="cm">// Dynamic binding เลือกเอง</span>
+    <span class="kw">if</span> (b <span class="kw">instanceof</span> Rollable) ((Rollable) b).<span class="fn">roll</span>();  <span class="cm">// เช็คก่อน cast</span>
+}
+<span class="cm">/* TestBall(new BallB()) → "BallA inflate 100" (ตกทอด) + "BallB is rolling" (Override)
+   TestBall(new BallC()) → "BallC inflate 100" (Override) + "BallA is rolling" (ตกทอด) */</span></pre>
+    <div class="exam"><b>เฉลยเต็มทั้ง 2 ข้อของ lab 7 (รวมระบบ BaseAccount/Card/Withdrawable)</b> อยู่ในวิชา <a href="../subject_oop/slides_ch7.html" style="color:var(--ca)">OOP Lab 2–7 บท Lab 7</a> — ที่นั่นมีโค้ดครบทุกคลาส</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 instanceof -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · เครื่องมือเสริม</div>
+    <h2 class="slide-title">instanceof + Upcasting/Downcasting</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">สองทิศของการแปลงชนิด</div>
+        <pre class="code-block"><span class="cm">// Upcasting — ลูก → แม่ (ทำได้เลย)</span>
+Ball b = <span class="kw">new</span> <span class="fn">BallA</span>();      <span class="cm">// ✓ อัตโนมัติ</span>
+
+<span class="cm">// Downcasting — แม่ → ลูก (ต้องเขียน cast)</span>
+BallA a = (BallA) b;         <span class="cm">// ต้องระบุเอง</span>
+
+<span class="cm">/* ทำไม upcast ปลอดภัย?
+   BallA "เป็น" Ball แน่นอน (is-a)
+   แต่ Ball ไม่จำเป็นต้องเป็น BallA
+   → downcast ผิดตัว = ClassCastException
+     ตอน run-time! */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">instanceof กันพัง</div>
+        <pre class="code-block"><span class="kw">if</span> (b <span class="kw">instanceof</span> Rollable) {
+    ((Rollable) b).<span class="fn">roll</span>();   <span class="cm">// ปลอดภัย</span>
+}
+
+<span class="cm">/* instanceof คืน true ถ้าเป็น
+   "ชนิดนั้น หรือลูกของชนิดนั้น"
+   หรือ implement interface นั้น
+
+   BallB b2 = new BallB();
+   b2 instanceof BallB    → true
+   b2 instanceof BallA    → true (แม่)
+   b2 instanceof Ball     → true (ปู่)
+   b2 instanceof Rollable → true (ผ่าน BallA) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อควรระวังเชิงออกแบบ:</b> ถ้าโค้ดเต็มไปด้วย instanceof + cast แสดงว่า design ยังไม่ polymorphic พอ — ควรย้าย logic ไปเป็น method ใน class ลูกแทน แล้วเรียกผ่านชนิดแม่ตรงๆ</div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โค้ดนี้พิมพ์อะไร?<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+class P { void go(){ System.out.print("P"); } }<br>
+class Q extends P { void go(){ System.out.print("Q"); } }<br>
+class R extends Q { }<br>
+<br>
+P x = new R();&nbsp;&nbsp;x.go();
+</code><br><br>
+<em>ใบ้: R ไม่ได้ Override go() → ไล่ขึ้นไปหาแม่<br>
+แม่ตรงของ R คือ Q ซึ่ง Override ไว้ → พิมพ์ "Q"<br><br>
+กฎ: ไล่จาก "คลาสของวัตถุจริง" ขึ้นไปหาตัวแรกที่มี method นั้น</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ข้อใดคือ Overloading (ไม่ใช่ Overriding)?</h2>
+    <div id="mc-o7" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-o7','A','C','❌ นี่คือ Override — คลาสลูกเขียนทับ method แม่ที่ signature เหมือนกัน')">A) คลาสลูกเขียน toString() ทับของแม่</button>
+      <button class="mc-btn" onclick="pickMC('mc-o7','B','C','❌ implements คือทำตามสัญญา interface — นับเป็นการ override abstract method')">B) คลาสเขียน roll() ตามที่ interface กำหนด</button>
+      <button class="mc-btn" onclick="pickMC('mc-o7','C','C','✅ คลาสเดียวกัน ชื่อเดียวกัน parameter ต่างกัน = Overloading (constructor ก็ overload ได้)')">C) คลาสเดียวมี show() และ show(String msg)</button>
+      <button class="mc-btn" onclick="pickMC('mc-o7','D','C','❌ super.method() คือการเรียกใช้ของแม่ ไม่ใช่การสร้าง method ใหม่')">D) คลาสลูกเรียก super.printInfo()</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">Overload = "คลาสเดียวกัน ชื่อซ้ำ parameter ต่าง" ตัดสินตอน compile จาก parameter list
+Override = "แม่-ลูก signature เหมือนเป๊ะ" ตัดสินตอน run-time จากชนิดวัตถุจริง</pre>
+  </div>
+</div>
+
+<!-- SLIDE 11 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 7 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 8</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① attribute ใน interface จะเป็น public, static และ ___ โดยอัตโนมัติ</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo7a" placeholder="keyword">
+      <button class="fill-btn" onclick="checkFill('fo7a','final',['final'],[],'✅ final — จึงต้องกำหนดค่าตอนประกาศเสมอ (เป็นค่าคงที่)','❌ final — public static final ทั้งสามตัวเติมให้อัตโนมัติ')">ตรวจ</button>
+    </div>
+    <div id="fo7a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② JVM ตัดสิน Overriding ตอน ___ time (compile/run)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo7b" placeholder="ตอนไหน">
+      <button class="fill-btn" onclick="checkFill('fo7b','run',['runtime','run-time','run time'],[],'✅ run-time — ดูชนิดวัตถุจริง (Dynamic Binding) · Overloading ตัดสินตอน compile','❌ run-time — Override ดูวัตถุจริงตอนรัน, Overload ดู parameter ตอน compile')">ตรวจ</button>
+    </div>
+    <div id="fo7b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ คลาสหนึ่ง implements interface ได้ ___ ตัว (จำนวน)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo7c" placeholder="จำนวน">
+      <button class="fill-btn" onclick="checkFill('fo7c','หลาย',['many','ได้หลายตัว','ไม่จำกัด','หลายตัว'],[],'✅ หลายตัว (คั่นด้วย ,) — ต่างจาก extends ที่ได้แม่เดียว','❌ หลายตัว — implements A, B, C ได้ แต่ extends ได้แม่เดียว')">ตรวจ</button>
+    </div>
+    <div id="fo7c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 12 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🎭</div>
+      <div class="summary-title">จบติวบทที่ 7 — Polymorphism + Interface</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">นิยาม</div><div class="sum-body">วัตถุต่างกันตอบสนองข่าวสารเดียวกันต่างกัน · poly=หลาย morph=รูปแบบ</div></div>
+        <div class="sum-card"><div class="sum-head">2 รูปแบบ</div><div class="sum-body">Overload (คลาสเดียว param ต่าง) · Override (แม่-ลูก signature เหมือน)</div></div>
+        <div class="sum-card"><div class="sum-head">Dynamic Binding</div><div class="sum-body">ดูฝั่งขวาของ new — ชนิดตัวแปรมีผลแค่ตอน compile</div></div>
+        <div class="sum-card"><div class="sum-head">Interface 5 กฎ</div><div class="sum-body">method public ไม่มี body · field เป็นค่าคงที่ · new ไม่ได้ · implement ครบทุก method</div></div>
+        <div class="sum-card"><div class="sum-head">abstract vs interface</div><div class="sum-body">is-a สายเลือดแม่เดียว vs can-do ใบรับรองหลายใบ</div></div>
+        <div class="sum-card"><div class="sum-head">Cast</div><div class="sum-body">upcast อัตโนมัติ · downcast ต้องเขียนเอง + เช็ค instanceof ก่อน</div></div>
+      </div>
+      <a href="slides_ch8.html" class="summary-next">→ ติวบทที่ 8: Nested / Inner Class</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 7 — Polymorphism + Interface</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','นิยาม Polymorphism','Overload vs Override','เฉลย Dispatch','เฉลย OverloadTest','Interface 5 กฎ','abstract vs interface','เฉลย lab Ball','instanceof + cast','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

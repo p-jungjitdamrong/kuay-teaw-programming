@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheat Sheet ก่อนเข้าห้องสอบ | ติวสอบ OOP Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#0f766e;--cal:#dcf5f2;--cam:#3fa89e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.cs{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.cs th{background:var(--ca);color:#fff;padding:5px 9px;text-align:left;font-weight:600;}
+.cs td{padding:5px 9px;border:1px solid var(--line);font-family:var(--mono);}
+.cs td:first-child{font-family:var(--sans);font-weight:600;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🎭 ติวสอบ Final · 02204172 OOP (Java)</div>
+        <div class="cover-title">ด่านสุดท้าย<br><em>Cheat Sheet</em></div>
+        <div class="cover-subtitle">ทวนรอบสุดท้าย — ทุกศัพท์ ทุกตาราง ทุกจุดหลอกของครึ่งหลัง</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ศัพท์บท 7–13 ในหน้าเดียว</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตารางเทียบที่ออกบ่อยที่สุด 4 ตาราง</div>
+          <div class="topic-row"><div class="topic-dot"></div>10 จุดหลอกที่เสียคะแนนฟรี</div>
+          <div class="topic-row"><div class="topic-dot"></div>โค้ด 5 ท่าท่องจำ + แผนคืนก่อนสอบ</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">✓</div>
+        <div class="cover-badge">ทวน 30 นาทีจบ</div>
+        <div class="cover-slides-count">9 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 ศัพท์ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ศัพท์</div>
+    <h2 class="slide-title">ศัพท์บท 7–13 ทุกคำในหน้าเดียว</h2>
+    <table class="cs">
+      <thead><tr><th>ศัพท์</th><th>ความหมายสั้นที่สุดที่ยังถูก</th></tr></thead>
+      <tbody>
+        <tr><td>Polymorphism</td><td>วัตถุต่างกันตอบสนองข่าวสารเดียวกันต่างกัน (poly=หลาย morph=รูปแบบ)</td></tr>
+        <tr><td>Overloading</td><td>ชื่อซ้ำในคลาสเดียว parameter ต่าง — ตัดสินตอน compile</td></tr>
+        <tr><td>Overriding</td><td>ลูกทับ method แม่ signature เหมือนเป๊ะ — ตัดสินตอน run-time</td></tr>
+        <tr><td>Interface</td><td>"บอกสิ่งที่ต้องทำ ไม่บอกว่าทำอย่างไร" — method ไม่มี body, field เป็นค่าคงที่</td></tr>
+        <tr><td>Inner class</td><td>คลาสในคลาส (ไม่ static) — เข้าถึง field ของ outer ได้แม้ private</td></tr>
+        <tr><td>Exception</td><td>ข้อผิดพลาดที่ "จัดการได้" · Error = ร้ายแรง ไม่ควรจับ</td></tr>
+        <tr><td>Checked</td><td>ไม่ใช่ Error/RuntimeException — compiler บังคับ try-catch หรือ throws</td></tr>
+        <tr><td>Event Listener</td><td>คลาสที่ implements ActionListener + เขียน actionPerformed()</td></tr>
+        <tr><td>Wrapper class</td><td>ห่อ primitive ให้เป็น object (int→Integer) — collection ต้องใช้</td></tr>
+        <tr><td>Autoboxing</td><td>primitive → object อัตโนมัติ (ทางกลับ = Autounboxing)</td></tr>
+        <tr><td>Generics &lt;T&gt;</td><td>กำหนดชนิดสมาชิก — ย้าย error จาก run-time มา compile-time</td></tr>
+        <tr><td>Stream</td><td>"ท่อ" ส่งข้อมูล source→sink · Stream=byte, Reader/Writer=char</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SLIDE 2 ตาราง -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · 4 ตารางทอง</div>
+    <h2 class="slide-title">4 ตารางเทียบที่ออกบ่อยที่สุด</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><b>① Overload vs Override</b>
+Overload: คลาสเดียว · param ต่าง · compile
+Override: แม่-ลูก · signature เหมือน · runtime
+
+<b>② abstract class vs interface</b>
+abstract: extends แม่เดียว · มี field/ctor ได้
+          "เป็นอะไร" (is-a)
+interface: implements หลายตัว · ค่าคงที่เท่านั้น
+          "ทำอะไรได้" (can-do)</pre>
+      </div>
+      <div>
+        <pre class="code-block"><b>③ Checked vs Unchecked</b>
+Unchecked: Error + RuntimeException
+           compiler ไม่บังคับ (NullPointer,
+           ArithmeticException, ArrayIndex...)
+Checked:   ที่เหลือ — บังคับจัดการ
+           (IOException, FileNotFound...)
+
+<b>④ List / Set / Map</b>
+List: ลำดับ + ซ้ำได้ + index (ArrayList)
+Set:  ห้ามซ้ำ (HashSet)
+Map:  key→value, key ห้ามซ้ำ (HashMap)</pre>
+      </div>
+    </div>
+    <div class="exam"><b>วิธีใช้:</b> คืนก่อนสอบเขียน 4 ตารางนี้จากความจำ — เขียนได้ครบ = ตอบข้อทฤษฎีครึ่งหลังได้เกือบหมด เพราะข้อสอบวนอยู่ 4 คู่เทียบนี้</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 จุดหลอก 1-5 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ห้ามพลาด</div>
+    <h2 class="slide-title">10 จุดหลอกเสียคะแนนฟรี (ข้อ 1–5)</h2>
+    <pre class="code-block"><span class="cm">① Dynamic binding — ดูฝั่งขวาของ new</span>
+   A r = new B(); r.callme(); → เรียกของ B ไม่ใช่ A
+   ชนิดตัวแปรมีผลแค่ตอน compile ว่า "เรียก method นี้ได้ไหม"
+
+<span class="cm">② Overload ไม่ได้ทับ Overload</span>
+   B มี show(String) ไม่ได้ลบ show() ของ A ทิ้ง — เรียกได้ทั้งคู่
+
+<span class="cm">③ interface: field ต้องกำหนดค่า</span>
+   int x;  ❌  → int x = 10; ✓  (เพราะเป็น public static final)
+
+<span class="cm">④ inner class new ยังไง</span>
+   มี static → new Outer.Inner()   ·   ไม่มี static → outerObj.new Inner()
+
+<span class="cm">⑤ catch เรียงลูกก่อนแม่</span>
+   catch(Exception) ไว้บนสุด แล้วตามด้วย catch(IOException) = compile error</pre>
+  </div>
+</div>
+
+<!-- SLIDE 4 จุดหลอก 6-10 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ห้ามพลาด</div>
+    <h2 class="slide-title">10 จุดหลอกเสียคะแนนฟรี (ข้อ 6–10)</h2>
+    <pre class="code-block"><span class="cm">⑥ throw vs throws</span>
+   throw (ไม่มี s) = โยนจริงในตัว method  ·  throws (มี s) = ประกาศที่หัว method
+
+<span class="cm">⑦ ลืม addActionListener</span>
+   compile ผ่าน หน้าต่างขึ้น แต่กดปุ่มเงียบ — bug ที่หาไม่เจอถ้าไม่รู้
+
+<span class="cm">⑧ Swing ไม่ได้แทนที่ AWT</span>
+   Swing สร้างบน AWT และยังใช้ event handling ของ AWT (ActionListener อยู่ java.awt.event)
+
+<span class="cm">⑨ JScrollPane ต้อง "ห่อ" ไม่ใช่ "add"</span>
+   new JScrollPane(area) ✓   ·   scrollPane.add(area) ✗
+
+<span class="cm">⑩ collection ใช้ primitive ไม่ได้</span>
+   ArrayList&lt;int&gt; ❌ → ArrayList&lt;Integer&gt; ✓  · และเทียบ wrapper ด้วย .equals() ไม่ใช่ ==</pre>
+    <div class="exam"><b>คืนก่อนสอบอ่านสองหน้านี้รอบเดียวพอ</b> — สิบข้อนี้คือจุดที่นักศึกษาเสียคะแนนซ้ำๆ ทุกปีในครึ่งหลังของวิชา</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 โค้ด 5 ท่า -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · โค้ดท่องจำ</div>
+    <h2 class="slide-title">โค้ด 5 ท่า — เขียนได้จากความจำ = ข้อเขียนโค้ดผ่าน</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">// ① interface + implements</span>
+<span class="kw">interface</span> <span class="fn">Rollable</span> { <span class="kw">void</span> <span class="fn">roll</span>(); }
+<span class="kw">class</span> <span class="fn">Ball</span> <span class="kw">implements</span> Rollable {
+    <span class="kw">public void</span> <span class="fn">roll</span>() { ... }
+}
+
+<span class="cm">// ② try-catch-finally</span>
+<span class="kw">try</span> { ... }
+<span class="kw">catch</span> (ArithmeticException e) {
+    System.out.<span class="fn">println</span>(e.<span class="fn">getMessage</span>());
+}
+<span class="kw">finally</span> { ... }
+
+<span class="cm">// ③ GUI + ActionListener 3 ขั้น</span>
+<span class="kw">class</span> <span class="fn">W</span> <span class="kw">extends</span> JFrame
+        <span class="kw">implements</span> ActionListener {   <span class="cm">// ①</span>
+    <span class="fn">W</span>() {
+        btn.<span class="fn">addActionListener</span>(<span class="kw">this</span>);   <span class="cm">// ②</span>
+        <span class="fn">setVisible</span>(<span class="kw">true</span>);
+    }
+    <span class="kw">public void</span> <span class="fn">actionPerformed</span>(ActionEvent e) { }  <span class="cm">// ③</span>
+}</pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">// ④ ArrayList + for-each</span>
+ArrayList&lt;Item&gt; list = <span class="kw">new</span> <span class="fn">ArrayList</span>&lt;&gt;();
+list.<span class="fn">add</span>(<span class="kw">new</span> <span class="fn">Item</span>(...));
+<span class="kw">for</span> (Item it : list) {
+    System.out.<span class="fn">println</span>(it);
+}
+
+<span class="cm">// ⑤ อ่าน/เขียนไฟล์</span>
+<span class="kw">try</span> (BufferedReader br = <span class="kw">new</span> <span class="fn">BufferedReader</span>(
+         <span class="kw">new</span> <span class="fn">FileReader</span>(<span class="st">"in.txt"</span>))) {
+    String line;
+    <span class="kw">while</span> ((line = br.<span class="fn">readLine</span>()) != <span class="kw">null</span>)
+        System.out.<span class="fn">println</span>(line);
+} <span class="kw">catch</span> (IOException e) { }
+
+<span class="kw">try</span> (PrintWriter pw = <span class="kw">new</span> <span class="fn">PrintWriter</span>(
+         <span class="kw">new</span> <span class="fn">FileWriter</span>(<span class="st">"out.txt"</span>))) {
+    pw.<span class="fn">println</span>(<span class="st">"data"</span>);
+} <span class="kw">catch</span> (IOException e) { }</pre>
+      </div>
+    </div>
+    <div class="exam"><b>ทดสอบ:</b> ปิดจอ เขียนทั้ง 5 ท่าลงกระดาษใน 15 นาที — ผ่าน = ข้อเขียนโค้ดของ final พร้อมแล้ว เพราะโจทย์ส่วนใหญ่คือการผสม 5 ท่านี้เข้าด้วยกัน</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 แผน -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · แผน</div>
+    <h2 class="slide-title">แผนคืนก่อนสอบ + ในห้องสอบ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คืนก่อนสอบ (2.5 ชั่วโมง)</div>
+        <pre class="code-block">□ 20 นาที: ศัพท์หน้าแรก
+  อธิบายปากเปล่าทุกคำ
+□ 20 นาที: เขียน 4 ตารางทอง
+  จากความจำ
+□ 40 นาที: เขียนโค้ด 5 ท่า
+  ลงกระดาษ ไม่เปิดดู
+□ 30 นาที: ไล่เฉลย lab
+  (num[5], Calculator, Item,
+   File IO) ผ่านตาอีกรอบ
+□ 20 นาที: อ่าน 10 จุดหลอก
+□ 20 นาที: ทำ MCQ ท้ายบท
+  ที่ยังไม่มั่นใจ
+□ นอน! สมองจัดระเบียบตอนหลับ</pre>
+      </div>
+      <div>
+        <div class="code-label">ในห้องสอบ</div>
+        <pre class="code-block">① กวาดทั้งฉบับ 2 นาที
+   ข้อทฤษฎี/ปรนัย ทำก่อน (เร็ว+ชัวร์)
+② ข้อ "โปรแกรมพิมพ์อะไร"
+   → ไล่ทีละบรรทัด เขียนค่าตัวแปรกำกับ
+   → ดูฝั่งขวาของ new เสมอ
+③ ข้อเขียนโค้ด ทำท้ายสุด
+   → เขียนโครงก่อน (class/method)
+     แล้วค่อยเติมเนื้อใน
+④ เหลือเวลา เช็ค:
+   - import ครบไหม
+   - semicolon ครบไหม
+   - actionPerformed มีไหม
+   - try-catch ครอบ IOException ไหม
+   - ArrayList มี generic ไหม</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ข้อสุดท้าย</div>
+    <h2 class="slide-title">ข้อรวบยอด — ผสม 4 บทในข้อเดียว</h2>
+    <pre class="code-block" style="margin-bottom:14px">ArrayList&lt;Integer&gt; list = <span class="kw">new</span> <span class="fn">ArrayList</span>&lt;&gt;();
+list.<span class="fn">add</span>(<span class="nm">10</span>);
+list.<span class="fn">add</span>(<span class="nm">20</span>);
+<span class="kw">try</span> {
+    System.out.<span class="fn">println</span>(list.<span class="fn">get</span>(<span class="nm">5</span>));
+} <span class="kw">catch</span> (IndexOutOfBoundsException e) {
+    System.out.<span class="fn">println</span>(<span class="st">"error"</span>);
+} <span class="kw">finally</span> {
+    System.out.<span class="fn">println</span>(list.<span class="fn">size</span>());
+}</pre>
+    <div id="mc-of" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-of','A','B','❌ list.get(5) พังทันที ไม่มีการพิมพ์ค่าออกมา')">A) null / 2</button>
+      <button class="mc-btn" onclick="pickMC('mc-of','B','B','✅ get(5) เกินขนาด (มีแค่ 2 ตัว) → IndexOutOfBoundsException → catch พิมพ์ "error" → finally ทำเสมอ พิมพ์ 2')">B) error / 2</button>
+      <button class="mc-btn" onclick="pickMC('mc-of','C','B','❌ finally ทำงานเสมอ — ไม่ว่าจะเกิด exception หรือไม่')">C) error (finally ไม่ทำงาน)</button>
+      <button class="mc-btn" onclick="pickMC('mc-of','D','B','❌ มี catch ที่ตรงชนิดแล้ว โปรแกรมไม่หยุด ทำงานต่อได้')">D) โปรแกรมหยุดทำงาน</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px"><span class="cm">// รวม 3 บท: ArrayList+Generic (12) · Exception (9) · autoboxing (12)
+// ไล่: add 2 ตัว → get(5) เกิน → โยน IndexOutOfBounds (unchecked)
+//      → catch ตรงชนิด พิมพ์ "error" → finally ทำเสมอ พิมพ์ size = 2</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Final -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🏆</div>
+      <div class="summary-title">พร้อมสอบ OOP Final แล้ว — ปิดวิชานี้กัน</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">บท 7</div><div class="sum-body">Overload/Override · Dynamic binding ดูฝั่งขวา new · interface 5 กฎ</div></div>
+        <div class="sum-card"><div class="sum-head">บท 8</div><div class="sum-body">inner เข้าถึง private ของ outer · static → new Outer.Inner()</div></div>
+        <div class="sum-card"><div class="sum-head">บท 9</div><div class="sum-body">Checked บังคับจัดการ · catch ลูกก่อนแม่ · finally ทำเสมอ</div></div>
+        <div class="sum-card"><div class="sum-head">บท 10–11</div><div class="sum-body">3 ขั้น ActionListener · Swing บน AWT · setVisible ท้ายสุด</div></div>
+        <div class="sum-card"><div class="sum-head">บท 12</div><div class="sum-body">wrapper + autoboxing · Generics · List ซ้ำได้ Set ห้ามซ้ำ</div></div>
+        <div class="sum-card"><div class="sum-head">บท 13</div><div class="sum-body">Stream=byte Reader/Writer=char · readLine() จน null · try-with-resources</div></div>
+      </div>
+      <a href="index.html" class="summary-next">🏠 กลับหน้าหลัก — ทวนบทไหนอีกรอบก็ได้ สู้ๆ 💪</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 9</span>
+      <span class="nav-chapter" id="chapterLabel">Cheat Sheet ก่อนเข้าห้องสอบ</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ศัพท์บท 7-13','4 ตารางทอง','จุดหลอก 1-5','จุดหลอก 6-10','โค้ด 5 ท่า','แผนก่อนสอบ','ข้อรวบยอด','พร้อมสอบแล้ว'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

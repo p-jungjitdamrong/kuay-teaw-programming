@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 8 — Nested / Inner Class | ติวสอบ OOP Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#0f766e;--cal:#dcf5f2;--cam:#3fa89e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.ct{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.ct th{background:var(--ca);color:#fff;padding:5px 9px;text-align:left;font-weight:600;}
+.ct td{padding:5px 9px;border:1px solid var(--line);}
+.ct td:first-child{font-weight:600;color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🎭 ติวสอบ Final · 02204172 OOP (Java)</div>
+        <div class="cover-title">ติวบทที่ 8<br><em>Nested / Inner Class</em></div>
+        <div class="cover-subtitle">คลาสซ้อนในคลาส — ทำไมต้องมี, static กับ non-static ต่างกันตรงไหน</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>เหตุผล 3 ข้อที่ต้องใช้ nested class</div>
+          <div class="topic-row"><div class="topic-dot"></div>static nested class vs inner class</div>
+          <div class="topic-row"><div class="topic-dot"></div>วิธี new แต่ละแบบ (จุดหลอก syntax!)</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตัวอย่าง Pair / ArrayAlg จากสไลด์</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลย lab 8: DebitCard เป็น inner class + Iterator</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">O8</div>
+        <div class="cover-badge">จุดหลอก SYNTAX</div>
+        <div class="cover-slides-count">11 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 ทำไม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · ทำไมต้องมี</div>
+    <h2 class="slide-title">เหตุผล 3 ข้อจากสไลด์ — ข้อบรรยายชอบถาม</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block">① Logical grouping of classes
+   "หากคลาสหนึ่งถูกเรียกใช้ในเพียง
+    คลาสเดียว ควรให้ฝังอยู่ในอีกคลาส
+    เพื่อให้ทั้งสองอยู่ด้วยกัน"
+   → คลาสที่ถูกเรียกใช้ = helper class
+
+② Increase encapsulation
+   "คลาสภายในเข้าถึงข้อมูลของคลาส
+    ภายนอกได้โดยตรง แม้ประกาศ private
+    และคลาสภายในถูกซ่อนจากคลาสอื่นได้
+    (ประกาศเป็น private)"
+
+③ More readable/maintainable code
+   "โค้ดของคลาสภายในอยู่ใกล้กับ
+    ที่ที่เรียกใช้มัน"</pre>
+      </div>
+      <div>
+        <div class="code-label">Syntax พื้นฐาน</div>
+        <pre class="code-block"><span class="kw">class</span> <span class="fn">OuterClass</span> {
+    <span class="cm">// ...</span>
+    <span class="kw">class</span> <span class="fn">InnerClass</span> {
+        <span class="cm">// ...</span>
+    }
+}
+
+<span class="cm">/* 2 ประเภทตามสไลด์:
+   ① static  → "static nested class"
+   ② non-static → "inner class"
+
+   ต่างกันแค่คำว่า static ข้างหน้า
+   แต่พฤติกรรมต่างกันมาก! */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>คีย์เวิร์ดที่กรรมการหา:</b> logical grouping (helper class) · เพิ่ม encapsulation (เข้าถึง private ของ outer ได้) · โค้ดอ่านง่าย/ดูแลง่าย — ตอบครบ 3 ข้อได้คะแนนเต็ม</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 static vs inner -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · ตารางบังคับจำ</div>
+    <h2 class="slide-title">static nested class vs inner class</h2>
+    <table class="ct">
+      <thead><tr><th></th><th>static nested class</th><th>inner class (non-static)</th></tr></thead>
+      <tbody>
+        <tr><td>ประกาศ</td><td><code class="inline-code">static class Inner</code></td><td><code class="inline-code">class Inner</code></td></tr>
+        <tr><td>เข้าถึง field ปกติของ outer</td><td><b>ไม่ได้</b> (ได้เฉพาะ static)</td><td><b>ได้ทุกตัว</b> แม้ private</td></tr>
+        <tr><td>ต้องมี object ของ outer ก่อนไหม</td><td>ไม่ต้อง</td><td><b>ต้องมี</b></td></tr>
+        <tr><td>วิธีสร้าง</td><td><code class="inline-code">new Outer.Inner()</code></td><td><code class="inline-code">outerObj.new Inner()</code></td></tr>
+        <tr><td>เรียกจาก static method ของ outer</td><td>ได้</td><td>ไม่ได้ (ต้องมี instance ก่อน)</td></tr>
+        <tr><td>ใช้บ่อยไหม</td><td>สไลด์บอก "ถูกใช้งานน้อย"</td><td>ใช้บ่อยกว่า</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>เหตุผลเบื้องหลังทั้งตาราง:</b> inner class ไม่ static → มัน "ผูกกับ instance ของ outer" เหมือน field ธรรมดา จึงเข้าถึงของ outer ได้ทุกตัว แต่ต้องมี outer object ก่อน · static nested → เป็นอิสระ เหมือนคลาสธรรมดาที่แค่ถูกเก็บไว้ในชื่อ outer</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 syntax new -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · จุดหลอก syntax</div>
+    <h2 class="slide-title">วิธี new — ท่อง 2 บรรทัดนี้ให้ขึ้นใจ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">static nested — ตรงไปตรงมา</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">OuterClass</span> {
+    <span class="kw">public static class</span> <span class="fn">InnerClass</span> {
+        <span class="cm">// ...</span>
+    }
+}
+
+<span class="cm">// สร้างจากที่ไหนก็ได้:</span>
+OuterClass.InnerClass in =
+    <span class="kw">new</span> OuterClass.<span class="fn">InnerClass</span>();
+
+<span class="cm">/* อ่านว่า "InnerClass ที่อยู่ใน
+   OuterClass" — เหมือน package */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">inner class — ต้องมี outer ก่อน!</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">OuterClass</span> {
+    <span class="kw">public class</span> <span class="fn">InnerClass</span> {
+        <span class="cm">// ...</span>
+    }
+}
+
+<span class="cm">// ① สร้าง outer ก่อน</span>
+OuterClass outer = <span class="kw">new</span> <span class="fn">OuterClass</span>();
+<span class="cm">// ② แล้วใช้ outer สร้าง inner</span>
+OuterClass.InnerClass in =
+    outer.<span class="kw">new</span> <span class="fn">InnerClass</span>();
+<span class="cm">//  ↑ syntax แปลกที่คนจำไม่ได้!</span>
+
+<span class="cm">/* new OuterClass.InnerClass() ❌
+   ใช้ไม่ได้กับ inner class ธรรมดา */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อสอบ syntax เก็งได้เลย:</b> ให้โค้ด nested class มาแล้วถาม "บรรทัดใดสร้าง object ได้ถูกต้อง" — ดูว่ามี <b>static</b> ไหม: มี → <code class="inline-code">new Outer.Inner()</code> · ไม่มี → <code class="inline-code">outerObj.new Inner()</code></div>
+  </div>
+</div>
+
+<!-- SLIDE 4 Pair example -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · ตัวอย่างในสไลด์</div>
+    <h2 class="slide-title">ตัวอย่างคลาสสิก: ArrayAlg.Pair — คืนค่า 2 ตัวจาก method เดียว</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">ArrayAlg</span> {
+    <span class="kw">public static class</span> <span class="fn">Pair</span> {              <span class="cm">// static nested — เป็น helper ล้วนๆ</span>
+        <span class="kw">private double</span> min, max;
+        <span class="kw">public</span> <span class="fn">Pair</span>(<span class="kw">double</span> f, <span class="kw">double</span> s) { min = f; max = s; }
+        <span class="kw">public double</span> <span class="fn">getMin</span>() { <span class="kw">return</span> min; }
+        <span class="kw">public double</span> <span class="fn">getMax</span>() { <span class="kw">return</span> max; }
+    }
+
+    <span class="kw">public static</span> Pair <span class="fn">minmax</span>(<span class="kw">double</span>[] values) {   <span class="cm">// คืน "คู่" ค่าในครั้งเดียว</span>
+        <span class="kw">double</span> min = Double.MAX_VALUE;
+        <span class="kw">double</span> max = Double.MIN_VALUE;
+        <span class="kw">for</span> (<span class="kw">double</span> v : values) {
+            <span class="kw">if</span> (min > v) min = v;
+            <span class="kw">if</span> (max &lt; v) max = v;
+        }
+        <span class="kw">return new</span> <span class="fn">Pair</span>(min, max);
+    }
+}
+
+<span class="cm">// ใช้งาน:</span>
+ArrayAlg.Pair p = ArrayAlg.<span class="fn">minmax</span>(d);
+System.out.<span class="fn">println</span>(p.<span class="fn">getMin</span>() + <span class="st">" "</span> + p.<span class="fn">getMax</span>());</pre>
+    <div class="exam"><b>ทำไมตัวอย่างนี้ถึงคลาสสิก:</b> Java คืนค่าจาก method ได้ทีละ 1 ตัว — อยากคืน min กับ max พร้อมกันจึงห่อใน Pair · และ Pair ถูกใช้แค่ใน ArrayAlg จึงควรฝังไว้ข้างใน (เหตุผลข้อ ① logical grouping เป๊ะๆ)</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 lab 8 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · เฉลย lab 8 (1/2)</div>
+    <h2 class="slide-title">เฉลย: ทำ DebitCard เป็น inner class ของ SavingAccount</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">SavingAccount</span> <span class="kw">extends</span> BaseAccount {
+    <span class="kw">private double</span> balance;
+    <span class="kw">private</span> Card card;
+
+    <span class="kw">public</span> <span class="fn">SavingAccount</span>(FixedSalary owner) {
+        <span class="kw">this</span>.balance = <span class="nm">0</span>;
+        <span class="kw">this</span>.card = <span class="kw">new</span> <span class="fn">DebitCard</span>(<span class="st">"xxx-xxx-5555"</span>);  <span class="cm">// อยู่ในคลาสอยู่แล้ว → new ตรงๆ ได้</span>
+    }
+
+    <span class="cm">// ── inner class (ไม่ใส่ static!) ──</span>
+    <span class="kw">public class</span> <span class="fn">DebitCard</span> <span class="kw">extends</span> Card {
+        <span class="kw">private</span> String cardNumber;
+        <span class="kw">public</span> <span class="fn">DebitCard</span>(String cardNumber) { <span class="kw">this</span>.cardNumber = cardNumber; }
+
+        <span class="kw">public</span> String <span class="fn">type</span>()     { <span class="kw">return</span> <span class="st">"visa"</span>; }
+        <span class="kw">public double</span> <span class="fn">discount</span>() { <span class="kw">return</span> <span class="nm">2.5</span>; }
+
+        <span class="kw">public boolean</span> <span class="fn">withdraw</span>(<span class="kw">double</span> amount) {
+            <span class="kw">if</span> (amount > balance) <span class="kw">return false</span>;   <span class="cm">// ← เข้าถึง balance ของ outer</span>
+            balance -= amount;                    <span class="cm">//   ได้ตรงๆ แม้เป็น private!</span>
+            <span class="kw">return true</span>;
+        }
+    }
+    <span class="kw">public</span> Card <span class="fn">getCard</span>() { <span class="kw">return</span> card; }
+}</pre>
+    <div class="exam"><b>จุดที่ทำให้เฉลยนี้ "ดีขึ้นกว่าเดิม":</b> เวอร์ชัน lab 7 ที่ DebitCard เป็นคลาสแยก ต้องเก็บ reference กลับไปหา account แล้วเรียก account.withdraw() — พอเป็น inner class เข้าถึง <code class="inline-code">balance</code> ได้ตรงๆ (เหตุผลข้อ ② increase encapsulation ที่สไลด์บอก)</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Iterator -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · เฉลย lab 8 (2/2)</div>
+    <h2 class="slide-title">เฉลย: NameRepository + Iterator (inner class ใช้จริง)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">main ที่โจทย์กำหนด</div>
+        <pre class="code-block">NameRepository namesRepository =
+    <span class="kw">new</span> <span class="fn">NameRepository</span>();
+
+<span class="kw">for</span> (Iterator iter =
+     namesRepository.<span class="fn">getIterator</span>();
+     iter.<span class="fn">hasNext</span>();) {
+    String name = (String) iter.<span class="fn">next</span>();
+    System.out.<span class="fn">println</span>(<span class="st">"Name : "</span> + name);
+}</pre>
+        <pre class="code-block"><span class="cm">// interface ที่ต้องประกาศ</span>
+<span class="kw">interface</span> <span class="fn">Container</span> {
+    Iterator <span class="fn">getIterator</span>();
+}
+<span class="kw">interface</span> <span class="fn">Iterator</span> {
+    <span class="kw">boolean</span> <span class="fn">hasNext</span>();
+    Object <span class="fn">next</span>();
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">คลาส + inner class</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">NameRepository</span> <span class="kw">implements</span> Container {
+    <span class="kw">private</span> String[] names =
+        {<span class="st">"Robert"</span>, <span class="st">"John"</span>, <span class="st">"Julie"</span>, <span class="st">"Lora"</span>};
+
+    <span class="kw">public</span> Iterator <span class="fn">getIterator</span>() {
+        <span class="kw">return new</span> <span class="fn">NameIterator</span>();   <span class="cm">// inner!</span>
+    }
+
+    <span class="kw">private class</span> <span class="fn">NameIterator</span> <span class="kw">implements</span> Iterator {
+        <span class="kw">int</span> index = <span class="nm">0</span>;
+
+        <span class="kw">public boolean</span> <span class="fn">hasNext</span>() {
+            <span class="kw">return</span> index &lt; names.length;  <span class="cm">// ใช้ names</span>
+        }                                    <span class="cm">// ของ outer ตรงๆ</span>
+        <span class="kw">public</span> Object <span class="fn">next</span>() {
+            <span class="kw">if</span> (<span class="fn">hasNext</span>()) <span class="kw">return</span> names[index++];
+            <span class="kw">return null</span>;
+        }
+    }
+}
+<span class="cm">/* Output: Name : Robert / John / Julie / Lora */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ทำไม NameIterator ต้องเป็น inner (ไม่ใช่ static):</b> มันต้องอ่าน array <code class="inline-code">names</code> ของ instance นั้นๆ — ถ้าเป็น static nested จะเข้าถึง field ปกติของ outer ไม่ได้เลย · และประกาศเป็น <b>private</b> เพื่อซ่อนจากคลาสอื่น (เหตุผลข้อ ②)</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โค้ดนี้ compile ผ่านไหม? ถ้าไม่ผ่าน แก้ยังไง?<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+public class Outer {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;private int x = 10;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public static class Helper {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void show() { System.out.println(x); }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}
+</code><br><br>
+<em>ใบ้: Helper เป็น static nested → เข้าถึงได้เฉพาะ static ของ outer<br>
+แต่ x เป็น field ปกติ (ไม่ static) → <b>compile error!</b><br><br>
+แก้ได้ 2 ทาง: ① เอา static ออกจาก Helper (เป็น inner class)<br>② ทำ x ให้เป็น static</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · ลองข้อสอบ</div>
+    <h2 class="slide-title">Outer มี inner class ธรรมดา (ไม่ static) — สร้างยังไงถูก?</h2>
+    <div id="mc-o8" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-o8','A','C','❌ new Outer.Inner() ใช้กับ static nested class เท่านั้น')">A) Outer.Inner i = new Outer.Inner();</button>
+      <button class="mc-btn" onclick="pickMC('mc-o8','B','C','❌ new Inner() ตรงๆ ทำได้เฉพาะ "ภายในคลาส Outer เอง" ไม่ใช่จากข้างนอก')">B) Inner i = new Inner();</button>
+      <button class="mc-btn" onclick="pickMC('mc-o8','C','C','✅ ต้องมี object ของ outer ก่อน แล้วใช้ syntax outerObj.new Inner() — เพราะ inner class ผูกกับ instance ของ outer')">C) Outer o = new Outer(); Outer.Inner i = o.new Inner();</button>
+      <button class="mc-btn" onclick="pickMC('mc-o8','D','C','❌ Outer.new Inner() ผิด syntax — ต้องเป็น object ไม่ใช่ชื่อคลาส')">D) Outer.Inner i = Outer.new Inner();</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">มี static → new Outer.Inner()        (ไม่ผูกกับ instance)
+ไม่มี static → outerObj.new Inner()   (ต้องมี outer object ก่อน)
+⚠️ ข้อ B ใช้ได้เฉพาะเมื่อเขียนอยู่ "ข้างในคลาส Outer" — จากข้างนอกใช้ไม่ได้</pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 8 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 9</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① inner class (ไม่ static) เข้าถึง field ที่เป็น private ของ outer class ได้หรือไม่</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo8a" placeholder="ได้/ไม่ได้">
+      <button class="fill-btn" onclick="checkFill('fo8a','ได้',['yes','ได้ครับ','เข้าถึงได้'],[],'✅ ได้ — นี่คือจุดเด่นข้อ "increase encapsulation" ในสไลด์','❌ ได้ — inner class เข้าถึงทุก field ของ outer แม้ private')">ตรวจ</button>
+    </div>
+    <div id="fo8a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② static nested class เข้าถึงได้เฉพาะสมาชิกที่เป็น ___ ของ outer</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo8b" placeholder="keyword">
+      <button class="fill-btn" onclick="checkFill('fo8b','static',['static เท่านั้น','สแตติก'],[],'✅ static — static nested เข้าถึงได้เฉพาะ static attribute/method ของ outer','❌ static — เพราะไม่ผูกกับ instance ใดของ outer')">ตรวจ</button>
+    </div>
+    <div id="fo8b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ คลาสภายในที่ถูกเรียกใช้โดยคลาสเดียว สไลด์เรียกว่า ___ class</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo8c" placeholder="คำศัพท์">
+      <button class="fill-btn" onclick="checkFill('fo8c','helper',['helper class','เฮลเปอร์'],[],'✅ helper class — เหตุผลข้อ logical grouping of classes','❌ helper class — คลาสผู้ช่วยที่ถูกใช้โดยคลาสเดียว จึงควรฝังไว้ข้างใน')">ตรวจ</button>
+    </div>
+    <div id="fo8c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">📦</div>
+      <div class="summary-title">จบติวบทที่ 8 — Nested / Inner Class</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">เหตุผล 3 ข้อ</div><div class="sum-body">logical grouping (helper) · เพิ่ม encapsulation · โค้ดอ่าน/ดูแลง่าย</div></div>
+        <div class="sum-card"><div class="sum-head">2 ประเภท</div><div class="sum-body">static nested (อิสระ) · inner class (ผูกกับ instance ของ outer)</div></div>
+        <div class="sum-card"><div class="sum-head">การเข้าถึง</div><div class="sum-body">inner เข้าถึงทุก field แม้ private · static nested ได้แค่ static</div></div>
+        <div class="sum-card"><div class="sum-head">Syntax new</div><div class="sum-body">static: new Outer.Inner() · inner: outerObj.new Inner()</div></div>
+        <div class="sum-card"><div class="sum-head">Pair pattern</div><div class="sum-body">ห่อค่าหลายตัวคืนจาก method เดียว — helper class ตัวอย่างคลาสสิก</div></div>
+        <div class="sum-card"><div class="sum-head">เฉลย lab</div><div class="sum-body">DebitCard เป็น inner → ใช้ balance ตรงๆ · NameIterator private inner</div></div>
+      </div>
+      <a href="slides_ch9.html" class="summary-next">→ ติวบทที่ 9: Exception Handling</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 8 — Nested / Inner Class</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','เหตุผล 3 ข้อ','static vs inner','Syntax new','ตัวอย่าง Pair','เฉลย lab DebitCard','เฉลย Iterator','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

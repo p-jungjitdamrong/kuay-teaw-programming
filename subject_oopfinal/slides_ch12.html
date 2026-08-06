@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 12 — Collection Framework | ติวสอบ OOP Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#0f766e;--cal:#dcf5f2;--cam:#3fa89e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.ct{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.ct th{background:var(--ca);color:#fff;padding:5px 9px;text-align:left;font-weight:600;}
+.ct td{padding:5px 9px;border:1px solid var(--line);}
+.ct td:first-child{font-weight:600;color:var(--ca);font-family:var(--mono);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🎭 ติวสอบ Final · 02204172 OOP (Java)</div>
+        <div class="cover-title">ติวบทที่ 12<br><em>Collection Framework</em></div>
+        <div class="cover-subtitle">array ที่ยืดได้ + Wrapper class + Generics — ของที่ใช้จริงทุกวัน</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Wrapper class — ตาราง 8 ตัวที่ต้องจำ</div>
+          <div class="topic-row"><div class="topic-dot"></div>Autoboxing / Autounboxing</div>
+          <div class="topic-row"><div class="topic-dot"></div>Generics &lt;T&gt; — ทำไมต้องมี</div>
+          <div class="topic-row"><div class="topic-dot"></div>List / Set / Map เลือกใช้ตัวไหน</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลย lab 12: ArrayList เก็บ item</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">O12</div>
+        <div class="cover-badge">ใช้จริงทุกวัน</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 wrapper -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · Wrapper Class</div>
+    <h2 class="slide-title">Wrapper Class — ห่อ primitive ให้กลายเป็น object</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตาราง 8 คู่ (สไลด์มีเต็มๆ)</div>
+        <table class="ct">
+          <thead><tr><th>Primitive</th><th>Wrapper</th></tr></thead>
+          <tbody>
+            <tr><td>boolean</td><td>Boolean</td></tr>
+            <tr><td>char</td><td><b>Character</b></td></tr>
+            <tr><td>byte</td><td>Byte</td></tr>
+            <tr><td>short</td><td>Short</td></tr>
+            <tr><td>int</td><td><b>Integer</b></td></tr>
+            <tr><td>long</td><td>Long</td></tr>
+            <tr><td>float</td><td>Float</td></tr>
+            <tr><td>double</td><td>Double</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="code-label">ทำไมต้องมี + จุดหลอก</div>
+        <pre class="code-block"><span class="cm">/* เหตุผลตามสไลด์:
+   "คอลเลคชั่นคลาส สมาชิกย่อยต้องเป็น
+    พอยต์เตอร์ไปยัง object
+    → ใช้ชุดข้อมูลพื้นฐานเป็นสมาชิก
+      ของ collection ไม่ได้!
+    (แต่มี wrapper class ใช้แทนได้) */</span>
+
+ArrayList&lt;<span class="kw">int</span>&gt; ❌      <span class="cm">// ใช้ไม่ได้!</span>
+ArrayList&lt;Integer&gt; ✓    <span class="cm">// ต้องใช้ wrapper</span>
+
+<span class="cm">/* 2 ชื่อที่ไม่ตรงตัว (ข้อสอบชอบหลอก):
+   char  → Character (ไม่ใช่ Char!)
+   int   → Integer   (ไม่ใช่ Int!)
+   ที่เหลือแค่เปลี่ยนตัวแรกเป็นพิมพ์ใหญ่ */</span>
+
+<span class="cm">/* wrapper object เป็น immutable
+   (แก้ค่าที่กำหนดไว้ไม่ได้) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>method ที่ใช้บ่อย (ส่วนใหญ่เป็น static เรียกผ่านชื่อคลาสได้เลย):</b> <code class="inline-code">Integer.parseInt("1")</code> · <code class="inline-code">Double.parseDouble(s)</code> · <code class="inline-code">Integer.valueOf(1)</code> — parseInt คืน primitive, valueOf คืน object</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 autoboxing -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · Boxing</div>
+    <h2 class="slide-title">Boxing / Unboxing + คำว่า "Auto"</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">4 คำจากสไลด์ (แยกให้ออก)</div>
+        <pre class="code-block"><span class="cm">// Boxing: primitive → object (เขียนเอง)</span>
+<span class="kw">int</span> x = <span class="nm">5</span>;
+Integer y = <span class="kw">new</span> <span class="fn">Integer</span>(x);
+
+<span class="cm">// Unboxing: object → primitive (เขียนเอง)</span>
+Integer a = <span class="kw">new</span> <span class="fn">Integer</span>(<span class="st">"5"</span>);
+<span class="kw">int</span> b = a.<span class="fn">intValue</span>();
+
+<span class="cm">// Autoboxing: อัตโนมัติ (J2SE 5.0+)</span>
+<span class="kw">int</span> p = <span class="nm">5</span>;
+Integer q = p;              <span class="cm">// ไม่ต้อง new!</span>
+
+<span class="cm">// Autounboxing: อัตโนมัติ</span>
+Integer m = <span class="kw">new</span> <span class="fn">Integer</span>(<span class="st">"5"</span>);
+<span class="kw">int</span> n = m;                  <span class="cm">// ไม่ต้อง intValue()!</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ประโยชน์ + จุดพัง</div>
+        <pre class="code-block"><span class="cm">/* ประโยชน์ตามสไลด์:
+   "สะดวกต่อการทำงานระหว่าง
+    primitive type และ collection" */</span>
+
+ArrayList&lt;Integer&gt; list = <span class="kw">new</span> <span class="fn">ArrayList</span>&lt;&gt;();
+list.<span class="fn">add</span>(<span class="nm">10</span>);          <span class="cm">// autoboxing!</span>
+<span class="kw">int</span> v = list.<span class="fn">get</span>(<span class="nm">0</span>);   <span class="cm">// autounboxing!</span>
+
+<span class="cm">/* ⚠️ จุดพังที่ข้อสอบชอบ:
+   Integer a = null;
+   int b = a;    → NullPointerException!
+   (autounboxing จาก null)
+
+   และการเทียบ:
+   Integer x = 1000, y = 1000;
+   x == y     → false! (คนละ object)
+   x.equals(y) → true  ✓
+   ← เทียบ wrapper ต้องใช้ equals */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>โยงกลับ midterm:</b> เรื่อง == vs equals กลับมาอีกครั้ง — wrapper เป็น object จึงต้องเทียบด้วย <code class="inline-code">.equals()</code> · แต่ primitive (int) เทียบด้วย == ได้ปกติ</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 generics -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · Generics</div>
+    <h2 class="slide-title">Generics &lt;T&gt; — ทำไมต้องมี (ตัวอย่าง Box ในสไลด์)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แบบเก่า: ใช้ Object</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">Box</span> {
+    <span class="kw">private</span> Object content;
+    <span class="kw">public</span> Object <span class="fn">getContent</span>() { <span class="kw">return</span> content; }
+    <span class="kw">public void</span> <span class="fn">setContent</span>(Object c) { content = c; }
+}
+
+Box myBox = <span class="kw">new</span> <span class="fn">Box</span>();
+myBox.<span class="fn">setContent</span>(<span class="st">"I am a String"</span>);
+String s = (String) myBox.<span class="fn">getContent</span>();
+<span class="cm">//         ↑ ต้อง cast ทุกครั้ง!</span>
+
+<span class="cm">/* ปัญหา:
+   ① ต้อง cast เอง เสี่ยงพลาด
+   ② ใส่อะไรก็ได้ — ใส่ Integer
+      แล้ว cast เป็น String
+      → ClassCastException ตอนรัน! */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">แบบใหม่: Generic &lt;T&gt;</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">Box</span>&lt;T&gt; {
+    <span class="kw">private</span> T content;
+    <span class="kw">public</span> T <span class="fn">getContent</span>() { <span class="kw">return</span> content; }
+    <span class="kw">public void</span> <span class="fn">setContent</span>(T c) { content = c; }
+}
+
+Box&lt;String&gt; myBox = <span class="kw">new</span> <span class="fn">Box</span>&lt;&gt;();
+myBox.<span class="fn">setContent</span>(<span class="st">"I am a String"</span>);
+String s = myBox.<span class="fn">getContent</span>();  <span class="cm">// no casting!</span>
+
+myBox.<span class="fn">setContent</span>(<span class="nm">1</span>);        <span class="cm">// compile error ✓</span>
+Integer i = myBox.<span class="fn">getContent</span>(); <span class="cm">// compile error ✓</span>
+
+<span class="cm">/* ข้อดี: ผิดตั้งแต่ compile
+   ไม่ต้องรอพังตอนรัน + ไม่ต้อง cast */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ประโยคทองของ Generics:</b> "ย้ายความผิดพลาดจาก run-time มาเป็น compile-time" — พังตอน compile ดีกว่าพังตอนลูกค้าใช้ · Java 1.5 ขึ้นไปถึงมี · <code class="inline-code">&lt;&gt;</code> ฝั่งขวาเว้นว่างได้ (diamond operator)</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 collection types -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · เลือกใช้</div>
+    <h2 class="slide-title">List / Set / Map — เลือกตัวไหนดี</h2>
+    <table class="ct">
+      <thead><tr><th>ตระกูล</th><th>คุณสมบัติ</th><th>คลาสที่ใช้</th><th>ใช้เมื่อ</th></tr></thead>
+      <tbody>
+        <tr><td>List</td><td>มีลำดับ · <b>ซ้ำได้</b> · เข้าถึงด้วย index</td><td>ArrayList, LinkedList</td><td>เก็บรายการเรียงลำดับ</td></tr>
+        <tr><td>Set</td><td>ไม่มีลำดับ · <b>ห้ามซ้ำ</b></td><td>HashSet, TreeSet</td><td>เก็บของไม่ซ้ำ (เช่นรหัสนิสิต)</td></tr>
+        <tr><td>Map</td><td>คู่ key→value · <b>key ห้ามซ้ำ</b></td><td>HashMap, TreeMap</td><td>ค้นด้วยคีย์ (เช่น รหัส→ชื่อ)</td></tr>
+      </tbody>
+    </table>
+    <div class="two-col" style="margin-top:8px">
+      <div>
+        <pre class="code-block"><span class="cm">// List — มีลำดับ ซ้ำได้</span>
+List&lt;String&gt; list = <span class="kw">new</span> <span class="fn">ArrayList</span>&lt;&gt;();
+list.<span class="fn">add</span>(<span class="st">"A"</span>); list.<span class="fn">add</span>(<span class="st">"A"</span>);   <span class="cm">// ได้ 2 ตัว</span>
+list.<span class="fn">get</span>(<span class="nm">0</span>);        <span class="cm">// เข้าถึงด้วย index</span>
+list.<span class="fn">size</span>();         <span class="cm">// จำนวน</span>
+list.<span class="fn">remove</span>(<span class="nm">0</span>);
+
+<span class="cm">// Set — ห้ามซ้ำ</span>
+Set&lt;String&gt; set = <span class="kw">new</span> <span class="fn">HashSet</span>&lt;&gt;();
+set.<span class="fn">add</span>(<span class="st">"A"</span>); set.<span class="fn">add</span>(<span class="st">"A"</span>);    <span class="cm">// เหลือ 1 ตัว!</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">// Map — คู่ key/value</span>
+Map&lt;String,<span class="kw">Integer</span>&gt; m = <span class="kw">new</span> <span class="fn">HashMap</span>&lt;&gt;();
+m.<span class="fn">put</span>(<span class="st">"apple"</span>, <span class="nm">50</span>);
+m.<span class="fn">put</span>(<span class="st">"banana"</span>, <span class="nm">30</span>);
+m.<span class="fn">get</span>(<span class="st">"apple"</span>);        <span class="cm">// 50</span>
+m.<span class="fn">containsKey</span>(<span class="st">"apple"</span>); <span class="cm">// true</span>
+
+<span class="cm">/* ArrayList vs LinkedList
+   (ความรู้จากวิชา Data Structures!)
+   ArrayList  → เข้าถึง index O(1)
+                แทรกกลาง O(n)
+   LinkedList → เข้าถึง O(n)
+                แทรก/ลบ O(1) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ประกาศแบบมืออาชีพ:</b> <code class="inline-code">List&lt;String&gt; list = new ArrayList&lt;&gt;();</code> — ฝั่งซ้ายใช้ <b>interface</b> ฝั่งขวาใช้ <b>คลาสจริง</b> · เปลี่ยนไปใช้ LinkedList ทีหลังแก้ที่เดียว (นี่คือ polymorphism บท 7 ใช้จริง!)</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 iterate -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · วนอ่าน</div>
+    <h2 class="slide-title">3 วิธีวนอ่าน Collection</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">// ① for ธรรมดา (ใช้กับ List เท่านั้น)</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; list.<span class="fn">size</span>(); i++) {
+    System.out.<span class="fn">println</span>(list.<span class="fn">get</span>(i));
+}
+
+<span class="cm">// ② for-each (ง่ายสุด นิยมสุด)</span>
+<span class="kw">for</span> (String s : list) {
+    System.out.<span class="fn">println</span>(s);
+}
+
+<span class="cm">// ③ Iterator (แบบที่ lab 8 ให้ทำเอง!)</span>
+Iterator&lt;String&gt; it = list.<span class="fn">iterator</span>();
+<span class="kw">while</span> (it.<span class="fn">hasNext</span>()) {
+    System.out.<span class="fn">println</span>(it.<span class="fn">next</span>());
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">วน Map ต้องใช้ท่าพิเศษ</div>
+        <pre class="code-block"><span class="cm">// วน key อย่างเดียว</span>
+<span class="kw">for</span> (String key : map.<span class="fn">keySet</span>()) {
+    System.out.<span class="fn">println</span>(key + <span class="st">" = "</span>
+                     + map.<span class="fn">get</span>(key));
+}
+
+<span class="cm">// วนทั้งคู่ (entrySet)</span>
+<span class="kw">for</span> (Map.Entry&lt;String,Integer&gt; e
+     : map.<span class="fn">entrySet</span>()) {
+    System.out.<span class="fn">println</span>(e.<span class="fn">getKey</span>()
+                     + <span class="st">" = "</span> + e.<span class="fn">getValue</span>());
+}
+
+<span class="cm">/* ⚠️ ห้ามลบสมาชิกระหว่าง for-each!
+   → ConcurrentModificationException
+   ต้องใช้ it.remove() ของ Iterator */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เชื่อมบท 8:</b> Iterator ที่ lab 8 ให้เขียนเอง (hasNext/next) คือ interface มาตรฐานตัวเดียวกับที่ collection ทุกตัวใน Java ใช้ — เขียนเองครั้งเดียวเข้าใจทั้งระบบ</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 lab12 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · เฉลย lab 12</div>
+    <h2 class="slide-title">เฉลย: คลาส Item + ArrayList เก็บรายการ</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">Item</span> {                      <span class="cm">// ตามที่โจทย์กำหนด 3 field</span>
+    <span class="kw">private</span> String name;
+    <span class="kw">private double</span> price;
+    <span class="kw">private int</span> quantity;
+
+    <span class="kw">public</span> <span class="fn">Item</span>(String name, <span class="kw">double</span> price, <span class="kw">int</span> quantity) {
+        <span class="kw">this</span>.name = name; <span class="kw">this</span>.price = price; <span class="kw">this</span>.quantity = quantity;
+    }
+    <span class="kw">public</span> String <span class="fn">getName</span>()   { <span class="kw">return</span> name; }
+    <span class="kw">public double</span> <span class="fn">getPrice</span>()  { <span class="kw">return</span> price; }
+    <span class="kw">public int</span> <span class="fn">getQuantity</span>()  { <span class="kw">return</span> quantity; }
+    <span class="kw">public double</span> <span class="fn">getTotal</span>()  { <span class="kw">return</span> price * quantity; }
+
+    <span class="kw">public</span> String <span class="fn">toString</span>() {                <span class="cm">// Override → println(item) สวย</span>
+        <span class="kw">return</span> String.<span class="fn">format</span>(<span class="st">"%-10s %8.2f %5d %10.2f"</span>,
+                             name, price, quantity, <span class="fn">getTotal</span>());
+    }
+}
+
+<span class="kw">import</span> java.util.*;
+<span class="kw">public class</span> <span class="fn">TestItem</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        Scanner sc = <span class="kw">new</span> <span class="fn">Scanner</span>(System.in);
+        ArrayList&lt;Item&gt; items = <span class="kw">new</span> <span class="fn">ArrayList</span>&lt;&gt;();   <span class="cm">// Generic! เก็บเฉพาะ Item</span>
+
+        <span class="kw">while</span> (<span class="kw">true</span>) {
+            System.out.<span class="fn">print</span>(<span class="st">"Name (พิมพ์ exit เพื่อจบ): "</span>);
+            String name = sc.<span class="fn">nextLine</span>();
+            <span class="kw">if</span> (name.<span class="fn">equals</span>(<span class="st">"exit"</span>)) <span class="kw">break</span>;        <span class="cm">// String → equals!</span>
+            System.out.<span class="fn">print</span>(<span class="st">"Price: "</span>);
+            <span class="kw">double</span> price = Double.<span class="fn">parseDouble</span>(sc.<span class="fn">nextLine</span>());
+            System.out.<span class="fn">print</span>(<span class="st">"Quantity: "</span>);
+            <span class="kw">int</span> qty = Integer.<span class="fn">parseInt</span>(sc.<span class="fn">nextLine</span>());
+            items.<span class="fn">add</span>(<span class="kw">new</span> <span class="fn">Item</span>(name, price, qty));     <span class="cm">// เพิ่มลง list</span>
+        }
+
+        <span class="kw">double</span> grand = <span class="nm">0</span>;
+        System.out.<span class="fn">printf</span>(<span class="st">"%-10s %8s %5s %10s%n"</span>, <span class="st">"NAME"</span>,<span class="st">"PRICE"</span>,<span class="st">"QTY"</span>,<span class="st">"TOTAL"</span>);
+        <span class="kw">for</span> (Item it : items) {                       <span class="cm">// for-each</span>
+            System.out.<span class="fn">println</span>(it);                    <span class="cm">// เรียก toString() อัตโนมัติ</span>
+            grand += it.<span class="fn">getTotal</span>();
+        }
+        System.out.<span class="fn">printf</span>(<span class="st">"Grand Total: %.2f%n"</span>, grand);
+    }
+}</pre>
+    <div class="exam"><b>4 จุดให้คะแนนของข้อนี้:</b> ① คลาส Item ครบ 3 field + getter ② ใช้ <code class="inline-code">ArrayList&lt;Item&gt;</code> (มี generic!) ③ วนรับจนกว่าจะจบด้วย add() ④ for-each รวมยอด — และ toString() ทำให้ println สวยโดยไม่ต้องเขียนซ้ำ</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โค้ดนี้พิมพ์อะไร?<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+Set&lt;String&gt; s = new HashSet&lt;&gt;();<br>
+s.add("A"); s.add("B"); s.add("A");<br>
+System.out.println(s.size());<br>
+<br>
+List&lt;String&gt; l = new ArrayList&lt;&gt;();<br>
+l.add("A"); l.add("B"); l.add("A");<br>
+System.out.println(l.size());
+</code><br><br>
+<em>เฉลย: 2 แล้วก็ 3<br>
+Set ห้ามซ้ำ → "A" ตัวที่สองถูกทิ้ง → size 2<br>
+List ซ้ำได้ → เก็บครบ → size 3<br><br>
+นี่คือความต่างที่ข้อสอบชอบถามที่สุดของบทนี้</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ข้อใดประกาศ ArrayList เก็บจำนวนเต็มได้ถูกต้อง?</h2>
+    <div id="mc-o12" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-o12','A','C','❌ ArrayList<int> ใช้ไม่ได้ — collection รับได้เฉพาะ object ต้องใช้ wrapper class')">A) ArrayList&lt;int&gt; list = new ArrayList&lt;int&gt;();</button>
+      <button class="mc-btn" onclick="pickMC('mc-o12','B','C','❌ Int ไม่ใช่ชื่อคลาสใน Java — wrapper ของ int คือ Integer')">B) ArrayList&lt;Int&gt; list = new ArrayList&lt;&gt;();</button>
+      <button class="mc-btn" onclick="pickMC('mc-o12','C','C','✅ ใช้ wrapper class Integer + diamond operator <> ฝั่งขวา — ถูกต้องทั้งคู่')">C) ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;();</button>
+      <button class="mc-btn" onclick="pickMC('mc-o12','D','C','❌ ประกาศแบบไม่มี generic ยังทำงานได้ แต่ต้อง cast เอง เสี่ยง ClassCastException — ไม่ใช่คำตอบที่ดีที่สุด')">D) ArrayList list = new ArrayList();</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">กฎ 2 ข้อ: ① collection รับเฉพาะ object → primitive ต้องใช้ wrapper (int → Integer)
+② ชื่อ wrapper ที่ไม่ตรงตัว: int → Integer, char → Character (ที่เหลือแค่พิมพ์ใหญ่ตัวแรก)</pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 13</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① wrapper class ของ char คือ ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo12a" placeholder="ชื่อคลาส">
+      <button class="fill-btn" onclick="checkFill('fo12a','Character',['character'],[],'✅ Character — หนึ่งใน 2 ตัวที่ชื่อไม่ตรงตัว (อีกตัวคือ int → Integer)','❌ Character (ไม่ใช่ Char!) — คู่กับ int → Integer')">ตรวจ</button>
+    </div>
+    <div id="fo12a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② collection ตระกูลใดที่สมาชิก "ห้ามซ้ำ"</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo12b" placeholder="ชื่อตระกูล">
+      <button class="fill-btn" onclick="checkFill('fo12b','Set',['set','hashset'],[],'✅ Set (HashSet/TreeSet) — เพิ่มค่าซ้ำจะถูกทิ้ง · List ซ้ำได้','❌ Set — ห้ามซ้ำ · List ซ้ำได้ · Map ห้าม key ซ้ำ')">ตรวจ</button>
+    </div>
+    <div id="fo12b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ การแปลง primitive เป็น object โดยอัตโนมัติเรียกว่า ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo12c" placeholder="คำศัพท์">
+      <button class="fill-btn" onclick="checkFill('fo12c','autoboxing',['auto boxing','ออโต้บ็อกซิ่ง'],[],'✅ Autoboxing — ทางกลับคือ Autounboxing (object → primitive)','❌ Autoboxing — primitive→object · Autounboxing คือ object→primitive')">ตรวจ</button>
+    </div>
+    <div id="fo12c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🗃️</div>
+      <div class="summary-title">จบติวบทที่ 12 — Collection Framework</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Wrapper</div><div class="sum-body">8 คู่ · int→Integer, char→Character (2 ตัวที่ไม่ตรงตัว) · immutable</div></div>
+        <div class="sum-card"><div class="sum-head">Autoboxing</div><div class="sum-body">primitive↔object อัตโนมัติ · ระวัง null → NullPointerException</div></div>
+        <div class="sum-card"><div class="sum-head">Generics</div><div class="sum-body">&lt;T&gt; ย้าย error จาก run-time มา compile-time + ไม่ต้อง cast</div></div>
+        <div class="sum-card"><div class="sum-head">3 ตระกูล</div><div class="sum-body">List (ลำดับ+ซ้ำได้) · Set (ห้ามซ้ำ) · Map (key→value)</div></div>
+        <div class="sum-card"><div class="sum-head">วนอ่าน</div><div class="sum-body">for / for-each / Iterator · Map ใช้ keySet() หรือ entrySet()</div></div>
+        <div class="sum-card"><div class="sum-head">เฉลย lab</div><div class="sum-body">ArrayList&lt;Item&gt; + toString() Override + for-each รวมยอด</div></div>
+      </div>
+      <a href="slides_ch13.html" class="summary-next">→ ติวบทที่ 13: Java IO</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 12 — Collection Framework</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Wrapper Class','Autoboxing','Generics','List/Set/Map','วนอ่าน 3 วิธี','เฉลย lab Item','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

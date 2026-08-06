@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 13 — Java IO | ติวสอบ OOP Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#0f766e;--cal:#dcf5f2;--cam:#3fa89e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.ct{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.ct th{background:var(--ca);color:#fff;padding:5px 9px;text-align:left;font-weight:600;}
+.ct td{padding:5px 9px;border:1px solid var(--line);}
+.ct td:first-child{font-weight:600;color:var(--ca);font-family:var(--mono);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🎭 ติวสอบ Final · 02204172 OOP (Java)</div>
+        <div class="cover-title">ติวบทที่ 13<br><em>Java IO</em></div>
+        <div class="cover-subtitle">บทสุดท้าย — Stream คือ "ท่อ" ส่งข้อมูล อ่าน/เขียนไฟล์ให้เป็น</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Stream = ท่อจาก source → sink</div>
+          <div class="topic-row"><div class="topic-dot"></div>Byte stream vs Character stream (4 คลาสฐาน)</div>
+          <div class="topic-row"><div class="topic-dot"></div>คลาส File — constructor + method</div>
+          <div class="topic-row"><div class="topic-dot"></div>อ่าน/เขียนไฟล์ + ปิดให้ถูก (try-with-resources)</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลย lab 13: บันทึก item ลงไฟล์</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">O13</div>
+        <div class="cover-badge">บทปิดท้าย</div>
+        <div class="cover-slides-count">12 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 stream -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 13 · แนวคิด</div>
+    <h2 class="slide-title">Stream คืออะไร — นิยามตามสไลด์</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block">"Stream เป็นเหมือน 'ท่อ' ส่งข้อมูล
+ จากต้นทาง (source) ไปยังปลายทาง (sink)
+
+ source = ตำแหน่งเริ่มต้นของ stream
+        → เรียกว่า input stream
+ sink   = ตำแหน่งสิ้นสุดของ stream
+        → เรียกว่า output stream
+
+ source หรือ sink อาจเป็น
+ ฮาร์ดแวร์หรือซอฟต์แวร์
+ เช่น ไฟล์ หน่วยความจำ หรือ socket"</pre>
+      </div>
+      <div>
+        <div class="diagram">อ่านไฟล์ (input):
+  [ไฟล์] ══ท่อ══▶ [โปรแกรม]
+  source              sink
+
+เขียนไฟล์ (output):
+  [โปรแกรม] ══ท่อ══▶ [ไฟล์]
+   source              sink
+
+<span style="color:#8a8276">มองจาก "มุมของโปรแกรม" เสมอ:
+เข้าโปรแกรม = input
+ออกจากโปรแกรม = output</span></div>
+        <pre class="code-block"><span class="cm">/* 2 ชนิดตามสไลด์:
+   ① Byte stream
+   ② Character stream
+
+   "คำว่า stream โดยทั่วไปหมายถึง
+    byte stream
+    reader และ writer หมายถึง
+    character stream" */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>วิธีจำชื่อคลาสทั้งหมดของบทนี้:</b> ลงท้าย <b>Stream</b> = byte · ลงท้าย <b>Reader/Writer</b> = character · ขึ้นต้น <b>Input/Reader</b> = อ่าน · ขึ้นต้น <b>Output/Writer</b> = เขียน — รู้ 2 กฎนี้เดาชื่อคลาสได้หมด</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 4 คลาส -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 13 · java.io</div>
+    <h2 class="slide-title">4 คลาสพื้นฐานใน package java.io</h2>
+    <table class="ct">
+      <thead><tr><th>คลาสฐาน</th><th>ชนิดข้อมูล</th><th>ทิศทาง</th><th>คลาสลูกที่ใช้จริง</th></tr></thead>
+      <tbody>
+        <tr><td>InputStream</td><td>byte</td><td>อ่าน</td><td>FileInputStream</td></tr>
+        <tr><td>OutputStream</td><td>byte</td><td>เขียน</td><td>FileOutputStream</td></tr>
+        <tr><td>Reader</td><td>char</td><td>อ่าน</td><td>FileReader, BufferedReader</td></tr>
+        <tr><td>Writer</td><td>char</td><td>เขียน</td><td>FileWriter, PrintWriter</td></tr>
+      </tbody>
+    </table>
+    <div class="two-col" style="margin-top:8px">
+      <div>
+        <pre class="code-block"><span class="cm">/* เลือกใช้ตัวไหน:
+
+   ไฟล์ข้อความ (.txt, .csv)
+   → Reader / Writer (character)
+
+   ไฟล์ binary (.jpg, .mp3, .zip)
+   → InputStream / OutputStream (byte)
+
+   ← ข้อสอบถาม "ควรใช้คลาสใด"
+     ดูว่าไฟล์เป็นข้อความหรือไบนารี */</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">/* คลาสที่ "ห่อ" เพื่อเพิ่มความสามารถ
+   (Decorator pattern):
+
+   FileReader อ่านทีละตัวอักษร → ช้า
+   ห่อด้วย BufferedReader →
+     อ่านทีละบรรทัดได้ (readLine())
+     และเร็วขึ้นมาก
+
+   BufferedReader br = new BufferedReader(
+       new FileReader("data.txt"));
+   ← เห็น new ซ้อน new บ่อยมากในบทนี้ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ทำไมต้องห่อ (new ซ้อน new):</b> แต่ละคลาสทำหน้าที่เดียว — FileReader รู้วิธีเปิดไฟล์ · BufferedReader รู้วิธีอ่านทีละบรรทัดเร็วๆ · เอามาต่อกันได้ผลลัพธ์ที่ต้องการ (นี่คือการ compose object แบบ OOP)</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 File class -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 13 · คลาส File</div>
+    <h2 class="slide-title">คลาส File — แทน "ไฟล์หรือไดเรกทอรี"</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Constructor 3 แบบ (สไลด์ระบุ)</div>
+        <pre class="code-block"><span class="kw">public</span> <span class="fn">File</span>(String name)
+<span class="kw">public</span> <span class="fn">File</span>(String dir, String name)
+<span class="kw">public</span> <span class="fn">File</span>(File dir, String name)
+
+<span class="cm">// ตัวอย่าง</span>
+File f1 = <span class="kw">new</span> <span class="fn">File</span>(<span class="st">"data.txt"</span>);
+File f2 = <span class="kw">new</span> <span class="fn">File</span>(<span class="st">"C:/temp"</span>, <span class="st">"data.txt"</span>);
+
+<span class="cm">/* ⚠️ จุดหลอก:
+   new File("x.txt") "ไม่ได้สร้างไฟล์"!
+   แค่สร้าง object ที่ "อ้างถึง" path
+   ไฟล์จริงจะเกิดตอน createNewFile()
+   หรือตอนเขียนด้วย Writer */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">method ที่ใช้บ่อย</div>
+        <pre class="code-block">f.<span class="fn">exists</span>()        <span class="cm">// มีไฟล์นี้ไหม (boolean)</span>
+f.<span class="fn">getName</span>()       <span class="cm">// ชื่อไฟล์</span>
+f.<span class="fn">getPath</span>()       <span class="cm">// path</span>
+f.<span class="fn">length</span>()        <span class="cm">// ขนาด (byte)</span>
+f.<span class="fn">canRead</span>()       <span class="cm">// อ่านได้ไหม</span>
+f.<span class="fn">canWrite</span>()      <span class="cm">// เขียนได้ไหม</span>
+f.<span class="fn">isFile</span>()        <span class="cm">// เป็นไฟล์ไหม</span>
+f.<span class="fn">isDirectory</span>()   <span class="cm">// เป็นโฟลเดอร์ไหม</span>
+f.<span class="fn">delete</span>()        <span class="cm">// ลบ</span>
+f.<span class="fn">createNewFile</span>() <span class="cm">// สร้างไฟล์จริง (throws IOException)</span>
+f.<span class="fn">mkdir</span>()         <span class="cm">// สร้างโฟลเดอร์</span>
+f.<span class="fn">list</span>()          <span class="cm">// รายชื่อในโฟลเดอร์ (String[])</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>Pattern ที่ควรเขียนเสมอ:</b> <code class="inline-code">if (f.exists()) { ...อ่าน... } else { ...แจ้งว่าไม่มีไฟล์... }</code> — เช็คก่อนอ่าน ลด FileNotFoundException (ซึ่งเป็น <b>checked exception</b> จากบท 9!)</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 read write -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 13 · ท่าบังคับ</div>
+    <h2 class="slide-title">อ่าน / เขียนไฟล์ข้อความ — 2 ท่าที่ต้องเขียนได้</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">อ่านทีละบรรทัด</div>
+        <pre class="code-block"><span class="kw">import</span> java.io.*;
+
+<span class="kw">try</span> (BufferedReader br = <span class="kw">new</span> <span class="fn">BufferedReader</span>(
+         <span class="kw">new</span> <span class="fn">FileReader</span>(<span class="st">"data.txt"</span>))) {
+
+    String line;
+    <span class="kw">while</span> ((line = br.<span class="fn">readLine</span>()) != <span class="kw">null</span>) {
+        System.out.<span class="fn">println</span>(line);
+    }
+} <span class="kw">catch</span> (IOException e) {
+    System.out.<span class="fn">println</span>(<span class="st">"อ่านไฟล์ไม่ได้: "</span>
+                       + e.<span class="fn">getMessage</span>());
+}
+
+<span class="cm">/* readLine() คืน null เมื่อจบไฟล์
+   → เงื่อนไข while ใช้ != null */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">เขียนลงไฟล์</div>
+        <pre class="code-block"><span class="kw">try</span> (PrintWriter pw = <span class="kw">new</span> <span class="fn">PrintWriter</span>(
+         <span class="kw">new</span> <span class="fn">FileWriter</span>(<span class="st">"out.txt"</span>))) {
+
+    pw.<span class="fn">println</span>(<span class="st">"บรรทัดแรก"</span>);
+    pw.<span class="fn">printf</span>(<span class="st">"%s %.2f%n"</span>, <span class="st">"ราคา"</span>, <span class="nm">99.5</span>);
+
+} <span class="kw">catch</span> (IOException e) {
+    e.<span class="fn">printStackTrace</span>();
+}
+
+<span class="cm">/* PrintWriter ใช้ println/printf
+   ได้เหมือน System.out เลย!
+   ← ท่าที่จำง่ายที่สุด
+
+   เขียนต่อท้าย (ไม่ทับของเดิม):
+   new FileWriter("out.txt", true)
+                            ↑ append */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>try-with-resources</b> <code class="inline-code">try (... ) { }</code> — ประกาศ resource ในวงเล็บแล้ว Java <b>ปิดให้อัตโนมัติ</b> ไม่ต้องเขียน finally { close(); } · ถ้าเขียนแบบเก่าต้องมี <code class="inline-code">finally { br.close(); }</code> เสมอ ไม่งั้นไฟล์ค้าง</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 lab13 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 13 · เฉลย lab 13</div>
+    <h2 class="slide-title">เฉลย: บันทึกรายการ item ลงไฟล์ แล้วอ่านกลับ</h2>
+    <pre class="code-block"><span class="kw">import</span> java.io.*;
+<span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="fn">ItemFileIO</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        ArrayList&lt;Item&gt; items = <span class="kw">new</span> <span class="fn">ArrayList</span>&lt;&gt;();      <span class="cm">// ใช้ของบท 12</span>
+        items.<span class="fn">add</span>(<span class="kw">new</span> <span class="fn">Item</span>(<span class="st">"Mama"</span>, <span class="nm">5.5</span>, <span class="nm">10</span>));
+        items.<span class="fn">add</span>(<span class="kw">new</span> <span class="fn">Item</span>(<span class="st">"Lays"</span>, <span class="nm">10.5</span>, <span class="nm">3</span>));
+
+        <span class="cm">// ── เขียนลงไฟล์ ──</span>
+        <span class="kw">try</span> (PrintWriter pw = <span class="kw">new</span> <span class="fn">PrintWriter</span>(<span class="kw">new</span> <span class="fn">FileWriter</span>(<span class="st">"items.txt"</span>))) {
+            <span class="kw">for</span> (Item it : items) {
+                pw.<span class="fn">println</span>(it.<span class="fn">getName</span>() + <span class="st">","</span> + it.<span class="fn">getPrice</span>()
+                           + <span class="st">","</span> + it.<span class="fn">getQuantity</span>());     <span class="cm">// รูปแบบ CSV</span>
+            }
+            System.out.<span class="fn">println</span>(<span class="st">"บันทึกเรียบร้อย"</span>);
+        } <span class="kw">catch</span> (IOException e) {
+            System.out.<span class="fn">println</span>(<span class="st">"เขียนไฟล์ไม่ได้: "</span> + e.<span class="fn">getMessage</span>());
+        }
+
+        <span class="cm">// ── อ่านกลับมา ──</span>
+        ArrayList&lt;Item&gt; loaded = <span class="kw">new</span> <span class="fn">ArrayList</span>&lt;&gt;();
+        File f = <span class="kw">new</span> <span class="fn">File</span>(<span class="st">"items.txt"</span>);
+        <span class="kw">if</span> (!f.<span class="fn">exists</span>()) {                                <span class="cm">// เช็คก่อนอ่าน!</span>
+            System.out.<span class="fn">println</span>(<span class="st">"ไม่พบไฟล์"</span>);
+            <span class="kw">return</span>;
+        }
+        <span class="kw">try</span> (BufferedReader br = <span class="kw">new</span> <span class="fn">BufferedReader</span>(<span class="kw">new</span> <span class="fn">FileReader</span>(f))) {
+            String line;
+            <span class="kw">while</span> ((line = br.<span class="fn">readLine</span>()) != <span class="kw">null</span>) {
+                String[] p = line.<span class="fn">split</span>(<span class="st">","</span>);              <span class="cm">// แยกด้วย , (บท Array&String)</span>
+                loaded.<span class="fn">add</span>(<span class="kw">new</span> <span class="fn">Item</span>(p[<span class="nm">0</span>],
+                        Double.<span class="fn">parseDouble</span>(p[<span class="nm">1</span>]),           <span class="cm">// wrapper บท 12</span>
+                        Integer.<span class="fn">parseInt</span>(p[<span class="nm">2</span>])));
+            }
+        } <span class="kw">catch</span> (IOException e) {
+            System.out.<span class="fn">println</span>(<span class="st">"อ่านไฟล์ไม่ได้"</span>);
+        }
+
+        <span class="kw">double</span> grand = <span class="nm">0</span>;
+        <span class="kw">for</span> (Item it : loaded) { System.out.<span class="fn">println</span>(it); grand += it.<span class="fn">getTotal</span>(); }
+        System.out.<span class="fn">printf</span>(<span class="st">"Grand Total: %.2f%n"</span>, grand);
+    }
+}</pre>
+    <div class="exam"><b>ข้อนี้รวม 4 บทในข้อเดียว:</b> Item + ArrayList (บท 12) · try-catch IOException (บท 9) · split/parseDouble (บท 2 midterm) · File IO (บทนี้) — ข้อสอบ final ชอบออกแบบผสมแบบนี้แหละ</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 serialize -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 13 · ทางเลือก</div>
+    <h2 class="slide-title">เขียน "ทั้ง object" ลงไฟล์ — Serialization</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แทนที่จะแปลงเป็นข้อความเอง</div>
+        <pre class="code-block"><span class="cm">// ① คลาสต้อง implements Serializable</span>
+<span class="kw">public class</span> <span class="fn">Item</span> <span class="kw">implements</span> Serializable {
+    <span class="cm">// ... field เดิม ...</span>
+}
+
+<span class="cm">// ② เขียน object ทั้งก้อน</span>
+<span class="kw">try</span> (ObjectOutputStream out = <span class="kw">new</span> <span class="fn">ObjectOutputStream</span>(
+         <span class="kw">new</span> <span class="fn">FileOutputStream</span>(<span class="st">"items.dat"</span>))) {
+    out.<span class="fn">writeObject</span>(items);   <span class="cm">// ทั้ง ArrayList เลย!</span>
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">อ่านกลับ</div>
+        <pre class="code-block"><span class="kw">try</span> (ObjectInputStream in = <span class="kw">new</span> <span class="fn">ObjectInputStream</span>(
+         <span class="kw">new</span> <span class="fn">FileInputStream</span>(<span class="st">"items.dat"</span>))) {
+    ArrayList&lt;Item&gt; loaded =
+        (ArrayList&lt;Item&gt;) in.<span class="fn">readObject</span>();
+}
+
+<span class="cm">/* Serializable เป็น "marker interface"
+   — ไม่มี method ให้ implement เลย!
+   แค่ประกาศไว้เพื่อบอก JVM ว่า
+   "คลาสนี้ยอมให้แปลงเป็น byte ได้"
+
+   ← interface ที่ไม่มี method
+     ก็มีจริงในโลก (บท 7) */</span>
+
+<span class="cm">/* ไฟล์ที่ได้เป็น binary → ใช้
+   Stream ไม่ใช่ Reader/Writer */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เทียบ 2 วิธี:</b> เขียนเป็น <b>ข้อความ (CSV)</b> — คนอ่านได้ แก้ด้วย notepad ได้ แต่ต้อง parse เอง · <b>Serialization</b> — สะดวก เก็บทั้ง object แต่ไฟล์เป็น binary คนอ่านไม่ออก และต้อง implements Serializable</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โค้ดนี้ compile ไม่ผ่าน — เพราะอะไร?<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+public static void main(String[] args) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;FileReader fr = new FileReader("data.txt");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("opened");<br>
+}
+</code><br><br>
+<em>ใบ้: FileReader โยน FileNotFoundException<br>
+ซึ่งเป็น <b>Checked Exception</b> (บท 9!)<br>
+→ compiler บังคับให้จัดการ<br><br>
+แก้ได้ 2 ทาง: ① ห่อด้วย try-catch<br>② เติม <code>throws IOException</code> ที่หัว main</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 13 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ต้องการอ่านไฟล์ข้อความทีละบรรทัด ควรใช้คลาสใด?</h2>
+    <div id="mc-o13" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-o13','A','C','❌ FileInputStream เป็น byte stream — เหมาะกับไฟล์ binary ไม่ใช่ข้อความ และอ่านทีละบรรทัดไม่ได้')">A) FileInputStream</button>
+      <button class="mc-btn" onclick="pickMC('mc-o13','B','C','❌ FileWriter ใช้ "เขียน" ไม่ใช่อ่าน')">B) FileWriter</button>
+      <button class="mc-btn" onclick="pickMC('mc-o13','C','C','✅ BufferedReader ห่อ FileReader → มี readLine() อ่านทีละบรรทัดได้ และเป็น character stream เหมาะกับไฟล์ข้อความ')">C) BufferedReader ห่อ FileReader</button>
+      <button class="mc-btn" onclick="pickMC('mc-o13','D','C','❌ PrintWriter ใช้ "เขียน" (println/printf ลงไฟล์)')">D) PrintWriter</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">2 กฎเดาชื่อคลาส: ลงท้าย Stream = byte / ลงท้าย Reader-Writer = character
+                  ขึ้นต้น Input-Reader = อ่าน / ขึ้นต้น Output-Writer = เขียน
+ไฟล์ข้อความ + ทีละบรรทัด → new BufferedReader(new FileReader("f.txt")).readLine()</pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 13 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — บทสุดท้ายแล้ว!</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① คลาสฐาน 4 ตัวใน java.io ที่รับข้อมูลแบบ char คือ Reader กับ ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo13a" placeholder="ชื่อคลาส">
+      <button class="fill-btn" onclick="checkFill('fo13a','Writer',['writer'],[],'✅ Writer — คู่ char คือ Reader/Writer · คู่ byte คือ InputStream/OutputStream','❌ Writer — Reader อ่าน / Writer เขียน (ทั้งคู่เป็น character stream)')">ตรวจ</button>
+    </div>
+    <div id="fo13a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② br.readLine() คืนค่า ___ เมื่ออ่านจนจบไฟล์</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo13b" placeholder="ค่าอะไร">
+      <button class="fill-btn" onclick="checkFill('fo13b','null',['null','ค่า null'],[],'✅ null — จึงเขียน while ((line = br.readLine()) != null)','❌ null — เป็นเงื่อนไขจบ loop มาตรฐานของการอ่านไฟล์')">ตรวจ</button>
+    </div>
+    <div id="fo13b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ new File("x.txt") สร้างไฟล์จริงบนดิสก์เลยหรือไม่</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo13c" placeholder="ใช่/ไม่ใช่">
+      <button class="fill-btn" onclick="checkFill('fo13c','ไม่ใช่',['ไม่','no','ไม่สร้าง'],[],'✅ ไม่ใช่ — แค่สร้าง object ที่อ้างถึง path · ไฟล์เกิดตอน createNewFile() หรือเขียนด้วย Writer','❌ ไม่ใช่ — File object เป็นแค่ "ที่อยู่" ยังไม่ใช่ไฟล์จริง')">ตรวจ</button>
+    </div>
+    <div id="fo13c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">💾</div>
+      <div class="summary-title">จบติวบทที่ 13 — Java IO (ครบทุกบทแล้ว!)</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Stream</div><div class="sum-body">ท่อจาก source → sink · input=เข้าโปรแกรม output=ออกจากโปรแกรม</div></div>
+        <div class="sum-card"><div class="sum-head">4 คลาสฐาน</div><div class="sum-body">InputStream/OutputStream (byte) · Reader/Writer (char)</div></div>
+        <div class="sum-card"><div class="sum-head">เดาชื่อคลาส</div><div class="sum-body">ลงท้าย Stream=byte, Reader/Writer=char · ขึ้นต้น Input/Read=อ่าน</div></div>
+        <div class="sum-card"><div class="sum-head">File</div><div class="sum-body">new File() ไม่ได้สร้างไฟล์ · exists() เช็คก่อนอ่านเสมอ</div></div>
+        <div class="sum-card"><div class="sum-head">2 ท่าหลัก</div><div class="sum-body">BufferedReader.readLine() วน while != null · PrintWriter.println()</div></div>
+        <div class="sum-card"><div class="sum-head">try-with-resources</div><div class="sum-body">try(...) ปิดให้อัตโนมัติ · IOException เป็น checked ต้องจัดการ</div></div>
+      </div>
+      <a href="slides_final.html" class="summary-next">→ ด่านสุดท้าย: Cheat Sheet ก่อนเข้าห้องสอบ</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 13 — Java IO</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Stream คืออะไร','4 คลาสฐาน','คลาส File','อ่าน/เขียนไฟล์','เฉลย lab 13','Serialization','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
