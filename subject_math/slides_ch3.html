@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 3 — Binary Arithmetic + Bitwise | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#6a2c91;--cal:#f3e9fa;--cam:#9b59b6;}
+.op-table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.op-table th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;font-family:var(--mono);}
+.op-table td{padding:5px 10px;border-bottom:1px solid var(--line);font-family:var(--mono);}
+.op-table tr:nth-child(even) td{background:var(--cal);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Math for CS</div>
+        <div class="cover-title">บทที่ 3<br><em>Binary Arithmetic<br>+ Bitwise</em></div>
+        <div class="cover-subtitle">บวกลบฐาน 2, เลขติดลบใน computer, และ operators ที่เร็วที่สุดในภาษา C</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>บวกเลขฐาน 2 — ทดเหมือนฐาน 10</div>
+          <div class="topic-row"><div class="topic-dot"></div>Two's Complement — เลขติดลบเก็บยังไง</div>
+          <div class="topic-row"><div class="topic-dot"></div>Overflow — ทำไม int พังที่ 2.1 พันล้าน</div>
+          <div class="topic-row"><div class="topic-dot"></div>Bitwise: &amp; | ^ ~ &lt;&lt; &gt;&gt; ครบทุกตัว</div>
+          <div class="topic-row"><div class="topic-dot"></div>Bit Tricks ที่ใช้จริง + แบบฝึกหัด</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">03</div>
+        <div class="cover-badge">ARITHMETIC · BITWISE</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 บวกฐาน 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · บวก</div>
+    <h2 class="slide-title">บวกเลขฐาน 2 — กฎ 4 ข้อ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กฎการบวก</div>
+        <pre class="code-block">0 + 0 = 0
+0 + 1 = 1
+1 + 0 = 1
+1 + 1 = 10   ← เขียน 0 ทด 1!
+1 + 1 + 1 = 11 ← เขียน 1 ทด 1
+
+<span class="cm">/* เหมือนฐาน 10:
+   7+8 = 15 เขียน 5 ทด 1
+   ฐาน 2 แค่ "เต็ม" เร็วกว่า
+   ถึง 2 ก็ทดแล้ว */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่าง: 1011 + 0110</div>
+        <pre class="code-block">  ทด:  1 1 1
+        1 0 1 1    = 11
+      + 0 1 1 0    = 6
+      ─────────
+      1 0 0 0 1    = 17 ✓
+
+ไล่จากขวา:
+หลัก 1: 1+0 = 1
+หลัก 2: 1+1 = 0 ทด 1
+หลัก 3: 0+1+ทด1 = 0 ทด 1
+หลัก 4: 1+0+ทด1 = 0 ทด 1
+หลัก 5: ทด 1 → 1
+
+เช็ค: 11 + 6 = 17 ✓</pre>
+      </div>
+    </div>
+    <div class="callout">CPU บวกเลขด้วยวงจรนี้เป๊ะๆ (Full Adder) — ทุกการบวกในโปรแกรมคือกฎ 4 ข้อนี้ทำงานทีละ bit</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 Two's Complement -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · เลขติดลบ</div>
+    <h2 class="slide-title">Two's Complement — เลขติดลบใน Computer</h2>
+    <p class="slide-lead">ไม่มีเครื่องหมายลบใน hardware — ใช้วิธี <strong>กลับ bit แล้วบวก 1</strong> แทน</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">วิธีทำ −5 (ใน 8 bits)</div>
+        <pre class="code-block">ขั้น 1: เขียน +5
+  00000101
+
+ขั้น 2: กลับทุก bit (~)
+  11111010
+
+ขั้น 3: บวก 1
+  11111011  ← นี่คือ −5!
+
+<span class="cm">/* เช็ค: 5 + (−5) ต้องได้ 0 */</span>
+  00000101
++ 11111011
+─────────
+ 100000000
+ ↑ bit ที่ 9 หลุดทิ้งไป (8 bits)
+→ เหลือ 00000000 = 0 ✓ เจ๋ง!</pre>
+      </div>
+      <div>
+        <div class="code-label">ทำไมวิธีนี้ฉลาด</div>
+        <pre class="code-block"><span class="cm">/* ① บวกลบใช้วงจรเดียวกัน!
+   a − b = a + (−b)
+   ไม่ต้องมีวงจรลบแยก */</span>
+
+<span class="cm">/* ② bit ซ้ายสุด = เครื่องหมาย
+   0... = บวก   1... = ลบ */</span>
+
+<span class="cm">/* ③ ช่วงของ 8 bits signed:
+   −128 .. +127
+   (ลบได้มากกว่าบวก 1 ค่า) */</span>
+
+01111111 = +127  (max)
+10000000 = −128  (min)
+11111111 = −1    ← จำไว้!
+<span class="cm">/* ทุก bit เป็น 1 = −1 เสมอ */</span></pre>
+      </div>
+    </div>
+    <div class="callout">จำ: −1 = ทุก bit เป็น 1 — เจอ 0xFFFFFFFF ใน debugger เมื่อไหร่ นั่นคือ −1 (หรือ max ของ unsigned)</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 Overflow -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Overflow</div>
+    <h2 class="slide-title">Overflow — เมื่อตัวเลข "ล้น" กล่อง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างใน 8 bits</div>
+        <pre class="code-block"><span class="cm">/* 127 + 1 = ? (signed 8-bit) */</span>
+  01111111   = 127 (max แล้ว)
++ 00000001   = 1
+──────────
+  10000000   = −128 ?!!
+
+<span class="cm">/* ล้นจาก +127 → พลิกเป็น −128
+   เหมือนเข็มไมล์รถหมุนครบรอบ */</span>
+
+<span class="cm">/* int 32-bit ก็เหมือนกัน: */</span>
+INT_MAX = 2,147,483,647
+INT_MAX + 1 = −2,147,483,648</pre>
+      </div>
+      <div>
+        <div class="code-label">เหตุการณ์จริงที่เกิดจาก overflow</div>
+        <pre class="code-block"><span class="cm">/* Gangnam Style (2014):
+   views ทะลุ 2,147,483,647
+   YouTube ต้องเปลี่ยนเป็น 64-bit! */</span>
+
+<span class="cm">/* Ariane 5 rocket (1996):
+   แปลง 64-bit → 16-bit overflow
+   จรวดระเบิด เสียหาย $370M */</span>
+
+<span class="cm">/* ป้องกันในโค้ด: */</span>
+<span class="kw">if</span> (a > INT_MAX - b) {
+    <span class="cm">/* a + b จะ overflow! */</span>
+}
+<span class="cm">/* หรือใช้ long long (64-bit)
+   เมื่อค่าอาจใหญ่ */</span></pre>
+      </div>
+    </div>
+    <div class="callout">เช็คก่อนบวก ไม่ใช่หลังบวก — เพราะหลัง overflow ค่าพังไปแล้ว (undefined behavior ใน signed)</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 Bitwise AND OR XOR -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Bitwise</div>
+    <h2 class="slide-title">Bitwise: &amp; (AND) · | (OR) · ^ (XOR)</h2>
+    <p class="slide-lead">ทำงานทีละ bit คู่กัน — เร็วที่สุดใน CPU (1 clock cycle)</p>
+    <div class="two-col">
+      <div>
+        <table class="op-table">
+          <thead><tr><th>a</th><th>b</th><th>a&amp;b</th><th>a|b</th><th>a^b</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+            <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+            <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+            <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="cm">/* จำง่าย:
+   & ทั้งคู่ต้องเป็น 1
+   | ตัวใดตัวหนึ่งเป็น 1
+   ^ ต่างกันได้ 1 เหมือนกันได้ 0 */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่างเต็ม byte</div>
+        <pre class="code-block">  10110100          10110100
+& 11010110        | 11010110
+──────────       ──────────
+  10010100          11110110
+
+  10110100
+^ 11010110
+──────────
+  01100010
+
+<span class="cm">/* ใน C: */</span>
+<span class="kw">int</span> a = <span class="nm">0xB4</span>, b = <span class="nm">0xD6</span>;
+a & b   <span class="cm">/* 0x94 */</span>
+a | b   <span class="cm">/* 0xF6 */</span>
+a ^ b   <span class="cm">/* 0x62 */</span>
+~a      <span class="cm">/* กลับทุก bit */</span></pre>
+      </div>
+    </div>
+    <div class="callout">ระวัง: & กับ && คนละตัว! — <code class="inline-code">&amp;</code> ทำทีละ bit · <code class="inline-code">&amp;&amp;</code> คือ logical (จริง/เท็จ) — bug คลาสสิกของมือใหม่</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 Shift -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Shift</div>
+    <h2 class="slide-title">&lt;&lt; และ &gt;&gt; — เลื่อน bit = คูณ/หาร 2</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Left Shift (&lt;&lt;) = คูณ 2</div>
+        <pre class="code-block">00000101 = 5
+&lt;&lt; 1 → 00001010 = 10  (×2)
+&lt;&lt; 2 → 00010100 = 20  (×4)
+&lt;&lt; 3 → 00101000 = 40  (×8)
+
+<span class="cm">/* x << n  =  x × 2ⁿ */</span>
+
+<span class="cm">/* ใช้สร้างค่า: */</span>
+1 &lt;&lt; 0 = 1
+1 &lt;&lt; 4 = 16
+1 &lt;&lt; 10 = 1024  <span class="cm">/* = 1KB! */</span>
+1 &lt;&lt; 20 = 1MB</pre>
+      </div>
+      <div>
+        <div class="code-label">Right Shift (&gt;&gt;) = หาร 2</div>
+        <pre class="code-block">00101000 = 40
+&gt;&gt; 1 → 00010100 = 20  (÷2)
+&gt;&gt; 2 → 00001010 = 10  (÷4)
+
+<span class="cm">/* x >> n  =  x ÷ 2ⁿ (ปัดลง) */</span>
+
+7 &gt;&gt; 1 = 3   <span class="cm">/* 7/2 = 3.5 → 3 */</span>
+
+<span class="cm">/* เจอในโค้ดจริงบ่อยมาก: */</span>
+<span class="kw">int</span> mid = (lo + hi) &gt;&gt; <span class="nm">1</span>;
+<span class="cm">/* = (lo+hi)/2 ใน binary search */</span></pre>
+      </div>
+    </div>
+    <div class="callout">compiler สมัยใหม่แปลง ×2 ÷2 เป็น shift ให้อัตโนมัติ — เขียน x*2 อ่านง่ายกว่า แต่ต้องอ่าน shift ในโค้ดคนอื่นให้ออก</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Bit Flags -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · ใช้จริง</div>
+    <h2 class="slide-title">Bit Flags — เก็บ 8 สถานะใน 1 byte</h2>
+    <p class="slide-lead">Pattern ที่เจอในทุก OS, ทุก game engine, ทุก library ระดับต่ำ</p>
+    <pre class="code-block"><span class="cm">/* กำหนด flag แต่ละ bit */</span>
+<span class="pp">#define</span> PERM_READ    (<span class="nm">1</span> &lt;&lt; <span class="nm">0</span>)   <span class="cm">/* 00000001 */</span>
+<span class="pp">#define</span> PERM_WRITE   (<span class="nm">1</span> &lt;&lt; <span class="nm">1</span>)   <span class="cm">/* 00000010 */</span>
+<span class="pp">#define</span> PERM_EXEC    (<span class="nm">1</span> &lt;&lt; <span class="nm">2</span>)   <span class="cm">/* 00000100 */</span>
+<span class="pp">#define</span> PERM_ADMIN   (<span class="nm">1</span> &lt;&lt; <span class="nm">3</span>)   <span class="cm">/* 00001000 */</span>
+
+<span class="kw">unsigned char</span> perm = <span class="nm">0</span>;
+
+<span class="cm">/* เปิด flag: ใช้ OR */</span>
+perm |= PERM_READ;              <span class="cm">/* 00000001 */</span>
+perm |= PERM_WRITE;             <span class="cm">/* 00000011 */</span>
+
+<span class="cm">/* เช็ค flag: ใช้ AND */</span>
+<span class="kw">if</span> (perm & PERM_WRITE) <span class="fn">printf</span>(<span class="st">"เขียนได้\n"</span>);   <span class="cm">/* จริง */</span>
+<span class="kw">if</span> (perm & PERM_ADMIN) <span class="fn">printf</span>(<span class="st">"แอดมิน\n"</span>);    <span class="cm">/* เท็จ */</span>
+
+<span class="cm">/* ปิด flag: ใช้ AND กับ NOT */</span>
+perm &= ~PERM_READ;              <span class="cm">/* 00000010 */</span>
+
+<span class="cm">/* สลับ flag: ใช้ XOR */</span>
+perm ^= PERM_EXEC;              <span class="cm">/* เปิด↔ปิด สลับกัน */</span>
+
+<span class="cm">/* chmod 755 ของ Linux ก็คือแบบนี้!
+   O_RDONLY | O_CREAT ตอน open() ไฟล์ ก็แบบนี้! */</span></pre>
+    <div class="callout">สูตรจำ: เปิด |= · เช็ค & · ปิด &= ~ · สลับ ^= — สี่ท่านี้ใช้ได้ทั้งชีวิต</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Bit Tricks -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Tricks</div>
+    <h2 class="slide-title">Bit Tricks สุดคลาสสิก</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เช็คคู่/คี่ + swap ไม่ใช้ temp</div>
+        <pre class="code-block"><span class="cm">/* เลขคี่ bit สุดท้ายเป็น 1 เสมอ */</span>
+<span class="kw">if</span> (n & <span class="nm">1</span>) <span class="fn">printf</span>(<span class="st">"คี่"</span>);
+<span class="kw">else</span>       <span class="fn">printf</span>(<span class="st">"คู่"</span>);
+<span class="cm">/* เร็วกว่า n % 2 (บาง CPU) */</span>
+
+<span class="cm">/* swap ด้วย XOR (ไม่ใช้ temp) */</span>
+a ^= b;
+b ^= a;   <span class="cm">/* b กลายเป็น a เดิม */</span>
+a ^= b;   <span class="cm">/* a กลายเป็น b เดิม */</span>
+<span class="cm">/* ใช้ x^x=0 และ x^0=x */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">เช็ค power of 2 + หาตัวไม่ซ้ำ</div>
+        <pre class="code-block"><span class="cm">/* power of 2 มี bit 1 ตัวเดียว
+   n   = 01000000
+   n-1 = 00111111
+   AND = 00000000 = 0! */</span>
+<span class="kw">if</span> ((n & (n-<span class="nm">1</span>)) == <span class="nm">0</span>)
+    <span class="fn">printf</span>(<span class="st">"power of 2"</span>);
+
+<span class="cm">/* array มีเลขซ้ำคู่หมด ยกเว้น 1 ตัว
+   หาตัวเดียวนั้นใน O(n), O(1) space */</span>
+<span class="kw">int</span> x = <span class="nm">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++)
+    x ^= arr[i];
+<span class="cm">/* คู่ซ้ำ XOR กันหมด = 0
+   เหลือตัวเดียวที่ไม่ซ้ำ! */</span></pre>
+      </div>
+    </div>
+    <div class="callout">ท่า XOR หาตัวไม่ซ้ำ คือข้อสอบสัมภาษณ์ยอดฮิต (LeetCode "Single Number") — เจอเมื่อไหร่ตอบได้เลย</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 Use Case -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Use Case</div>
+    <h2 class="slide-title">🏦 Bitwise ในระบบจริง</h2>
+    <pre class="code-block"><span class="cm">/* ── สถานะบัญชีธนาคาร เก็บใน 1 byte ── */</span>
+<span class="pp">#define</span> ACC_ACTIVE     (<span class="nm">1</span> &lt;&lt; <span class="nm">0</span>)  <span class="cm">/* บัญชีใช้งานได้ */</span>
+<span class="pp">#define</span> ACC_VERIFIED   (<span class="nm">1</span> &lt;&lt; <span class="nm">1</span>)  <span class="cm">/* ยืนยัน KYC แล้ว */</span>
+<span class="pp">#define</span> ACC_FROZEN     (<span class="nm">1</span> &lt;&lt; <span class="nm">2</span>)  <span class="cm">/* ถูกอายัด */</span>
+<span class="pp">#define</span> ACC_OVERDRAFT  (<span class="nm">1</span> &lt;&lt; <span class="nm">3</span>)  <span class="cm">/* เปิดวงเงินติดลบ */</span>
+<span class="pp">#define</span> ACC_PREMIUM    (<span class="nm">1</span> &lt;&lt; <span class="nm">4</span>)  <span class="cm">/* ลูกค้า premium */</span>
+
+<span class="kw">int</span> <span class="fn">can_withdraw</span>(<span class="kw">unsigned char</span> status) {
+    <span class="cm">/* ต้อง active + verified และต้องไม่ frozen */</span>
+    <span class="kw">if</span> (!(status & ACC_ACTIVE))   <span class="kw">return</span> <span class="nm">0</span>;
+    <span class="kw">if</span> (!(status & ACC_VERIFIED)) <span class="kw">return</span> <span class="nm">0</span>;
+    <span class="kw">if</span> (status & ACC_FROZEN)      <span class="kw">return</span> <span class="nm">0</span>;
+    <span class="kw">return</span> <span class="nm">1</span>;
+}
+
+<span class="cm">/* ── ทำไมไม่ใช้ bool 5 ตัว? ──
+   bool 5 ตัว = 5 bytes × 10 ล้านบัญชี = 50 MB
+   bit flags  = 1 byte  × 10 ล้านบัญชี = 10 MB
+   ประหยัด 5 เท่า + เช็คหลาย flag ได้ใน 1 คำสั่ง:
+
+   ready = (status & (ACC_ACTIVE|ACC_VERIFIED))
+                  == (ACC_ACTIVE|ACC_VERIFIED);   */</span></pre>
+    <div class="callout">ฐานข้อมูลจริงเก็บ status เป็น bit flags กันทั้งนั้น — อ่าน schema เก่าๆ ของธนาคารจะเจอตลอด</div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">โค้ดนี้ทำอะไร? ผลลัพธ์คืออะไร?<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.8">
+unsigned char x = 200;<br>
+x = x + 100;<br>
+printf("%d", x);
+</code><br><br>
+<em>힌트: unsigned char เก็บได้ 0..255<br>
+200 + 100 = 300 แต่ 300 > 255 → ล้น!<br>
+300 − 256 = ?</em><br><br>
+แล้วถ้าเป็น signed char (−128..127) ล่ะ จะได้อะไร?</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · MCQ</div>
+    <h2 class="slide-title">ค่าของ <code class="inline-code">(5 &lt;&lt; 2) | 3</code> คือ?</h2>
+    <div id="mc-bw3" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-bw3','A','B','❌ 5<<2 คือเลื่อนซ้าย 2 = ×4 ไม่ใช่ ×2')">A) 13</button>
+      <button class="mc-btn" onclick="pickMC('mc-bw3','B','B','✅ 5<<2 = 20 (10100₂) แล้ว | 3 (00011₂) = 10111₂ = 23')">B) 23</button>
+      <button class="mc-btn" onclick="pickMC('mc-bw3','C','B','❌ 20+3=23 บังเอิญเท่า OR ในเคสนี้ แต่ 24 ไม่ใช่ทั้งคู่ — ลองกางเป็น bits')">C) 24</button>
+      <button class="mc-btn" onclick="pickMC('mc-bw3','D','B','❌ | คือ OR ไม่ใช่ AND — 20 & 3 = 0 ต่างหาก')">D) 0</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">ขั้น 1: 5 &lt;&lt; 2
+  00101 (5) เลื่อนซ้าย 2 → 10100 (20)   /* 5 × 4 */
+
+ขั้น 2: 20 | 3
+  10100
+| 00011
+───────
+  10111 = 16+4+2+1 = 23
+
+(เคสนี้ 20|3 = 20+3 เพราะ bits ไม่ทับกัน — ไม่ใช่ทุกเคสนะ!)</pre>
+  </div>
+</div>
+
+<!-- SLIDE 11 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 3 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① 1011₂ + 0011₂ = ___₂</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fbw3a" placeholder="เลขฐาน 2">
+      <button class="fill-btn" onclick="checkFill('fbw3a','1110',['01110'],[],'✅ 11 + 3 = 14 = 1110₂','❌ 1011(11) + 0011(3): หลัก1: 1+1=0ทด1, หลัก2: 1+1+1=1ทด1, หลัก3: 0+0+1=1, หลัก4: 1 → 1110₂ = 14')">ตรวจ</button>
+    </div>
+    <div id="fbw3a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② x &lt;&lt; 3 เท่ากับ x คูณด้วย ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fbw3b" placeholder="ตัวเลข">
+      <button class="fill-btn" onclick="checkFill('fbw3b','8',['8'],[],'✅ << 3 = ×2³ = ×8','❌ เลื่อนซ้าย n ครั้ง = คูณ 2ⁿ → <<3 = ×8')">ตรวจ</button>
+    </div>
+    <div id="fbw3b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ เช็คว่า flag เปิดอยู่ไหม ใช้ operator ตัวไหน? (& | ^ ~)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fbw3c" placeholder="operator">
+      <button class="fill-btn" onclick="checkFill('fbw3c','&',['and','&amp;'],[],'✅ เช็คใช้ & — if (perm & PERM_WRITE) · เปิดใช้ |= · ปิดใช้ &= ~ · สลับใช้ ^=','❌ เช็คใช้ & (AND) — ถ้า bit นั้นเปิด ผลจะไม่เป็น 0')">ตรวจ</button>
+    </div>
+    <div id="fbw3c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 12 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">⚙️</div>
+      <div class="summary-title">สรุปบทที่ 3 — จบ Course Math for CS</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">บวกฐาน 2</div><div class="sum-body">1+1 = 0 ทด 1 — CPU บวกแบบนี้ทีละ bit (Full Adder)</div></div>
+        <div class="sum-card"><div class="sum-head">Two's Complement</div><div class="sum-body">ลบ = กลับ bit + 1 · −1 = ทุก bit เป็น 1 · ช่วง −2ⁿ⁻¹..2ⁿ⁻¹−1</div></div>
+        <div class="sum-card"><div class="sum-head">Overflow</div><div class="sum-body">INT_MAX + 1 พลิกเป็นลบ — เช็คก่อนบวก ใช้ long long เมื่อเสี่ยง</div></div>
+        <div class="sum-card"><div class="sum-head">Bitwise</div><div class="sum-body">& AND · | OR · ^ XOR · ~ NOT · &lt;&lt; ×2ⁿ · &gt;&gt; ÷2ⁿ</div></div>
+        <div class="sum-card"><div class="sum-head">Bit Flags</div><div class="sum-body">เปิด |= · เช็ค & · ปิด &= ~ · สลับ ^= — เก็บ 8 สถานะใน 1 byte</div></div>
+        <div class="sum-card"><div class="sum-head">Tricks</div><div class="sum-body">n&1 เช็คคี่ · n&(n−1)==0 เช็ค power of 2 · XOR หาตัวไม่ซ้ำ</div></div>
+      </div>
+      <a href="index.html" class="summary-next">🏠 กลับหน้าหลัก Math for CS</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 3 — Binary Arithmetic + Bitwise</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','บวกฐาน 2','Two\'s Complement','Overflow','& | ^','Shift << >>','Bit Flags','Bit Tricks','Banking Use Case','Think!','MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

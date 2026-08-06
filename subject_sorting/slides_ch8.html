@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทพิเศษ — Space Complexity | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#005f73;--cal:#e0f4f6;--cam:#0a9396;}
+
+/* ── Pattern Card ── */
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;}
+.pat-card{border-radius:10px;overflow:hidden;border:1.5px solid var(--line);}
+.pat-head{background:var(--ca);color:#fff;font-family:var(--mono);font-size:11px;font-weight:700;padding:6px 12px;letter-spacing:.5px;}
+.pat-head.y{background:#d4851a;}
+.pat-head.g{background:#1a7a4a;}
+.pat-head.r{background:#b83232;}
+.pat-body{background:#fff;padding:10px 12px;}
+
+/* ── Rule Badge ── */
+.rule{display:inline-flex;align-items:center;gap:8px;background:var(--cal);border:1.5px solid var(--cam);border-radius:8px;padding:8px 14px;margin:5px 4px;font-family:var(--mono);font-size:12px;}
+.rule .arr{color:var(--cam);font-size:16px;font-weight:900;}
+.rule .ans{color:var(--ca);font-weight:700;}
+.rule.g .ans{color:#1a7a4a;}
+.rule.g{border-color:#27ae60;background:#eafaf1;}
+.rule.y .ans{color:#d4851a;}
+.rule.y{border-color:#f39c12;background:#fef9e7;}
+.rule.r .ans{color:#b83232;}
+.rule.r{border-color:#e74c3c;background:#fdedec;}
+
+/* ── Memory Box Visual ── */
+.mem-row{display:flex;align-items:center;gap:8px;margin:5px 0;}
+.mem-label{font-family:var(--mono);font-size:11px;color:var(--dim);width:90px;flex-shrink:0;}
+.mem-boxes{display:flex;gap:3px;}
+.mbox{width:28px;height:28px;border-radius:4px;border:1.5px solid var(--cam);background:var(--cal);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ca);}
+.mbox.used{background:var(--ca);color:#fff;border-color:var(--ca);}
+.mbox.stack{background:#9b59b6;border-color:#8e44ad;color:#fff;}
+.mbox.temp{background:#f39c12;border-color:#d68910;color:#fff;}
+.mbox.empty{background:#f8f9fa;border-color:#dee2e6;color:#aaa;}
+
+/* ── Big Answer ── */
+.big-ans{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--ca);text-align:center;margin:16px 0 6px;}
+.big-sub{font-family:var(--sans);font-size:13px;color:var(--dim);text-align:center;margin-bottom:12px;}
+
+/* ── Cheatsheet ── */
+.cs-table{width:100%;border-collapse:collapse;font-size:12px;}
+.cs-table th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-family:var(--mono);font-weight:600;}
+.cs-table td{padding:6px 10px;border-bottom:1px solid var(--line);font-family:var(--mono);}
+.cs-table tr:nth-child(even) td{background:var(--cal);}
+.cs-table .sc{font-weight:700;color:var(--ca);}
+.cs-table .g{color:#1a7a4a;font-weight:700;}
+.cs-table .y{color:#d4851a;font-weight:700;}
+.cs-table .r{color:#b83232;font-weight:700;}
+
+/* ── Highlight box in code ── */
+.hl{background:#fff3cd;border-left:3px solid #f39c12;padding:2px 6px;border-radius:0 4px 4px 0;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ════ SLIDE 0 — COVER ════ -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Sorting Algorithms</div>
+        <div class="cover-title">บทพิเศษ<br><em>Space Complexity</em><br><span style="font-size:18px;font-style:normal;opacity:.7">ฉบับ เห็นแล้วตอบได้เลย</span></div>
+        <div class="cover-subtitle">เรียนแบบจำ Pattern — เห็นโค้ดแบบไหน → Space O(?) ตอบทันที ไม่ต้องคิดนาน</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Space คืออะไร? นับอะไรบ้าง?</div>
+          <div class="topic-row"><div class="topic-dot"></div>กฎดูปั๊บรู้เลย — 5 Pattern หลัก</div>
+          <div class="topic-row"><div class="topic-dot"></div>Recursion กินพื้นที่ยังไง?</div>
+          <div class="topic-row"><div class="topic-dot"></div>ดูโค้ด → ตอบ Space ทันที (Workshop)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Cheatsheet พกติดตัว</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">S</div>
+        <div class="cover-badge">SPACE COMPLEXITY · SPECIAL</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 1 — Space คืออะไร นับอะไร ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทพิเศษ · พื้นฐาน</div>
+    <h2 class="slide-title">Space Complexity นับ "หน่วยความจำเพิ่ม" เท่านั้น</h2>
+    <p class="slide-lead">นับแค่ <strong>Auxiliary Space</strong> — memory ที่ algorithm สร้างขึ้นเพิ่ม <em>นอกจาก input เดิม</em></p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">นับ 3 อย่างนี้</div>
+        <div style="margin:8px 0">
+          <div class="mem-row"><div class="mem-label">ตัวแปรปกติ</div><div class="mem-boxes"><div class="mbox used">i</div><div class="mbox used">j</div><div class="mbox used">tmp</div></div><span style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-left:6px">O(1)</span></div>
+          <div class="mem-row"><div class="mem-label">Array/struct</div><div class="mem-boxes"><div class="mbox temp">0</div><div class="mbox temp">1</div><div class="mbox temp">2</div><div class="mbox temp">...</div><div class="mbox temp">n</div></div><span style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-left:6px">O(n)</span></div>
+          <div class="mem-row"><div class="mem-label">Call stack</div><div class="mem-boxes"><div class="mbox stack">f(n)</div><div class="mbox stack">f(n/2)</div><div class="mbox stack">f(n/4)</div><div class="mbox stack">...</div></div><span style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-left:6px">O(log n)</span></div>
+        </div>
+        <pre class="code-block" style="margin-top:8px"><span class="cm">/* ไม่นับ input arr[] เดิม
+   เพราะมันมีอยู่แล้วก่อน sort */</span>
+
+<span class="cm">/* นับเฉพาะ "เพิ่มมาใหม่" */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่างเปรียบ</div>
+        <pre class="code-block"><span class="cm">/* Bubble Sort */</span>
+<span class="kw">void</span> <span class="fn">bubble</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i, j, temp;  <span class="cm">← 3 ตัวแปร</span>
+    ...
+}
+<span class="cm">/* Space = O(1)
+   ไม่ว่า n จะเป็น 10 หรือ 10M
+   ใช้แค่ 3 ตัวแปรเสมอ */</span>
+
+<span class="cm">/* Merge Sort */</span>
+<span class="kw">void</span> <span class="fn">merge</span>(...) {
+    <span class="kw">int</span> L[n1], R[n2]; <span class="cm">← n elements</span>
+}
+<span class="cm">/* Space = O(n)
+   สร้าง array ขนาด n ทุกครั้ง */</span></pre>
+      </div>
+    </div>
+    <div class="callout">จำง่าย: สร้าง array/struct ขนาด n → O(n) · แค่ตัวแปร i,j,tmp → O(1) · Recursion ลึก d ชั้น → O(d)</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 2 — Pattern 1: O(1) ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทพิเศษ · Pattern 1</div>
+    <h2 class="slide-title">เห็นแบบนี้ → <span style="color:var(--ca)">O(1)</span></h2>
+    <p class="slide-lead">ไม่ว่า n จะเป็นเท่าไหร่ ใช้ memory เพิ่มเท่าเดิม</p>
+    <div class="pat-grid">
+      <div class="pat-card">
+        <div class="pat-head g">✅ แค่ตัวแปร int/float/char</div>
+        <div class="pat-body">
+          <pre class="code-block" style="margin:0"><span class="kw">int</span> i, j, temp, min_idx;
+<span class="kw">double</span> sum = <span class="nm">0</span>;
+<span class="kw">char</span> c;
+<span class="cm">/* ไม่ว่า n=10 หรือ n=1M
+   ตัวแปรเหล่านี้ใช้แค่ช่อง
+   memory คงที่เสมอ */</span></pre>
+        </div>
+      </div>
+      <div class="pat-card">
+        <div class="pat-head g">✅ swap, ตัวแปร flag, pointer</div>
+        <div class="pat-body">
+          <pre class="code-block" style="margin:0"><span class="kw">int</span> swapped = <span class="nm">0</span>;   <span class="cm">/* flag */</span>
+<span class="kw">int</span> *ptr = &arr[<span class="nm">0</span>]; <span class="cm">/* pointer */</span>
+<span class="kw">int</span> lo = <span class="nm">0</span>, hi = n-<span class="nm">1</span>;
+<span class="cm">/* ไม่ว่า array ใหญ่แค่ไหน
+   ตัวแปรช่วยเหล่านี้ = O(1) */</span></pre>
+        </div>
+      </div>
+      <div class="pat-card">
+        <div class="pat-head g">✅ Algorithm In-place ที่ไม่ recurse</div>
+        <div class="pat-body">
+          <pre class="code-block" style="margin:0">Bubble Sort    → O(1)
+Selection Sort → O(1)
+Insertion Sort → O(1)
+Heap Sort      → O(1)
+<span class="cm">/* sort in-place = เรียงใน
+   array เดิม ไม่สร้างใหม่ */</span></pre>
+        </div>
+      </div>
+      <div class="pat-card">
+        <div class="pat-head g">✅ Array ขนาด constant (ไม่ขึ้นกับ n)</div>
+        <div class="pat-body">
+          <pre class="code-block" style="margin:0"><span class="kw">int</span> count[<span class="nm">10</span>] = {<span class="nm">0</span>};  <span class="cm">/* 10 ช่อง */</span>
+<span class="kw">int</span> freq[<span class="nm">256</span>];         <span class="cm">/* 256 ช่อง */</span>
+<span class="cm">/* ขนาดคงที่ ไม่ขึ้นกับ n
+   → O(1) เสมอ */</span></pre>
+        </div>
+      </div>
+    </div>
+    <div class="rule g"><span>เห็น: ตัวแปรเดี่ยว หรือ array ขนาด constant</span><span class="arr">→</span><span class="ans">O(1) ทันที!</span></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 3 — Pattern 2: O(n) ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทพิเศษ · Pattern 2</div>
+    <h2 class="slide-title">เห็นแบบนี้ → <span style="color:#d4851a">O(n)</span></h2>
+    <p class="slide-lead">สร้าง array หรือโครงสร้างที่ขนาดขึ้นกับ n</p>
+    <div class="pat-grid">
+      <div class="pat-card">
+        <div class="pat-head y">⚠️ สร้าง array ขนาด n</div>
+        <div class="pat-body">
+          <pre class="code-block" style="margin:0"><span class="kw">int</span> output[n];     <span class="cm">← O(n)</span>
+<span class="kw">int</span> temp[n];       <span class="cm">← O(n)</span>
+<span class="kw">int</span> L[n1], R[n2];  <span class="cm">← O(n)</span>
+<span class="cm">/* Merge Sort: สร้าง L, R
+   ขนาดรวม n → O(n) */</span></pre>
+        </div>
+      </div>
+      <div class="pat-card">
+        <div class="pat-head y">⚠️ สร้าง Linked List / struct ขนาด n</div>
+        <div class="pat-body">
+          <pre class="code-block" style="margin:0">Node *new_node = malloc(sizeof(Node));
+<span class="cm">/* ถ้า malloc n ครั้ง → O(n) */</span>
+
+<span class="kw">int</span> memo[n];  <span class="cm">/* memoization */</span>
+<span class="kw">int</span> dp[n];    <span class="cm">/* DP table → O(n) */</span></pre>
+        </div>
+      </div>
+      <div class="pat-card">
+        <div class="pat-head y">⚠️ Counting Sort count array = O(k)</div>
+        <div class="pat-body">
+          <pre class="code-block" style="margin:0"><span class="kw">int</span> count[max_val + <span class="nm">1</span>]; <span class="cm">← O(k)</span>
+<span class="kw">int</span> output[n];          <span class="cm">← O(n)</span>
+<span class="cm">/* k = ขอบเขตค่า
+   ถ้า k >> n → สิ้นเปลือง!
+   ถ้า k ≈ n → O(n) */</span></pre>
+        </div>
+      </div>
+      <div class="pat-card">
+        <div class="pat-head y">⚠️ Recursion ลึก n ชั้น</div>
+        <div class="pat-body">
+          <pre class="code-block" style="margin:0"><span class="cm">/* Factorial — n calls deep */</span>
+<span class="kw">int</span> <span class="fn">fact</span>(<span class="kw">int</span> n) {
+    <span class="kw">if</span> (n==<span class="nm">0</span>) <span class="kw">return</span> <span class="nm">1</span>;
+    <span class="kw">return</span> n * <span class="fn">fact</span>(n-<span class="nm">1</span>); <span class="cm">← n ชั้น</span>
+} <span class="cm">/* call stack = O(n) */</span></pre>
+        </div>
+      </div>
+    </div>
+    <div class="rule y"><span>เห็น: <code>int arr[n]</code> หรือ malloc n ครั้ง หรือ recurse n ชั้น</span><span class="arr">→</span><span class="ans">O(n) ทันที!</span></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 4 — Pattern 3: O(log n) ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทพิเศษ · Pattern 3</div>
+    <h2 class="slide-title">เห็นแบบนี้ → <span style="color:var(--ca)">O(log n)</span></h2>
+    <p class="slide-lead">Recursion ที่ตัด input ครึ่งทุกครั้ง — call stack ลึก log n ชั้น</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Quick Sort — stack ลึก O(log n)</div>
+        <pre class="code-block"><span class="kw">void</span> <span class="fn">quick_sort</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> lo, <span class="kw">int</span> hi) {
+    <span class="kw">if</span> (lo &lt; hi) {
+        <span class="kw">int</span> pi = <span class="fn">partition</span>(arr, lo, hi);
+        <span class="fn">quick_sort</span>(arr, lo, pi-<span class="nm">1</span>);   <span class="cm">← n/2</span>
+        <span class="fn">quick_sort</span>(arr, pi+<span class="nm">1</span>, hi);  <span class="cm">← n/2</span>
+    }
+}
+<span class="cm">/* Average: ทุก call ตัดครึ่ง
+   ลึกสุด = log₂(n) ชั้น
+   → Space O(log n) call stack
+
+   Worst: pivot แย่ ลึก n ชั้น
+   → Space O(n) call stack */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Binary Search — stack O(log n)</div>
+        <pre class="code-block"><span class="kw">int</span> <span class="fn">bs</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> lo, <span class="kw">int</span> hi, <span class="kw">int</span> x) {
+    <span class="kw">if</span> (lo > hi) <span class="kw">return</span> -<span class="nm">1</span>;
+    <span class="kw">int</span> mid = (lo+hi)/<span class="nm">2</span>;
+    <span class="kw">if</span> (arr[mid]==x) <span class="kw">return</span> mid;
+    <span class="kw">if</span> (arr[mid]&lt;x)
+        <span class="kw">return</span> <span class="fn">bs</span>(arr, mid+<span class="nm">1</span>, hi, x); <span class="cm">← n/2</span>
+    <span class="kw">return</span> <span class="fn">bs</span>(arr, lo, mid-<span class="nm">1</span>, x);     <span class="cm">← n/2</span>
+}
+<span class="cm">/* call stack depth = log₂(n)
+   แต่ละ frame: i, j เล็กน้อย
+   → Space O(log n) */</span></pre>
+      </div>
+    </div>
+    <div class="rule g"><span>เห็น: recurse แบบ f(n/2) ครั้งเดียว (ไม่สร้าง array ใหม่)</span><span class="arr">→</span><span class="ans">O(log n) ทันที!</span></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 5 — Pattern 4: O(n) จาก Recursion ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทพิเศษ · Pattern 4</div>
+    <h2 class="slide-title">Recursion → Space = ความลึก Call Stack</h2>
+    <p class="slide-lead">วิธีคิดง่ายๆ: <strong>ลึกกี่ชั้น = Space เท่านั้น</strong> — ไม่ใช่จำนวน call ทั้งหมด</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ภาพ call stack</div>
+        <div style="background:var(--cal);border-radius:8px;padding:12px;font-family:var(--mono);font-size:11px;line-height:1.9">
+          <div style="background:#9b59b6;color:#fff;padding:2px 8px;border-radius:4px;margin-bottom:2px">merge_sort(0,7) &nbsp;← level 0</div>
+          <div style="background:#8e44ad;color:#fff;padding:2px 8px;border-radius:4px;margin-left:16px;margin-bottom:2px">merge_sort(0,3) ← level 1</div>
+          <div style="background:#7d3c98;color:#fff;padding:2px 8px;border-radius:4px;margin-left:32px;margin-bottom:2px">merge_sort(0,1) ← level 2</div>
+          <div style="background:#6c3483;color:#fff;padding:2px 8px;border-radius:4px;margin-left:48px;margin-bottom:2px">merge_sort(0,0) ← level 3 ← MAX DEPTH</div>
+          <div style="color:var(--dim);font-size:10px;margin-top:6px">n=8 → ลึกสุด log₂(8) = 3 ชั้น → Space O(log n)</div>
+        </div>
+      </div>
+      <div>
+        <div class="code-label">ตาราง: recursion → space</div>
+        <table class="cs-table">
+          <thead><tr><th>Pattern Recursion</th><th>Stack Depth</th><th>Space</th></tr></thead>
+          <tbody>
+            <tr><td>f(n-1) เรียกต่อเนื่อง</td><td>n</td><td class="y">O(n)</td></tr>
+            <tr><td>f(n/2) เรียกทีละข้าง</td><td>log n</td><td class="g">O(log n)</td></tr>
+            <tr><td>f(n/2) เรียกสองข้าง</td><td>log n</td><td class="g">O(log n)</td></tr>
+            <tr><td>f(n-1) + f(n-2)</td><td>n</td><td class="y">O(n)</td></tr>
+          </tbody>
+        </table>
+        <div class="callout" style="margin-top:8px">Merge Sort เรียก 2 ข้าง แต่ stack depth = log n เพราะ call เสร็จแล้วจึงไปต่อ</div>
+      </div>
+    </div>
+    <div class="rule g"><span>เห็น: f(n/2) → ลึก log n</span><span class="arr">→</span><span class="ans">O(log n)</span></div>
+    <div class="rule y"><span>เห็น: f(n-1) → ลึก n</span><span class="arr">→</span><span class="ans">O(n)</span></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 6 — Pattern 5: O(n²) และ 2D ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทพิเศษ · Pattern 5</div>
+    <h2 class="slide-title">เห็นแบบนี้ → <span style="color:#b83232">O(n²)</span> หรือ <span style="color:#d4851a">O(n×m)</span></h2>
+    <p class="slide-lead">สร้าง 2D array หรือ nested structure ขนาด n×n</p>
+    <div class="pat-grid">
+      <div class="pat-card">
+        <div class="pat-head r">🔴 2D Array n×n</div>
+        <div class="pat-body">
+          <pre class="code-block" style="margin:0"><span class="kw">int</span> dp[n][n];
+<span class="kw">int</span> matrix[n][n];
+<span class="kw">char</span> grid[n][n];
+<span class="cm">/* n×n ช่อง = O(n²) space
+   n=1000 → 1,000,000 ints
+   ≈ 4 MB */</span></pre>
+        </div>
+      </div>
+      <div class="pat-card">
+        <div class="pat-head y">⚠️ 2D Array n×m</div>
+        <div class="pat-body">
+          <pre class="code-block" style="margin:0"><span class="kw">int</span> dp[n][m];
+<span class="kw">char</span> table[n][m];
+<span class="cm">/* n×m ช่อง = O(n×m)
+   เช่น LCS problem:
+   n = len string 1
+   m = len string 2 */</span></pre>
+        </div>
+      </div>
+      <div class="pat-card">
+        <div class="pat-head r">🔴 Adjacency Matrix</div>
+        <div class="pat-body">
+          <pre class="code-block" style="margin:0"><span class="kw">int</span> adj[V][V]; <span class="cm">/* V vertices */</span>
+<span class="cm">/* Graph n nodes
+   → O(n²) space
+   เหมาะกับ Dense graph เท่านั้น
+   Sparse → ใช้ Adjacency List */</span></pre>
+        </div>
+      </div>
+      <div class="pat-card">
+        <div class="pat-head y">⚠️ DP 1D = O(n) ดีกว่า 2D</div>
+        <div class="pat-body">
+          <pre class="code-block" style="margin:0"><span class="cm">/* Fibonacci DP:
+   Naive: dp[n] = O(n)
+   Optimized: แค่ 2 ตัวแปร */</span>
+<span class="kw">int</span> a = <span class="nm">0</span>, b = <span class="nm">1</span>; <span class="cm">← O(1)!</span>
+<span class="cm">/* trade-off: เร็วเท่ากัน
+   แต่ space น้อยกว่ามาก */</span></pre>
+        </div>
+      </div>
+    </div>
+    <div class="rule r"><span>เห็น: <code>arr[n][n]</code> หรือ 2D struct</span><span class="arr">→</span><span class="ans">O(n²) ทันที!</span></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 7 — สรุป 5 Pattern ดูปั๊บรู้ ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทพิเศษ · สรุปกฎ</div>
+    <h2 class="slide-title">5 กฎ ดูปั๊บรู้เลย</h2>
+    <div style="display:flex;flex-direction:column;gap:8px;margin:10px 0">
+      <div class="rule g" style="width:100%">
+        <span style="font-weight:700;min-width:100px">เห็น:</span>
+        <span>แค่ตัวแปร int, pointer, flag หรือ array ขนาดคงที่</span>
+        <span class="arr">→</span>
+        <span class="ans">O(1)</span>
+      </div>
+      <div class="rule g" style="width:100%">
+        <span style="font-weight:700;min-width:100px">เห็น:</span>
+        <span>recurse แบบ <code>f(n/2)</code> ทีละข้าง ไม่สร้าง array</span>
+        <span class="arr">→</span>
+        <span class="ans">O(log n)</span>
+      </div>
+      <div class="rule y" style="width:100%">
+        <span style="font-weight:700;min-width:100px">เห็น:</span>
+        <span>สร้าง <code>int arr[n]</code> หรือ recurse แบบ <code>f(n-1)</code></span>
+        <span class="arr">→</span>
+        <span class="ans">O(n)</span>
+      </div>
+      <div class="rule y" style="width:100%">
+        <span style="font-weight:700;min-width:100px">เห็น:</span>
+        <span>Merge Sort pattern (สร้าง temp array ขนาด n ทุก level)</span>
+        <span class="arr">→</span>
+        <span class="ans">O(n)</span>
+      </div>
+      <div class="rule r" style="width:100%">
+        <span style="font-weight:700;min-width:100px">เห็น:</span>
+        <span>สร้าง <code>arr[n][n]</code> หรือ 2D structure</span>
+        <span class="arr">→</span>
+        <span class="ans">O(n²)</span>
+      </div>
+    </div>
+    <div class="callout">ลำดับถาม: ① สร้าง array ขนาดอะไร? → ② recurse ลึกแค่ไหน? → ③ เลือก Space ที่ใหญ่กว่าระหว่างสอง</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 8 — Workshop ดูโค้ดตอบ Space ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทพิเศษ · Workshop</div>
+    <h2 class="slide-title">ดูโค้ด → ตอบ Space ทันที</h2>
+    <p class="slide-lead">ใช้กฎ 5 ข้อ — หา "สิ่งที่สร้างขึ้นเพิ่ม" ในแต่ละโค้ด</p>
+    <pre class="code-block"><span class="cm">/* ① Space = ? */</span>
+<span class="kw">void</span> <span class="fn">f1</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> i=<span class="nm">0</span>, sum=<span class="nm">0</span>;       <span class="cm">← นับตรงนี้</span>
+    <span class="kw">for</span> (i=<span class="nm">0</span>; i&lt;n; i++) sum += arr[i];
+}  <span class="cm">/* แค่ตัวแปร i, sum → O(1) */</span>
+
+<span class="cm">/* ② Space = ? */</span>
+<span class="kw">int</span>* <span class="fn">f2</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">int</span> *copy = malloc(n * <span class="kw">sizeof</span>(<span class="kw">int</span>));  <span class="cm">← นับตรงนี้</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++) copy[i] = arr[i];
+    <span class="kw">return</span> copy;
+}  <span class="cm">/* malloc n ints → O(n) */</span>
+
+<span class="cm">/* ③ Space = ? */</span>
+<span class="kw">int</span> <span class="fn">f3</span>(<span class="kw">int</span> n) {
+    <span class="kw">if</span> (n==<span class="nm">0</span>) <span class="kw">return</span> <span class="nm">0</span>;
+    <span class="kw">return</span> n + <span class="fn">f3</span>(n-<span class="nm">1</span>);  <span class="cm">← f(n-1) ลึก n ชั้น</span>
+}  <span class="cm">/* call stack n ชั้น → O(n) */</span>
+
+<span class="cm">/* ④ Space = ? */</span>
+<span class="kw">void</span> <span class="fn">f4</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> lo, <span class="kw">int</span> hi) {
+    <span class="kw">if</span> (lo >= hi) <span class="kw">return</span>;
+    <span class="kw">int</span> mid = (lo+hi)/<span class="nm">2</span>;  <span class="cm">← แค่ตัวแปร</span>
+    <span class="fn">f4</span>(arr, lo, mid);       <span class="cm">← f(n/2) ลึก log n</span>
+    <span class="fn">f4</span>(arr, mid+<span class="nm">1</span>, hi);
+}  <span class="cm">/* call stack log n ชั้น → O(log n) */</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 9 — Sorting Algorithms Space Head-to-Head ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทพิเศษ · เปรียบเทียบ</div>
+    <h2 class="slide-title">Sorting Algorithms — Space ทุกตัว อธิบายว่าเพราะอะไร</h2>
+    <table class="cs-table">
+      <thead><tr><th>Algorithm</th><th>Space</th><th>เหตุผล (เห็นแล้วเข้าใจ)</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Bubble Sort</td><td class="g">O(1)</td>
+          <td>แค่ตัวแปร i, j, temp, swapped</td>
+        </tr>
+        <tr>
+          <td>Selection Sort</td><td class="g">O(1)</td>
+          <td>แค่ i, j, min_idx — ไม่สร้างอะไรใหม่</td>
+        </tr>
+        <tr>
+          <td>Insertion Sort</td><td class="g">O(1)</td>
+          <td>แค่ key, j — shift in-place</td>
+        </tr>
+        <tr>
+          <td>Heap Sort</td><td class="g">O(1)</td>
+          <td>heapify ใน array เดิม + i, largest เท่านั้น</td>
+        </tr>
+        <tr>
+          <td>Quick Sort (avg)</td><td class="g">O(log n)</td>
+          <td>call stack ลึก log n ชั้น (pivot แบ่งครึ่ง)</td>
+        </tr>
+        <tr>
+          <td>Quick Sort (worst)</td><td class="y">O(n)</td>
+          <td>call stack ลึก n ชั้น (pivot แย่ทุกรอบ)</td>
+        </tr>
+        <tr>
+          <td>Merge Sort</td><td class="y">O(n)</td>
+          <td>สร้าง temp arrays L, R รวม n elements</td>
+        </tr>
+        <tr>
+          <td>Counting Sort</td><td class="y">O(k)</td>
+          <td>count[k] + output[n] → O(n+k)</td>
+        </tr>
+        <tr>
+          <td>Radix Sort</td><td class="y">O(n+k)</td>
+          <td>output array n + count array k ทุก pass</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout">จำง่าย: In-place (เรียงใน array เดิม) → O(1) · สร้าง array ใหม่ → O(n) · Recursion ลึก log n → O(log n)</div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 10 — Think! ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">โค้ดต่อไปนี้ Space Complexity คืออะไร?<br><br>
+<code style="font-family:monospace;font-size:12px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.8">
+int fib(int n) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if (n &lt;= 1) return n;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return fib(n-1) + fib(n-2);<br>
+}
+</code><br><br>
+<em>힌트: มีกี่ branch? แต่ละ branch ลึกแค่ไหน?<br>และ call stack ณ เวลาหนึ่งมีกี่ frame?</em>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 11 — MCQ ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทพิเศษ · MCQ</div>
+    <h2 class="slide-title">โค้ดนี้ Space Complexity คือ?</h2>
+    <pre class="code-block" style="margin-bottom:14px"><span class="kw">void</span> <span class="fn">mystery_sort</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> l, <span class="kw">int</span> r) {
+    <span class="kw">if</span> (l &gt;= r) <span class="kw">return</span>;
+    <span class="kw">int</span> m = l + (r - l) / <span class="nm">2</span>;
+    <span class="kw">int</span> temp[r - l + <span class="nm">1</span>];          <span class="cm">← สร้าง array ขนาด (r-l+1)</span>
+    <span class="cm">/* ... merge logic ... */</span>
+    <span class="fn">mystery_sort</span>(arr, l, m);
+    <span class="fn">mystery_sort</span>(arr, m+<span class="nm">1</span>, r);
+}</pre>
+    <div id="mc-sp" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-sp','A','B','❌ มีทั้ง array temp และ call stack — ต้องนับทั้งคู่ แล้วเลือกที่ใหญ่กว่า')">A) O(log n) — recurse แบบ f(n/2)</button>
+      <button class="mc-btn" onclick="pickMC('mc-sp','B','B','✅ temp[r-l+1] สร้างทุก call รวม O(n) + call stack O(log n) → เลือกใหญ่สุด = O(n)')">B) O(n) — temp array ขนาด n</button>
+      <button class="mc-btn" onclick="pickMC('mc-sp','C','B','❌ 2D ต้องเห็น arr[n][n] — ตรงนี้มีแค่ 1D')">C) O(n²) — สร้าง array ทุก level</button>
+      <button class="mc-btn" onclick="pickMC('mc-sp','D','B','❌ มี temp array ขึ้นกับ n — ไม่ใช่ O(1)')">D) O(1) — in-place</button>
+    </div>
+    <pre class="code-block" style="margin-top:10px"><span class="cm">/* วิเคราะห์:
+   ① temp[r-l+1]: ทุก call สร้าง array ขนาด O(n) รวมกัน
+   ② call stack: log n ชั้น
+   ③ เลือกที่ใหญ่กว่า: max(O(n), O(log n)) = O(n)
+   → นี่คือ Merge Sort! Space O(n) */</span></pre>
+  </div>
+</div>
+
+<!-- ════ SLIDE 12 — Fill-in ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทพิเศษ · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① <code class="inline-code">int arr[n];</code> ทำให้ Space Complexity เป็น O(___)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fsp1" placeholder="O(?)">
+      <button class="fill-btn" onclick="checkFill('fsp1','n',['O(n)','o(n)'],[],'✅ O(n) — สร้าง array n ช่อง ขนาดขึ้นกับ n','❌ O(n) — int arr[n] สร้าง n ช่องใน memory')">ตรวจ</button>
+    </div>
+    <div id="fsp1-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Quick Sort average case Space เป็น O(___) เพราะ call stack ลึก ___ ชั้น</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fsp2" placeholder="O(?)">
+      <button class="fill-btn" onclick="checkFill('fsp2','log n',['O(log n)','o(log n)','logn','log(n)'],[],'✅ O(log n) — average case pivot แบ่งครึ่ง call stack ลึก log₂(n) ชั้น','❌ O(log n) — pivot แบ่งครึ่งทุกครั้ง ลึก log n ชั้น')">ตรวจ</button>
+    </div>
+    <div id="fsp2-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Heap Sort ใช้ Space O(___) เพราะ heapify ทำงาน ___ (in-place / out-of-place)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fsp3" placeholder="O(?)">
+      <button class="fill-btn" onclick="checkFill('fsp3','1',['O(1)','o(1)'],[],'✅ O(1) — Heap Sort heapify ทำ in-place ใน array เดิม ไม่สร้าง array ใหม่','❌ O(1) — Heap Sort in-place, สร้างแค่ตัวแปร i, largest')">ตรวจ</button>
+    </div>
+    <div id="fsp3-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- ════ SLIDE 13 — Cheatsheet + Summary ════ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🗂️</div>
+      <div class="summary-title">Space Complexity — Cheatsheet พกติดตัว</div>
+      <table class="cs-table" style="margin-bottom:14px">
+        <thead><tr><th>เห็นอะไรในโค้ด</th><th>Space</th></tr></thead>
+        <tbody>
+          <tr><td>แค่ตัวแปร int, pointer · array[constant]</td><td class="g">O(1)</td></tr>
+          <tr><td>recurse f(n/2) ไม่สร้าง array</td><td class="g">O(log n)</td></tr>
+          <tr><td>malloc(n) · int arr[n] · recurse f(n-1)</td><td class="y">O(n)</td></tr>
+          <tr><td>Merge Sort pattern (temp array n)</td><td class="y">O(n)</td></tr>
+          <tr><td>int arr[n][n] · 2D table</td><td class="r">O(n²)</td></tr>
+        </tbody>
+      </table>
+      <div class="summary-grid" style="margin-bottom:14px">
+        <div class="sum-card"><div class="sum-head">สูตรถามตัวเอง</div><div class="sum-body">① สร้าง array ขนาดอะไร? → ② Recursion ลึกกี่ชั้น? → เลือกที่ใหญ่กว่า</div></div>
+        <div class="sum-card"><div class="sum-head">In-place = O(1)</div><div class="sum-body">เรียงใน array เดิม ไม่มี malloc ไม่มี recursion = O(1) เสมอ</div></div>
+        <div class="sum-card"><div class="sum-head">Call Stack</div><div class="sum-body">Recursion ลึก d ชั้น = Space O(d) — ดู pattern: n-1→O(n), n/2→O(log n)</div></div>
+        <div class="sum-card"><div class="sum-head">Space ≠ Time</div><div class="sum-body">Merge Sort: Time O(n log n) แต่ Space O(n) · Heap Sort: Time O(n log n) แต่ Space O(1)</div></div>
+      </div>
+      <a href="index.html" class="summary-next">🏠 กลับหน้าหลัก Sorting</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">บทพิเศษ — Space Complexity</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = [
+  'Cover',
+  'Space คืออะไร นับอะไร',
+  'Pattern 1 — O(1)',
+  'Pattern 2 — O(n)',
+  'Pattern 3 — O(log n)',
+  'Pattern 4 — Recursion Stack',
+  'Pattern 5 — O(n²)',
+  '5 กฎ ดูปั๊บรู้เลย',
+  'Workshop ดูโค้ดตอบ',
+  'Sorting Algorithms เปรียบ Space',
+  'Think!',
+  'MCQ',
+  'Fill-in',
+  'Cheatsheet + Summary'
+];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

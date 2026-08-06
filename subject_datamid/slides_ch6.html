@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 6 — Queue | ติวสอบ Data Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#a4133c;--cal:#fde8ef;--cam:#d45a7e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.qt{border-collapse:collapse;font-family:var(--mono);font-size:12px;margin:6px 0;}
+.qt th{background:var(--ca);color:#fff;padding:4px 9px;font-weight:600;}
+.qt td{padding:4px 9px;border:1px solid var(--line);text-align:center;min-width:40px;}
+.qt td.ok{background:#d4edda;color:#155724;font-weight:700;}
+.qt td.hl{background:var(--cal);color:var(--ca);font-weight:700;}
+.qt td.x{color:#c0392b;font-weight:700;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🚨 ติวสอบ Midterm · 02204231 Data Structures</div>
+        <div class="cover-title">ติวบทที่ 6<br><em>Queue</em></div>
+        <div class="cover-subtitle">FIFO — เข้าท้าย ออกหัว · เติมตาราง Front/Rear ให้ถูกทุกช่อง ทั้ง Linear และ Circular</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>FIFO + 5 operations (Enqueue/Dequeue/Peek/isEmpty/isFull)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Queue ด้วย Linked List — front/rear สองตัว O(1)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Linear Array + ปัญหา "เต็มปลอม" → Circular Array</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลยใบ practice จริง: trace Q[4] ทีละ operation</div>
+          <div class="topic-row"><div class="topic-dot"></div>Multiple Queue (สายการบิน) + Radix sort</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">T6</div>
+        <div class="cover-badge">ตาม practice · ตาราง Front/Rear</div>
+        <div class="cover-slides-count">14 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 FIFO + operations -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · แนวคิด</div>
+    <h2 class="slide-title">Queue = แถวรอคิว — FIFO เข้าก่อนออกก่อน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กฎเหล็ก 2 ข้อ</div>
+        <pre class="code-block">เพิ่มข้อมูล (Enqueue) → ท้ายคิว (Rear) เสมอ
+ลบข้อมูล (Dequeue)  → หัวคิว (Front) เสมอ
+
+Front ──▶ [A][B][C][D] ◀── Rear
+ออกทางนี้ ↑          ↑ เข้าทางนี้
+
+First In First Out (FIFO)
+"มาก่อน ได้ก่อน" เหมือนต่อแถวซื้อข้าว
+
+<span class="cm">/* เทียบ Stack (ถ้าเรียนแล้ว):
+   Stack = LIFO เข้า-ออกทางเดียว
+   Queue = FIFO เข้าท้าย ออกหัว */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">5 Operations (ปรนัยถามชื่อ)</div>
+        <pre class="code-block">① Enqueue  เพิ่มที่ท้ายคิว
+   → ต้องเช็ค isFull ก่อน
+② Dequeue  ลบที่หัวคิว
+   → ต้องเช็ค isEmpty ก่อน
+③ Peek     ดูค่าหัวคิว "ไม่เอาออก"
+④ isEmpty  คิวว่างไหม
+⑤ isFull   คิวเต็มไหม
+   (LL ไม่ต้องมี — ไม่มีวันเต็ม!)
+
+<span class="cm">/* คู่ที่ต้องจำ:
+   Enqueue↔isFull · Dequeue↔isEmpty */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ปรนัยเก็งได้:</b> "Peek ต่างจาก Dequeue อย่างไร" → Peek แค่ดูค่าหัวคิว ไม่นำออก · "Queue ที่สร้างด้วย LL ไม่ต้องมี operation ใด" → isFull เพราะ LL ขยายได้เรื่อยๆ</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 Queue ด้วย LL -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · Linked List</div>
+    <h2 class="slide-title">Queue ด้วย Singly LL — pointer 2 ตัว front/rear</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Enqueue (ตาม pseudocode อาจารย์)</div>
+        <pre class="code-block"><span class="cm">/* เพิ่มท้ายลิสต์ — ใช้ rear ช่วย
+   ไม่ต้องเดินหาท้าย → O(1)! */</span>
+
+1. สร้าง newnode
+   newnode->data = value
+   newnode->next = <span class="nm">NULL</span>
+
+2. <span class="kw">if</span> (Front == <span class="nm">NULL</span>)      <span class="cm">/* คิวว่าง */</span>
+       Front = Rear = newnode
+   <span class="kw">else</span> {
+       Rear->next = newnode  <span class="cm">/* ต่อท้าย */</span>
+       Rear = newnode        <span class="cm">/* ย้าย rear */</span>
+   }</pre>
+      </div>
+      <div>
+        <div class="code-label">Dequeue + Peek</div>
+        <pre class="code-block"><span class="cm">/* Dequeue = ลบหัวลิสต์ (บท 4!) */</span>
+<span class="kw">if</span> (Front == <span class="nm">NULL</span>)
+    <span class="fn">printf</span>(<span class="st">"Underflow"</span>);
+<span class="kw">else</span> {
+    ptr = Front;           <span class="cm">/* จำ */</span>
+    Front = Front->next;   <span class="cm">/* ข้าม */</span>
+    <span class="fn">free</span>(ptr);             <span class="cm">/* ทิ้ง */</span>
+}
+
+<span class="cm">/* Peek — เติมช่องว่างในสไลด์อาจารย์: */</span>
+<span class="kw">void</span> <span class="fn">peek</span>() {
+    <span class="kw">if</span> (Front == <span class="nm">NULL</span>)
+        <span class="fn">printf</span>(<span class="st">"Underflow"</span>);
+    <span class="kw">else</span>
+        <span class="fn">printf</span>(<span class="st">"%d"</span>, Front->data);
+}</pre>
+      </div>
+    </div>
+    <div class="exam"><b>คำถามในสไลด์อาจารย์ที่ต้องตอบได้:</b> "ทำไม Enqueue ที่ท้าย + Dequeue ที่หัว?" → เพราะลบหัวลิสต์ O(1) แต่ลบท้าย Singly ต้องเดินหาตัวก่อนหน้า O(n) — จึงเอา "ลบ" ไว้หัว "เพิ่ม" ไว้ท้าย (มี rear ชี้อยู่แล้ว O(1) ทั้งคู่)</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 Linear array -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · Linear Array</div>
+    <h2 class="slide-title">Queue ด้วย Array ธรรมดา + ตัวแปร 4 ตัว</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวแปร + Enqueue</div>
+        <pre class="code-block">maxsize  ขนาดอาเรย์
+size     จำนวนสมาชิกตอนนี้
+Front    ดัชนีหัวคิว   (เริ่ม −1)
+Rear     ดัชนีท้ายคิว  (เริ่ม −1)
+
+<span class="cm">/* Enqueue: */</span>
+<span class="kw">if</span> (Rear == maxsize-<span class="nm">1</span>)     <span class="cm">/* เต็ม? */</span>
+    <span class="fn">printf</span>(<span class="st">"Full"</span>);
+<span class="kw">else</span> {
+    <span class="kw">if</span> (Front == -<span class="nm">1</span> && Rear == -<span class="nm">1</span>)
+        Front = Rear = <span class="nm">0</span>;   <span class="cm">/* ตัวแรก */</span>
+    <span class="kw">else</span>
+        Rear = Rear + <span class="nm">1</span>;
+    Q[Rear] = data;
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">Dequeue แบบ "เลื่อน Front"</div>
+        <pre class="code-block"><span class="cm">/* วิธีที่อาจารย์ใช้: ไม่ย้ายข้อมูล
+   แค่เลื่อน Front ไปขวา */</span>
+<span class="kw">if</span> (Front == -<span class="nm">1</span> || Front > Rear)
+    <span class="fn">printf</span>(<span class="st">"Underflow"</span>);
+<span class="kw">else</span> {
+    data = Q[Front];
+    Front = Front + <span class="nm">1</span>;
+}
+
+<span class="cm">/* อีกแบบในสไลด์: ย้ายข้อมูลทั้งแถว
+   หลังลบตัวแรก → O(n) แย่กว่า
+   ← ปรนัยถามเทียบสองแบบนี้ได้ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เงื่อนไขต้องแม่น:</b> เต็ม → <b>Rear == maxsize−1</b> · ว่าง → <b>Front == −1 หรือ Front &gt; Rear</b> — เงื่อนไขพวกนี้คือช่องว่างที่ Lab ให้เติม จำเป๊ะๆ</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 ปัญหาเต็มปลอม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · จุดเปลี่ยนของบท</div>
+    <h2 class="slide-title">ปัญหา "เต็มปลอม" — เหตุผลที่ต้องมี Circular</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">สถานการณ์จากสไลด์อาจารย์</div>
+        <table class="qt">
+          <thead><tr><th></th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th></tr></thead>
+          <tbody>
+            <tr><td>Q</td><td class="x">·</td><td class="x">·</td><td class="x">·</td><td class="x">·</td><td class="x">·</td><td class="x">·</td><td class="ok">25</td><td class="ok">34</td><td class="ok">2</td><td class="ok">810</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block">Front = 6, Rear = 9, size = 4
+
+เพิ่มค่า 100:
+Rear == maxsize−1 → "คิวเต็ม"!?
+
+แต่ช่อง 0–5 ว่างตั้ง 6 ช่อง!
+← "เต็มปลอม" เพราะ Rear ชนขอบขวา
+   ทั้งที่ข้างหน้าว่าง</pre>
+      </div>
+      <div>
+        <div class="code-label">ทางแก้: Circular Array</div>
+        <pre class="code-block"><span class="cm">/* ให้ index "วนกลับ" ด้วย mod:
+   Rear = (Rear + 1) % maxsize
+   Front = (Front + 1) % maxsize
+
+   ชนขอบขวา → วนกลับช่อง 0
+   (mod เดียวกับ hashing บท 5!)
+
+   เช็คเต็มด้วย size:
+   size == maxsize     → เต็มจริง
+   เช็คว่างด้วย
+   size == 0           → ว่างจริง */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อ 2 ของใบ practice ถามตรงนี้เป๊ะๆ:</b> "enqueue(35) สำเร็จหรือไม่ เพราะเหตุใด พร้อมวิธีแก้" → ไม่สำเร็จ เพราะ Rear == maxsize−1 (เต็มปลอม — ยังมีช่องหน้าว่าง) · วิธีแก้: ใช้ <b>Circular Array</b> ให้ Rear วนกลับด้วย mod</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 practice linear trace -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · เฉลยใบ practice ข้อ 1-2</div>
+    <h2 class="slide-title">เฉลยจริง: Q[4] Linear — trace ทีละ operation</h2>
+    <p class="slide-lead">Front = Rear = −1 เริ่มต้น · ลำดับ: e(25) e(13) d() e(19) e(11) d() e(35)</p>
+    <table class="qt">
+      <thead><tr><th>Operation</th><th>Front</th><th>Rear</th><th>Q[0]</th><th>Q[1]</th><th>Q[2]</th><th>Q[3]</th><th>หมายเหตุ</th></tr></thead>
+      <tbody>
+        <tr><td>enqueue(25)</td><td>0</td><td>0</td><td class="ok">25</td><td>·</td><td>·</td><td>·</td><td>ตัวแรก F=R=0</td></tr>
+        <tr><td>enqueue(13)</td><td>0</td><td>1</td><td class="ok">25</td><td class="ok">13</td><td>·</td><td>·</td><td>R+1</td></tr>
+        <tr><td>dequeue()</td><td class="hl">1</td><td>1</td><td class="x">25</td><td class="ok">13</td><td>·</td><td>·</td><td>เอา 25 ออก เลื่อน F</td></tr>
+        <tr><td>enqueue(19)</td><td>1</td><td>2</td><td class="x">·</td><td class="ok">13</td><td class="ok">19</td><td>·</td><td></td></tr>
+        <tr><td>enqueue(11)</td><td>1</td><td>3</td><td class="x">·</td><td class="ok">13</td><td class="ok">19</td><td class="ok">11</td><td>R = maxsize−1 แล้ว!</td></tr>
+        <tr><td>dequeue()</td><td class="hl">2</td><td>3</td><td>·</td><td class="x">13</td><td class="ok">19</td><td class="ok">11</td><td>เอา 13 ออก</td></tr>
+        <tr><td>enqueue(35)</td><td>2</td><td>3</td><td>·</td><td>·</td><td class="ok">19</td><td class="ok">11</td><td class="x">Full! แทรกไม่ได้</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>ข้อ 2 ตอบ:</b> enqueue(35) <b>ไม่สำเร็จ</b> — Rear == 3 == maxsize−1 ทั้งที่ Q[0], Q[1] ว่าง (เต็มปลอม) · <b>วิธีแก้:</b> เปลี่ยนเป็น Circular Array ให้ Rear = (Rear+1) % maxsize วนกลับมาใช้ช่องว่างหน้าได้</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 practice circular trace 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · เฉลยใบ practice ข้อ 3 (1/2)</div>
+    <h2 class="slide-title">เฉลยจริง: CQ[4] Circular — ชุดเดิม คราวนี้ 35 เข้าได้!</h2>
+    <p class="slide-lead">ลำดับเดิม: e(25) e(13) d() e(19) e(11) d() e(35) — ต่างที่ Rear วนกลับด้วย mod</p>
+    <table class="qt">
+      <thead><tr><th>Operation</th><th>Front</th><th>Rear</th><th>CQ[0]</th><th>CQ[1]</th><th>CQ[2]</th><th>CQ[3]</th><th>หมายเหตุ</th></tr></thead>
+      <tbody>
+        <tr><td>enqueue(25)</td><td>0</td><td>0</td><td class="ok">25</td><td>·</td><td>·</td><td>·</td><td></td></tr>
+        <tr><td>enqueue(13)</td><td>0</td><td>1</td><td class="ok">25</td><td class="ok">13</td><td>·</td><td>·</td><td></td></tr>
+        <tr><td>dequeue()</td><td>1</td><td>1</td><td>·</td><td class="ok">13</td><td>·</td><td>·</td><td>25 ออก</td></tr>
+        <tr><td>enqueue(19)</td><td>1</td><td>2</td><td>·</td><td class="ok">13</td><td class="ok">19</td><td>·</td><td></td></tr>
+        <tr><td>enqueue(11)</td><td>1</td><td>3</td><td>·</td><td class="ok">13</td><td class="ok">19</td><td class="ok">11</td><td></td></tr>
+        <tr><td>dequeue()</td><td>2</td><td>3</td><td>·</td><td>·</td><td class="ok">19</td><td class="ok">11</td><td>13 ออก</td></tr>
+        <tr><td>enqueue(35)</td><td>2</td><td class="hl">0</td><td class="hl">35</td><td>·</td><td class="ok">19</td><td class="ok">11</td><td class="ok">R=(3+1)%4=0 วนกลับ! ✓</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>ไฮไลต์ของข้อนี้:</b> แถวสุดท้าย Rear วนจาก 3 → 0 แล้ว 35 ลง CQ[0] ได้สบาย — เทียบกับ Linear ที่ตอบ Full · ภาพนี้แหละคือคำตอบว่า "Circular แก้เต็มปลอมยังไง" ที่ข้อสอบต้องการ</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 practice circular trace 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · เฉลยใบ practice ข้อ 3 (2/2) + ข้อ 4</div>
+    <h2 class="slide-title">ต่ออีก 7 operations — จนเจอ "เต็มจริง"</h2>
+    <p class="slide-lead">ต่อจากสถานะ F=2, R=0, CQ = {35, ·, 19, 11}: d() d() e(59) e(27) e(13) e(21) e(32)</p>
+    <table class="qt">
+      <thead><tr><th>Operation</th><th>Front</th><th>Rear</th><th>CQ[0]</th><th>CQ[1]</th><th>CQ[2]</th><th>CQ[3]</th><th>หมายเหตุ</th></tr></thead>
+      <tbody>
+        <tr><td>dequeue()</td><td>3</td><td>0</td><td class="ok">35</td><td>·</td><td>·</td><td class="ok">11</td><td>19 ออก</td></tr>
+        <tr><td>dequeue()</td><td class="hl">0</td><td>0</td><td class="ok">35</td><td>·</td><td>·</td><td>·</td><td>11 ออก · F วน (3+1)%4=0</td></tr>
+        <tr><td>enqueue(59)</td><td>0</td><td>1</td><td class="ok">35</td><td class="ok">59</td><td>·</td><td>·</td><td></td></tr>
+        <tr><td>enqueue(27)</td><td>0</td><td>2</td><td class="ok">35</td><td class="ok">59</td><td class="ok">27</td><td>·</td><td></td></tr>
+        <tr><td>enqueue(13)</td><td>0</td><td>3</td><td class="ok">35</td><td class="ok">59</td><td class="ok">27</td><td class="ok">13</td><td>size = 4 = maxsize</td></tr>
+        <tr><td>enqueue(21)</td><td>0</td><td>3</td><td class="ok">35</td><td class="ok">59</td><td class="ok">27</td><td class="ok">13</td><td class="x">Full! (เต็มจริง)</td></tr>
+        <tr><td>enqueue(32)</td><td>0</td><td>3</td><td class="ok">35</td><td class="ok">59</td><td class="ok">27</td><td class="ok">13</td><td class="x">Full!</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>ข้อ 4 ตอบ:</b> พบข้อผิดพลาด — enqueue(21) และ enqueue(32) <b>ทำไม่ได้เพราะคิวเต็มจริง</b> (ทุกช่องมีข้อมูล size == maxsize) · ต่างจากข้อ 2 ที่เต็มปลอม — คราวนี้เป็นข้อจำกัดของ array ขนาดคงที่ · <b>วิธีแก้:</b> ขยายขนาดตาราง หรือเปลี่ยนไปสร้างคิวด้วย Linked List ที่ไม่มีวันเต็ม</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 Multiple queue -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · เฉลยใบ practice ข้อ 5</div>
+    <h2 class="slide-title">เฉลยจริง: สายการบิน — Multiple Queue 3 แถว</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กติกา + ลำดับ operations</div>
+        <pre class="code-block">คิว 3 แถวตามชั้นผู้โดยสาร:
+Q1 ชั้นหนึ่ง · Q2 ชั้นธุรกิจ · Q3 ประหยัด
+dequeue = เอาจาก Q1 ก่อน → Q2 → Q3
+(ชั้นเดียวกัน มาก่อนได้ก่อน = FIFO)
+
+1. e(1,1234)   6. e(3,3456)
+2. e(1,2222)   7. e(3,1489)
+3. e(3,3333)   8. dequeue()
+4. dequeue()   9. dequeue()
+5. e(2,9876)  10. e(2,4579)</pre>
+      </div>
+      <div>
+        <div class="code-label">ไล่ทีละขั้น</div>
+        <pre class="code-block">หลังข้อ 3: Q1=[1234,2222] Q3=[3333]
+④ dequeue → Q1 มีของ → <span class="nm">1234</span> ออก
+หลังข้อ 7: Q1=[2222] Q2=[9876]
+          Q3=[3333,3456,1489]
+⑧ dequeue → Q1 ก่อน → <span class="nm">2222</span> ออก
+⑨ dequeue → Q1 ว่าง → Q2 → <span class="nm">9876</span> ออก
+⑩ e(2,4579) → Q2=[4579]
+
+สถานะจบ: Q1=[] Q2=[4579]
+         Q3=[3333,3456,1489]</pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อ 5.2 ตอบ:</b> ผู้โดยสารที่เช็คอินเสร็จ (ถูก dequeue) = <b>1234, 2222, 9876</b> ตามลำดับ · แนวคิดนี้คือ <b>Priority Queue อย่างง่าย</b> — ทำด้วยหลายคิวเรียงตามความสำคัญ ปรนัยชอบถามว่า "ระบบนี้ใช้โครงสร้างใด"</div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Radix sort -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · Application</div>
+    <h2 class="slide-title">Radix Sort — Queue 10 ใบเรียงตัวเลข (Lab ข้อ 4)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">หลักการ (sort ทีละหลัก)</div>
+        <pre class="code-block">ใช้คิว 10 ใบ (bucket 0-9)
+
+รอบ 1: แจกตามหลักหน่วย
+  แต่ละตัว → enqueue เข้าคิว
+  ตามเลขหลักหน่วยของมัน
+  แล้ว dequeue กลับตามลำดับคิว 0→9
+
+รอบ 2: แจกตามหลักสิบ ...
+รอบ 3: หลักร้อย ... ทำจนครบหลัก
+ของค่ามากสุด → เรียงเสร็จ!
+
+<span class="cm">/* ตัวอย่างสั้น: 25 13 8 31
+   หน่วย: [1]:31 [3]:13 [5]:25 [8]:8
+   → 31 13 25 8
+   สิบ:  [0]:8 [1]:13 [2]:25 [3]:31
+   → 8 13 25 31 ✓ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ทำไมต้องใช้ Queue?</div>
+        <pre class="code-block"><span class="cm">/* จุดที่ข้อสอบถาม:
+   "เพราะเหตุใด Radix sort
+    ต้องใช้ Queue ไม่ใช่ Stack?"
+
+   → เพราะต้องรักษา "ลำดับเดิม"
+     ของตัวที่ลงหลักเดียวกัน
+     (FIFO = เข้าก่อนออกก่อน)
+     ถ้าใช้ Stack ลำดับจะกลับด้าน
+     ผลรอบก่อนหน้าพัง!
+
+   คำศัพท์: คุณสมบัตินี้เรียกว่า
+   sort แบบ "Stable" */</span>
+
+<span class="cm">/* จำนวนรอบ = จำนวนหลัก (d)
+   เวลารวม O(d × n) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ครบวงจรพอดี:</b> Radix sort ใช้ Queue (บทนี้) + แนวคิด mod หลัก (บท 5) + เทียบกับ sorting O(n²) (บท 3) — ข้อสอบชอบออกเป็นข้อเชื่อมบท ตอบให้ได้ว่า "Queue รักษาลำดับ = stable"</div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โจทย์ Lab ข้อ 2: คิววงกลม N=5, K=3<br>
+ข้อมูล: 1 2 3 4 5 — เอาออก K ตัวแล้วแสดง "ย้อนกลับ" แล้วต่อด้วยที่เหลือ<br>
+คำตอบตัวอย่างคือ 3 2 1 4 5<br><br>
+dequeue ได้ 1, 2, 3 ตามลำดับ (FIFO)<br>
+แต่ต้องพิมพ์ 3 2 1 — กลับด้าน!<br><br>
+<em>ใช้โครงสร้างอะไรช่วยกลับลำดับ?<br>
+ใบ้: โครงสร้างที่ "เข้าหลังออกก่อน" (LIFO)...<br>
+dequeue จากคิว → push ลง ___ → pop ออกมา = กลับด้านพอดี</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · ลองข้อสอบ</div>
+    <h2 class="slide-title">CQ[5] วงกลม: Front=3, Rear=4 แล้ว enqueue(9) — Rear ใหม่คือ?</h2>
+    <div id="mc-t6" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-t6','A','B','❌ Rear=5 ไม่มีจริง — array มีแค่ index 0-4 ต้อง mod วนกลับ')">A) Rear = 5</button>
+      <button class="mc-btn" onclick="pickMC('mc-t6','B','B','✅ Rear = (4+1) % 5 = 0 — วนกลับหัวตาราง ค่า 9 ลง CQ[0]')">B) Rear = 0</button>
+      <button class="mc-btn" onclick="pickMC('mc-t6','C','B','❌ คิวยังไม่เต็ม (Front=3 แปลว่าช่อง 0-2 ว่าง) — enqueue ได้')">C) เพิ่มไม่ได้ คิวเต็ม</button>
+      <button class="mc-btn" onclick="pickMC('mc-t6','D','B','❌ Front ไม่เปลี่ยนตอน enqueue — Front เปลี่ยนเฉพาะตอน dequeue')">D) Front = 4</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">Rear = (Rear + 1) % maxsize = (4 + 1) % 5 = 0   → Q[0] = 9
+
+จุดหลอกซ้ำกับบท 5: ชนขอบขวาต้อง mod วนกลับ
+และอย่าลืม — enqueue แตะแค่ Rear · dequeue แตะแค่ Front</pre>
+  </div>
+</div>
+
+<!-- SLIDE 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 6 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ปิดบทสุดท้ายก่อน Cheat Sheet</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Queue ทำงานแบบ ___ (ตัวย่อ 4 ตัวอักษร)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft6a" placeholder="ตัวย่อ">
+      <button class="fill-btn" onclick="checkFill('ft6a','FIFO',['fifo','first in first out'],[],'✅ FIFO — First In First Out เข้าก่อนออกก่อน','❌ FIFO (First In First Out) — คู่เทียบคือ Stack = LIFO')">ตรวจ</button>
+    </div>
+    <div id="ft6a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Circular Array: Rear ตัวถัดไป = (Rear + 1) % ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft6b" placeholder="ตัวแปร">
+      <button class="fill-btn" onclick="checkFill('ft6b','maxsize',['max size','ขนาดตาราง','N','maxsize'],[],'✅ % maxsize — ชนขอบขวาวนกลับช่อง 0','❌ % maxsize (ขนาดอาเรย์) — mod ทำให้ index วนเป็นวงกลม')">ตรวจ</button>
+    </div>
+    <div id="ft6b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Radix sort ต้องใช้ Queue เพราะต้องรักษา ___ ของข้อมูลที่ลง bucket เดียวกัน</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft6c" placeholder="รักษาอะไร?">
+      <button class="fill-btn" onclick="checkFill('ft6c','ลำดับ',['ลำดับเดิม','order','ลำดับการเข้า','ลำดับข้อมูล'],[],'✅ ลำดับเดิม (FIFO) — คุณสมบัติ stable · ใช้ Stack ลำดับกลับด้าน ผลรอบก่อนพัง','❌ รักษา \"ลำดับเดิม\" — FIFO ทำให้ sort เป็น stable')">ตรวจ</button>
+    </div>
+    <div id="ft6c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🎫</div>
+      <div class="summary-title">จบติวบทที่ 6 — Queue</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">FIFO</div><div class="sum-body">Enqueue ท้าย (เช็ค isFull) · Dequeue หัว (เช็ค isEmpty) · Peek แค่ดู</div></div>
+        <div class="sum-card"><div class="sum-head">Queue ด้วย LL</div><div class="sum-body">front+rear สองตัว → O(1) ทั้งเข้าออก · ไม่มีวันเต็ม ไม่ต้องมี isFull</div></div>
+        <div class="sum-card"><div class="sum-head">Linear Array</div><div class="sum-body">เต็ม: Rear==maxsize−1 · ว่าง: Front==−1 หรือ Front&gt;Rear · เจอ "เต็มปลอม"</div></div>
+        <div class="sum-card"><div class="sum-head">Circular Array</div><div class="sum-body">(Rear+1)%maxsize วนกลับ · เต็มจริงเมื่อ size==maxsize</div></div>
+        <div class="sum-card"><div class="sum-head">Multiple Queue</div><div class="sum-body">หลายคิวตาม priority · dequeue จากคิวสำคัญสุดก่อน (สายการบิน)</div></div>
+        <div class="sum-card"><div class="sum-head">Radix Sort</div><div class="sum-body">คิว 10 ใบ แจกทีละหลัก · ใช้ Queue เพราะรักษาลำดับ (stable) · O(d×n)</div></div>
+      </div>
+      <a href="slides_final.html" class="summary-next">→ ด่านสุดท้าย: Cheat Sheet + ข้อผิดพลาดยอดฮิต</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 6 — Queue</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','FIFO + Operations','Queue ด้วย LL','Linear Array','ปัญหาเต็มปลอม','เฉลย Linear Q[4]','เฉลย Circular 1/2','เฉลย Circular 2/2','Multiple Queue','Radix Sort','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
