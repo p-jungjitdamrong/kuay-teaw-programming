@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 0 — สถิติพื้นฐาน | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#6a2c91;--cal:#f3e9fa;--cam:#9b59b6;}
+.stat-table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.stat-table th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;}
+.stat-table td{padding:6px 10px;border-bottom:1px solid var(--line);font-family:var(--mono);}
+.stat-table tr:nth-child(even) td{background:var(--cal);}
+.dot-row{display:flex;align-items:flex-end;gap:3px;height:80px;margin:10px 0;}
+.dot-col{display:flex;flex-direction:column-reverse;gap:2px;align-items:center;}
+.dot{width:16px;height:16px;border-radius:50%;background:var(--cam);}
+.dot.hi{background:#e74c3c;}
+.dot-label{font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:3px;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Math for CS</div>
+        <div class="cover-title">บทที่ 0<br><em>สถิติพื้นฐาน</em></div>
+        <div class="cover-subtitle">Mean, Median, Mode, SD — สถิติที่โปรแกรมเมอร์ใช้วัด performance และเข้าใจข้อมูลจริง</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ทำไมโปรแกรมเมอร์ต้องรู้สถิติ?</div>
+          <div class="topic-row"><div class="topic-dot"></div>ค่ากลาง 3 แบบ: Mean, Median, Mode</div>
+          <div class="topic-row"><div class="topic-dot"></div>Variance และ Standard Deviation</div>
+          <div class="topic-row"><div class="topic-dot"></div>Percentile — p50, p95, p99 ใน server จริง</div>
+          <div class="topic-row"><div class="topic-dot"></div>โค้ด C คำนวณทุกค่า + Think! + แบบฝึกหัด</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">00</div>
+        <div class="cover-badge">STATISTICS · BASICS</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 ทำไมต้องรู้ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · ทำไม</div>
+    <h2 class="slide-title">ทำไมโปรแกรมเมอร์ต้องรู้สถิติ?</h2>
+    <p class="slide-lead">เพราะงานจริงเจอสถิติทุกวัน — ไม่ใช่แค่วิชาบังคับ</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เจอที่ไหนบ้าง</div>
+        <pre class="code-block"><span class="cm">/* 1. วัด Performance */</span>
+API response time เฉลี่ยเท่าไหร่?
+p95 latency เกิน SLA ไหม?
+
+<span class="cm">/* 2. Average Case Analysis */</span>
+Quick Sort O(n log n) "average"
+— คำว่า average มาจากสถิติ!
+
+<span class="cm">/* 3. A/B Testing */</span>
+ปุ่มสีแดง vs สีเขียว
+อันไหน convert ดีกว่า "จริง"?
+
+<span class="cm">/* 4. Machine Learning */</span>
+ทั้งวงการคือสถิติประยุกต์</pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่างจริง: Response Time</div>
+        <pre class="code-block"><span class="cm">/* server log 10 requests (ms): */</span>
+{12, 15, 11, 13, 14, 12, 13, 11, 950, 14}
+
+Mean   = 106.5 ms   ← โดน 950 ลาก!
+Median = 13 ms      ← ค่าจริงที่ user เจอ
+
+<span class="cm">/* ถ้าดูแค่ mean จะคิดว่าระบบช้า
+   ทั้งที่จริง 9 ใน 10 requests เร็วมาก
+   มี 1 request เดียวที่ผิดปกติ
+
+   → ต้องรู้ว่าเมื่อไหร่ใช้ค่าไหน */</span></pre>
+      </div>
+    </div>
+    <div class="callout">บทเรียนแรกของ site reliability: อย่าเชื่อ average อย่างเดียว — outlier ตัวเดียวลากค่าเฉลี่ยพังได้</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 Mean -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · ค่ากลาง</div>
+    <h2 class="slide-title">Mean (ค่าเฉลี่ย) — บวกหมด หารด้วยจำนวน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">สูตร + ตัวอย่าง</div>
+        <pre class="code-block">x̄ = (x₁ + x₂ + ... + xₙ) / n
+
+<span class="cm">/* คะแนนสอบ 5 คน */</span>
+{70, 80, 60, 90, 75}
+
+Mean = (70+80+60+90+75) / 5
+     = 375 / 5
+     = 75
+
+<span class="cm">/* จุดอ่อน: โดน outlier ลาก */</span>
+{70, 80, 60, 90, 0}   ← คนหนึ่งขาดสอบ
+Mean = 300/5 = 60     ← ต่ำผิดจริง!</pre>
+      </div>
+      <div>
+        <div class="code-label">โค้ด C</div>
+        <pre class="code-block"><span class="kw">double</span> <span class="fn">mean</span>(<span class="kw">double</span> arr[], <span class="kw">int</span> n) {
+    <span class="kw">double</span> sum = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++)
+        sum += arr[i];
+    <span class="kw">return</span> sum / n;
+}
+<span class="cm">/* Time O(n), Space O(1) */</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">double</span> scores[] = {<span class="nm">70</span>,<span class="nm">80</span>,<span class="nm">60</span>,<span class="nm">90</span>,<span class="nm">75</span>};
+    <span class="fn">printf</span>(<span class="st">"mean = %.2f\n"</span>,
+           <span class="fn">mean</span>(scores, <span class="nm">5</span>));
+    <span class="cm">/* mean = 75.00 */</span>
+}</pre>
+      </div>
+    </div>
+    <div class="callout">ใช้ Mean เมื่อ: ข้อมูลกระจายปกติ ไม่มี outlier รุนแรง — เช่น ส่วนสูงคน, คะแนนสอบทั่วไป</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 Median -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · ค่ากลาง</div>
+    <h2 class="slide-title">Median (มัธยฐาน) — เรียงก่อน เอาตัวกลาง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">วิธีหา</div>
+        <pre class="code-block"><span class="cm">/* 1. sort ข้อมูลก่อน (ใช้วิชา Sorting!)
+   2. n คี่ → ตัวกลางพอดี
+      n คู่ → เฉลี่ยสองตัวกลาง */</span>
+
+{12, 15, 11, 13, 950}  n=5 (คี่)
+sort → {11, 12, 13, 15, 950}
+                ↑
+Median = arr[n/2] = arr[2] = 13
+
+{10, 20, 30, 40}  n=4 (คู่)
+Median = (arr[1]+arr[2])/2
+       = (20+30)/2 = 25
+
+<span class="cm">/* 950 ไม่มีผลต่อ median เลย!
+   → ทนต่อ outlier */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">โค้ด C</div>
+        <pre class="code-block"><span class="cm">/* ต้อง sort ก่อน! */</span>
+<span class="kw">double</span> <span class="fn">median</span>(<span class="kw">double</span> arr[], <span class="kw">int</span> n) {
+    <span class="fn">quick_sort</span>(arr, <span class="nm">0</span>, n-<span class="nm">1</span>); <span class="cm">/* O(n log n) */</span>
+
+    <span class="kw">if</span> (n % <span class="nm">2</span> == <span class="nm">1</span>)
+        <span class="kw">return</span> arr[n/<span class="nm">2</span>];
+    <span class="kw">return</span> (arr[n/<span class="nm">2</span> - <span class="nm">1</span>] + arr[n/<span class="nm">2</span>]) / <span class="nm">2.0</span>;
+}
+
+<span class="cm">/* เห็นไหม — วิชา Sorting ใช้ตรงนี้!
+   หา median ต้อง sort ก่อน
+   → O(n log n)
+
+   (มี Quickselect หา median
+   ได้ O(n) โดยไม่ sort เต็ม) */</span></pre>
+      </div>
+    </div>
+    <div class="callout">ใช้ Median เมื่อ: มี outlier — เงินเดือน (CEO ลากค่าเฉลี่ย), ราคาบ้าน, response time</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 Mode -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · ค่ากลาง</div>
+    <h2 class="slide-title">Mode (ฐานนิยม) — ค่าที่เจอบ่อยสุด</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่าง</div>
+        <pre class="code-block">{2, 3, 3, 5, 3, 7, 2}
+
+นับ: 2→2ครั้ง, 3→3ครั้ง, 5→1, 7→1
+Mode = 3  (เจอบ่อยสุด)
+
+<span class="cm">/* ใช้กับข้อมูล category ได้
+   ซึ่ง mean/median ทำไม่ได้: */</span>
+สีเสื้อขายดี: {แดง,แดง,ดำ,ขาว,แดง}
+Mode = แดง ← mean หาไม่ได้!
+
+<span class="cm">/* ใช้ใน CS:
+   - หา request ที่เจอบ่อยสุด (caching!)
+   - หา error code ที่เกิดบ่อยสุด
+   - Majority element problem */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">โค้ด C (ใช้ counting)</div>
+        <pre class="code-block"><span class="cm">/* ค่าเป็น int ช่วง 0..k */</span>
+<span class="kw">int</span> <span class="fn">mode</span>(<span class="kw">int</span> arr[], <span class="kw">int</span> n, <span class="kw">int</span> k) {
+    <span class="kw">int</span> count[k+<span class="nm">1</span>];
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;=k; i++) count[i]=<span class="nm">0</span>;
+
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++)
+        count[arr[i]]++;   <span class="cm">/* นับ */</span>
+
+    <span class="kw">int</span> best = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> v=<span class="nm">1</span>; v&lt;=k; v++)
+        <span class="kw">if</span> (count[v] > count[best])
+            best = v;
+    <span class="kw">return</span> best;
+}
+<span class="cm">/* Time O(n+k), Space O(k)
+   — เหมือน Counting Sort เลย! */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Mean = แบ่งเท่ากัน · Median = คนตรงกลาง · Mode = เสียงส่วนใหญ่ — สามค่านี้เล่าเรื่องต่างกัน</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 เลือกใช้ค่าไหน -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · การเลือก</div>
+    <h2 class="slide-title">เลือกใช้ค่าไหน? — ดูจากข้อมูล</h2>
+    <table class="stat-table">
+      <thead><tr><th>สถานการณ์</th><th>ใช้</th><th>เหตุผล</th></tr></thead>
+      <tbody>
+        <tr><td>คะแนนสอบ (กระจายปกติ)</td><td>Mean</td><td>ไม่มี outlier รุนแรง</td></tr>
+        <tr><td>เงินเดือนพนักงาน</td><td>Median</td><td>CEO เงินเดือนสูงลาก mean ขึ้น</td></tr>
+        <tr><td>API response time</td><td>Median + p95/p99</td><td>request ช้า 1 ตัวลาก mean</td></tr>
+        <tr><td>สินค้าขายดีสุด</td><td>Mode</td><td>ข้อมูลเป็น category</td></tr>
+        <tr><td>ราคาบ้านในเมือง</td><td>Median</td><td>คฤหาสน์หลังเดียวลาก mean</td></tr>
+        <tr><td>ขนาด packet ใน network</td><td>Mean + SD</td><td>ต้องรู้ throughput รวม</td></tr>
+      </tbody>
+    </table>
+    <div class="two-col" style="margin-top:8px">
+      <div>
+        <pre class="code-block"><span class="cm">/* เงินเดือน (บาท): */</span>
+{25k, 28k, 30k, 32k, 35k, 500k}
+Mean   = 108k ← "เฉลี่ยแสนแปด" โกหก!
+Median = 31k  ← ความจริงของคนส่วนใหญ่</pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">/* กฎจำง่าย: */</span>
+ข้อมูลสมมาตร  → Mean
+ข้อมูลเบ้/มี outlier → Median
+ข้อมูล category → Mode</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Variance + SD -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · การกระจาย</div>
+    <h2 class="slide-title">Variance และ SD — วัด "ความแกว่ง"</h2>
+    <p class="slide-lead">ค่ากลางเท่ากัน ไม่ได้แปลว่าข้อมูลเหมือนกัน — ต้องดูการกระจายด้วย</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">สองเซิร์ฟเวอร์ mean เท่ากัน</div>
+        <pre class="code-block">Server A: {14, 15, 15, 16, 15}  mean=15
+Server B: {5, 25, 10, 20, 15}   mean=15
+
+<span class="cm">/* A นิ่ง — B แกว่งหนัก!
+   ถ้าดูแค่ mean จะไม่รู้เลย */</span>
+
+<span class="cm">/* Variance σ² =
+   เฉลี่ยของ (ระยะห่างจาก mean)² */</span>
+
+A: ((-1)²+0²+0²+1²+0²)/5 = 0.4
+B: ((-10)²+10²+(-5)²+5²+0²)/5 = 50
+
+SD = √Variance
+A: SD = 0.63 ms  ← เสถียร
+B: SD = 7.07 ms  ← แกว่ง 11 เท่า!</pre>
+      </div>
+      <div>
+        <div class="code-label">โค้ด C</div>
+        <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;math.h&gt;</span>
+
+<span class="kw">double</span> <span class="fn">variance</span>(<span class="kw">double</span> a[], <span class="kw">int</span> n) {
+    <span class="kw">double</span> m = <span class="fn">mean</span>(a, n);
+    <span class="kw">double</span> sum = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i=<span class="nm">0</span>; i&lt;n; i++)
+        sum += (a[i]-m) * (a[i]-m);
+    <span class="kw">return</span> sum / n;
+}
+
+<span class="kw">double</span> <span class="fn">std_dev</span>(<span class="kw">double</span> a[], <span class="kw">int</span> n) {
+    <span class="kw">return</span> <span class="fn">sqrt</span>(<span class="fn">variance</span>(a, n));
+}
+<span class="cm">/* ทำไมยกกำลังสอง?
+   ① กันค่าลบหักล้างค่าบวก
+   ② โทษ outlier แรงขึ้น */</span></pre>
+      </div>
+    </div>
+    <div class="callout">SD ต่ำ = ข้อมูลเกาะกลุ่มใกล้ mean · SD สูง = กระจายกว้าง — หน่วยเดียวกับข้อมูลเดิม (variance หน่วยยกกำลังสอง)</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Percentile -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Percentile</div>
+    <h2 class="slide-title">Percentile — p50, p95, p99 ที่เจอในงานจริง</h2>
+    <p class="slide-lead">p95 = ค่าที่ 95% ของข้อมูลต่ำกว่า — มาตรฐานวัด latency ของทุกบริษัท tech</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ความหมาย</div>
+        <pre class="code-block">p50 = median (ครึ่งหนึ่งเร็วกว่านี้)
+p95 = 95% ของ requests เร็วกว่านี้
+p99 = 99% ของ requests เร็วกว่านี้
+
+<span class="cm">/* ตัวอย่าง SLA จริง:
+   "p99 latency < 200ms"
+   = ใน 100 requests
+     อย่างน้อย 99 ต้องเร็วกว่า 200ms */</span>
+
+<span class="cm">/* ทำไมไม่ใช้ max?
+   max โดน outlier ตัวเดียวพัง
+   p99 ตัด 1% ที่แย่สุดออก
+   → เสถียรกว่า วัดจริงได้ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">โค้ด C — หา percentile</div>
+        <pre class="code-block"><span class="cm">/* sort ก่อนเสมอ! */</span>
+<span class="kw">double</span> <span class="fn">percentile</span>(<span class="kw">double</span> a[], <span class="kw">int</span> n,
+                  <span class="kw">double</span> p) {
+    <span class="fn">quick_sort</span>(a, <span class="nm">0</span>, n-<span class="nm">1</span>);
+    <span class="kw">int</span> idx = (<span class="kw">int</span>)(p / <span class="nm">100.0</span> * n);
+    <span class="kw">if</span> (idx >= n) idx = n - <span class="nm">1</span>;
+    <span class="kw">return</span> a[idx];
+}
+
+<span class="cm">/* latency 10 ตัว (sorted):
+{11,12,12,13,13,14,14,15,15,950}
+
+p50 = a[5]  = 14 ms
+p90 = a[9]  = 950 ms  ← จับ outlier ได้!
+*/</span></pre>
+      </div>
+    </div>
+    <div class="callout">อีกครั้ง — percentile ต้อง sort ก่อน นี่คือเหตุผลที่เรียน Sorting มาก่อนบทนี้</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 Distribution -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Distribution</div>
+    <h2 class="slide-title">รูปร่างข้อมูล — Normal vs Skewed</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Normal (ระฆังคว่ำ)</div>
+        <div class="dot-row" style="justify-content:center">
+          <div class="dot-col"><div class="dot"></div><div class="dot-label">60</div></div>
+          <div class="dot-col"><div class="dot"></div><div class="dot"></div><div class="dot-label">65</div></div>
+          <div class="dot-col"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot-label">70</div></div>
+          <div class="dot-col"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot-label">75</div></div>
+          <div class="dot-col"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot-label">80</div></div>
+          <div class="dot-col"><div class="dot"></div><div class="dot"></div><div class="dot-label">85</div></div>
+          <div class="dot-col"><div class="dot"></div><div class="dot-label">90</div></div>
+        </div>
+        <pre class="code-block">Mean ≈ Median ≈ Mode (ตรงกลาง)
+เช่น ส่วนสูง, คะแนนสอบ
+68% อยู่ใน mean ± 1SD
+95% อยู่ใน mean ± 2SD</pre>
+      </div>
+      <div>
+        <div class="code-label">Right-skewed (หางยาวขวา)</div>
+        <div class="dot-row" style="justify-content:center">
+          <div class="dot-col"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot-label">10</div></div>
+          <div class="dot-col"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot-label">20</div></div>
+          <div class="dot-col"><div class="dot"></div><div class="dot"></div><div class="dot-label">30</div></div>
+          <div class="dot-col"><div class="dot"></div><div class="dot-label">50</div></div>
+          <div class="dot-col"><div class="dot hi"></div><div class="dot-label">500</div></div>
+        </div>
+        <pre class="code-block">Mean > Median (โดนหางลาก)
+เช่น เงินเดือน, response time,
+     ขนาดไฟล์, จำนวน followers
+
+→ ใช้ Median + Percentile
+  แทน Mean</pre>
+      </div>
+    </div>
+    <div class="callout">เช็คง่ายๆ: ถ้า Mean ≠ Median มาก แสดงว่าข้อมูลเบ้ — อย่าใช้ mean เล่าเรื่อง</div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Banking -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Use Case</div>
+    <h2 class="slide-title">🏦 วิเคราะห์ Transaction แบบครบเครื่อง</h2>
+    <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="pp">#include</span> <span class="st">&lt;math.h&gt;</span>
+
+<span class="kw">typedef struct</span> {
+    <span class="kw">double</span> mean, median, sd, p95;
+} Report;
+
+Report <span class="fn">analyze</span>(<span class="kw">double</span> amounts[], <span class="kw">int</span> n) {
+    Report r;
+    r.mean = <span class="fn">mean</span>(amounts, n);              <span class="cm">/* O(n) */</span>
+    <span class="fn">quick_sort</span>(amounts, <span class="nm">0</span>, n-<span class="nm">1</span>);           <span class="cm">/* O(n log n) */</span>
+    r.median = (n % <span class="nm">2</span>) ? amounts[n/<span class="nm">2</span>]
+             : (amounts[n/<span class="nm">2</span>-<span class="nm">1</span>] + amounts[n/<span class="nm">2</span>]) / <span class="nm">2</span>;
+    r.sd  = <span class="fn">std_dev</span>(amounts, n);            <span class="cm">/* O(n) */</span>
+    r.p95 = amounts[(<span class="kw">int</span>)(<span class="nm">0.95</span> * n)];      <span class="cm">/* sorted แล้ว O(1) */</span>
+    <span class="kw">return</span> r;
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">double</span> txn[] = {<span class="nm">120</span>, <span class="nm">85</span>, <span class="nm">200</span>, <span class="nm">95</span>, <span class="nm">110</span>, <span class="nm">105</span>, <span class="nm">98</span>, <span class="nm">15000</span>, <span class="nm">130</span>, <span class="nm">90</span>};
+    Report r = <span class="fn">analyze</span>(txn, <span class="nm">10</span>);
+    <span class="cm">/* mean=1603 (โดน 15000 ลาก!) median=107 sd≈4467
+       → mean >> median = มี outlier
+       → 15000 อาจเป็น fraud! แจ้งเตือนระบบ */</span>
+}</pre>
+    <div class="callout">Fraud detection เบื้องต้น: transaction ที่ห่างจาก mean เกิน 3×SD = ผิดปกติ ควรตรวจสอบ</div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">บริษัทหนึ่งโฆษณาว่า "เงินเดือนเฉลี่ยพนักงาน 90,000 บาท"<br><br>
+พนักงาน 10 คน: 9 คนได้ 30,000 · CEO ได้ 630,000<br><br>
+Mean คือเท่าไหร่? Median คือเท่าไหร่?<br>
+โฆษณานี้โกหกไหม? ควรใช้ค่าไหนถึงยุติธรรม?<br><br>
+<em>힌트: (9×30,000 + 630,000) / 10 = ?</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · MCQ</div>
+    <h2 class="slide-title">Latency: {10, 12, 11, 13, 2000} ควรรายงานค่าไหน?</h2>
+    <p class="slide-lead">ทีม ops ต้องการรู้ว่า "user ทั่วไปเจอความเร็วเท่าไหร่"</p>
+    <div id="mc-st0" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-st0','A','B','❌ Mean = 409.2 ms — โดน 2000 ลากจนไม่สะท้อนประสบการณ์จริงของ user ส่วนใหญ่')">A) Mean = 409.2 ms</button>
+      <button class="mc-btn" onclick="pickMC('mc-st0','B','B','✅ Median = 12 ms — sort ได้ {10,11,12,13,2000} ตัวกลางคือ 12 สะท้อน user ทั่วไปจริง (แล้วค่อยดู p99 จับ outlier แยก)')">B) Median = 12 ms</button>
+      <button class="mc-btn" onclick="pickMC('mc-st0','C','B','❌ Mode ใช้กับข้อมูลซ้ำๆ/category — latency แต่ละค่าไม่ซ้ำกัน หา mode ไม่มีความหมาย')">C) Mode</button>
+      <button class="mc-btn" onclick="pickMC('mc-st0','D','B','❌ Max = 2000 บอกแค่ตัวแย่สุด ไม่บอกว่า user ทั่วไปเจออะไร')">D) Max = 2000 ms</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">sort → {10, 11, 12, 13, 2000}
+Median = arr[2] = 12 ms  ← user ทั่วไป
+Mean = 2046/5 = 409.2    ← โกหกเพราะ outlier
+แนวปฏิบัติจริง: รายงาน p50 (=median) + p95 + p99 คู่กัน</pre>
+  </div>
+</div>
+
+<!-- SLIDE 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 0 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① {3, 7, 5, 9, 6} — Median คือ?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fst0a" placeholder="ตัวเลข">
+      <button class="fill-btn" onclick="checkFill('fst0a','6',['6'],[],'✅ sort → {3,5,6,7,9} ตัวกลาง = 6','❌ ต้อง sort ก่อน: {3,5,6,7,9} → ตัวกลางคือ 6')">ตรวจ</button>
+    </div>
+    <div id="fst0a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② การหา Median ต้องทำอะไรกับข้อมูลก่อน?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fst0b" placeholder="ทำอะไร?">
+      <button class="fill-btn" onclick="checkFill('fst0b','sort',['เรียง','เรียงลำดับ','sorting','จัดเรียง'],[],'✅ sort ก่อนเสมอ — แล้วเอาตัวกลาง → O(n log n)','❌ ต้อง sort (เรียงลำดับ) ก่อน แล้วจึงหยิบตัวกลางได้')">ตรวจ</button>
+    </div>
+    <div id="fst0b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ SD สูง แปลว่าข้อมูล ___ (เกาะกลุ่ม/กระจาย)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fst0c" placeholder="เกาะกลุ่มหรือกระจาย">
+      <button class="fill-btn" onclick="checkFill('fst0c','กระจาย',['กระจายกว้าง','แกว่ง','spread'],[],'✅ SD สูง = ข้อมูลกระจายห่างจาก mean มาก','❌ SD สูง = กระจาย (ห่างจาก mean มาก) · SD ต่ำ = เกาะกลุ่ม')">ตรวจ</button>
+    </div>
+    <div id="fst0c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">📊</div>
+      <div class="summary-title">สรุปบทที่ 0 — สถิติพื้นฐาน</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Mean</div><div class="sum-body">บวกหมดหาร n — ใช้เมื่อไม่มี outlier · โดนค่าสุดโต่งลากง่าย</div></div>
+        <div class="sum-card"><div class="sum-head">Median</div><div class="sum-body">sort แล้วเอาตัวกลาง — ทนต่อ outlier · ใช้กับเงินเดือน/latency</div></div>
+        <div class="sum-card"><div class="sum-head">Mode</div><div class="sum-body">ค่าที่เจอบ่อยสุด — ใช้ได้กับ category · หาด้วย counting O(n+k)</div></div>
+        <div class="sum-card"><div class="sum-head">Variance / SD</div><div class="sum-body">วัดความแกว่ง — SD สูง = กระจาย · fraud = ห่างเกิน 3SD</div></div>
+        <div class="sum-card"><div class="sum-head">Percentile</div><div class="sum-body">p50/p95/p99 — มาตรฐานวัด latency · ต้อง sort ก่อน</div></div>
+        <div class="sum-card"><div class="sum-head">เช็คความเบ้</div><div class="sum-body">Mean ≠ Median มาก = ข้อมูลเบ้ → เปลี่ยนไปใช้ Median</div></div>
+      </div>
+      <a href="slides_ch1.html" class="summary-next">→ บทที่ 1: Probability สำหรับ CS</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 0 — สถิติพื้นฐาน</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ทำไมต้องรู้สถิติ','Mean','Median','Mode','เลือกใช้ค่าไหน','Variance + SD','Percentile','Distribution','Banking Use Case','Think!','MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

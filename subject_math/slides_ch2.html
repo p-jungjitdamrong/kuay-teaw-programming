@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 2 — เลขฐาน 2 พื้นฐาน | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#6a2c91;--cal:#f3e9fa;--cam:#9b59b6;}
+.bit-row{display:flex;gap:4px;margin:8px 0;justify-content:flex-start;}
+.bit{width:42px;height:42px;border-radius:6px;border:1.5px solid var(--cam);background:var(--cal);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--mono);}
+.bit .v{font-size:16px;font-weight:700;color:var(--ca);}
+.bit .w{font-size:9px;color:var(--dim);}
+.bit.on{background:var(--ca);border-color:var(--ca);}
+.bit.on .v{color:#fff;}
+.bit.on .w{color:#d9c5ec;}
+.b-table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.b-table th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;font-family:var(--mono);}
+.b-table td{padding:5px 10px;border-bottom:1px solid var(--line);font-family:var(--mono);}
+.b-table tr:nth-child(even) td{background:var(--cal);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Math for CS</div>
+        <div class="cover-title">บทที่ 2<br><em>เลขฐาน 2 พื้นฐาน</em></div>
+        <div class="cover-subtitle">ภาษาแม่ของคอมพิวเตอร์ — แปลงฐาน 2↔10↔16 แบบเห็นแล้วทำได้เลย</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ทำไมคอมพิวเตอร์ใช้ฐาน 2?</div>
+          <div class="topic-row"><div class="topic-dot"></div>ค่าประจำหลัก — หัวใจของทุกฐาน</div>
+          <div class="topic-row"><div class="topic-dot"></div>แปลง 2→10 และ 10→2 (สองวิธี)</div>
+          <div class="topic-row"><div class="topic-dot"></div>ฐาน 16 (Hex) — เพื่อนซี้ของ programmer</div>
+          <div class="topic-row"><div class="topic-dot"></div>bit, byte, KB — ทำไม 1KB = 1024</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">02</div>
+        <div class="cover-badge">BINARY · BASE CONVERSION</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 ทำไมฐาน 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · ทำไม</div>
+    <h2 class="slide-title">ทำไมคอมพิวเตอร์ใช้ฐาน 2?</h2>
+    <p class="slide-lead">เพราะ hardware แยกแยะได้แค่ 2 สถานะ: <strong>มีไฟ (1)</strong> กับ <strong>ไม่มีไฟ (0)</strong> — เชื่อถือได้ที่สุด</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โลกกายภาพ</div>
+        <pre class="code-block">transistor:  เปิด/ปิด        → 1/0
+แรงดันไฟ:    สูง/ต่ำ          → 1/0
+จานแม่เหล็ก:  N/S             → 1/0
+SSD cell:    มีประจุ/ไม่มี     → 1/0
+แผ่น CD:     สะท้อน/ไม่สะท้อน → 1/0
+
+<span class="cm">/* ถ้าใช้ฐาน 10 ต้องแยก
+   แรงดัน 10 ระดับ → ผิดพลาดง่าย
+   2 ระดับ → ชัดเจน ทนทาน noise */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ทุกอย่างคือ bit</div>
+        <pre class="code-block">ตัวเลข 65        = 01000001
+ตัวอักษร 'A'     = 01000001  ← เหมือนกัน!
+สี แดงสด        = 11111111 00000000 00000000
+เสียง (1 sample) = 0110100101010011
+รูปภาพ 1 pixel   = 24 bits
+
+<span class="cm">/* ความหมายขึ้นกับ "การตีความ"
+   bits เดียวกัน ตีความต่างกัน
+   ได้ผลต่างกัน — นี่คือ type
+   ในภาษา C นั่นเอง! */</span></pre>
+      </div>
+    </div>
+    <div class="callout">int x = 65 กับ char c = 'A' คือ bits เดียวกันเป๊ะ — ต่างแค่วิธีตีความ นี่คือเหตุผลที่ C แปลง char↔int ได้ตรงๆ</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 ค่าประจำหลัก -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · หลักการ</div>
+    <h2 class="slide-title">ค่าประจำหลัก — หัวใจของทุกฐาน</h2>
+    <p class="slide-lead">ฐาน 10 ที่ใช้ทุกวันก็ทำงานแบบเดียวกัน — แค่เปลี่ยนตัวคูณจาก 10 เป็น 2</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ฐาน 10 (คุ้นเคยอยู่แล้ว)</div>
+        <pre class="code-block">    3 4 7
+    │ │ └─ 7 × 10⁰ = 7 × 1   = 7
+    │ └─── 4 × 10¹ = 4 × 10  = 40
+    └───── 3 × 10² = 3 × 100 = 300
+                              ─────
+                               347</pre>
+      </div>
+      <div>
+        <div class="code-label">ฐาน 2 (หลักการเดียวกัน)</div>
+        <pre class="code-block">    1 0 1 1
+    │ │ │ └─ 1 × 2⁰ = 1 × 1 = 1
+    │ │ └─── 1 × 2¹ = 1 × 2 = 2
+    │ └───── 0 × 2² = 0 × 4 = 0
+    └─────── 1 × 2³ = 1 × 8 = 8
+                             ────
+                              11</pre>
+      </div>
+    </div>
+    <div class="code-label" style="margin-top:8px">ค่าประจำหลัก 8 bits — ท่องให้ขึ้นใจ</div>
+    <div class="bit-row">
+      <div class="bit"><span class="v">·</span><span class="w">128</span></div>
+      <div class="bit"><span class="v">·</span><span class="w">64</span></div>
+      <div class="bit"><span class="v">·</span><span class="w">32</span></div>
+      <div class="bit"><span class="v">·</span><span class="w">16</span></div>
+      <div class="bit"><span class="v">·</span><span class="w">8</span></div>
+      <div class="bit"><span class="v">·</span><span class="w">4</span></div>
+      <div class="bit"><span class="v">·</span><span class="w">2</span></div>
+      <div class="bit"><span class="v">·</span><span class="w">1</span></div>
+    </div>
+    <div class="callout">128 64 32 16 8 4 2 1 — ท่องแค่นี้ แปลงฐาน 2 ได้ทุกโจทย์ในหัว ไม่ต้องทด</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 แปลง 2 → 10 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · แปลงฐาน</div>
+    <h2 class="slide-title">แปลง 2 → 10 : บวกค่าหลักที่เป็น 1</h2>
+    <p class="slide-lead">วางเลขใต้ค่าประจำหลัก แล้ว <strong>บวกเฉพาะหลักที่เป็น 1</strong> — จบ</p>
+    <div class="code-label">ตัวอย่าง: 10110101₂ = ?</div>
+    <div class="bit-row">
+      <div class="bit on"><span class="v">1</span><span class="w">128</span></div>
+      <div class="bit"><span class="v">0</span><span class="w">64</span></div>
+      <div class="bit on"><span class="v">1</span><span class="w">32</span></div>
+      <div class="bit on"><span class="v">1</span><span class="w">16</span></div>
+      <div class="bit"><span class="v">0</span><span class="w">8</span></div>
+      <div class="bit on"><span class="v">1</span><span class="w">4</span></div>
+      <div class="bit"><span class="v">0</span><span class="w">2</span></div>
+      <div class="bit on"><span class="v">1</span><span class="w">1</span></div>
+    </div>
+    <pre class="code-block">บวกเฉพาะช่องม่วง (bit = 1):
+128 + 32 + 16 + 4 + 1 = 181
+
+∴ 10110101₂ = 181₁₀</pre>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">/* ฝึกอีกข้อ: 1101₂ */</span>
+8 + 4 + 1 = 13 ✓
+
+<span class="cm">/* 11111111₂ (8 bits เต็ม) */</span>
+128+64+32+16+8+4+2+1 = 255
+← ค่า max ของ unsigned char!</pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">/* ตัวเลขน่าจำ */</span>
+1111₂     = 15  (4 bits เต็ม)
+11111111₂ = 255 (8 bits เต็ม)
+2ⁿ − 1 = ค่า max ของ n bits</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4 แปลง 10 → 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · แปลงฐาน</div>
+    <h2 class="slide-title">แปลง 10 → 2 : สองวิธี เลือกที่ถนัด</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">วิธี 1: หารสองเก็บเศษ (มาตรฐาน)</div>
+        <pre class="code-block"><span class="cm">/* 45 → ฐาน 2 */</span>
+45 ÷ 2 = 22  เศษ <span class="nm">1</span>  ↑ อ่านจากล่าง
+22 ÷ 2 = 11  เศษ <span class="nm">0</span>  │ ขึ้นบน
+11 ÷ 2 = 5   เศษ <span class="nm">1</span>  │
+ 5 ÷ 2 = 2   เศษ <span class="nm">1</span>  │
+ 2 ÷ 2 = 1   เศษ <span class="nm">0</span>  │
+ 1 ÷ 2 = 0   เศษ <span class="nm">1</span>  │
+
+อ่านเศษจากล่างขึ้นบน:
+45 = 101101₂</pre>
+      </div>
+      <div>
+        <div class="code-label">วิธี 2: หักลบค่าหลัก (เร็วกว่าถ้าคล่อง)</div>
+        <pre class="code-block"><span class="cm">/* 45 → ฐาน 2
+   ไล่จาก 128 64 32 16 8 4 2 1 */</span>
+
+128 > 45         → 0
+ 64 > 45         → 0
+ 32 ≤ 45 หัก เหลือ 13 → <span class="nm">1</span>
+ 16 > 13         → 0
+  8 ≤ 13 หัก เหลือ 5  → <span class="nm">1</span>
+  4 ≤ 5  หัก เหลือ 1  → <span class="nm">1</span>
+  2 > 1          → 0
+  1 ≤ 1  หัก เหลือ 0  → <span class="nm">1</span>
+
+45 = 00101101₂ = 101101₂ ✓ ตรงกัน!</pre>
+      </div>
+    </div>
+    <div class="callout">ตรวจคำตอบเสมอ: แปลงกลับ 32+8+4+1 = 45 ✓ — แปลงไปกลับได้ = เข้าใจจริง</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 Hex -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · ฐาน 16</div>
+    <h2 class="slide-title">ฐาน 16 (Hex) — เพื่อนซี้ของ Programmer</h2>
+    <p class="slide-lead">เลขฐาน 2 ยาวเกิน — Hex ย่อ 4 bits เหลือ 1 ตัวอักษร อ่านง่ายกว่ามาก</p>
+    <div class="two-col">
+      <div>
+        <table class="b-table">
+          <thead><tr><th>Dec</th><th>Bin</th><th>Hex</th><th>Dec</th><th>Bin</th><th>Hex</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>0000</td><td>0</td><td>8</td><td>1000</td><td>8</td></tr>
+            <tr><td>1</td><td>0001</td><td>1</td><td>9</td><td>1001</td><td>9</td></tr>
+            <tr><td>2</td><td>0010</td><td>2</td><td>10</td><td>1010</td><td>A</td></tr>
+            <tr><td>3</td><td>0011</td><td>3</td><td>11</td><td>1011</td><td>B</td></tr>
+            <tr><td>4</td><td>0100</td><td>4</td><td>12</td><td>1100</td><td>C</td></tr>
+            <tr><td>5</td><td>0101</td><td>5</td><td>13</td><td>1101</td><td>D</td></tr>
+            <tr><td>6</td><td>0110</td><td>6</td><td>14</td><td>1110</td><td>E</td></tr>
+            <tr><td>7</td><td>0111</td><td>7</td><td>15</td><td>1111</td><td>F</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="code-label">แปลง Bin ↔ Hex: จับกลุ่มละ 4</div>
+        <pre class="code-block"><span class="cm">/* Bin → Hex: จับ 4 bits จากขวา */</span>
+10110101₂
+= 1011 | 0101
+=  B   |  5
+= 0xB5
+
+<span class="cm">/* Hex → Bin: กาง 1 ตัวเป็น 4 bits */</span>
+0x3F = 3 | F = 0011 | 1111
+     = 00111111₂
+
+<span class="cm">/* เจอที่ไหน:
+   สี CSS:      #FF6600
+   memory addr: 0x7ffee4c01a2c
+   MAC addr:    A4:B1:C2:D3
+   error code:  0xDEADBEEF */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Hex 1 ตัว = 4 bits พอดีเป๊ะ — แปลงไปกลับได้ทันทีไม่ต้องคำนวณ (ฐาน 10 ทำแบบนี้ไม่ได้)</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 bit byte KB -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · หน่วย</div>
+    <h2 class="slide-title">bit → byte → KB — ทำไม 1KB = 1024?</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ลำดับหน่วย</div>
+        <pre class="code-block">1 bit  = 0 หรือ 1 (เล็กสุด)
+1 byte = 8 bits   = เก็บ 0..255
+1 KB   = 1024 bytes = 2¹⁰
+1 MB   = 1024 KB    = 2²⁰ bytes
+1 GB   = 1024 MB    = 2³⁰ bytes
+1 TB   = 1024 GB    = 2⁴⁰ bytes
+
+<span class="cm">/* ทำไม 1024 ไม่ใช่ 1000?
+   เพราะ 2¹⁰ = 1024 ใกล้ 1000
+   และ address memory เป็นฐาน 2
+   → ใช้กำลังของ 2 ลงตัวพอดี */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">n bits เก็บอะไรได้บ้าง</div>
+        <table class="b-table">
+          <thead><tr><th>bits</th><th>ค่าที่เก็บได้</th><th>ใช้กับ</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>2 ค่า</td><td>bool</td></tr>
+            <tr><td>8</td><td>256 ค่า</td><td>char, สี 1 channel</td></tr>
+            <tr><td>16</td><td>65,536</td><td>short, เสียง CD</td></tr>
+            <tr><td>32</td><td>4.29 × 10⁹</td><td>int, IPv4</td></tr>
+            <tr><td>64</td><td>1.8 × 10¹⁹</td><td>long long, pointer</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block" style="margin-top:6px"><span class="cm">/* สูตร: n bits → 2ⁿ ค่า
+   ช่วง unsigned: 0 .. 2ⁿ−1 */</span></pre>
+      </div>
+    </div>
+    <div class="callout">เกร็ด: HDD ขายแบบ 1TB = 10¹² bytes (ฐาน 10) แต่ OS นับฐาน 2 → เห็นแค่ 931 GB — ไม่ได้โดนโกง แค่คนละหน่วย!</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 โค้ด C แปลงฐาน -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · โค้ด C</div>
+    <h2 class="slide-title">โค้ด C — แปลงฐานด้วยตัวเอง</h2>
+    <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="cm">/* 10 → 2 : หารสองเก็บเศษ (เก็บใส่ array แล้วพิมพ์ย้อน) */</span>
+<span class="kw">void</span> <span class="fn">print_binary</span>(<span class="kw">unsigned int</span> n) {
+    <span class="kw">int</span> bits[<span class="nm">32</span>], count = <span class="nm">0</span>;
+    <span class="kw">if</span> (n == <span class="nm">0</span>) { <span class="fn">printf</span>(<span class="st">"0"</span>); <span class="kw">return</span>; }
+    <span class="kw">while</span> (n > <span class="nm">0</span>) {
+        bits[count++] = n % <span class="nm">2</span>;   <span class="cm">/* เศษ = bit */</span>
+        n /= <span class="nm">2</span>;                  <span class="cm">/* หารต่อ */</span>
+    }
+    <span class="kw">for</span> (<span class="kw">int</span> i = count-<span class="nm">1</span>; i >= <span class="nm">0</span>; i--)  <span class="cm">/* อ่านย้อน! */</span>
+        <span class="fn">printf</span>(<span class="st">"%d"</span>, bits[i]);
+}
+
+<span class="cm">/* 2 → 10 : บวกค่าประจำหลัก */</span>
+<span class="kw">int</span> <span class="fn">binary_to_dec</span>(<span class="kw">const char</span> *bin) {
+    <span class="kw">int</span> result = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; bin[i] != <span class="st">'\0'</span>; i++) {
+        result = result * <span class="nm">2</span> + (bin[i] - <span class="st">'0'</span>);  <span class="cm">/* เลื่อนหลัก + บวก */</span>
+    }
+    <span class="kw">return</span> result;
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="fn">print_binary</span>(<span class="nm">45</span>);                        <span class="cm">/* 101101 */</span>
+    <span class="fn">printf</span>(<span class="st">"\n%d\n"</span>, <span class="fn">binary_to_dec</span>(<span class="st">"101101"</span>)); <span class="cm">/* 45 */</span>
+    <span class="fn">printf</span>(<span class="st">"%x\n"</span>, <span class="nm">181</span>);   <span class="cm">/* b5  — %x พิมพ์ hex ได้เลย */</span>
+    <span class="fn">printf</span>(<span class="st">"%d\n"</span>, <span class="nm">0xB5</span>);  <span class="cm">/* 181 — เขียน hex ในโค้ดได้เลย */</span>
+}</pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 ทำไม 0.1 + 0.2 != 0.3 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · เศษส่วนฐาน 2</div>
+    <h2 class="slide-title">Bonus: ทำไม 0.1 + 0.2 ≠ 0.3 ในคอมพิวเตอร์?</h2>
+    <p class="slide-lead">เพราะ 0.1 เขียนเป็นฐาน 2 ได้ไม่ลงตัว — เหมือน 1/3 เขียนฐาน 10 ได้ไม่ลงตัว (0.3333...)</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เศษส่วนฐาน 2</div>
+        <pre class="code-block">หลักหลังจุดฐาน 2:
+0.5   = 2⁻¹ = 0.1₂
+0.25  = 2⁻² = 0.01₂
+0.75  = 0.5+0.25 = 0.11₂
+0.625 = 0.5+0.125 = 0.101₂
+
+<span class="cm">/* แต่ 0.1 (หนึ่งส่วนสิบ)? */</span>
+0.1₁₀ = 0.0001100110011...₂
+        ← ซ้ำ 0011 ไม่รู้จบ!
+
+<span class="cm">/* คอมเก็บได้จำกัด bits
+   → ต้องตัด → ค่าเพี้ยนนิดๆ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ผลในโค้ดจริง</div>
+        <pre class="code-block"><span class="kw">double</span> a = <span class="nm">0.1</span> + <span class="nm">0.2</span>;
+<span class="fn">printf</span>(<span class="st">"%.17f\n"</span>, a);
+<span class="cm">/* 0.30000000000000004  ← เพี้ยน! */</span>
+
+<span class="kw">if</span> (a == <span class="nm">0.3</span>)  <span class="cm">/* false!! */</span>
+
+<span class="cm">/* วิธีถูก: เทียบด้วย epsilon */</span>
+<span class="pp">#include</span> <span class="st">&lt;math.h&gt;</span>
+<span class="kw">if</span> (<span class="fn">fabs</span>(a - <span class="nm">0.3</span>) &lt; <span class="nm">1e-9</span>)  <span class="cm">/* true ✓ */</span>
+
+<span class="cm">/* เงิน: ห้ามใช้ float/double!
+   ใช้ int เก็บเป็นสตางค์แทน
+   129.99 บาท → เก็บ 12999 */</span></pre>
+      </div>
+    </div>
+    <div class="callout">ระบบธนาคารเก็บเงินเป็น integer สตางค์เสมอ — float สะสม error จนเงินหายได้จริง</div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Use Case -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Use Case</div>
+    <h2 class="slide-title">💡 เลขฐานในงานจริง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">IP Address = เลขฐาน 2 แต่งตัว</div>
+        <pre class="code-block">192.168.1.1
+= 11000000.10101000.00000001.00000001
+  ← แต่ละก้อนคือ 1 byte (0..255)
+
+<span class="cm">/* subnet mask /24 */</span>
+255.255.255.0
+= 11111111.11111111.11111111.00000000
+  ← 24 bits แรกเป็น network
+
+<span class="cm">/* นี่คือเหตุผลที่ IP สูงสุด
+   แต่ละก้อนคือ 255 = 2⁸−1 */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">สี RGB = 3 bytes</div>
+        <pre class="code-block">#FF6600 (สีส้ม)
+  FF = 255 → แดงเต็ม
+  66 = 102 → เขียวปานกลาง
+  00 = 0   → ไม่มีน้ำเงิน
+
+<span class="cm">/* rgb(255, 102, 0) คือค่าเดียวกัน
+   แค่เขียนฐาน 10 */</span>
+
+<span class="cm">/* file permission ใน Linux */</span>
+chmod 755
+7 = 111₂ = rwx (เจ้าของ)
+5 = 101₂ = r-x (กลุ่ม)
+5 = 101₂ = r-x (คนอื่น)</pre>
+      </div>
+    </div>
+    <div class="callout">IP, สี, permission, MAC address — เข้าใจเลขฐาน = อ่านออกหมดทุกอัน</div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">IPv4 ใช้ 32 bits → มี address ได้ 2³² ≈ 4.3 พันล้าน<br><br>
+โลกมีอุปกรณ์เชื่อมเน็ตมากกว่า 4.3 พันล้านไปนานแล้ว<br>ทำไมเน็ตยังไม่ล่ม?<br><br>
+IPv6 ใช้ 128 bits → มีกี่ address?<br>2¹²⁸ ใหญ่ขนาดไหน?<br><br>
+<em>힌트: 2¹²⁸ ≈ 3.4 × 10³⁸ — มากกว่าเม็ดทรายทุกเม็ดบนโลก<br>คูณด้วยจำนวนดาวในจักรวาล... ยังเหลือ</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · MCQ</div>
+    <h2 class="slide-title">11010110₂ = เท่าไหร่ในฐาน 10?</h2>
+    <p class="slide-lead">ใช้ค่าประจำหลัก: 128 64 32 16 8 4 2 1</p>
+    <div id="mc-bn2" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-bn2','A','B','❌ 198 = 11000110₂ — เช็ค bit ตำแหน่ง 16 อีกที')">A) 198</button>
+      <button class="mc-btn" onclick="pickMC('mc-bn2','B','B','✅ 128+64+16+4+2 = 214 — บวกเฉพาะหลักที่เป็น 1')">B) 214</button>
+      <button class="mc-btn" onclick="pickMC('mc-bn2','C','B','❌ 226 = 11100010₂ — ลองวางใต้ค่าประจำหลักใหม่')">C) 226</button>
+      <button class="mc-btn" onclick="pickMC('mc-bn2','D','B','❌ 182 = 10110110₂ — bit ที่ 64 กับ 32 สลับกัน')">D) 182</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">  1    1    0    1    0    1    1    0
+128   64   32   16    8    4    2    1
+ ✓    ✓    ·    ✓    ·    ✓    ✓    ·
+
+128 + 64 + 16 + 4 + 2 = 214
+
+เช็ค hex ด้วย: 1101|0110 = D|6 = 0xD6 = 13×16+6 = 214 ✓</pre>
+  </div>
+</div>
+
+<!-- SLIDE 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 2 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① 25₁₀ = ___₂ (ฐาน 2)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fbn2a" placeholder="เลขฐาน 2">
+      <button class="fill-btn" onclick="checkFill('fbn2a','11001',['011001','0011001'],[],'✅ 16+8+1 = 25 → 11001₂','❌ 25 = 16+8+1 → 11001₂ (หารสองเก็บเศษ: 1,0,0,1,1 อ่านย้อน)')">ตรวจ</button>
+    </div>
+    <div id="fbn2a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② 1111₂ = ___₁₀ (ฐาน 10)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fbn2b" placeholder="เลขฐาน 10">
+      <button class="fill-btn" onclick="checkFill('fbn2b','15',['15'],[],'✅ 8+4+2+1 = 15 — 4 bits เต็ม = 2⁴−1','❌ 8+4+2+1 = 15 (n bits เต็ม = 2ⁿ−1 เสมอ)')">ตรวจ</button>
+    </div>
+    <div id="fbn2b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ 0xFF = ___₁₀ (ฐาน 10)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fbn2c" placeholder="เลขฐาน 10">
+      <button class="fill-btn" onclick="checkFill('fbn2c','255',['255'],[],'✅ F=15 → 15×16 + 15 = 255 = 11111111₂ (1 byte เต็ม)','❌ 0xFF = 15×16+15 = 255 — ค่า max ของ 1 byte')">ตรวจ</button>
+    </div>
+    <div id="fbn2c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">💾</div>
+      <div class="summary-title">สรุปบทที่ 2 — เลขฐาน 2 พื้นฐาน</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">ทำไมฐาน 2</div><div class="sum-body">hardware มี 2 สถานะ (ไฟ/ไม่มีไฟ) — ทุกอย่างคือ bits + การตีความ</div></div>
+        <div class="sum-card"><div class="sum-head">ค่าประจำหลัก</div><div class="sum-body">128 64 32 16 8 4 2 1 — ท่องแล้วแปลงในหัวได้เลย</div></div>
+        <div class="sum-card"><div class="sum-head">2→10 / 10→2</div><div class="sum-body">บวกหลักที่เป็น 1 / หารสองเก็บเศษอ่านย้อน</div></div>
+        <div class="sum-card"><div class="sum-head">Hex</div><div class="sum-body">1 ตัว = 4 bits พอดี — จับกลุ่ม 4 แปลงได้ทันที · 0xFF = 255</div></div>
+        <div class="sum-card"><div class="sum-head">หน่วย</div><div class="sum-body">1 byte = 8 bits · 1KB = 2¹⁰ = 1024 · n bits เก็บได้ 2ⁿ ค่า</div></div>
+        <div class="sum-card"><div class="sum-head">0.1+0.2≠0.3</div><div class="sum-body">0.1 เขียนฐาน 2 ไม่ลงตัว — เงินต้องใช้ int เสมอ</div></div>
+      </div>
+      <a href="slides_ch3.html" class="summary-next">→ บทที่ 3: Binary Arithmetic + Bitwise</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 2 — เลขฐาน 2 พื้นฐาน</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ทำไมฐาน 2','ค่าประจำหลัก','แปลง 2→10','แปลง 10→2','ฐาน 16 Hex','bit byte KB','โค้ด C แปลงฐาน','0.1+0.2≠0.3','Use Case จริง','Think!','MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
