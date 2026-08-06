@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 5 — Hashing | ติวสอบ Data Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#a4133c;--cal:#fde8ef;--cam:#d45a7e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.ht{border-collapse:collapse;font-family:var(--mono);font-size:12px;margin:6px 0;}
+.ht th{background:var(--ca);color:#fff;padding:4px 10px;font-weight:600;}
+.ht td{padding:4px 10px;border:1px solid var(--line);text-align:center;min-width:44px;}
+.ht td.ok{background:#d4edda;color:#155724;font-weight:700;}
+.ht td.hl{background:var(--cal);color:var(--ca);font-weight:700;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🚨 ติวสอบ Midterm · 02204231 Data Structures</div>
+        <div class="cover-title">ติวบทที่ 5<br><em>Hashing</em></div>
+        <div class="cover-subtitle">เติมตารางแฮชให้ถูกทุกช่อง — ทำโจทย์ใบ practice จริง 15, 22, 95, 56, 63, 13, 27 ครบสามวิธี</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ทำไมต้อง Hash — O(n) → O(log n) → O(1)</div>
+          <div class="topic-row"><div class="topic-dot"></div>h(k) = k mod m + การชน (Collision)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Open Hashing: Separate Chaining (ใช้ LL บท 4!)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Closed Hashing: Linear / Quadratic / Double</div>
+          <div class="topic-row"><div class="topic-dot"></div>การค้นหา + นับจำนวนครั้ง (ข้อ 2 ของ practice)</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">T5</div>
+        <div class="cover-badge">ใบ practice เต็มใบ · เติมตาราง</div>
+        <div class="cover-slides-count">14 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 ทำไม hash -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · ที่มา</div>
+    <h2 class="slide-title">เรื่องเล่าเปิดบทของอาจารย์: หาหนังสือ 1 ล้านเล่ม</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">วิวัฒนาการการค้นหา (ต้องเรียงได้)</div>
+        <pre class="code-block">ค้นหาหนังสือด้วย ISBN, 1 เล่ม = 6 ms
+
+① Sequential search (ไม่เรียง)
+   O(n) → 10⁶ × 6ms = 6000 วิ
+        ≈ 100 นาที 💀
+
+② Binary search (เรียงแล้ว)
+   O(log n) → log₂10⁶ × 6ms
+        ≈ 119.58 ms ✓
+
+③ Hashing search
+   O(1) → คงที่ ไม่ขึ้นกับ n!! 🚀</pre>
+      </div>
+      <div>
+        <div class="code-label">แนวคิด Hashing</div>
+        <pre class="code-block"><span class="cm">/* แปลง key → index ของ array
+   ด้วยแฮชฟังก์ชัน h(k)
+   แล้วเก็บ/ค้นที่ช่องนั้น "ตรงๆ"
+
+   key ──▶ h(k) ──▶ ช่องin ตาราง
+
+   ตารางที่เก็บ = Hash Table
+   (array ขนาดคงที่ m ช่อง) */</span>
+
+<span class="cm">/* ข้อจำกัดที่ออกปรนัย:
+   Hash Table "ไม่รองรับ
+   การจัดเรียงข้อมูล"
+   — ข้อมูลกระจายตาม h(k)
+   ไม่ได้เรียงตามค่า! */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ปรนัยที่ชอบออก:</b> "การค้นหาแบบใดเร็วสุด/ใช้กับข้อมูลไม่เรียง" — Sequential O(n) ไม่ต้องเรียง · Binary O(log n) <b>ต้องเรียงก่อน</b> · Hash O(1) ไม่ต้องเรียง แต่ต้องมีตาราง+ฟังก์ชัน</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 hash function + collision -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · พื้นฐาน</div>
+    <h2 class="slide-title">h(k) = k mod m และการชน (Collision)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คำนวณ h(k) ให้คล่อง</div>
+        <pre class="code-block">h(k) = k mod m   (m = ขนาดตาราง)
+
+m = 10:  h(89) = 9   h(18) = 8
+         h(49) = 9   ← ชนกับ 89!
+
+m = 7:   h(15) = 1   h(22) = 1 ← ชน!
+         h(95) = 4   h(56) = 0
+         h(63) = 0 ← ชน!  h(13) = 6
+         h(27) = 6 ← ชน!
+
+<span class="cm">/* mod เร็วๆ: 95 = 7×13 + 4 → 4
+   ท่องสูตรคูณแม่ 7 ก่อนเข้าห้องสอบ! */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">การชน + 2 ค่ายวิธีแก้</div>
+        <pre class="code-block">Collision = สอง key ได้ช่องเดียวกัน
+h(15) = h(22) = 1
+
+วิธีแก้ 2 ค่าย (คำศัพท์ต้องแม่น):
+
+① Open Hashing = Separate Chaining
+   ต่อ Linked List ในช่องเดียวกัน
+   (ใช้ความรู้บท 4!)
+
+② Closed Hashing = หา "ช่องอื่น"
+   ในตารางเดิม:
+   - Linear probing:    f(i) = i
+   - Quadratic probing: f(i) = i²
+   - Double hashing:    f(i) = i·h₂(k)
+
+   hᵢ(k) = ( h(k) + f(i) ) mod m</pre>
+      </div>
+    </div>
+    <div class="exam"><b>ระวังศัพท์สลับ:</b> <b>Open</b> Hashing = แยกออกไปนอกตาราง (chaining) · <b>Closed</b> Hashing = ปิดอยู่ในตาราง (probing) — หลายคนจำกลับกันแล้วกาปรนัยผิด</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 separate chaining -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · Open Hashing</div>
+    <h2 class="slide-title">Separate Chaining — Linked List ช่วยไว้</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่าง: เพิ่ม 20,10,30,81,22,42 (m=10)</div>
+        <pre class="code-block">h(20)=0, h(10)=0, h(30)=0  ← ชนสามตัว
+h(81)=1
+h(22)=2, h(42)=2           ← ชนสองตัว
+
+[0] ─▶ 20 ─▶ 10 ─▶ 30 ─▶ ╳
+[1] ─▶ 81 ─▶ ╳
+[2] ─▶ 22 ─▶ 42 ─▶ ╳
+[3..9] ว่าง
+
+<span class="cm">/* แทรกที่ "หัวลิสต์" O(1)
+   (insertFront จากบท 4 เป๊ะๆ)
+   บางตำรา/บาง lab ต่อท้ายลิสต์
+   — ทำตามแบบที่อาจารย์สอนใน lab */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ข้อดี-ข้อเสีย (ปรนัย)</div>
+        <pre class="code-block">ข้อดี:
++ ตารางไม่มีวัน "เต็ม"
+  (ต่อลิสต์ยาวได้เรื่อยๆ)
++ ลบง่าย (ลบโหนดจากลิสต์)
+
+ข้อเสีย:
+− ใช้หน่วยความจำ pointer เพิ่ม
+− ถ้าชนเยอะ ลิสต์ยาว
+  ค้นหาเสื่อมเป็น O(n)
+
+<span class="cm">/* ค้นหา: hash หาช่อง O(1)
+   แล้วไล่ลิสต์ในช่องนั้น
+   → เร็วเมื่อลิสต์สั้น */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>โจทย์ Lab5_seperatechaining ให้เขียนโปรแกรมจริง</b> — โครงคือ array ของ head pointers + insertFront + search ตามบท 4 · ในข้อสอบเขียน ให้วาดตารางแบบซ้ายมือนี้แล้วไล่ทีละ key</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 linear probing concept -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · Closed Hashing</div>
+    <h2 class="slide-title">Linear Probing — ตัวอย่างในสไลด์อาจารย์ (m=10)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เพิ่ม 89, 18, 49, 58, 69 · h(k)=k%10</div>
+        <pre class="code-block">89 % 10 = 9  → ช่อง 9 ✓
+18 % 10 = 8  → ช่อง 8 ✓
+49 % 10 = 9  → ชน!
+   9+1=10%10=0 → ช่อง 0 ✓
+58 % 10 = 8  → ชน!
+   8+1=9 ชน, 8+2=0 ชน, 8+3=1 → ช่อง 1 ✓
+69 % 10 = 9  → ชน!
+   0 ชน, 1 ชน, 9+3=2 → ช่อง 2 ✓</pre>
+      </div>
+      <div>
+        <table class="ht">
+          <thead><tr><th>ช่อง</th><th>ค่า</th><th>มาจาก</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td class="hl">49</td><td>9→0 (ชน 1 ครั้ง)</td></tr>
+            <tr><td>1</td><td class="hl">58</td><td>8→9→0→1 (ชน 3)</td></tr>
+            <tr><td>2</td><td class="hl">69</td><td>9→0→1→2 (ชน 3)</td></tr>
+            <tr><td>3–7</td><td>ว่าง</td><td></td></tr>
+            <tr><td>8</td><td class="ok">18</td><td>ตรง</td></tr>
+            <tr><td>9</td><td class="ok">89</td><td>ตรง</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="cm">/* วิธีเขียนตอบ: เขียนสมการ
+   ทุกครั้งที่ชน เช่น
+   "49: 9 ชน → (9+1)%10 = 0 ✓"
+   อาจารย์ให้คะแนนตามขั้น */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>สังเกตปัญหาของ Linear:</b> ค่าที่ชนมากองติดกันเป็นก้อน (Primary Clustering) แถวช่อง 0-2 — ยิ่งกอง ยิ่งชนซ้ำ นี่คือเหตุผลให้มี Quadratic กับ Double ตามมา (จุดออกปรนัย "ข้อเสียของ linear probing")</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 practice linear -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · เฉลยใบ practice (1/3)</div>
+    <h2 class="slide-title">เฉลยจริง: 15,22,95,56,63,13,27 · m=7 · Linear</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ไล่ทีละ key · h(k)=k%7</div>
+        <pre class="code-block">15%7=1 → ช่อง 1 ✓
+22%7=1 → ชน! (1+1)%7=2 ✓
+95%7=4 → ช่อง 4 ✓
+56%7=0 → ช่อง 0 ✓
+63%7=0 → ชน! 1 ชน, 2 ชน,
+         (0+3)%7=3 ✓
+13%7=6 → ช่อง 6 ✓
+27%7=6 → ชน! (6+1)%7=0 ชน,
+         1 ชน, 2 ชน, 3 ชน, 4 ชน,
+         (6+6)%7=5 ✓  (ชน 5 ครั้ง!)</pre>
+      </div>
+      <div>
+        <table class="ht">
+          <thead><tr><th>ช่อง</th><th>Linear</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td class="ok">56</td></tr>
+            <tr><td>1</td><td class="ok">15</td></tr>
+            <tr><td>2</td><td class="hl">22</td></tr>
+            <tr><td>3</td><td class="hl">63</td></tr>
+            <tr><td>4</td><td class="ok">95</td></tr>
+            <tr><td>5</td><td class="hl">27</td></tr>
+            <tr><td>6</td><td class="ok">13</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="cm">/* ตารางเต็มพอดี 7 ช่อง 7 ค่า
+   ลำดับการใส่สำคัญมาก —
+   สลับลำดับ = ตารางเปลี่ยน! */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>กฎเหล็กของข้อเติมตาราง:</b> ใส่ทีละ key <b>ตามลำดับที่โจทย์ให้</b> ห้ามข้าม ห้ามสลับ · เขียนสมการกำกับทุกการชน — ตารางถูกแต่ไม่มีวิธีทำ อาจไม่ได้คะแนนเต็ม</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 practice quadratic -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · เฉลยใบ practice (2/3)</div>
+    <h2 class="slide-title">ชุดเดิม · Quadratic Probing — เจอจุดตายของโจทย์!</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">hᵢ = (h(k)+i²) % 7</div>
+        <pre class="code-block">15 → 1 ✓
+22 → 1 ชน! (1+1²)=2 ✓
+95 → 4 ✓
+56 → 0 ✓
+63 → 0 ชน!
+  i=1: (0+1)%7=1 ชน
+  i=2: (0+4)%7=4 ชน
+  i=3: (0+9)%7=2 ชน
+  i=4: (0+16)%7=2 ชน (ซ้ำ!)
+  i=5: (0+25)%7=4 ชน (ซ้ำ!)
+  i=6: (0+36)%7=1 ชน (ซ้ำ!)
+  → i² mod 7 วนอยู่ใน {0,1,2,4}
+  → ไปไม่ถึงช่อง 3,5,6 เลย
+  ∴ 63 แทรกไม่ได้! ⚠️
+13 → 6 ✓
+27 → 6 ชน! i=1: (6+1)=0 ชน
+     i=2: (6+4)%7=3 ✓</pre>
+      </div>
+      <div>
+        <table class="ht">
+          <thead><tr><th>ช่อง</th><th>Quadratic</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td class="ok">56</td></tr>
+            <tr><td>1</td><td class="ok">15</td></tr>
+            <tr><td>2</td><td class="hl">22</td></tr>
+            <tr><td>3</td><td class="hl">27</td></tr>
+            <tr><td>4</td><td class="ok">95</td></tr>
+            <tr><td>5</td><td>ว่าง</td></tr>
+            <tr><td>6</td><td class="ok">13</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="cm">/* 63 แทรกไม่สำเร็จ —
+   เขียนตอบว่า "แทรกไม่ได้
+   เพราะ probe วนซ้ำ
+   ไม่พบช่องว่าง"
+
+   นี่คือข้อเสียของ quadratic:
+   อาจหาช่องว่างไม่เจอทั้งที่
+   ตารางยังไม่เต็ม
+   (การันตีเจอเมื่อตารางเต็ม
+   ไม่เกินครึ่ง + m เป็นจำนวนเฉพาะ) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>อย่าตกใจถ้าคำตอบ "แทรกไม่ได้"</b> — โจทย์ practice ชุดนี้จงใจให้เห็นจุดอ่อนของ quadratic · แสดงการ probe ครบทุก i แล้วสรุปว่าวนซ้ำ = ได้คะแนนเต็ม · เดาสุ่มยัดลงช่องว่าง = ผิด</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 practice double -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · เฉลยใบ practice (3/3)</div>
+    <h2 class="slide-title">ชุดเดิม · Double Hashing — h₂(k) = 5 − (k%5)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">hᵢ = (h(k) + i·h₂(k)) % 7</div>
+        <pre class="code-block">15 → 1 ✓
+22 → 1 ชน! h₂=5−(22%5)=3
+   i=1: (1+3)%7=4 ✓
+95 → 4 ชน! (22 อยู่แล้ว)
+   h₂=5−(95%5)=5−0=5
+   i=1: (4+5)%7=2 ✓
+56 → 0 ✓
+63 → 0 ชน! h₂=5−(63%5)=2
+   i=1: (0+2)%7=2 ชน
+   i=2: (0+4)%7=4 ชน
+   i=3: (0+6)%7=6 ✓
+13 → 6 ชน! h₂=5−(13%5)=2
+   i=1: (6+2)%7=1 ชน
+   i=2: (6+4)%7=3 ✓
+27 → 6 ชน! h₂=5−(27%5)=3
+   i=1: (6+3)%7=2 ชน
+   i=2: (6+6)%7=5 ✓</pre>
+      </div>
+      <div>
+        <table class="ht">
+          <thead><tr><th>ช่อง</th><th>Double</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td class="ok">56</td></tr>
+            <tr><td>1</td><td class="ok">15</td></tr>
+            <tr><td>2</td><td class="hl">95</td></tr>
+            <tr><td>3</td><td class="hl">13</td></tr>
+            <tr><td>4</td><td class="hl">22</td></tr>
+            <tr><td>5</td><td class="hl">27</td></tr>
+            <tr><td>6</td><td class="hl">63</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="cm">/* จุดพลาดอันดับ 1:
+   ลืมว่า h₂ คำนวณจาก k แต่ละตัว
+   (แต่ละ key ก้าวไม่เท่ากัน!)
+
+   จุดพลาดอันดับ 2:
+   h₂ ของ 95: 95%5 = 0
+   → h₂ = 5−0 = 5 ไม่ใช่ 0!
+   (h₂ ต้องไม่เป็น 0 ไม่งั้นวนที่เดิม
+   — สูตร 5−(k%5) การันตี 1..5) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>สามวิธี ชุดเดียวกัน ได้ตารางต่างกันหมด</b> — ข้อสอบให้ทำเทียบกันแบบนี้แหละ ฝึกชุดนี้ซ้ำจนทำได้ใน 10 นาทีโดยไม่เปิดเฉลย</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 search -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · การค้นหา (ข้อ 2 practice)</div>
+    <h2 class="slide-title">ค้นหา + นับจำนวนครั้ง — กติกาหยุด 3 ข้อ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กติกาการค้นหา (จากสไลด์อาจารย์)</div>
+        <pre class="code-block">เริ่มที่ h(k) แล้ว probe ตามวิธีเดิม
+หยุดเมื่อเกิดอย่างใดอย่างหนึ่ง:
+
+① พบค่า k          → "เจอ"
+② พบช่องว่าง        → "ไม่เจอ"
+③ ตรวจครบทั้งตาราง  → "ไม่เจอ"
+
+นับจำนวนครั้ง = จำนวนช่อง
+ที่เปิดดูทั้งหมด (รวมช่องสุดท้าย
+ที่ทำให้หยุด)</pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่างจากตาราง Linear (สไลด์ 5)</div>
+        <pre class="code-block">ตาราง: 0:56 1:15 2:22 3:63 4:95 5:27 6:13
+
+หา 95: h=4 → ช่อง 4 = 95 เจอ!
+       → 1 ครั้ง
+หา 27: h=6 → 13 ไม่ใช่ → 0:56 → 1:15
+       → 2:22 → 3:63 → 4:95 → 5:27 เจอ!
+       → 7 ครั้ง (แย่สุดพอดี)
+หา 12: h=5 → 27 ไม่ใช่ → 6,0,1,2,3,4
+       ตรวจครบตาราง ไม่มีช่องว่างให้หยุด
+       → ไม่เจอ / 7 ครั้ง</pre>
+      </div>
+    </div>
+    <div class="exam"><b>เหตุผลที่ "เจอช่องว่าง = หยุดได้เลย":</b> ถ้า k เคยถูกใส่ มันต้องอยู่ในเส้นทาง probe ก่อนถึงช่องว่างเสมอ — เจอช่องว่างก่อนแปลว่าไม่มีแน่นอน · แต่ตารางที่ "เต็ม" ไม่มีช่องว่าง → ต้องตรวจครบ m ครั้ง</div>
+  </div>
+</div>
+
+<!-- SLIDE 9 เทคนิคทำข้อสอบ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · เทคนิคห้องสอบ</div>
+    <h2 class="slide-title">ลำดับการทำข้อ Hashing ในห้องสอบ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ทำตามนี้ทุกครั้ง</div>
+        <pre class="code-block">① เขียน h(k) ของทุก key ก่อน
+   ยกแผง: 15→1 22→1 95→4 ...
+   (เห็นภาพรวมว่าตัวไหนจะชน)
+
+② วาดตารางเปล่า 0..m−1
+
+③ ใส่ทีละ key ตามลำดับโจทย์
+   ชนเมื่อไหร่ เขียนสมการ probe
+   ทุกขั้นจนกว่าจะลงช่อง
+
+④ Double hashing: คำนวณ h₂
+   ของ key นั้นก่อนเริ่ม probe
+
+⑤ เสร็จแล้วนับ: จำนวนค่าในตาราง
+   ต้องเท่าจำนวน key ที่แทรกสำเร็จ</pre>
+      </div>
+      <div>
+        <div class="code-label">จุดหักคะแนนยอดฮิต</div>
+        <pre class="code-block">❌ mod ผิด (95%7 คิดเป็น 5)
+   → ผิดลามทั้งตาราง
+   ทวนสูตรคูณแม่ m ก่อนเริ่ม!
+
+❌ quadratic ใช้ +i แทน +i²
+   (สลับกับ linear)
+
+❌ double ใช้ h₂ ของ key ตัวอื่น
+
+❌ probe แล้วลืม mod m
+   (6+3 = 9 → ต้อง %7 = 2)
+
+❌ นับครั้งค้นหา ไม่นับช่องสุดท้าย
+   (ต้องนับทุกช่องที่ "เปิดดู")</pre>
+      </div>
+    </div>
+    <div class="exam"><b>สูตรสำเร็จเขียนตอบ:</b> "k%m = a ชน → (a+f(i))%m = b ชน → ... = c ว่าง ∴ ใส่ช่อง c" — เขียนแบบนี้ทุก key ที่ชน คะแนนวิธีทำครบแน่นอน</div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โจทย์ practice ข้อ 3: ตารางว่าง m=13, h(k) = k%13<br><br>
+ลองแทรก 18, 41, 22, 44, 59, 32, 31, 73 ด้วย Linear probing<br><br>
+<em>เริ่มจากเขียน h(k) ยกแผง:<br>
+18→5, 41→2, 22→9, 44→5(ชน!), 59→7, 32→6, 31→5(ชน!), 73→8</em><br><br>
+ใครชนบ้าง? ลงช่องไหนสุดท้าย?<br>
+ทำบนกระดาษแล้วเช็ค: 44 ลง 6? ไม่สิ — 6 ว่างตอนนั้นไหม?<br>
+ลำดับการใส่คือทุกอย่าง!</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · ลองข้อสอบ</div>
+    <h2 class="slide-title">m=10, Linear probing, ตารางมี: 0:49, 8:18, 9:89 — แทรก 79 ลงช่องไหน?</h2>
+    <div id="mc-t5" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-t5','A','B','❌ ช่อง 9 มี 89 อยู่แล้ว — ต้อง probe ต่อ')">A) ช่อง 9</button>
+      <button class="mc-btn" onclick="pickMC('mc-t5','B','B','✅ h(79)=9 ชน(89) → (9+1)%10=0 ชน(49) → (9+2)%10=1 ว่าง → ลงช่อง 1')">B) ช่อง 1</button>
+      <button class="mc-btn" onclick="pickMC('mc-t5','C','B','❌ ช่อง 0 มี 49 อยู่ — probe ข้ามไปอีก')">C) ช่อง 0</button>
+      <button class="mc-btn" onclick="pickMC('mc-t5','D','B','❌ ตารางยังมีช่องว่างเพียบ — linear probing หาเจอแน่นอนถ้าไม่เต็ม')">D) แทรกไม่ได้</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">h(79) = 79 % 10 = 9  → ชน (89)
+(9+1) % 10 = 0       → ชน (49)   ← mod ทำให้วนกลับหัวตาราง!
+(9+2) % 10 = 1       → ว่าง ✓ ลงช่อง 1
+
+จุดหลอก: probe ข้ามท้ายตารางต้อง mod วนกลับมาช่อง 0 — ใครลืม mod จะตอบว่า "ช่อง 10" ซึ่งไม่มีจริง</pre>
+  </div>
+</div>
+
+<!-- SLIDE 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ด่านสุดท้ายก่อน Cheat Sheet</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① การแก้การชนด้วยการต่อ Linked List ในช่องเดียวกัน เรียกว่า Separate ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft5a" placeholder="คำศัพท์">
+      <button class="fill-btn" onclick="checkFill('ft5a','chaining',['เชนนิ่ง','separate chaining'],[],'✅ Separate Chaining = Open Hashing — ใช้ LL จากบท 4','❌ Chaining — Open Hashing ต่อลิสต์นอกตาราง')">ตรวจ</button>
+    </div>
+    <div id="ft5a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Quadratic probing ใช้ f(i) = ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft5b" placeholder="สูตร">
+      <button class="fill-btn" onclick="checkFill('ft5b','i^2',['i²','i2','i*i'],[],'✅ f(i) = i² → hᵢ = (h(k)+i²) mod m','❌ f(i) = i² — linear คือ i, double คือ i·h₂(k)')">ตรวจ</button>
+    </div>
+    <div id="ft5b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ การค้นหาใน closed hashing หยุดแล้วตอบ "ไม่เจอ" เมื่อพบ ___ หรือตรวจครบตาราง</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft5c" placeholder="พบอะไร?">
+      <button class="fill-btn" onclick="checkFill('ft5c','ช่องว่าง',['ช่องว่างในตาราง','empty','empty slot','ช่องที่ว่าง'],[],'✅ พบช่องว่าง = k ไม่มีแน่นอน (ถ้ามีต้องเจอก่อนถึงช่องว่าง)','❌ พบ \"ช่องว่าง\" — ถ้า k มีจริงต้องอยู่ก่อนช่องว่างเสมอ')">ตรวจ</button>
+    </div>
+    <div id="ft5c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">#️⃣</div>
+      <div class="summary-title">จบติวบทที่ 5 — Hashing</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">ทำไม Hash</div><div class="sum-body">Sequential O(n) → Binary O(log n) → Hash O(1) · แต่เรียงข้อมูลไม่ได้</div></div>
+        <div class="sum-card"><div class="sum-head">สูตรหลัก</div><div class="sum-body">h(k) = k mod m · ชน → hᵢ = (h(k)+f(i)) mod m</div></div>
+        <div class="sum-card"><div class="sum-head">Open vs Closed</div><div class="sum-body">Open = Chaining (ต่อ LL) · Closed = probing ในตาราง (อย่าจำสลับ!)</div></div>
+        <div class="sum-card"><div class="sum-head">f(i) สามแบบ</div><div class="sum-body">Linear i · Quadratic i² (อาจหาไม่เจอ!) · Double i·h₂(k) (h₂ ต่อ key)</div></div>
+        <div class="sum-card"><div class="sum-head">ค้นหา</div><div class="sum-body">หยุดเมื่อ เจอ k / เจอช่องว่าง / ครบตาราง · นับทุกช่องที่เปิดดู</div></div>
+        <div class="sum-card"><div class="sum-head">ห้องสอบ</div><div class="sum-body">เขียน h(k) ยกแผงก่อน · probe เขียนสมการทุกขั้น · อย่าลืม mod วนกลับ</div></div>
+      </div>
+      <a href="slides_ch6.html" class="summary-next">→ ติวบทที่ 6: Queue</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 5 — Hashing</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ทำไม Hash','h(k) + Collision','Separate Chaining','Linear (สไลด์อาจารย์)','เฉลย Linear m=7','เฉลย Quadratic','เฉลย Double','การค้นหา + นับครั้ง','เทคนิคห้องสอบ','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 7 — Polymorphism | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#9b1d6a;--cal:#fce7f3;--cam:#d45fa0;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:16px 20px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · OOP (02204172)</div>
+        <div class="cover-title">Lab 7<br><em>Polymorphism</em></div>
+        <div class="cover-subtitle">ตัวแปรเดียว หลายร่าง — abstract class + interface ทำงานร่วมกันในระบบจริง</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Polymorphism + Dynamic Binding</div>
+          <div class="topic-row"><div class="topic-dot"></div>interface ต่างจาก abstract class ยังไง</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 1: Ball + Rollable — BallA/B/C</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 2: BaseAccount / Card / Withdrawable</div>
+          <div class="topic-row"><div class="topic-dot"></div>รวมทุก Lab — ระบบร้านค้าจ่ายด้วยบัตร</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">L7</div>
+        <div class="cover-badge">INTERFACE · DYNAMIC BINDING</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 Polymorphism คือ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 7 · แนวคิด</div>
+    <h2 class="slide-title">Polymorphism = ตัวแปรเดียว หลายร่าง</h2>
+    <p class="slide-lead">เรียก method เดียวกัน แต่พฤติกรรมต่างกันตาม "ร่างจริง" ของ object — Java เลือกให้ตอน runtime (Dynamic Binding)</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เห็นแล้วใน Lab 6 แต่ยังไม่ได้ตั้งชื่อ</div>
+        <pre class="code-block"><span class="kw">for</span> (Employee emp : employees) {
+    emp.<span class="fn">earnings</span>();
+    <span class="cm">// ตัวแปรชนิด Employee เหมือนกัน
+    // แต่:
+    // FixedSalary   → คืน 15000
+    // HourlySalary  → คืน 20×165
+    // CommissionPay → คืน 95000×0.06
+    // ← คนละสูตร ตามร่างจริง!</span>
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">Dynamic Binding ทำงานยังไง</div>
+        <pre class="code-block">Employee e = <span class="kw">new</span> <span class="fn">HourlySalary</span>(...);
+e.<span class="fn">earnings</span>();
+
+<span class="cm">// compile time: เช็คว่า Employee
+//   มี earnings() ไหม → มี ✓ ผ่าน
+// runtime: ดูร่างจริงของ object
+//   → เป็น HourlySalary
+//   → เรียก earnings() ของ
+//     HourlySalary ไม่ใช่ของแม่!
+
+// "ประกาศชนิดไหน compile เช็คชนิดนั้น
+//  รันจริง วิ่งตามร่างจริง"</span></pre>
+      </div>
+    </div>
+    <div class="callout">ประโยชน์ตัวจริง: โค้ดฝั่งเรียกใช้ (main, Cashier) ไม่ต้องรู้จักลูกทุกตัว — เพิ่มลูกใหม่พรุ่งนี้ โค้ดเดิมไม่ต้องแก้เลย</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 interface -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 7 · interface</div>
+    <h2 class="slide-title">interface — สัญญาล้วนๆ ไม่มีของแถม</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ประกาศ + ใช้งาน</div>
+        <pre class="code-block"><span class="kw">public interface</span> <span class="fn">Rollable</span> {
+    <span class="kw">void</span> <span class="fn">roll</span>();      <span class="cm">// ไม่มี body</span>
+}
+
+<span class="kw">public interface</span> <span class="fn">Withdrawable</span> {
+    <span class="kw">boolean</span> <span class="fn">withdraw</span>(<span class="kw">double</span> amount);
+}
+
+<span class="cm">// class รับสัญญาด้วย implements</span>
+<span class="kw">public class</span> <span class="fn">BallA</span> <span class="kw">extends</span> Ball
+                   <span class="kw">implements</span> Rollable {
+    <span class="kw">public void</span> <span class="fn">roll</span>() { ... }
+    <span class="cm">// ต้องเขียนทุก method ในสัญญา</span>
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">abstract class vs interface</div>
+        <pre class="code-block"><span class="cm">// abstract class:
+// - มี field + method ปกติได้
+// - มี constructor ได้
+// - extends ได้แม่เดียว
+// → "เป็นอะไร" (is-a)
+
+// interface:
+// - มีแต่สัญญา (abstract methods)
+// - implements ได้หลายตัวพร้อมกัน!
+// → "ทำอะไรได้" (can-do)
+
+// ใช้คู่กันได้:
+// class BallA extends Ball
+//             implements Rollable
+// ← เป็น Ball + กลิ้งได้</span></pre>
+      </div>
+    </div>
+    <div class="callout">จำง่ายๆ: abstract class = สายเลือด (ได้แม่เดียว) · interface = ใบรับรองความสามารถ (สะสมได้หลายใบ)</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 ข้อ 1 โครงสร้าง -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 7 · ข้อ 1</div>
+    <h2 class="slide-title">ข้อ 1: Ball + Rollable — อ่านโครงสร้าง</h2>
+    <div class="diagram">        ┌─────────────────────┐      ┌──────────────┐
+        │  «abstract» Ball    │      │ «interface»  │
+        │ + inflate(volume)   │      │   Rollable   │
+        └──────────┬──────────┘      │ + roll()     │
+            extends│                 └──────┬───────┘
+        ┌──────────┴──────────┐  implements │
+        │       BallA         │─ ─ ─ ─ ─ ─ ─┘
+        └──────────┬──────────┘
+            extends│
+         ┌─────────┴─────────┐
+         │  BallB      BallC │   ← ลูกของ BallA ได้ roll() ไปด้วย
+         └───────────────────┘</div>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">// โจทย์กำหนด:
+// Ball    = abstract class
+//           มี abstract inflate(volume)
+// Rollable = interface มี roll()
+// BallA extends Ball
+//       implements Rollable
+// BallB extends BallA
+// BallC extends BallA</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">// จุดสังเกต:
+// BallB, BallC ไม่ต้อง implements
+// Rollable เอง — ได้จาก BallA แล้ว!
+// (inheritance ส่งต่อ interface ด้วย)
+
+// แต่ Override roll() / inflate()
+// ทับเป็นของตัวเองได้
+// → ผลลัพธ์ต่างกันตามชนิดลูก</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4 ข้อ 1 เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 7 · ข้อ 1 เฉลย</div>
+    <h2 class="slide-title">ข้อ 1: โค้ดเต็ม + TestBall</h2>
+    <pre class="code-block"><span class="kw">public abstract class</span> <span class="fn">Ball</span> {
+    <span class="kw">public abstract void</span> <span class="fn">inflate</span>(<span class="kw">double</span> volume);      <span class="cm">// สัญญา: ลูกต้องสูบลมได้</span>
+}
+
+<span class="kw">public interface</span> <span class="fn">Rollable</span> {
+    <span class="kw">void</span> <span class="fn">roll</span>();                                       <span class="cm">// สัญญา: กลิ้งได้</span>
+}
+
+<span class="kw">public class</span> <span class="fn">BallA</span> <span class="kw">extends</span> Ball <span class="kw">implements</span> Rollable {
+    <span class="kw">public void</span> <span class="fn">inflate</span>(<span class="kw">double</span> volume) {
+        System.out.<span class="fn">println</span>(<span class="st">"BallA inflate "</span> + volume + <span class="st">" cc"</span>);
+    }
+    <span class="kw">public void</span> <span class="fn">roll</span>() {
+        System.out.<span class="fn">println</span>(<span class="st">"BallA is rolling"</span>);
+    }
+}
+
+<span class="kw">public class</span> <span class="fn">BallB</span> <span class="kw">extends</span> BallA {
+    <span class="kw">public void</span> <span class="fn">roll</span>() {                               <span class="cm">// Override ทับ</span>
+        System.out.<span class="fn">println</span>(<span class="st">"BallB is rolling"</span>);
+    }
+}
+
+<span class="kw">public class</span> <span class="fn">BallC</span> <span class="kw">extends</span> BallA {
+    <span class="kw">public void</span> <span class="fn">inflate</span>(<span class="kw">double</span> volume) {              <span class="cm">// Override ทับ</span>
+        System.out.<span class="fn">println</span>(<span class="st">"BallC inflate "</span> + volume + <span class="st">" cc"</span>);
+    }
+}
+
+<span class="cm">// static method รับ parameter ชนิด Ball — รับลูกได้ทุกชนิด!</span>
+<span class="kw">public static void</span> <span class="fn">TestBall</span>(Ball b) {
+    b.<span class="fn">inflate</span>(<span class="nm">100</span>);                                    <span class="cm">// Dynamic Binding เลือกร่างจริง</span>
+    <span class="kw">if</span> (b <span class="kw">instanceof</span> Rollable)                         <span class="cm">// เช็คว่ากลิ้งได้ไหมก่อนเรียก</span>
+        ((Rollable) b).<span class="fn">roll</span>();
+}
+
+<span class="fn">TestBall</span>(<span class="kw">new</span> <span class="fn">BallA</span>());   <span class="cm">// BallA inflate / BallA is rolling</span>
+<span class="fn">TestBall</span>(<span class="kw">new</span> <span class="fn">BallB</span>());   <span class="cm">// BallA inflate / BallB is rolling ← roll ของ B!</span>
+<span class="fn">TestBall</span>(<span class="kw">new</span> <span class="fn">BallC</span>());   <span class="cm">// BallC inflate / BallA is rolling ← inflate ของ C!</span></pre>
+    <div class="callout">TestBall ตัวเดียวรับได้ทั้ง 3 ชนิด — แต่ผลต่างกันตามร่างจริง นี่คือโจทย์ต้องการให้เห็น Polymorphism ชัดๆ</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 ข้อ 2 โครงสร้าง -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 7 · ข้อ 2</div>
+    <h2 class="slide-title">ข้อ 2: ระบบบัญชี + บัตร — แผนที่คลาส</h2>
+    <div class="diagram">   «interface» Withdrawable ── boolean withdraw(double)
+        ▲ implements                  ▲ implements
+┌───────┴────────────┐       ┌───────┴──────────┐
+│ «abstract»         │       │ «abstract» Card  │
+│   BaseAccount      │       │ + type()         │
+│ + deposit(amount)  │       │ + discount()     │
+└───────┬────────────┘       └───────┬──────────┘
+ extends│                     extends│
+┌───────┴────────────┐       ┌───────┴──────────┐
+│  SavingAccount     │◆──────│    DebitCard     │
+│  - card : Card     │ has-a │  (visa, 2.5%)    │
+│  - balance         │       └──────────────────┘
+│  + deposit ✓       │
+│  + withdraw ✓      │   + FixedSalary (Lab 6) เป็นเจ้าของบัญชี
+└────────────────────┘</div>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">// โจทย์รวมทุกอย่างที่เรียนมา:
+// abstract class   (Lab 6)
+// interface        (Lab 7 ข้อ 1)
+// has-a Card       (Lab 5)
+// private+getter   (Lab 4)
+// FixedSalary      (Lab 6 ข้อ 3)
+// ร้านค้า+Cashier   (Lab 5-6)</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">// เงื่อนไขสำคัญจากโจทย์:
+// - SavingAccount มี Card เปิดใช้
+//   ทันทีเมื่อเปิดบัญชี
+//   → new DebitCard ใน constructor
+//   → Composition! (Lab 5)
+// - deposit / withdraw คืน boolean
+// - จ่ายผ่านบัตร → ได้ส่วนลด
+//   discount() ของบัตร (2.5%)</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6 ข้อ 2 เฉลย 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 7 · ข้อ 2 เฉลย (1/2)</div>
+    <h2 class="slide-title">ข้อ 2: Withdrawable, BaseAccount, Card, DebitCard</h2>
+    <pre class="code-block"><span class="kw">public interface</span> <span class="fn">Withdrawable</span> {
+    <span class="kw">boolean</span> <span class="fn">withdraw</span>(<span class="kw">double</span> amount);
+}
+
+<span class="kw">public abstract class</span> <span class="fn">BaseAccount</span> <span class="kw">implements</span> Withdrawable {
+    <span class="kw">public abstract boolean</span> <span class="fn">deposit</span>(<span class="kw">double</span> amount);
+}
+
+<span class="kw">public abstract class</span> <span class="fn">Card</span> <span class="kw">implements</span> Withdrawable {
+    <span class="kw">public abstract</span> String <span class="fn">type</span>();
+    <span class="kw">public abstract double</span> <span class="fn">discount</span>();
+}
+
+<span class="kw">public class</span> <span class="fn">DebitCard</span> <span class="kw">extends</span> Card {
+    <span class="kw">private</span> String cardNumber;
+    <span class="kw">private</span> SavingAccount account;                     <span class="cm">// บัตรผูกกับบัญชี</span>
+
+    <span class="kw">public</span> <span class="fn">DebitCard</span>(String cardNumber, SavingAccount account) {
+        <span class="kw">this</span>.cardNumber = cardNumber;
+        <span class="kw">this</span>.account = account;
+    }
+    <span class="kw">public</span> String <span class="fn">type</span>()      { <span class="kw">return</span> <span class="st">"visa"</span>; }
+    <span class="kw">public double</span> <span class="fn">discount</span>()  { <span class="kw">return</span> <span class="nm">2.5</span>; }         <span class="cm">// ส่วนลด 2.5%</span>
+    <span class="kw">public</span> String <span class="fn">getNumber</span>() { <span class="kw">return</span> cardNumber; }
+
+    <span class="kw">public boolean</span> <span class="fn">withdraw</span>(<span class="kw">double</span> amount) {
+        <span class="kw">return</span> account.<span class="fn">withdraw</span>(amount);               <span class="cm">// รูดบัตร = ถอนจากบัญชี</span>
+    }
+}</pre>
+    <div class="callout">DebitCard ไม่เก็บเงินเอง — withdraw ของบัตรส่งต่อให้บัญชี (delegation) เหมือนบัตรจริงที่ตัดเงินจากบัญชีเรา</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 ข้อ 2 เฉลย 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 7 · ข้อ 2 เฉลย (2/2)</div>
+    <h2 class="slide-title">ข้อ 2: SavingAccount + Cashier จ่ายด้วยบัตร</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">SavingAccount</span> <span class="kw">extends</span> BaseAccount {
+    <span class="kw">private double</span> balance;
+    <span class="kw">private</span> Card card;
+    <span class="kw">private</span> FixedSalary owner;                          <span class="cm">// เจ้าของบัญชี (Lab 6!)</span>
+
+    <span class="kw">public</span> <span class="fn">SavingAccount</span>(FixedSalary owner) {
+        <span class="kw">this</span>.owner = owner;
+        <span class="kw">this</span>.balance = <span class="nm">0</span>;
+        <span class="cm">// เปิดบัตรทันทีเมื่อเปิดบัญชี (Composition ตามโจทย์)</span>
+        <span class="kw">this</span>.card = <span class="kw">new</span> <span class="fn">DebitCard</span>(<span class="st">"xxx-xxx-5555"</span>, <span class="kw">this</span>);
+    }
+
+    <span class="kw">public boolean</span> <span class="fn">deposit</span>(<span class="kw">double</span> amount) {
+        <span class="kw">if</span> (amount &lt;= <span class="nm">0</span>) <span class="kw">return false</span>;
+        balance += amount;
+        <span class="kw">return true</span>;
+    }
+    <span class="kw">public boolean</span> <span class="fn">withdraw</span>(<span class="kw">double</span> amount) {
+        <span class="kw">if</span> (amount > balance) <span class="kw">return false</span>;             <span class="cm">// Lab 4 สอนไว้!</span>
+        balance -= amount;
+        <span class="kw">return true</span>;
+    }
+    <span class="kw">public</span> Card <span class="fn">getCard</span>() { <span class="kw">return</span> card; }
+}
+
+<span class="cm">// ── Cashier v3: จ่ายด้วยบัตร ──</span>
+<span class="kw">public void</span> <span class="fn">doPayment</span>(InventoryCart ic, Card card) {
+    System.out.<span class="fn">println</span>(<span class="st">"CARD TYPE:"</span> + card.<span class="fn">type</span>());
+    System.out.<span class="fn">println</span>(<span class="st">"CARD NUMBER:xxx-xxx-5555\n"</span>);
+
+    <span class="kw">double</span> total = ...;  <span class="cm">// รวมราคาจากรถเข็น (เหมือน Lab 5-6)</span>
+
+    <span class="kw">double</span> discounted = total * (<span class="nm">1</span> - card.<span class="fn">discount</span>() / <span class="nm">100</span>);
+    System.out.<span class="fn">println</span>(<span class="st">"CARD DISCOUNT "</span> + card.<span class="fn">discount</span>() + <span class="st">" %"</span>);
+
+    card.<span class="fn">withdraw</span>(discounted);                          <span class="cm">// ตัดเงินผ่านบัตร → บัญชี</span>
+    System.out.<span class="fn">printf</span>(<span class="st">"          Total      %.1f%n"</span>, discounted);
+}
+<span class="cm">/* Output ตามโจทย์:
+   CARD TYPE:visa / CARD NUMBER:xxx-xxx-5555
+   ... รายการสินค้า 700 ...
+   CARD DISCOUNT 2.5 %
+   Total      682.5   ← 700 × 0.975 ✓ */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 ภาพรวมทุก Lab -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 7 · ภาพรวม</div>
+    <h2 class="slide-title">เส้นทางทั้ง 6 Lab — ต่อกันเป็นระบบเดียว</h2>
+    <div class="diagram">Lab 2  Array & String      → พื้นฐาน Java, Scanner
+Lab 3  Class & Object      → Book, Box, Vector — new, this, constructor
+Lab 4  Encapsulation       → private + getter/setter, BankAccount, Product
+Lab 5  Class Relationships → Product + InventoryCart + Cashier (has-a)
+Lab 6  Inheritance         → Milk/Sugar/Coffee extends Product (is-a)
+                             abstract Employee + earnings()
+Lab 7  Polymorphism        → + interface Withdrawable / Rollable
+                             FixedSalary มีบัญชี มีบัตร รูดซื้อของ
+                             ในร้านที่สร้างมาตั้งแต่ Lab 5!</div>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">// 4 เสาหลักของ OOP ครบแล้ว:
+// ① Encapsulation  (Lab 4)
+// ② Abstraction    (Lab 6-7 abstract)
+// ③ Inheritance    (Lab 6)
+// ④ Polymorphism   (Lab 7)</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">// main สุดท้ายของ Lab 7 ใช้คลาสจาก
+// 4 lab พร้อมกันในไฟล์เดียว:
+// FixedSalary → SavingAccount →
+// DebitCard → Cashier → Cart → Milk
+// เขียน lab ก่อนหน้าดี = ต่อยอดง่าย</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9 instanceof -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 7 · เครื่องมือเสริม</div>
+    <h2 class="slide-title">instanceof + casting — เช็คร่างจริงก่อนใช้</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ทำไมต้องเช็ค</div>
+        <pre class="code-block">Ball b = <span class="kw">new</span> <span class="fn">BallA</span>();
+b.<span class="fn">roll</span>();   <span class="cm">// ❌ compile error!</span>
+
+<span class="cm">// ตัวแปรชนิด Ball → compiler รู้จัก
+// เฉพาะ method ของ Ball
+// roll() อยู่ใน Rollable ไม่ใช่ Ball
+
+// ต้องเช็ค + cast ก่อน:</span>
+<span class="kw">if</span> (b <span class="kw">instanceof</span> Rollable) {
+    ((Rollable) b).<span class="fn">roll</span>();  <span class="cm">// ✓</span>
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">กฎการใช้</div>
+        <pre class="code-block"><span class="cm">// instanceof คืน true ถ้า object
+// เป็นชนิดนั้น "หรือลูกของมัน"</span>
+
+BallB bb = <span class="kw">new</span> <span class="fn">BallB</span>();
+bb <span class="kw">instanceof</span> BallB     <span class="cm">// true</span>
+bb <span class="kw">instanceof</span> BallA     <span class="cm">// true (แม่)</span>
+bb <span class="kw">instanceof</span> Ball      <span class="cm">// true (ปู่)</span>
+bb <span class="kw">instanceof</span> Rollable  <span class="cm">// true (ผ่าน BallA)</span>
+
+<span class="cm">// cast ลงโดยไม่เช็คก่อน เสี่ยง
+// ClassCastException ตอน runtime
+// → เช็ค instanceof ก่อนเสมอ</span></pre>
+      </div>
+    </div>
+    <div class="callout">ใช้ instanceof ให้น้อยที่สุด — ถ้าเช็คชนิดเยอะๆ แสดงว่า design ยังไม่ polymorphic พอ ควรย้าย logic ไปเป็น method ใน class ลูกแทน</div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">ทั้ง BaseAccount และ Card ต่างก็ implements Withdrawable<br><br>
+ทำไมโจทย์ออกแบบให้ "บัญชี" กับ "บัตร" ถอนเงินได้ทั้งคู่<br>ผ่าน interface เดียวกัน?<br><br>
+<em>힌트: ถ้า Cashier รับ Withdrawable แทนที่จะรับ Card<br>ลูกค้าจ่ายด้วยอะไรได้บ้าง? เพิ่ม PromptPay/E-Wallet<br>ในอนาคตต้องแก้ Cashier ไหม?</em><br><br>
+นี่คือเหตุผลที่ interface ถูกเรียกว่า "สัญญา" —<br>ใครเซ็นสัญญาก็เสียบแทนกันได้ทันที</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 7 · MCQ</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
+    <pre class="code-block" style="margin-bottom:14px">Ball b = <span class="kw">new</span> <span class="fn">BallB</span>();     <span class="cm">// BallB extends BallA (Override roll เท่านั้น)</span>
+b.<span class="fn">inflate</span>(<span class="nm">100</span>);
+((Rollable) b).<span class="fn">roll</span>();</pre>
+    <div id="mc-l7" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-l7','A','B','❌ roll() ถูก BallB Override แล้ว — Dynamic Binding เรียกของร่างจริง')">A) BallA inflate / BallA is rolling</button>
+      <button class="mc-btn" onclick="pickMC('mc-l7','B','B','✅ inflate: BallB ไม่ได้ Override → ใช้ของ BallA · roll: BallB Override → ใช้ของ BallB')">B) BallA inflate / BallB is rolling</button>
+      <button class="mc-btn" onclick="pickMC('mc-l7','C','B','❌ BallB ไม่ได้ Override inflate — จึงตกทอดของ BallA มาใช้')">C) BallB inflate / BallB is rolling</button>
+      <button class="mc-btn" onclick="pickMC('mc-l7','D','B','❌ ไม่ error — BallB เป็น Rollable ผ่าน BallA การ cast ถูกต้อง')">D) ClassCastException</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px"><span class="cm">// Dynamic Binding ดู "ร่างจริง" (BallB) เสมอ:
+//   inflate() — BallB ไม่มี → ไล่ขึ้นไปเจอของ BallA → "BallA inflate"
+//   roll()    — BallB Override ไว้ → "BallB is rolling"
+// ตัวแปรประกาศเป็น Ball ไม่มีผลต่อว่า "ตัวไหนถูกเรียก" มีผลแค่ compile-time check</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 7 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① class รับสัญญาจาก interface ใช้คีย์เวิร์ด ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl7a" placeholder="keyword">
+      <button class="fill-btn" onclick="checkFill('fl7a','implements',['implement'],[],'✅ class BallA extends Ball implements Rollable','❌ คือ implements — extends ใช้กับ class, implements ใช้กับ interface')">ตรวจ</button>
+    </div>
+    <div id="fl7a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Java เลือก method ตามร่างจริงของ object ตอน runtime เรียกกลไกนี้ว่า Dynamic ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl7b" placeholder="คำศัพท์">
+      <button class="fill-btn" onclick="checkFill('fl7b','binding',['Binding','dynamic binding'],[],'✅ Dynamic Binding — ประกาศชนิดแม่ แต่รันตามร่างจริงของลูก','❌ คือ Binding — Dynamic Binding เลือก method ของร่างจริงตอน runtime')">ตรวจ</button>
+    </div>
+    <div id="fl7b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ ราคา 700 บาท บัตรลด 2.5% — จ่ายจริงกี่บาท?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl7c" placeholder="ตัวเลข">
+      <button class="fill-btn" onclick="checkFill('fl7c','682.5',['682.50','682.5 บาท'],[],'✅ 700 × (1 − 0.025) = 682.5 — ตรง output โจทย์เป๊ะ','❌ 700 × 0.975 = 682.5 บาท')">ตรวจ</button>
+    </div>
+    <div id="fl7c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🎭</div>
+      <div class="summary-title">สรุป Lab 7 — Polymorphism (จบ Lab 2–7)</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Polymorphism</div><div class="sum-body">ตัวแปรชนิดแม่ เรียก method เดียวกัน ได้พฤติกรรมตามร่างจริง</div></div>
+        <div class="sum-card"><div class="sum-head">Dynamic Binding</div><div class="sum-body">compile เช็คตามชนิดที่ประกาศ · runtime วิ่งตาม object จริง</div></div>
+        <div class="sum-card"><div class="sum-head">interface</div><div class="sum-body">สัญญาล้วนๆ (can-do) · implements ได้หลายใบ ต่างจาก extends ที่ได้แม่เดียว</div></div>
+        <div class="sum-card"><div class="sum-head">instanceof + cast</div><div class="sum-body">เช็คร่างจริงก่อน cast — แต่ใช้เยอะแปลว่า design ยังไม่ polymorphic พอ</div></div>
+        <div class="sum-card"><div class="sum-head">ระบบรวม</div><div class="sum-body">FixedSalary → SavingAccount → DebitCard → Cashier — ทุก Lab ต่อกันจริง</div></div>
+        <div class="sum-card"><div class="sum-head">4 เสา OOP ครบ</div><div class="sum-body">Encapsulation · Abstraction · Inheritance · Polymorphism ✓</div></div>
+      </div>
+      <a href="index.html" class="summary-next">🏠 กลับหน้าหลัก OOP — Lab 8–13 เร็วๆนี้</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">Lab 7 — Polymorphism</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Polymorphism คืออะไร','interface','ข้อ 1 โครงสร้าง','ข้อ 1 เฉลย','ข้อ 2 แผนที่คลาส','ข้อ 2 เฉลย 1/2','ข้อ 2 เฉลย 2/2','ภาพรวมทุก Lab','instanceof','Think!','MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

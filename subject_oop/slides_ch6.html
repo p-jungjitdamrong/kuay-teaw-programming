@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 6 — Inheritance | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#9b1d6a;--cal:#fce7f3;--cam:#d45fa0;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:16px 20px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · OOP (02204172)</div>
+        <div class="cover-title">Lab 6<br><em>Inheritance</em></div>
+        <div class="cover-subtitle">สืบทอดคลาสด้วย extends — Student 3 ระดับ, ร้านค้า v2 และ abstract Employee</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>extends, super(), Override</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 1: Student / Undergrad / Graduate + toString()</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 2: ร้านค้า v2 — Milk/Sugar/Coffee extends Product</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 3: abstract Employee + earnings() 3 แบบ</div>
+          <div class="topic-row"><div class="topic-dot"></div>ArrayList + for-each กับ polymorphism เบื้องต้น</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">L6</div>
+        <div class="cover-badge">EXTENDS · SUPER · ABSTRACT</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 extends แนวคิด -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 6 · แนวคิด</div>
+    <h2 class="slide-title">Inheritance = "is-a" — ลูกได้ทุกอย่างของแม่</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">extends</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">Student</span> {
+    <span class="kw">protected</span> String name;
+    <span class="kw">protected int</span> id;
+    <span class="kw">protected double</span> gpa;
+    <span class="kw">public</span> String <span class="fn">getName</span>() { ... }
+}
+
+<span class="kw">public class</span> <span class="fn">Undergrad</span> <span class="kw">extends</span> Student {
+    <span class="kw">private</span> String year;   <span class="cm">// เพิ่มของตัวเอง</span>
+}
+
+<span class="cm">// Undergrad ได้ name, id, gpa,
+// getName() มาอัตโนมัติ ไม่ต้องเขียนซ้ำ!</span></pre>
+      </div>
+      <div>
+        <div class="code-label">protected คืออะไร</div>
+        <pre class="code-block"><span class="cm">// access modifier 3 ระดับที่ใช้บ่อย:
+
+// public    ใครก็เข้าถึงได้
+// private   เฉพาะคลาสตัวเอง
+//           (ลูกก็มองไม่เห็น!)
+// protected คลาสตัวเอง + คลาสลูก
+//           ← ใช้กับ inheritance
+
+// โจทย์ข้อ 3 Employee ใช้
+// protected String firstName;
+// เพื่อให้ลูก (FixedSalary ฯลฯ)
+// เข้าถึง field ได้ตรงๆ</span></pre>
+      </div>
+    </div>
+    <div class="callout">is-a test: "Undergrad เป็น Student ไหม?" ใช่ → ใช้ inheritance ได้ · "BankAccount เป็น Date ไหม?" ไม่ใช่ → ใช้ has-a (Lab 5) แทน</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 super -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 6 · super</div>
+    <h2 class="slide-title">super() — ต่อสายถึง constructor แม่</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กติกา</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">Undergrad</span> <span class="kw">extends</span> Student {
+    <span class="kw">private</span> String year;
+
+    <span class="kw">public</span> <span class="fn">Undergrad</span>(<span class="kw">int</span> id, String name,
+                     <span class="kw">double</span> gpa, String year) {
+        <span class="kw">super</span>(id, name, gpa); <span class="cm">// เรียก constructor แม่</span>
+        <span class="kw">this</span>.year = year;     <span class="cm">// แล้วค่อยจัดการของตัวเอง</span>
+    }
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">กฎเหล็ก 3 ข้อ</div>
+        <pre class="code-block"><span class="cm">// ① super(...) ต้องเป็น
+//    บรรทัดแรกของ constructor
+
+// ② ไม่เขียน super() เอง
+//    → Java แอบเรียก super() ว่างให้
+//    → ถ้าแม่ไม่มี constructor ว่าง
+//      = compile error!
+
+// ③ super.method() เรียก method
+//    ของแม่ได้ด้วย เช่น
+//    super.toString() ใน Override</span></pre>
+      </div>
+    </div>
+    <div class="callout">แม่สร้างเสร็จก่อน ลูกค่อยเติมของตัวเอง — เหมือนสร้างบ้าน ต้องมีฐานรากก่อนต่อเติมชั้นสอง</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 ข้อ 1 วิเคราะห์ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 6 · ข้อ 1</div>
+    <h2 class="slide-title">ข้อ 1: อ่าน Class Diagram + main ให้ออก</h2>
+    <div class="diagram">            ┌──────────────────┐
+            │     Student      │
+            │ name, id, gpa    │
+            │ getName() ฯลฯ    │
+            │ toString()       │
+            └────────┬─────────┘
+              extends│         extends
+        ┌────────────┴──┐  ┌───┴──────────────┐
+        │   Undergrad   │  │     Graduate     │
+        │ year          │  │ thesisTitle      │
+        │ toString()    │  │ toString()       │
+        └───────────────┘  └──────────────────┘</div>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">// จาก main ถอดสเปคได้:</span>
+<span class="kw">new</span> <span class="fn">Student</span>(<span class="nm">97000</span>, <span class="st">"Sameer"</span>, <span class="nm">3.51</span>);
+<span class="kw">new</span> <span class="fn">Student</span>(<span class="nm">98000</span>, <span class="nm">3.22</span>);  <span class="cm">// ← ไม่มีชื่อ!</span>
+<span class="cm">// → Student ต้องมี constructor 2 ตัว
+//   (overload — Lab 3!)</span></pre>
+      </div>
+      <div>
+        <pre class="code-block">System.out.<span class="fn">println</span>(s1);
+<span class="cm">// println(object) จะเรียก
+// s1.toString() ให้อัตโนมัติ!
+// → ผลลัพธ์สวยๆ ในโจทย์
+//   มาจาก toString() ที่ Override</span></pre>
+      </div>
+    </div>
+    <div class="callout">จุดสังเกตสำคัญ: println(s1) พิมพ์ข้อมูลสวยงามได้เพราะ Java เรียก toString() ให้เอง — ถ้าไม่ Override จะได้ Student@1b6d3586</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 ข้อ 1 เฉลย Student -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 6 · ข้อ 1 เฉลย (1/2)</div>
+    <h2 class="slide-title">ข้อ 1: class Student</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">Student</span> {
+    <span class="kw">protected</span> String name;                <span class="cm">// protected ให้ลูกเข้าถึงได้</span>
+    <span class="kw">protected int</span> id;
+    <span class="kw">protected double</span> gpa;
+
+    <span class="kw">public</span> <span class="fn">Student</span>(<span class="kw">int</span> id, String name, <span class="kw">double</span> gpa) {
+        <span class="kw">this</span>.id = id;
+        <span class="kw">this</span>.name = name;
+        <span class="kw">this</span>.gpa = gpa;
+    }
+    <span class="kw">public</span> <span class="fn">Student</span>(<span class="kw">int</span> id, <span class="kw">double</span> gpa) {  <span class="cm">// overload: ไม่มีชื่อ (s2 ในโจทย์)</span>
+        <span class="kw">this</span>(id, <span class="st">""</span>, gpa);                 <span class="cm">// this(...) เรียก constructor ตัวบน!</span>
+    }
+
+    <span class="kw">public</span> String <span class="fn">getName</span>() { <span class="kw">return</span> name; }
+    <span class="kw">public double</span> <span class="fn">getGPA</span>()  { <span class="kw">return</span> gpa; }
+    <span class="kw">public int</span> <span class="fn">getId</span>()      { <span class="kw">return</span> id; }
+    <span class="kw">public void</span> <span class="fn">setName</span>(String name) { <span class="kw">this</span>.name = name; }
+
+    <span class="kw">public</span> String <span class="fn">toString</span>() {             <span class="cm">// Override จาก Object</span>
+        <span class="kw">return</span> <span class="st">"Student:\nID: "</span> + id + <span class="st">"\nName: "</span> + name + <span class="st">"\nGPA: "</span> + gpa;
+    }
+}
+<span class="cm">/* System.out.println(s1) →
+   Student:
+   ID: 97000
+   Name: Sameer
+   GPA: 3.51   ✓ ตรงโจทย์ */</span></pre>
+    <div class="callout">โบนัส: this(id, "", gpa) — constructor เรียก constructor กันเองได้ ลด code ซ้ำ (เหมือน super แต่ในคลาสเดียวกัน)</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 ข้อ 1 เฉลย ลูก -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 6 · ข้อ 1 เฉลย (2/2)</div>
+    <h2 class="slide-title">ข้อ 1: Undergrad และ Graduate</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">Undergrad</span> <span class="kw">extends</span> Student {
+    <span class="kw">private</span> String year;
+
+    <span class="kw">public</span> <span class="fn">Undergrad</span>(<span class="kw">int</span> id, String name, <span class="kw">double</span> gpa, String year) {
+        <span class="kw">super</span>(id, name, gpa);              <span class="cm">// ให้แม่จัดการ 3 field แรก</span>
+        <span class="kw">this</span>.year = year;
+    }
+    <span class="kw">public void</span> <span class="fn">setYear</span>(String year) { <span class="kw">this</span>.year = year; }
+    <span class="kw">public</span> String <span class="fn">getYear</span>() { <span class="kw">return</span> year; }
+
+    <span class="kw">public</span> String <span class="fn">toString</span>() {             <span class="cm">// Override อีกชั้น</span>
+        <span class="kw">return</span> <span class="st">"Undergraduate "</span> + <span class="kw">super</span>.<span class="fn">toString</span>()   <span class="cm">// reuse ของแม่!</span>
+             + <span class="st">"\nYear: "</span> + year;
+    }
+}
+
+<span class="kw">public class</span> <span class="fn">Graduate</span> <span class="kw">extends</span> Student {
+    <span class="kw">private</span> String thesisTitle;
+
+    <span class="kw">public</span> <span class="fn">Graduate</span>(<span class="kw">int</span> id, String name, <span class="kw">double</span> gpa, String thesisTitle) {
+        <span class="kw">super</span>(id, name, gpa);
+        <span class="kw">this</span>.thesisTitle = thesisTitle;
+    }
+    <span class="kw">public void</span> <span class="fn">setThesisTitle</span>(String t) { thesisTitle = t; }
+    <span class="kw">public</span> String <span class="fn">getThesisTitle</span>() { <span class="kw">return</span> thesisTitle; }
+
+    <span class="kw">public</span> String <span class="fn">toString</span>() {
+        <span class="kw">return</span> <span class="st">"Graduate "</span> + <span class="kw">super</span>.<span class="fn">toString</span>() + <span class="st">"\nThesis: "</span> + thesisTitle;
+    }
+}
+<span class="cm">/* Undergraduate Student: / ID: 99000 / Name: Shahid / GPA: 2.91 / Year: Junior ✓ */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 6 ข้อ 2 ร้านค้า v2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 6 · ข้อ 2 เฉลย</div>
+    <h2 class="slide-title">ข้อ 2: ร้านค้า v2 — Milk/Sugar/Coffee extends Product</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">Milk</span> <span class="kw">extends</span> Product {
+    <span class="kw">private double</span> volumn;                          <span class="cm">// เฉพาะนม: ปริมาตร CC</span>
+
+    <span class="kw">public</span> <span class="fn">Milk</span>(<span class="kw">double</span> price) {
+        <span class="kw">super</span>(<span class="st">""</span>, <span class="st">"Milk"</span>, price);                   <span class="cm">// ชื่อ fix เป็น Milk</span>
+    }
+    <span class="kw">public void</span> <span class="fn">setVolumn</span>(<span class="kw">double</span> v) { volumn = v; }
+
+    <span class="kw">public</span> String <span class="fn">getLabel</span>() {                       <span class="cm">// ป้ายบนใบเสร็จ</span>
+        <span class="kw">return</span> <span class="fn">getName</span>() + <span class="st">" "</span> + (<span class="kw">int</span>)volumn + <span class="st">" CC"</span>;
+    }
+}
+
+<span class="kw">public class</span> <span class="fn">Sugar</span> <span class="kw">extends</span> Product {
+    <span class="kw">private double</span> weight;                          <span class="cm">// เฉพาะน้ำตาล: น้ำหนักกรัม</span>
+    <span class="kw">public</span> <span class="fn">Sugar</span>(<span class="kw">double</span> price) { <span class="kw">super</span>(<span class="st">""</span>, <span class="st">"Suger"</span>, price); }
+    <span class="kw">public void</span> <span class="fn">setWeight</span>(<span class="kw">double</span> w) { weight = w; }
+    <span class="kw">public</span> String <span class="fn">getLabel</span>() { <span class="kw">return</span> <span class="fn">getName</span>() + <span class="st">" "</span> + (<span class="kw">int</span>)weight + <span class="st">" Gram"</span>; }
+}
+
+<span class="kw">public class</span> <span class="fn">Coffee</span> <span class="kw">extends</span> Product {
+    <span class="kw">private double</span> weight;
+    <span class="kw">public</span> <span class="fn">Coffee</span>(<span class="kw">double</span> price) { <span class="kw">super</span>(<span class="st">""</span>, <span class="st">"Coffee"</span>, price); }
+    <span class="kw">public void</span> <span class="fn">setWeight</span>(<span class="kw">double</span> w) { weight = w; }
+    <span class="kw">public</span> String <span class="fn">getLabel</span>() { <span class="kw">return</span> <span class="fn">getName</span>() + <span class="st">" "</span> + (<span class="kw">int</span>)weight + <span class="st">" Gram"</span>; }
+}
+
+<span class="cm">// จุดสำคัญในโจทย์:
+//   Product p3 = new Coffee(250);   ← ตัวแปรชนิดแม่ ชี้ object ลูกได้!
+// InventoryCart กับ Cashier เดิมจาก Lab 5 ใช้ได้เลย
+// เพราะ Milk/Sugar/Coffee ทุกตัว "is-a" Product</span></pre>
+    <div class="callout">Cashier v2 แค่รวมนับสินค้าชื่อซ้ำ (2 x Coffee) — เดิน array นับจำนวนก่อนพิมพ์ · โครงหลักเหมือน Lab 5 ทุกประการ</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 abstract -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 6 · abstract</div>
+    <h2 class="slide-title">abstract — แม่แบบที่บังคับให้ลูกเขียนเอง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์ให้ Employee มาแบบนี้</div>
+        <pre class="code-block"><span class="kw">public abstract class</span> <span class="fn">Employee</span> {
+    <span class="kw">protected</span> String firstName;
+    <span class="kw">protected</span> String lastName;
+    <span class="kw">protected</span> String securityNumber;
+
+    <span class="kw">public</span> <span class="fn">Employee</span>(String first,
+        String last, String ssn) { ... }
+
+    <span class="kw">public</span> String <span class="fn">toString</span>() { ... }
+
+    <span class="kw">public abstract double</span> <span class="fn">earnings</span>();
+    <span class="cm">// ↑ ไม่มี body! ลูกต้องเขียนเอง</span>
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">ความหมาย</div>
+        <pre class="code-block"><span class="cm">// abstract class:
+// - new ตรงๆ ไม่ได้!
+//   new Employee(...) ← error
+// - มีไว้เป็นแม่แบบให้สืบทอด
+
+// abstract method:
+// - ประกาศไว้แต่ไม่เขียน body
+// - ลูก "ทุกตัว" ต้อง override
+//   ไม่งั้น compile error
+
+// ทำไมดี? → บังคับสัญญา:
+// "พนักงานทุกประเภทต้องคำนวณ
+//  เงินเดือนได้ แต่วิธีใครวิธีมัน"</span></pre>
+      </div>
+    </div>
+    <div class="callout">Fixed = เงินเดือนตายตัว · Hourly = รายชั่วโมง · Commission = % จากยอดขาย — สูตรต่างกันหมด แต่ทุกตัวต้องมี earnings()</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 ข้อ 3 เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 6 · ข้อ 3 เฉลย</div>
+    <h2 class="slide-title">ข้อ 3: FixedSalary / HourlySalary / CommissionPay</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">FixedSalary</span> <span class="kw">extends</span> Employee {
+    <span class="kw">private double</span> monthlySalary;
+    <span class="kw">public</span> <span class="fn">FixedSalary</span>(String first, String last, String ssn, <span class="kw">double</span> salary) {
+        <span class="kw">super</span>(first, last, ssn);
+        monthlySalary = salary;
+    }
+    <span class="kw">public double</span> <span class="fn">earnings</span>() { <span class="kw">return</span> monthlySalary; }          <span class="cm">// ① ตายตัว</span>
+    <span class="kw">public</span> String <span class="fn">toString</span>() {
+        <span class="kw">return</span> String.<span class="fn">format</span>(<span class="st">"Fixed salary employee: %s\nmonthly salary: $%.2f"</span>,
+                             <span class="kw">super</span>.<span class="fn">toString</span>(), monthlySalary);
+    }
+}
+
+<span class="kw">public class</span> <span class="fn">HourlySalary</span> <span class="kw">extends</span> Employee {
+    <span class="kw">private double</span> wage, hours;
+    <span class="kw">public</span> <span class="fn">HourlySalary</span>(String first, String last, String ssn,
+                        <span class="kw">double</span> wage, <span class="kw">double</span> hours) {
+        <span class="kw">super</span>(first, last, ssn);
+        <span class="kw">this</span>.wage = wage; <span class="kw">this</span>.hours = hours;
+    }
+    <span class="kw">public double</span> <span class="fn">earnings</span>() { <span class="kw">return</span> wage * hours; }          <span class="cm">// ② 20×165 = 3300</span>
+    <span class="kw">public</span> String <span class="fn">toString</span>() {
+        <span class="kw">return</span> String.<span class="fn">format</span>(<span class="st">"hourly employee: %s\nhourly pay: $%.2f; hours worked: %.2f"</span>,
+                             <span class="kw">super</span>.<span class="fn">toString</span>(), wage, hours);
+    }
+}
+
+<span class="kw">public class</span> <span class="fn">CommissionPay</span> <span class="kw">extends</span> Employee {
+    <span class="kw">private double</span> grossSales, rate;
+    <span class="kw">public</span> <span class="fn">CommissionPay</span>(String first, String last, String ssn,
+                         <span class="kw">double</span> sales, <span class="kw">double</span> rate) {
+        <span class="kw">super</span>(first, last, ssn);
+        grossSales = sales; <span class="kw">this</span>.rate = rate;
+    }
+    <span class="kw">public double</span> <span class="fn">earnings</span>() { <span class="kw">return</span> grossSales * rate; }     <span class="cm">// ③ 95000×0.06 = 5700</span>
+    <span class="kw">public</span> String <span class="fn">toString</span>() {
+        <span class="kw">return</span> String.<span class="fn">format</span>(<span class="st">"commission employee: %s\ngross sales: $%.2f; commission rate: %.2f"</span>,
+                             <span class="kw">super</span>.<span class="fn">toString</span>(), grossSales, rate);
+    }
+}</pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 ArrayList + loop -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 6 · ข้อ 3 main</div>
+    <h2 class="slide-title">ArrayList&lt;Employee&gt; — เก็บลูกทุกชนิดใน list เดียว</h2>
+    <pre class="code-block"><span class="kw">import</span> java.util.ArrayList;
+
+<span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+    Employee fixedSalary   = <span class="kw">new</span> <span class="fn">FixedSalary</span>(<span class="st">"Clark"</span>, <span class="st">"Kent"</span>,
+                                 <span class="st">"555-999-5555"</span>, <span class="nm">15000.00</span>);
+    Employee hourlySalary  = <span class="kw">new</span> <span class="fn">HourlySalary</span>(<span class="st">"Bruce"</span>, <span class="st">"Wayne"</span>,
+                                 <span class="st">"555-777-1111"</span>, <span class="nm">20.00</span>, <span class="nm">165</span>);
+    Employee commissionPay = <span class="kw">new</span> <span class="fn">CommissionPay</span>(<span class="st">"Peter"</span>, <span class="st">"Parker"</span>,
+                                 <span class="st">"555-111-5555"</span>, <span class="nm">95000</span>, <span class="nm">0.06</span>);
+    <span class="cm">// ↑ ตัวแปรชนิด Employee (แม่) ชี้ object ลูกได้ทุกชนิด</span>
+
+    ArrayList&lt;Employee&gt; employees = <span class="kw">new</span> ArrayList&lt;&gt;();   <span class="cm">// แก้ [ ผิดในโจทย์เป็น ()</span>
+    employees.<span class="fn">add</span>(fixedSalary);
+    employees.<span class="fn">add</span>(hourlySalary);
+    employees.<span class="fn">add</span>(commissionPay);
+
+    <span class="kw">for</span> (Employee emp : employees) {                     <span class="cm">// for-each ทีละคน</span>
+        System.out.<span class="fn">println</span>(emp);                         <span class="cm">// เรียก toString ของลูกแต่ละตัว!</span>
+        System.out.<span class="fn">printf</span>(<span class="st">"earned $%.2f%n%n"</span>, emp.<span class="fn">earnings</span>());
+    }
+}
+<span class="cm">/* Fixed salary employee: Clark Kent ... earned $15000.00
+   hourly employee: Bruce Wayne ...     earned $3300.00
+   commission employee: Peter Parker ...earned $5700.00 ✓
+
+   บรรทัด emp.earnings() เรียกสูตรของใครของมันเอง
+   ทั้งที่ตัวแปรเป็นชนิด Employee เหมือนกันหมด
+   ← นี่คือ Polymorphism! (Lab 7 เจาะลึกต่อ) */</span></pre>
+    <div class="callout">โจทย์ pdf มี typo หลายจุด (ArrayList[, Employees) — เจตนาคือโค้ดข้างบนนี้ · ArrayList คือ array ยืดขนาดได้ ใช้ add แทน index</div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">ทำไมโจทย์ประกาศแบบนี้:<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.8">
+Employee fixedSalary = new FixedSalary(...);
+</code><br><br>
+แทนที่จะเป็น <code style="font-family:monospace;background:var(--cal);padding:2px 8px;border-radius:6px">FixedSalary fixedSalary = new FixedSalary(...)</code>?<br><br>
+<em>힌트: ArrayList&lt;Employee&gt; รับอะไรได้บ้าง?<br>ถ้าพรุ่งนี้เพิ่ม InternSalary ต้องแก้ main กี่บรรทัด?</em><br><br>
+"Program to an interface, not an implementation" — ประโยคนี้หมายความว่าอะไร?</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 6 · MCQ</div>
+    <h2 class="slide-title">บรรทัดไหน compile ไม่ผ่าน?</h2>
+    <pre class="code-block" style="margin-bottom:14px"><span class="kw">public abstract class</span> <span class="fn">Employee</span> {
+    <span class="kw">public abstract double</span> <span class="fn">earnings</span>();
+}
+<span class="kw">public class</span> <span class="fn">FixedSalary</span> <span class="kw">extends</span> Employee {
+    <span class="kw">public double</span> <span class="fn">earnings</span>() { <span class="kw">return</span> <span class="nm">15000</span>; }
+}</pre>
+    <div id="mc-l6" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-l6','A','B','❌ ตัวแปรชนิดแม่ชี้ object ลูกได้เสมอ (upcasting) — บรรทัดนี้ถูกต้อง')">A) Employee e = new FixedSalary();</button>
+      <button class="mc-btn" onclick="pickMC('mc-l6','B','B','✅ new Employee() error! — abstract class สร้าง object ตรงๆ ไม่ได้ มีไว้เป็นแม่แบบเท่านั้น')">B) Employee e = new Employee();</button>
+      <button class="mc-btn" onclick="pickMC('mc-l6','C','B','❌ สร้างลูกแบบตรงไปตรงมา — ถูกต้องปกติ')">C) FixedSalary f = new FixedSalary();</button>
+      <button class="mc-btn" onclick="pickMC('mc-l6','D','B','❌ เรียก earnings ผ่านตัวแปรชนิดแม่ได้ — abstract method รับประกันว่าลูกทุกตัวมีแน่')">D) double x = e.earnings();</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px"><span class="cm">// abstract class = พิมพ์เขียวที่ยังไม่สมบูรณ์ (มี method ไม่มี body)
+// → new ตรงๆ ไม่ได้ ต้อง new ผ่านลูกที่เติม body ครบแล้วเท่านั้น</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 6 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① คลาสลูกสืบทอดคลาสแม่ใช้คีย์เวิร์ด ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl6a" placeholder="keyword">
+      <button class="fill-btn" onclick="checkFill('fl6a','extends',['extend'],[],'✅ class Undergrad extends Student — ได้ field + method แม่มาทั้งหมด','❌ คือ extends — class ลูก extends แม่')">ตรวจ</button>
+    </div>
+    <div id="fl6a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② เรียก constructor ของแม่จากลูก ใช้ ___(...) และต้องเป็นบรรทัดแรก</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl6b" placeholder="keyword">
+      <button class="fill-btn" onclick="checkFill('fl6b','super',['super()'],[],'✅ super(id, name, gpa) — แม่สร้างเสร็จก่อน ลูกค่อยเติมของตัวเอง','❌ คือ super — super(...) เรียก constructor แม่ ต้องเป็นบรรทัดแรกเสมอ')">ตรวจ</button>
+    </div>
+    <div id="fl6b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ System.out.println(object) จะเรียก method ___ ของ object ให้อัตโนมัติ</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl6c" placeholder="method">
+      <button class="fill-btn" onclick="checkFill('fl6c','toString',['tostring','toString()'],[],'✅ toString() — Override แล้ว println จะพิมพ์สวยตามที่เราเขียน','❌ คือ toString() — ไม่ Override จะได้ Student@1b6d3586')">ตรวจ</button>
+    </div>
+    <div id="fl6c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🌳</div>
+      <div class="summary-title">สรุป Lab 6 — Inheritance</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">extends</div><div class="sum-body">is-a · ลูกได้ field + method แม่ทั้งหมด ไม่ต้องเขียนซ้ำ</div></div>
+        <div class="sum-card"><div class="sum-head">super</div><div class="sum-body">super(...) เรียก constructor แม่ (บรรทัดแรก) · super.toString() reuse ของแม่</div></div>
+        <div class="sum-card"><div class="sum-head">protected</div><div class="sum-body">คลาสตัวเอง + ลูกเข้าถึงได้ — กึ่งกลางระหว่าง private กับ public</div></div>
+        <div class="sum-card"><div class="sum-head">Override toString</div><div class="sum-body">println(obj) เรียกให้เอง — ลูก Override ต่อยอดจาก super.toString() ได้</div></div>
+        <div class="sum-card"><div class="sum-head">abstract</div><div class="sum-body">new ตรงๆ ไม่ได้ · abstract method บังคับลูกทุกตัวเขียน body เอง</div></div>
+        <div class="sum-card"><div class="sum-head">Upcasting</div><div class="sum-body">Employee e = new FixedSalary() — เก็บลูกทุกชนิดใน ArrayList&lt;Employee&gt; เดียว</div></div>
+      </div>
+      <a href="slides_ch7.html" class="summary-next">→ Lab 7: Polymorphism</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">Lab 6 — Inheritance</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','extends is-a','super()','ข้อ 1 วิเคราะห์','ข้อ 1 Student','ข้อ 1 Undergrad/Graduate','ข้อ 2 ร้านค้า v2','abstract','ข้อ 3 เฉลย 3 คลาส','ข้อ 3 ArrayList','Think!','MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
