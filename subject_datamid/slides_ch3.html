@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 3 — Sorting trace ลงตาราง | ติวสอบ Data Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#a4133c;--cal:#fde8ef;--cam:#d45a7e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.tr-t{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;margin:8px 0;}
+.tr-t th{background:var(--ca);color:#fff;padding:5px 8px;text-align:center;font-weight:600;}
+.tr-t td{padding:5px 8px;border:1px solid var(--line);text-align:center;}
+.tr-t td.hl{background:var(--cal);color:var(--ca);font-weight:700;}
+.tr-t td.ok{background:#d4edda;color:#155724;font-weight:700;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🚨 ติวสอบ Midterm · 02204231 Data Structures</div>
+        <div class="cover-title">ติวบทที่ 3<br><em>Sorting 3 ตัว</em></div>
+        <div class="cover-subtitle">Selection / Insertion / Bubble — trace ลงตารางแบบข้อสอบ ตาม pseudocode อาจารย์เป๊ะๆ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Selection Sort ตาม pseudocode อาจารย์ + trace 42 20 17 13 28 14 23 15</div>
+          <div class="topic-row"><div class="topic-dot"></div>Bubble Sort + นับจำนวนการสลับ (ข้อสอบสั่งนับ!)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Insertion Sort กับข้อมูลเรียงกลับด้าน 98 87 76 65 54</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตาราง Best/Worst ของทั้ง 3 ตัว + n(n-1)/2</div>
+          <div class="topic-row"><div class="topic-dot"></div>เทคนิคเขียนตารางในห้องสอบไม่ให้หลง</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">T3</div>
+        <div class="cover-badge">ใบ practice เต็มใบ · trace ตาราง</div>
+        <div class="cover-slides-count">14 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 ภาพรวม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · ภาพรวม</div>
+    <h2 class="slide-title">ข้อสอบบทนี้มีหน้าตาเดียว: "จงแสดงขั้นตอน"</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">รูปแบบข้อสอบ (จากใบ practice จริง)</div>
+        <pre class="code-block">1. Selection Sort:
+   "จงแสดงขั้นตอนการทำงาน
+    เพื่อจัดเรียงจากน้อยไปมาก"
+   → เติมตารางทีละรอบ
+
+2. Bubble Sort:
+   "แสดงขั้นตอน พร้อมทั้ง
+    นับจำนวนครั้งในการสลับค่า"
+   → เติมตาราง + นับ swap
+
+3. Insertion Sort:
+   ข้อมูล 98 87 76 65 54
+   → เรียงกลับด้าน = worst case!</pre>
+      </div>
+      <div>
+        <div class="code-label">สามตัวต่างกันยังไง (จำสั้นๆ)</div>
+        <pre class="code-block">Selection: "เลือกตัวน้อยสุด
+            มาวางหน้า" ทีละรอบ
+            swap รอบละ 1 ครั้ง
+
+Insertion: "หยิบตัวถัดไป
+            แทรกที่ที่ถูกต้อง
+            ในส่วนที่เรียงแล้ว"
+
+Bubble:    "เทียบคู่ติดกัน
+            สลับถ้าผิดลำดับ
+            ตัวใหญ่ลอยไปท้าย"</pre>
+      </div>
+    </div>
+    <div class="exam"><b>กติกาสำคัญที่สุดของบทนี้:</b> trace ตาม <b>pseudocode ของอาจารย์</b> เท่านั้น — Selection ของอาจารย์หา "min มาไว้หน้า" ถ้าไป trace แบบหา max จะผิดทั้งตารางแม้เข้าใจถูก</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 Selection pseudocode -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · Selection</div>
+    <h2 class="slide-title">Selection Sort — pseudocode อาจารย์ + วิธีอ่าน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">จากสไลด์อาจารย์ (จำโครงนี้)</div>
+        <pre class="code-block">Selection-Sort(A, n)
+1. <span class="kw">for</span> i = 0 <span class="kw">to</span> n-2 <span class="kw">do</span>
+2.    min ← i
+3.    <span class="kw">for</span> j = i+1 <span class="kw">to</span> n-1 <span class="kw">do</span>
+4.       <span class="kw">if</span> A[j] &lt; A[min] <span class="kw">then</span>
+5.          min ← j
+6.    swap(A[i], A[min])</pre>
+      </div>
+      <div>
+        <div class="code-label">แปลเป็นภาษาคน</div>
+        <pre class="code-block">รอบ i: มองช่วง A[i..n-1]
+  ① เดาว่า A[i] คือตัวน้อยสุด (min=i)
+  ② ไล่ดู j ถัดไปทั้งหมด
+     เจอตัวน้อยกว่า → จำตำแหน่ง (min=j)
+  ③ จบรอบ สลับ A[i] ↔ A[min]
+     → ตัวน้อยสุดมาอยู่หน้า
+
+ทำ n-1 รอบ (i = 0 ถึง n-2)
+รอบละ 1 swap เท่านั้น</pre>
+      </div>
+    </div>
+    <div class="exam"><b>ที่ข้อสอบชอบถาม:</b> จำนวนเปรียบเทียบรวม = (n−1)+(n−2)+...+1 = <b>n(n−1)/2</b> → O(n²) — สูตร Gauss จากบท 2 กลับมาแล้ว! และ Selection <b>ไม่มี Best case ที่ดีกว่า</b>: Best = Worst = O(n²)</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 Selection trace -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · Selection trace</div>
+    <h2 class="slide-title">Trace ชุดจากสไลด์อาจารย์: 42 20 17 13 28 14 23 15</h2>
+    <table class="tr-t">
+      <thead><tr><th>รอบ</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>สิ่งที่เกิด</th></tr></thead>
+      <tbody>
+        <tr><td>เริ่ม</td><td>42</td><td>20</td><td>17</td><td>13</td><td>28</td><td>14</td><td>23</td><td>15</td><td>—</td></tr>
+        <tr><td>i=0</td><td class="ok">13</td><td>20</td><td>17</td><td class="hl">42</td><td>28</td><td>14</td><td>23</td><td>15</td><td>min=13 (idx3) ↔ 42</td></tr>
+        <tr><td>i=1</td><td class="ok">13</td><td class="ok">14</td><td>17</td><td>42</td><td>28</td><td class="hl">20</td><td>23</td><td>15</td><td>min=14 (idx5) ↔ 20</td></tr>
+        <tr><td>i=2</td><td class="ok">13</td><td class="ok">14</td><td class="ok">15</td><td>42</td><td>28</td><td>20</td><td>23</td><td class="hl">17</td><td>min=15 (idx7) ↔ 17</td></tr>
+        <tr><td>i=3</td><td class="ok">13</td><td class="ok">14</td><td class="ok">15</td><td class="ok">17</td><td>28</td><td>20</td><td>23</td><td class="hl">42</td><td>min=17 (idx7) ↔ 42</td></tr>
+      </tbody>
+    </table>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">/* วิธีทำแต่ละรอบไม่ให้หลง:
+   ① วงกลมช่วงที่ยังไม่เรียง (i..n-1)
+   ② หาตัวน้อยสุดในช่วง เขียน min=..
+   ③ สลับกับตำแหน่ง i แล้วขีดเส้นใต้
+     ส่วนที่เรียงแล้ว (ซ้ายมือ) */</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">/* ทำต่อเองอีก 3 รอบ (i=4,5,6):
+   i=4: min=20(idx5)↔28 → ..17 20 28 23 42?
+        เช็คดีๆ: {13,14,15,17,28,20,23,42}
+        min ของ 28,20,23,42 คือ 20
+   → {13,14,15,17,20,28,23,42}
+   i=5: min=23 ↔ 28 → ..23,28,42
+   i=6: min=28 ↔ 28 (ตัวเอง ไม่ขยับ)
+   จบ: 13 14 15 17 20 23 28 42 ✓ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ระวัง:</b> ถ้า min คือตำแหน่ง i เอง ก็ "swap กับตัวเอง" — ในตารางเขียนแถวนั้นเหมือนเดิมได้ แต่ต้องเขียนแถวให้ครบทุกรอบ อย่าข้าม ข้อสอบตรวจจำนวนแถว</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 Bubble -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · Bubble</div>
+    <h2 class="slide-title">Bubble Sort — เทียบคู่ติดกัน + นับ swap</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">หลักการ + โครงรอบ</div>
+        <pre class="code-block">รอบที่ 1: เทียบ (0,1)(1,2)...(n-2,n-1)
+  ถ้าซ้าย > ขวา → สลับ
+  จบรอบ: ตัวใหญ่สุดไปอยู่ท้าย ✓
+
+รอบที่ 2: เทียบถึงแค่ n-2
+  (ท้ายสุดเรียงแล้ว ไม่ต้องเทียบ)
+
+...ทำจนครบ n-1 รอบ
+   หรือรอบไหนไม่มี swap เลย = จบ
+
+<span class="cm">/* ใบ practice ให้ตาราง:
+   รอบ 1 มี 5 แถว, รอบ 2 มี 4 แถว...
+   → เขียน 1 แถวต่อ 1 การเทียบ! */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่าง: 5 3 8 1 (นับ swap)</div>
+        <pre class="code-block">รอบ 1:
+(5,3) สลับ → 3 5 8 1   swap#1
+(5,8) ไม่สลับ → 3 5 8 1
+(8,1) สลับ → 3 5 1 8   swap#2
+
+รอบ 2:
+(3,5) ไม่สลับ → 3 5 1 8
+(5,1) สลับ → 3 1 5 8   swap#3
+
+รอบ 3:
+(3,1) สลับ → 1 3 5 8   swap#4
+
+ตอบ: เรียงเสร็จ ใช้การสลับ 4 ครั้ง</pre>
+      </div>
+    </div>
+    <div class="exam"><b>โจทย์ practice สั่ง "นับจำนวนครั้งในการสลับค่าด้วย"</b> — ทำเครื่องหมาย ✓ ทุกครั้งที่สลับระหว่าง trace แล้วรวมตอนจบ อย่านับย้อนหลังเพราะจะตกหล่น</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 Insertion -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · Insertion</div>
+    <h2 class="slide-title">Insertion Sort — หยิบมาแทรกในส่วนที่เรียงแล้ว</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">หลักการ</div>
+        <pre class="code-block">รอบ i (เริ่มที่ 1): หยิบ A[i] เป็น key
+  เทียบกับตัวซ้ายทีละตัว
+  ตัวไหนใหญ่กว่า key → เลื่อนขวา
+  เจอตัวเล็กกว่าหรือสุดขอบ → วาง key
+
+ซ้ายมือของ i = "ส่วนที่เรียงแล้ว"
+โตขึ้นทีละ 1 ทุกครั้งที่หยิบ
+
+<span class="cm">/* เหมือนเรียงไพ่ในมือ:
+   หยิบใบใหม่ → ไล่หาช่อง → เสียบ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Best / Worst (ออกสอบชัวร์)</div>
+        <pre class="code-block">Best: ข้อมูลเรียงอยู่แล้ว {1,2,3,4,5}
+  ทุก key เทียบครั้งเดียว ไม่เลื่อน
+  → O(n) ← ตัวเดียวในสามตัว
+    ที่ best ดีขนาดนี้แบบไม่ต้องมี flag
+
+Worst: เรียงกลับด้าน {98,87,76,65,54}
+  ทุก key เลื่อนสุดทาง
+  → O(n²)
+
+← โจทย์ practice จงใจให้ชุด
+  กลับด้าน = worst case พอดี!</pre>
+      </div>
+    </div>
+    <div class="exam"><b>สังเกตโจทย์:</b> practice ให้ 98 87 76 65 54 (มากไปน้อย) แต่สั่งเรียง "น้อยไปมาก" — นี่คือ worst case ทุก key ต้องเลื่อนไปหน้าสุดเสมอ ตารางจะยาวเต็ม อย่าตกใจว่าทำผิด</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Insertion trace -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · เฉลยใบ practice ข้อ 3</div>
+    <h2 class="slide-title">เฉลยจริง: Insertion 98 87 76 65 54</h2>
+    <table class="tr-t">
+      <thead><tr><th>รอบ</th><th>ผลลัพธ์หลังแทรก</th><th>อธิบาย</th></tr></thead>
+      <tbody>
+        <tr><td>เริ่ม</td><td>98 87 76 65 54</td><td>ส่วนเรียงแล้ว = {98}</td></tr>
+        <tr><td>1 (key=87)</td><td class="hl">87 98 | 76 65 54</td><td>87&lt;98 → เลื่อน 98, วาง 87 หน้าสุด</td></tr>
+        <tr><td>2 (key=76)</td><td class="hl">76 87 98 | 65 54</td><td>เลื่อน 98, 87 → วาง 76 หน้าสุด</td></tr>
+        <tr><td>3 (key=65)</td><td class="hl">65 76 87 98 | 54</td><td>เลื่อน 98, 87, 76 → วางหน้าสุด</td></tr>
+        <tr><td>4 (key=54)</td><td class="ok">54 65 76 87 98</td><td>เลื่อนทั้ง 4 ตัว → วางหน้าสุด ✓</td></tr>
+      </tbody>
+    </table>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">/* ใบ practice ให้เขียน "ทีละการเลื่อน"
+   รอบ 4 จึงมีหลายแถว:
+   98 87 76 65 | 54  หยิบ 54
+   .. 65 _ 98        เลื่อน 98
+   .. _ 87 98        เลื่อน 87  (ไล่ทีละตัว)
+   54 65 76 87 98    วางลง */</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">/* นับการเปรียบเทียบ (worst):
+   รอบ 1: 1 ครั้ง
+   รอบ 2: 2 ครั้ง
+   รอบ 3: 3, รอบ 4: 4
+   รวม = 1+2+3+4 = 10 = n(n-1)/2 ✓
+   สูตรเดียวกับ Selection! */</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 ตารางเทียบ 3 ตัว -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · ตารางบังคับจำ</div>
+    <h2 class="slide-title">ตารางเทียบ 3 ตัว — ท่องเข้าห้องสอบ</h2>
+    <table class="tr-t">
+      <thead><tr><th></th><th>Selection</th><th>Insertion</th><th>Bubble (มี flag)</th></tr></thead>
+      <tbody>
+        <tr><td>วิธีคิด</td><td>หา min มาวางหน้า</td><td>หยิบไปแทรกส่วนที่เรียง</td><td>เทียบคู่ติดกัน สลับ</td></tr>
+        <tr><td>Best</td><td class="hl">O(n²) เสมอ!</td><td class="ok">O(n) เรียงแล้ว</td><td class="ok">O(n) เรียงแล้ว</td></tr>
+        <tr><td>Worst</td><td>O(n²)</td><td>O(n²) กลับด้าน</td><td>O(n²) กลับด้าน</td></tr>
+        <tr><td>จำนวน swap</td><td class="ok">น้อยสุด ≤ n−1</td><td>ใช้เลื่อน (shift)</td><td class="hl">เยอะสุด O(n²)</td></tr>
+        <tr><td>เปรียบเทียบ (worst)</td><td>n(n−1)/2</td><td>n(n−1)/2</td><td>n(n−1)/2</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>3 ประโยคที่ใช้ตอบปรนัยได้ครึ่งบท:</b><br>
+① Selection: Best = Worst = O(n²) เพราะต้องหา min ครบทุกรอบ ไม่มีทางลัด แต่ swap น้อยสุด<br>
+② Insertion: Best O(n) เมื่อข้อมูลเรียงแล้ว — เหมาะกับข้อมูล "เกือบเรียง"<br>
+③ ทั้งสามตัวเปรียบเทียบ worst เท่ากัน n(n−1)/2 → O(n²) ทั้งคู่</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 เทคนิคห้องสอบ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · เทคนิคห้องสอบ</div>
+    <h2 class="slide-title">วิธีเขียนตาราง trace ไม่ให้หลง (สำคัญมาก)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ขั้นตอนที่แนะนำ</div>
+        <pre class="code-block">① อ่านโจทย์: sort ตัวไหน? ทิศไหน
+   (น้อย→มาก หรือ มาก→น้อย)?
+   ต้องนับ swap ไหม?
+
+② เขียนแถว "เริ่มต้น" ก่อนเสมอ
+
+③ ทำทีละรอบช้าๆ:
+   - Selection: เขียน min=idx กำกับ
+   - Bubble: 1 แถวต่อ 1 การเทียบ
+   - Insertion: ขีด | คั่นส่วนที่เรียง
+
+④ จบทุกรอบ เช็คว่า
+   ส่วนที่เรียงแล้ว "เรียงจริง"
+
+⑤ แถวสุดท้ายต้องเรียงสมบูรณ์
+   — ถ้าไม่เรียง แปลว่าพลาดสักรอบ
+   ย้อนหาจากรอบท้ายขึ้นไป</pre>
+      </div>
+      <div>
+        <div class="code-label">ข้อผิดพลาดยอดฮิต (เลี่ยงให้หมด)</div>
+        <pre class="code-block">❌ Selection: สลับทันทีที่เจอตัวน้อยกว่า
+   → ต้องหา min "จบรอบก่อน" แล้วค่อยสลับ
+   (สลับกลางทางคือ Bubble ไม่ใช่ Selection!)
+
+❌ Bubble: ลืมว่ารอบถัดไปเทียบสั้นลง
+   (ท้ายสุดเรียงแล้ว)
+
+❌ Insertion: เอา key ไป "สลับ"
+   → ที่ถูกคือ "เลื่อนแล้วแทรก"
+
+❌ อ่านทิศผิด: โจทย์ให้เรียงน้อย→มาก
+   แต่มือลั่นเรียงมาก→น้อย
+   → ผิดยกข้อ ทั้งที่ trace เป็น
+
+❌ เขียนเลขตกหล่นจากแถวก่อน
+   → ลอกเลขทุกตัวลงแถวใหม่ก่อนแก้</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9 practice selection -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · ฝึกเอง</div>
+    <h2 class="slide-title">ฝึกเองตอนนี้ — ชุดเดียวกับที่ข้อสอบชอบใช้</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์ฝึก (ทำบนกระดาษจริง)</div>
+        <pre class="code-block">ชุด A: 29 10 14 37 13
+① Selection Sort — แสดงทุกรอบ
+   พร้อมเขียน min แต่ละรอบ
+② Bubble Sort — แสดงทุกการเทียบ
+   พร้อมนับจำนวน swap
+③ Insertion Sort — แสดงทุกรอบ
+   พร้อมขีด | คั่นส่วนที่เรียงแล้ว</pre>
+      </div>
+      <div>
+        <div class="code-label">เฉลยเช็คคำตอบ (ย่อ)</div>
+        <pre class="code-block">① Selection:
+i=0: 10 29 14 37 13 (min=10)
+i=1: 10 13 14 37 29 (min=13)
+i=2: 10 13 14 37 29 (min=ตัวเอง)
+i=3: 10 13 14 29 37 (min=29)
+
+② Bubble: จบที่ 10 13 14 29 37
+   swap ทั้งหมด 6 ครั้ง
+
+③ Insertion:
+key=10: 10 29 | 14 37 13
+key=14: 10 14 29 | 37 13
+key=37: 10 14 29 37 | 13 (ไม่เลื่อน)
+key=13: 10 13 14 29 37 ✓</pre>
+      </div>
+    </div>
+    <div class="exam"><b>เกณฑ์ผ่านของบทนี้:</b> ทำทั้ง 3 แบบกับชุดเดียวกันได้ถูกทุกช่องภายใน 15 นาที — ถ้าเกิน แปลว่ายังไม่คล่อง วนทำอีกรอบก่อนไปบท 4</div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">ข้อมูล {5, 1, 2, 3, 4}<br><br>
+① Insertion Sort ใช้การเปรียบเทียบกี่ครั้ง?<br>
+② Selection Sort ใช้กี่ครั้ง?<br><br>
+<em>ใบ้: ข้อมูลนี้ "เกือบเรียงแล้ว" (แค่ 5 อยู่ผิดที่)<br>
+Insertion จะได้ประโยชน์เต็มๆ<br>
+แต่ Selection ไม่สนใจ — วนครบ n(n−1)/2 = 10 ครั้งเสมอ</em><br><br>
+คำถามนี้คือหัวใจของ "เลือก algorithm ตามข้อมูล"<br>ที่ข้อสอบเอาไปแต่งเป็นปรนัยได้หลายแบบ</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · ลองข้อสอบ</div>
+    <h2 class="slide-title">Selection Sort กับ {7, 3, 9, 1} — หลังรอบ i=0 ได้อะไร?</h2>
+    <div id="mc-t3" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-t3','A','B','❌ {3,7,9,1} คือการสลับคู่แรกแบบ Bubble — Selection ต้องหา min ทั้งชุดก่อน')">A) {3, 7, 9, 1}</button>
+      <button class="mc-btn" onclick="pickMC('mc-t3','B','B','✅ min ของทั้งชุดคือ 1 (idx3) → สลับกับ A[0] → {1,3,9,7}')">B) {1, 3, 9, 7}</button>
+      <button class="mc-btn" onclick="pickMC('mc-t3','C','B','❌ {1,3,7,9} คือผลลัพธ์สุดท้าย — รอบเดียวยังไม่เรียงหมด')">C) {1, 3, 7, 9}</button>
+      <button class="mc-btn" onclick="pickMC('mc-t3','D','B','❌ {7,3,1,9} ไม่ตรงกับขั้นตอนไหนเลย — ทวน pseudocode อีกรอบ')">D) {7, 3, 1, 9}</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">i=0: min=0(7) → j=1: 3&lt;7 min=1 → j=2: 9 ไม่ → j=3: 1&lt;3 min=3
+     จบรอบ: swap(A[0], A[3]) → {1, 3, 9, 7}
+
+⚠️ ตัวเลือก A คือกับดักคนจำ Bubble มาปน — Selection สลับ "ครั้งเดียวตอนจบรอบ"</pre>
+  </div>
+</div>
+
+<!-- SLIDE 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 4</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Sort ตัวไหนมี Best case = Worst case = O(n²) (ไม่มีทางลัด)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft3a" placeholder="ชื่อ algorithm">
+      <button class="fill-btn" onclick="checkFill('ft3a','selection',['selection sort','เซเลคชั่น'],[],'✅ Selection — ต้องหา min ครบทุกรอบเสมอ ไม่ว่าข้อมูลเรียงหรือยัง','❌ Selection Sort — หา min ต้องดูครบทุกตัวทุกรอบ')">ตรวจ</button>
+    </div>
+    <div id="ft3a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Insertion Sort ได้ Best O(n) เมื่อข้อมูลมีลักษณะ ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft3b" placeholder="ลักษณะข้อมูล">
+      <button class="fill-btn" onclick="checkFill('ft3b','เรียงอยู่แล้ว',['เรียงแล้ว','sorted','เรียงลำดับแล้ว','เรียงลำดับอยู่แล้ว'],[],'✅ เรียงอยู่แล้ว — ทุก key เทียบครั้งเดียวไม่ต้องเลื่อน','❌ ข้อมูลเรียงอยู่แล้ว (sorted) — จำคู่กับ Worst = เรียงกลับด้าน')">ตรวจ</button>
+    </div>
+    <div id="ft3b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ จำนวนการเปรียบเทียบ worst case ของทั้ง 3 ตัว = ___ (สูตร)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft3c" placeholder="สูตร">
+      <button class="fill-btn" onclick="checkFill('ft3c','n(n-1)/2',['n(n−1)/2','(n(n-1))/2','n*(n-1)/2'],[],'✅ n(n−1)/2 — มาจาก 1+2+...+(n−1) สูตร Gauss','❌ n(n−1)/2 — ผลรวม 1 ถึง n−1')">ตรวจ</button>
+    </div>
+    <div id="ft3c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔄</div>
+      <div class="summary-title">จบติวบทที่ 3 — Sorting 3 ตัว</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Selection</div><div class="sum-body">หา min จบรอบค่อยสลับ (รอบละครั้งเดียว!) · Best=Worst=O(n²)</div></div>
+        <div class="sum-card"><div class="sum-head">Bubble</div><div class="sum-body">เทียบคู่ติดกัน สลับทันที · ตัวใหญ่ลอยไปท้าย · นับ swap ระหว่างทำ</div></div>
+        <div class="sum-card"><div class="sum-head">Insertion</div><div class="sum-body">หยิบ key เลื่อนแล้วแทรก · Best O(n) เรียงแล้ว · Worst กลับด้าน</div></div>
+        <div class="sum-card"><div class="sum-head">สูตรเดียวใช้สามตัว</div><div class="sum-body">เปรียบเทียบ worst = n(n−1)/2 → O(n²)</div></div>
+        <div class="sum-card"><div class="sum-head">เทคนิคตาราง</div><div class="sum-body">เขียนแถวเริ่มต้น · 1 แถวต่อ 1 ขั้น · เช็คแถวสุดท้ายต้องเรียง</div></div>
+        <div class="sum-card"><div class="sum-head">กับดักใหญ่</div><div class="sum-body">อย่าเอา Bubble (สลับกลางทาง) ไปปนกับ Selection (สลับจบรอบ)</div></div>
+      </div>
+      <a href="slides_ch4.html" class="summary-next">→ ติวบทที่ 4: Linked List</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 3 — Sorting 3 ตัว</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ภาพรวมข้อสอบ','Selection pseudocode','Selection trace','Bubble + นับ swap','Insertion','เฉลย 98 87 76 65 54','ตารางเทียบ 3 ตัว','เทคนิคห้องสอบ','ฝึกเอง','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

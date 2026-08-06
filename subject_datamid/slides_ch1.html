@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 1 — Intro + Array | ติวสอบ Data Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#a4133c;--cal:#fde8ef;--cam:#d45a7e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🚨 ติวสอบ Midterm · 02204231 Data Structures</div>
+        <div class="cover-title">ติวบทที่ 1<br><em>Intro + Array</em></div>
+        <div class="cover-subtitle">บทเก็บคะแนนฟรี — นิยาม DS/Algorithm ตอบให้ตรง + Array ที่ต้องเลื่อนข้อมูลเป็น</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Data Structure / Algorithm ตอบยังไงให้ได้คะแนน</div>
+          <div class="topic-row"><div class="topic-dot"></div>Array ทำอะไรได้ / ทำอะไรไม่ได้ (จุดหลอกปรนัย)</div>
+          <div class="topic-row"><div class="topic-dot"></div>InsertItem / RemoveItem — เลื่อนข้อมูลให้ถูกทิศ</div>
+          <div class="topic-row"><div class="topic-dot"></div>ทำ Exercise Y = mX + c จากสไลด์อาจารย์</div>
+          <div class="topic-row"><div class="topic-dot"></div>เช็คความพร้อมก่อนไปบทถัดไป</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">T1</div>
+        <div class="cover-badge">เก็บคะแนนฟรี · อย่าทิ้ง</div>
+        <div class="cover-slides-count">12 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 ทำไมบทนี้สำคัญ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · ทำไมต้องเก็บบทนี้</div>
+    <h2 class="slide-title">บทนี้คือ "ข้อสอบแจกคะแนน" — อย่าทิ้งเด็ดขาด</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ความจริงเรื่องการสอบตก</div>
+        <pre class="code-block">คนที่ F วิชานี้ ส่วนใหญ่ไม่ได้ตกเพราะ
+โจทย์ยาก — แต่ตกเพราะ:
+
+① ทิ้งข้อนิยาม (คิดว่า "ท่องเฉยๆ")
+   → เสียคะแนนฟรี 10-15%
+② trace ผิดขั้นตอน (บท 3, 5)
+   → ผิด 1 ช่อง โดนหักยาว
+③ ทำไม่ทัน เพราะมัวแต่คิด
+   ข้อที่ควร "จำ pattern" ได้เลย
+
+บทนี้แก้ข้อ ① — ใช้เวลาติวน้อยสุด
+แต่ได้คะแนนแน่นอนที่สุด</pre>
+      </div>
+      <div>
+        <div class="code-label">โครงคะแนนวิชานี้ (จากสไลด์อาจารย์)</div>
+        <pre class="code-block">Midterm สอบบรรยาย   35%  ← เป้าของเรา
+Final สอบบรรยาย     35%
+แบบฝึกหัด/Lab       20%
+สอบปฏิบัติการ        10%
+
+เกณฑ์: ≥80% ได้ A · &lt;35% ได้ F
+
+<span class="cm">/* คิดเลขง่ายๆ:
+   ถ้า midterm ได้ 20/35
+   + lab ที่ส่งครบ ~15/20
+   = 35% แล้ว — พ้น F ตั้งแต่กลางเทอม!
+   นี่คือเหตุผลที่รอบนี้ต้องเอาจริง */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เป้าหมายของการติวรอบนี้:</b> ไม่ใช่เก่งที่สุดในห้อง แต่คือ "เก็บทุกข้อที่เก็บได้" — บท 1 เก็บ 100%, บท 2-5 เก็บ pattern ที่ออกซ้ำทุกปี</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 นิยาม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · นิยาม</div>
+    <h2 class="slide-title">Data Structure / Algorithm — ตอบให้ตรงคีย์เวิร์ด</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Data Structure (ตอบตามนี้)</div>
+        <pre class="code-block">"การจัดเก็บและจัดการข้อมูล
+ในหน่วยความจำคอมพิวเตอร์
+ที่มีรูปแบบและความสัมพันธ์
+ภายในกลุ่มข้อมูลชัดเจน
+เพื่อให้ใช้ข้อมูลได้อย่างมี
+ประสิทธิภาพ"
+
+<span class="cm">/* คีย์เวิร์ดที่กรรมการหา:
+   ① จัดเก็บ/จัดการในหน่วยความจำ
+   ② ความสัมพันธ์ของข้อมูล
+   ③ ใช้อย่างมีประสิทธิภาพ:
+      - เข้าถึง/ประมวลผลเร็ว
+      - ประหยัดหน่วยความจำ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Algorithm (ตอบตามนี้)</div>
+        <pre class="code-block">"ขั้นตอนวิธีในการแก้ปัญหา
+ที่ชัดเจน เป็นลำดับ
+มีจุดเริ่มต้นและจุดสิ้นสุด"
+
+<span class="cm">/* คุณสมบัติที่ต้องเลือกถูกในปรนัย:
+   ① Correctness ถูกต้องทุก instance
+   ② Efficiency มี 2 มุม:
+      - Time Complexity (เวลา)
+      - Space Complexity (memory)
+
+   ⚠️ วิชานี้เน้นวิเคราะห์ "เวลา"
+   → ที่มาของบทที่ 2 ทั้งบท */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>แนวข้อสอบ:</b> "โครงสร้างข้อมูลที่ดีช่วยเรื่องใด" → ตอบ 2 อย่างเสมอ: <b>เข้าถึงข้อมูลเร็ว + ประหยัดหน่วยความจำ</b> — ตอบอย่างเดียวได้คะแนนครึ่งเดียว</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 Array ทำอะไรไม่ได้ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · จุดหลอกปรนัย</div>
+    <h2 class="slide-title">Array ทำอะไร "ไม่ได้" — จุดหลอกที่ออกทุกปี</h2>
+    <p class="slide-lead">สไลด์อาจารย์เน้นเรื่อง "(Lack of) Aggregate Array Operations" — ทำกับทั้งก้อนไม่ได้ ต้องวนลูปทีละตัว</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">❌ ผิดทั้งหมด (ทำกับทั้งก้อน)</div>
+        <pre class="code-block"><span class="kw">int</span> x[<span class="nm">10</span>], y[<span class="nm">10</span>];
+
+x = <span class="nm">5</span>;         <span class="cm">/* ❌ assign ทั้งก้อน */</span>
+x = x * <span class="nm">2</span>;     <span class="cm">/* ❌ คูณทั้งก้อน */</span>
+x = x + y;     <span class="cm">/* ❌ บวกสอง array */</span>
+<span class="kw">if</span> (x &lt; y)     <span class="cm">/* ❌ เปรียบเทียบทั้งก้อน */</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>,x); <span class="cm">/* ❌ พิมพ์ทั้งก้อน */</span>
+<span class="fn">scanf</span>(<span class="st">"%d"</span>,x);  <span class="cm">/* ❌ รับทั้งก้อน */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">✅ ถูก (ระบุ index ทีละตัว)</div>
+        <pre class="code-block">x[<span class="nm">2</span>] = <span class="nm">5</span>;              <span class="cm">/* ✅ ทีละช่อง */</span>
+
+<span class="kw">for</span> (i=<span class="nm">0</span>; i&lt;<span class="nm">10</span>; i++)   <span class="cm">/* ✅ วนลูป */</span>
+    x[i] = x[i] * <span class="nm">2</span>;
+
+<span class="kw">int</span> x[<span class="nm">5</span>] = {<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>,<span class="nm">5</span>}; <span class="cm">/* ✅ ตอนประกาศ
+                            ทำได้ครั้งเดียว! */</span>
+
+<span class="cm">/* ข้อยกเว้นเดียว: C string
+   printf("%s", z); ✅ พิมพ์ทั้ง
+   string ได้เพราะมี \0 ปิดท้าย */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>วิธีจำเข้าห้องสอบ:</b> Array = ต้องระบุ index เสมอ ยกเว้น 2 อย่าง — <b>ตอนประกาศพร้อมค่าเริ่มต้น</b> กับ <b>C string ใน printf/scanf</b> · เจอตัวเลือกไหนทำกับทั้งก้อน = ผิดทันที</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 InsertItem -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · Insert</div>
+    <h2 class="slide-title">InsertItem — แทรกต้อง "เลื่อนขวา จากท้ายมา"</h2>
+    <p class="slide-lead">โค้ดนี้อยู่ในสไลด์อาจารย์ตรงๆ และเป็นฐานของการเทียบกับ Linked List ในบท 4 — ต้องอ่านออกและเขียนได้</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โค้ดจากสไลด์อาจารย์</div>
+        <pre class="code-block"><span class="kw">void</span> <span class="fn">InsertItem</span>(<span class="kw">int</span> A[], <span class="kw">int</span> k, <span class="kw">int</span> x)
+{
+    <span class="kw">int</span> i;
+    <span class="kw">for</span> (i = Last; i >= k; i--)
+        A[i+<span class="nm">1</span>] = A[i];   <span class="cm">/* เลื่อนขวา */</span>
+    A[k] = x;            <span class="cm">/* วางค่าใหม่ */</span>
+    Last++;              <span class="cm">/* ขยับตัวชี้ท้าย */</span>
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">Trace: InsertItem(A, 2, 10)</div>
+        <pre class="code-block">A = {3, 4, 5, 9}   Last = 3 (index)
+
+i=3: A[4]=A[3] → {3,4,5,9,9}
+i=2: A[3]=A[2] → {3,4,5,5,9}
+i หยุด (i=1 &lt; k=2)
+
+A[2]=10        → {3,4,10,5,9}
+Last=4 ✓
+
+<span class="cm">/* ⚠️ ทำไมต้องวนจาก "ท้าย" มา "k"?
+   ถ้าวนจาก k ไปท้าย ค่าจะถูกทับ!
+   A[3]=A[2] ก่อน A[4]=A[3]
+   → 9 หายไป กลายเป็น 5 ซ้ำ
+   ← จุดที่ข้อสอบชอบหลอกที่สุด */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ท่องเลย:</b> แทรก = เลื่อนขวา วนจากท้ายมาหา k · ลบ = เลื่อนซ้าย วนจาก k ไปท้าย — <b>ทิศการวนตรงข้ามกัน</b> สลับเมื่อไหร่ข้อมูลพังเมื่อนั้น</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 RemoveItem -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · Remove (Exercise ในสไลด์)</div>
+    <h2 class="slide-title">RemoveItem — โจทย์ที่อาจารย์เว้นว่างให้ทำเอง</h2>
+    <p class="slide-lead">สไลด์อาจารย์ให้ Exercise: "เขียนฟังก์ชันลบค่าออกจากอาเรย์ตำแหน่ง k" — นี่คือเฉลยพร้อมเหตุผล</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เฉลย</div>
+        <pre class="code-block"><span class="kw">void</span> <span class="fn">RemoveItem</span>(<span class="kw">int</span> A[], <span class="kw">int</span> k)
+{
+    <span class="kw">int</span> i;
+    <span class="kw">for</span> (i = k; i &lt; Last; i++)
+        A[i] = A[i+<span class="nm">1</span>];   <span class="cm">/* เลื่อนซ้าย */</span>
+    Last--;              <span class="cm">/* หดตัวชี้ท้าย */</span>
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">Trace: RemoveItem(A, 1)</div>
+        <pre class="code-block">A = {3, 4, 10, 5, 9}   Last = 4
+
+i=1: A[1]=A[2] → {3,10,10,5,9}
+i=2: A[2]=A[3] → {3,10,5,5,9}
+i=3: A[3]=A[4] → {3,10,5,9,9}
+Last=3 → มอง 9 ตัวท้ายว่า "ไม่มีแล้ว"
+
+ผล: {3, 10, 5, 9} ✓
+
+<span class="cm">/* สังเกต: ลบวนจาก k ไปท้าย
+   (ตรงข้ามกับ insert เป๊ะ) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ประเด็นออกสอบ:</b> ทั้ง Insert และ Remove ของ array ใช้เวลา <b>O(n)</b> เพราะต้องเลื่อนข้อมูล — ประโยคนี้แหละคือ "เหตุผลที่ Linked List เกิดมา" (บท 4) ข้อสอบถามเชื่อมสองบทนี้บ่อยมาก</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Array 2D + Exercise -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · Exercise จากสไลด์</div>
+    <h2 class="slide-title">ทำ Exercise Y = mX + c ให้ดูจบๆ</h2>
+    <p class="slide-lead">โจทย์ในสไลด์: X = {1,2,3,4,5}, Y = 5X + 3, เทียบกับเฉลย Z = {8,13,18,23,28}</p>
+    <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> X[<span class="nm">5</span>] = {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>};        <span class="cm">/* 1. ประกาศพร้อมค่า — ทำได้ */</span>
+    <span class="kw">int</span> Y[<span class="nm">5</span>];
+    <span class="kw">int</span> Z[<span class="nm">5</span>] = {<span class="nm">8</span>, <span class="nm">13</span>, <span class="nm">18</span>, <span class="nm">23</span>, <span class="nm">28</span>};   <span class="cm">/* 4. ผลเฉลยที่ถูกต้อง */</span>
+    <span class="kw">int</span> m = <span class="nm">5</span>, c = <span class="nm">3</span>, i, same = <span class="nm">1</span>;
+
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; <span class="nm">5</span>; i++)
+        Y[i] = m * X[i] + c;              <span class="cm">/* 2. Y=mX+c ต้องวนลูป! (Y=m*X+c ทั้งก้อน ❌) */</span>
+
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; <span class="nm">5</span>; i++)
+        <span class="fn">printf</span>(<span class="st">"%d "</span>, Y[i]);              <span class="cm">/* 3. แสดงผล — วนลูปเช่นกัน */</span>
+
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; <span class="nm">5</span>; i++)              <span class="cm">/* 5. เปรียบเทียบ — ก็ต้องวนลูป! */</span>
+        <span class="kw">if</span> (Y[i] != Z[i]) same = <span class="nm">0</span>;
+
+    <span class="fn">printf</span>(same ? <span class="st">"\nY==Z"</span> : <span class="st">"\nY!=Z"</span>);   <span class="cm">/* Y==Z ✓ */</span>
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+    <div class="exam"><b>สังเกตไหม:</b> ทุก step ของโจทย์นี้จงใจบังคับให้ "วนลูปทีละตัว" — กำหนดค่า, คำนวณ, แสดงผล, เปรียบเทียบ ครบทั้ง 4 operations ที่ทำกับทั้งก้อนไม่ได้ นี่คือวิธีอาจารย์สอนผ่านโจทย์</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Pointer เบื้องต้น -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · Pointer</div>
+    <h2 class="slide-title">Pointer 4 บรรทัดที่ต้องอ่านออก (ใช้ต่อบท 4)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">อ่านให้ออกแค่นี้พอ</div>
+        <pre class="code-block"><span class="kw">int</span> a = <span class="nm">5</span>;
+<span class="kw">int</span> *p;      <span class="cm">/* p = ตัวชี้ address */</span>
+
+p = &a;      <span class="cm">/* & = "address ของ a" */</span>
+*p = <span class="nm">10</span>;     <span class="cm">/* * = "ค่าที่ p ชี้อยู่"
+                → a กลายเป็น 10 */</span>
+
+<span class="fn">printf</span>(<span class="st">"%d"</span>, a);    <span class="cm">/* 10 */</span>
+<span class="fn">printf</span>(<span class="st">"%d"</span>, *p);   <span class="cm">/* 10 เหมือนกัน */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ทำไมต้องรู้ตอนนี้</div>
+        <pre class="code-block"><span class="cm">/* บท 4 Linked List ทั้งบท
+   คือ pointer ล้วนๆ:  */</span>
+
+<span class="kw">struct</span> node {
+    <span class="kw">int</span> data;
+    <span class="kw">struct</span> node *next;  <span class="cm">/* ← ชี้โหนดถัดไป */</span>
+};
+
+p->next          <span class="cm">/* = (*p).next
+   "ช่อง next ของโหนดที่ p ชี้"
+   สัญลักษณ์ -> เจอทุกบรรทัดในบท 4
+   อ่านไม่ออก = บท 4 จบเห่ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>จำสามตัว:</b> <b>&</b> = เอา address · <b>*</b> = เอาค่าที่ชี้ · <b>-&gt;</b> = เข้า field ของ struct ที่ pointer ชี้ — สามตัวนี้พอสำหรับสอบ midterm ทั้งฉบับ</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 สรุป Lab_ch1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · Lab ทวน</div>
+    <h2 class="slide-title">แนวโจทย์ Lab บท 1 — ทำซ้ำให้มือจำ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Pattern ที่ lab ให้ฝึก</div>
+        <pre class="code-block"><span class="cm">/* 1. อ่านค่าลง array แล้วประมวลผล */</span>
+<span class="kw">int</span> A[<span class="nm">100</span>], n, i, sum = <span class="nm">0</span>;
+<span class="fn">scanf</span>(<span class="st">"%d"</span>, &n);
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n; i++)
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, &A[i]);
+
+<span class="cm">/* 2. หาผลรวม / max / min */</span>
+<span class="kw">int</span> max = A[<span class="nm">0</span>];
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n; i++) {
+    sum += A[i];
+    <span class="kw">if</span> (A[i] > max) max = A[i];
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">จุดที่คนพลาดใน lab</div>
+        <pre class="code-block"><span class="cm">/* ❌ ลืม & ใน scanf ตัวแปรเดี่ยว */</span>
+<span class="fn">scanf</span>(<span class="st">"%d"</span>, n);     <span class="cm">/* พัง! ต้อง &n */</span>
+
+<span class="cm">/* ❌ max เริ่มที่ 0
+   ถ้าข้อมูลติดลบหมด → ผิด!
+   ✅ เริ่มที่ A[0] เสมอ */</span>
+
+<span class="cm">/* ❌ วน i &lt;= n (เกิน 1 ตัว)
+   ✅ วน i &lt; n
+   index สุดท้ายคือ n-1 */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ก่อนไปบท 2 ต้องทำได้:</b> อ่านค่าลง array → วนประมวลผล → insert/remove พร้อมเลื่อนข้อมูล — ถ้าสามท่านี้คล่อง บท 2-3 จะลื่นทันทีเพราะใช้ loop แบบเดียวกันวิเคราะห์</div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">A = {7, 2, 9, 4} และ Last = 3<br><br>
+เรียก InsertItem(A, 0, 1) — แทรก 1 ที่หน้าสุด<br><br>
+① ลูปเลื่อนข้อมูลทำงานกี่รอบ?<br>
+② array หน้าตาสุดท้ายเป็นยังไง?<br>
+③ ถ้า array มี n ตัว แทรกหน้าสุดต้องเลื่อนกี่ตัว? → นี่คือทำไม insert หน้า array = O(n)<br><br>
+<em>ลองเขียน trace ทีละบรรทัดบนกระดาษจริงๆ<br>ห้ามทำในหัว — ข้อสอบให้เขียนแสดงขั้นตอน</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ข้อใดใช้งาน array ใน C ได้ถูกต้อง?</h2>
+    <div id="mc-t1" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-t1','A','C','❌ x = y ทั้งก้อนไม่ได้ — assignment ต้องทีละ index (หรือใช้ loop)')">A) int x[5], y[5]; x = y;</button>
+      <button class="mc-btn" onclick="pickMC('mc-t1','B','C','❌ เปรียบเทียบทั้งก้อนไม่ได้ — ต้องวนเทียบทีละตัว')">B) if (x == y) printf("same");</button>
+      <button class="mc-btn" onclick="pickMC('mc-t1','C','C','✅ ประกาศพร้อมค่าเริ่มต้นทำได้ — เป็นข้อยกเว้นเดียวของ assignment ทั้งก้อน')">C) int x[5] = {1,2,3,4,5};</button>
+      <button class="mc-btn" onclick="pickMC('mc-t1','D','C','❌ พิมพ์ array int ทั้งก้อนไม่ได้ — ยกเว้นเฉพาะ C string (%s)')">D) int x[5]; printf("%d", x);</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px"><span class="cm">/* หลักตัดตัวเลือก: เห็น array ถูกใช้ "ทั้งก้อน" โดยไม่มี index → ผิด
+   ยกเว้น ① ประกาศพร้อมค่า {1,2,3}  ② C string กับ %s
+   ข้อนี้ C คือประกาศพร้อมค่า → ถูก */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 11 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — แบบที่ข้อสอบเว้นช่องให้เขียน</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① InsertItem ต้องวนเลื่อนข้อมูลจากตำแหน่ง ___ มาหา k (ท้าย/หน้า)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft1a" placeholder="ท้ายหรือหน้า">
+      <button class="fill-btn" onclick="checkFill('ft1a','ท้าย',['ท้ายสุด','last','จากท้าย','ตัวสุดท้าย'],[],'✅ วนจากท้าย (Last) ลงมาหา k — วนจากหน้าไปค่าจะถูกทับ','❌ ต้องวนจาก \"ท้าย\" มา — ไม่งั้นค่าถูกทับก่อนถูกเลื่อน')">ตรวจ</button>
+    </div>
+    <div id="ft1a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② การ insert/remove ข้อมูลกลาง array ใช้เวลา O(___) เพราะต้องเลื่อนข้อมูล</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft1b" placeholder="complexity">
+      <button class="fill-btn" onclick="checkFill('ft1b','n',['O(n)','o(n)'],[],'✅ O(n) — worst case เลื่อนเกือบทุกตัว · ประโยคนี้คือเหตุผลที่มี Linked List','❌ O(n) — ต้องเลื่อนข้อมูลสูงสุด n ตัว')">ตรวจ</button>
+    </div>
+    <div id="ft1b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ การเข้าถึงสมาชิก array ด้วย index เช่น A[5] ใช้เวลา O(___)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ft1c" placeholder="complexity">
+      <button class="fill-btn" onclick="checkFill('ft1c','1',['O(1)','o(1)'],[],'✅ O(1) — คำนวณ address ได้ทันที นี่คือจุดแข็งเดียวที่ array ชนะ Linked List','❌ O(1) — เข้าถึงตรงด้วย index ได้ทันที (จุดแข็งของ array)')">ตรวจ</button>
+    </div>
+    <div id="ft1c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 12 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🧱</div>
+      <div class="summary-title">จบติวบทที่ 1 — เก็บคะแนนส่วนนี้ให้หมด</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">นิยาม DS</div><div class="sum-body">จัดเก็บ+จัดการข้อมูลในหน่วยความจำ → เข้าถึงเร็ว + ประหยัดที่ (ตอบ 2 อย่างเสมอ)</div></div>
+        <div class="sum-card"><div class="sum-head">Array ทั้งก้อน</div><div class="sum-body">ทำไม่ได้ทุกอย่าง ต้องระบุ index — ยกเว้นประกาศพร้อมค่า + C string</div></div>
+        <div class="sum-card"><div class="sum-head">Insert</div><div class="sum-body">เลื่อนขวา วนจากท้ายมา k แล้ววาง + Last++</div></div>
+        <div class="sum-card"><div class="sum-head">Remove</div><div class="sum-body">เลื่อนซ้าย วนจาก k ไปท้าย + Last−− (ทิศตรงข้าม insert)</div></div>
+        <div class="sum-card"><div class="sum-head">Big-O ของ Array</div><div class="sum-body">เข้าถึง O(1) · insert/remove O(n) — คู่นี้ออกสอบเทียบกับ LL แน่นอน</div></div>
+        <div class="sum-card"><div class="sum-head">Pointer 3 ตัว</div><div class="sum-body">& เอา address · * เอาค่า · -&gt; เข้า field — ต้องอ่านออกก่อนถึงบท 4</div></div>
+      </div>
+      <a href="slides_ch2.html" class="summary-next">→ ติวบทที่ 2: T(n) + Big-O (ข้อสอบตัวเป้ง)</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 1 — Intro + Array</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ทำไมบทนี้สำคัญ','นิยาม DS/Algorithm','Array จุดหลอก','InsertItem','RemoveItem','Exercise Y=mX+c','Pointer 3 ตัว','Lab ทวน','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
