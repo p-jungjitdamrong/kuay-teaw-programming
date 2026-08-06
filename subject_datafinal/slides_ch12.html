@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 12 — Graph | ติวสอบ Data Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#6d1f7e;--cal:#f6e8fa;--cam:#a55cb5;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🌲 ติวสอบ Final · 02204231 Data Structures</div>
+        <div class="cover-title">ติวบทที่ 12<br><em>Graph</em></div>
+        <div class="cover-subtitle">บทสุดท้าย — Matrix ↔ รูป ↔ List แปลงได้สามทาง + BFS/DFS + getDegree</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>G=(V,E), directed/undirected, degree</div>
+          <div class="topic-row"><div class="topic-dot"></div>Adjacency Matrix ↔ วาดรูปกราฟ (เฉลย practice)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Adjacency List + เทียบข้อดีข้อเสีย</div>
+          <div class="topic-row"><div class="topic-dot"></div>BFS (ใช้ Queue!) / DFS (ใช้ Stack!)</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลยฟังก์ชัน getDegree (practice ข้อ 4)</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">F12</div>
+        <div class="cover-badge">บทปิดท้าย · ทุกบทมารวมกัน</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 นิยาม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · นิยาม</div>
+    <h2 class="slide-title">G = (V, E) + ศัพท์ที่ออกปรนัย</h2>
+    <div class="two-col">
+      <div>
+        <div class="diagram">    A ─── B          V = {A,B,C,D,E}
+    │ ╲              E = {AB,AC,AD,CD,DE}
+    │  ╲
+    C ── D ── E</div>
+        <pre class="code-block">Vertex (โหนด/จุด) เก็บข้อมูล
+Edge เส้นเชื่อม e = (u,v)
+
+Undirected: เส้นไม่มีหัวลูกศร
+  (u,v) = (v,u) ไปกลับได้
+Directed (Digraph): มีหัวลูกศร
+  (u,v) ≠ (v,u) ทางเดียว!</pre>
+      </div>
+      <div>
+        <pre class="code-block">Degree = จำนวนเส้นของโหนด
+  กราฟมีทิศ แยกเป็น:
+  In-degree  = ลูกศร "ชี้เข้า"
+  Out-degree = ลูกศร "ชี้ออก"
+
+Adjacent nodes = คู่โหนดที่มี
+  เส้นเชื่อมถึงกันโดยตรง
+Path = ลำดับโหนดที่เชื่อมต่อกัน
+  จากต้นถึงปลาย
+
+<span class="cm">/* Tree vs Graph (โยงบท 8):
+   tree = graph ที่ "ไม่มีวงจรปิด"
+   และเชื่อมถึงกันหมด
+   graph มี cycle ได้ มีหลายทางได้ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>สูตรเช็คเร็ว (undirected):</b> ผลรวม degree ทุกโหนด = 2 × จำนวน edge — ใช้ตรวจคำตอบข้อนับ degree ได้ทันที</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 matrix -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · เฉลยใบ practice ข้อ 1-2</div>
+    <h2 class="slide-title">Adjacency Matrix → อ่านประเภท + วาดรูป</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างแนวใบ practice (A-E = 0-4)</div>
+        <div class="diagram">      A B C D E
+   A [ 0 1 0 1 0 ]
+   B [ 0 0 1 0 0 ]
+   C [ 0 0 0 1 1 ]
+   D [ 0 0 0 0 1 ]
+   E [ 1 0 0 0 0 ]
+
+M[i][j] = 1 คือ "มีเส้นจาก i ไป j"</div>
+        <pre class="code-block"><span class="cm">/* ข้อ 1: กราฟประเภทใด?
+   เช็ค "สมมาตร" รอบแนวทแยง:
+   M[0][1]=1 แต่ M[1][0]=0
+   → ไม่สมมาตร
+   ∴ กราฟมีทิศทาง (Directed)
+   + เหตุผล: มีเส้น A→B
+     แต่ไม่มี B→A */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ข้อ 2: วาดรูปจาก matrix</div>
+        <div class="diagram">อ่านทีละแถว (แถว = ต้นทาง):
+A→B, A→D · B→C · C→D, C→E
+D→E · E→A
+
+     A ──▶ B
+     ▲ ╲    │
+     │  ╲   ▼
+     │   ▶ ─C
+     │  D ◀╱ ╲
+     │  │    ▼
+     └─ E ◀──┘
+   (D→E, C→E, E→A)</div>
+        <pre class="code-block"><span class="cm">/* วิธีวาดไม่พลาด:
+   วางจุด 5 จุดก่อน แล้วไล่
+   matrix ทีละช่องที่เป็น 1
+   ลากลูกศร i → j ทีละเส้น
+   นับเส้นรวม = จำนวนเลข 1 */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>กติกาจำ:</b> undirected → matrix สมมาตรเสมอ (ใส่ 1 ทั้ง [i][j] และ [j][i]) · directed → ไม่จำเป็นต้องสมมาตร — ข้อ "ประเภทใด" ตัดสินจากความสมมาตรนี่แหละ</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 list -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · เฉลยใบ practice ข้อ 3</div>
+    <h2 class="slide-title">Adjacency List + ตารางเทียบที่ชอบออก</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แปลงจาก matrix เดิม</div>
+        <div class="diagram">A ─▶ [B] ─▶ [D] ─▶ ╳
+B ─▶ [C] ─▶ ╳
+C ─▶ [D] ─▶ [E] ─▶ ╳
+D ─▶ [E] ─▶ ╳
+E ─▶ [A] ─▶ ╳
+
+(array ของ head pointer +
+ linked list — บท 4 กลับมาอีกแล้ว!)</div>
+      </div>
+      <div>
+        <div class="code-label">Matrix vs List</div>
+        <pre class="code-block">Matrix:
++ เช็ค "มีเส้น i→j ไหม" O(1)
+− กิน memory O(V²) เสมอ
+  (กราฟโปร่งก็เปลือง)
+
+List:
++ กิน memory ตามเส้นจริง O(V+E)
++ ไล่เพื่อนบ้านเร็ว
+− เช็คเส้นเจาะจงต้องไล่ลิสต์ O(V)
+
+<span class="cm">/* กราฟเส้นน้อย (sparse) → List
+   กราฟเส้นแน่น (dense) → Matrix */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>แนวถาม:</b> "กราฟ 1000 โหนด 1500 เส้น ควรแทนแบบใด" → List (sparse — matrix เปลือง 10⁶ ช่องเพื่อเก็บ 1 แค่ 1500 ตัว)</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 BFS DFS -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · Traversal</div>
+    <h2 class="slide-title">BFS ใช้ Queue · DFS ใช้ Stack — สองบทเก่ากลับมาทำงาน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">BFS — ท่องทีละชั้น (Queue/FIFO)</div>
+        <pre class="code-block">① เริ่มที่จุดตั้งต้น mark visited
+   แล้ว enqueue
+② dequeue 1 ตัว → เพื่อนบ้าน
+   ที่ยังไม่ visited: mark + enqueue
+③ ทำจน queue ว่าง
+
+<span class="cm">/* กระจายเป็นวงเหมือนหยดน้ำ
+   → ใกล้ก่อน ไกลทีหลัง
+   ใช้หา "เส้นทางสั้นสุด"
+   (จำนวน edge น้อยสุด) ได้ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">DFS — มุดให้สุดทาง (Stack/LIFO)</div>
+        <pre class="code-block">เดินลึกไปทางเดียวจนตัน
+→ ถอยกลับ (backtrack) มาแยกอื่น
+
+ใช้ stack หรือ recursion
+(recursion = stack ซ่อนรูป!)
+
+<span class="cm">/* จุดสอบ:
+   BFS ↔ Queue (บท 6 midterm)
+   DFS ↔ Stack (บท 7)
+   ห้ามจำสลับ! ท่อง:
+   Breadth=กว้าง=แผ่=คิว
+   Depth=ลึก=มุด=สแตค */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ทั้งสองแบบต้องมี visited</b> — กราฟมี cycle ได้ ไม่ mark = วนไม่รู้จบ (ต่างจาก tree ที่ไม่ต้อง) · ข้อสอบให้กราฟ + จุดเริ่ม แล้วสั่งเขียนลำดับ BFS/DFS — ตอนไล่เพื่อนบ้านให้เรียงตามตัวอักษร/หมายเลขน้อยก่อน (ตาม convention ที่โจทย์กำหนด)</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 getDegree -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · เฉลยใบ practice ข้อ 4</div>
+    <h2 class="slide-title">เฉลยจริง: getDegree() — แถว = ออก, คอลัมน์ = เข้า</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">หลักคิด</div>
+        <pre class="code-block">ใน adjacency matrix G ของกราฟมีทิศ:
+
+Out-degree ของโหนด k
+= จำนวนเลข 1 ใน "แถว k"
+  (เส้นที่ออกจาก k)
+
+In-degree ของโหนด k
+= จำนวนเลข 1 ใน "คอลัมน์ k"
+  (เส้นที่ชี้เข้า k)
+
+<span class="cm">/* โจทย์กำหนด: ฟังก์ชันไม่คืนค่า
+   รับ 4 พารามิเตอร์ โดย InDeg/
+   OutDeg เป็น output parameter
+   → ต้องรับเป็น pointer! (บท 1) */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">โค้ดเฉลย</div>
+        <pre class="code-block"><span class="pp">#define</span> N <span class="nm">5</span>
+
+<span class="kw">void</span> <span class="fn">getDegree</span>(<span class="kw">int</span> G[N][N], <span class="kw">int</span> k,
+               <span class="kw">int</span> *InDeg, <span class="kw">int</span> *OutDeg)
+{
+    <span class="kw">int</span> i;
+    *InDeg = <span class="nm">0</span>;
+    *OutDeg = <span class="nm">0</span>;
+
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; N; i++) {
+        *OutDeg += G[k][i];  <span class="cm">/* แถว k */</span>
+        *InDeg  += G[i][k];  <span class="cm">/* คอลัมน์ k */</span>
+    }
+}
+<span class="cm">/* เรียกใช้:
+   int in, out;
+   getDegree(G, 2, &in, &out); */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>สองจุดให้คะแนนของข้อนี้:</b> ① รู้ว่าแถว=out คอลัมน์=in ② output parameter ใช้ pointer (*InDeg, &in) — ความรู้บท 1 (pointer 3 ตัว) มาปิดจ๊อบบทสุดท้ายพอดี</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">จากกราฟ matrix ในบทนี้ (A→B, A→D, B→C, C→D, C→E, D→E, E→A)<br><br>
+เริ่ม BFS จาก A (ไล่เพื่อนบ้านตามตัวอักษร) ได้ลำดับอะไร?<br><br>
+<em>ไล่: A เข้าคิว → dequeue A เจอ B, D → dequeue B เจอ C<br>
+→ dequeue D เจอ E → dequeue C (D,E visited แล้ว) → dequeue E<br>
+ลำดับ: A B D C E</em><br><br>
+แล้ว DFS จาก A ล่ะ? (มุดทาง B ก่อน)<br>
+A → B → C → D → E — เห็นไหมว่าคนละลำดับ คนละนิสัย</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · ลองข้อสอบ</div>
+    <h2 class="slide-title">Adjacency matrix ที่ "สมมาตร" บอกอะไร?</h2>
+    <div id="mc-f12" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-f12','A','B','❌ วงจรปิดดูจาก matrix ตรงๆ ไม่ได้ — สมมาตรบอกเรื่องทิศทาง')">A) กราฟมีวงจรปิด (cycle)</button>
+      <button class="mc-btn" onclick="pickMC('mc-f12','B','B','✅ M[i][j] = M[j][i] ทุกคู่ = ทุกเส้นไปกลับได้ = กราฟไม่มีทิศทาง (undirected)')">B) กราฟไม่มีทิศทาง (undirected)</button>
+      <button class="mc-btn" onclick="pickMC('mc-f12','C','B','❌ เชื่อมถึงกันหมด (connected) ต้องไล่เส้นทางดู — สมมาตรไม่ได้บอก')">C) กราฟเชื่อมถึงกันทุกโหนด</button>
+      <button class="mc-btn" onclick="pickMC('mc-f12','D','B','❌ น้ำหนักเส้นคือค่าใน matrix (weighted graph) — ไม่เกี่ยวกับสมมาตร')">D) กราฟมีน้ำหนักเท่ากันทุกเส้น</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">สมมาตร (M[i][j] == M[j][i]) ⇔ undirected — เส้น (u,v) คือเส้น (v,u)
+ไม่สมมาตรแม้ช่องเดียว → directed ("มี A→B แต่ไม่มี B→A")</pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 12 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — บทสุดท้ายแล้ว!</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① BFS ใช้โครงสร้างข้อมูล ___ ช่วยท่องกราф</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff12a" placeholder="โครงสร้าง">
+      <button class="fill-btn" onclick="checkFill('ff12a','queue',['คิว','Queue'],[],'✅ Queue (FIFO) — แผ่ทีละชั้น · DFS ใช้ Stack','❌ Queue — Breadth=กว้าง=คิว / Depth=ลึก=สแตค')">ตรวจ</button>
+    </div>
+    <div id="ff12a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② In-degree ของโหนด k อ่านจาก ___ ที่ k ของ adjacency matrix (แถว/คอลัมน์)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff12b" placeholder="แถวหรือคอลัมน์">
+      <button class="fill-btn" onclick="checkFill('ff12b','คอลัมน์',['column','คอลัม','หลัก'],[],'✅ คอลัมน์ k (เส้นชี้เข้า) · แถว k = out-degree (เส้นชี้ออก)','❌ คอลัมน์ — เข้า=คอลัมน์ ออก=แถว')">ตรวจ</button>
+    </div>
+    <div id="ff12b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ กราฟเส้นน้อย (sparse) ควรแทนด้วย Adjacency ___ เพื่อประหยัด memory</p>
+    <div class="fill-row">
+      <input class="fill-input" id="ff12c" placeholder="แบบไหน">
+      <button class="fill-btn" onclick="checkFill('ff12c','list',['ลิสต์','List','adjacency list'],[],'✅ List — O(V+E) ตามเส้นจริง · Matrix กิน O(V²) เสมอ','❌ List — sparse ใช้ List, dense ใช้ Matrix')">ตรวจ</button>
+    </div>
+    <div id="ff12c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🕸️</div>
+      <div class="summary-title">จบติวบทที่ 12 — Graph (ครบทุกบทแล้ว!)</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">นิยาม</div><div class="sum-body">G=(V,E) · degree (in/out) · Σdegree = 2E (undirected)</div></div>
+        <div class="sum-card"><div class="sum-head">Matrix</div><div class="sum-body">สมมาตร=undirected · เช็คเส้น O(1) · เปลือง O(V²)</div></div>
+        <div class="sum-card"><div class="sum-head">List</div><div class="sum-body">head array + linked list · O(V+E) · เหมาะ sparse</div></div>
+        <div class="sum-card"><div class="sum-head">BFS / DFS</div><div class="sum-body">กว้าง=Queue แผ่ทีละชั้น · ลึก=Stack มุดสุดทาง · ต้อง mark visited</div></div>
+        <div class="sum-card"><div class="sum-head">getDegree</div><div class="sum-body">แถว=out คอลัมน์=in · output ผ่าน pointer</div></div>
+        <div class="sum-card"><div class="sum-head">ภาพรวม</div><div class="sum-body">บทนี้ใช้ทุกบทเก่า: LL (list), Queue (BFS), Stack (DFS), pointer</div></div>
+      </div>
+      <a href="slides_final.html" class="summary-next">→ ด่านสุดท้าย: Cheat Sheet ก่อนเข้าห้องสอบ</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 10</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 12 — Graph</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','G=(V,E) + ศัพท์','Matrix → รูป','Adjacency List','BFS / DFS','getDegree','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
