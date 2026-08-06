@@ -62,19 +62,20 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
 <div class="main">
 
   <div class="pep">
-    <b>อ่านก่อนเริ่มติว:</b> ข้อสอบ midterm มี 35% และเกณฑ์ F คือต่ำกว่า 35% รวมทั้งเทอม —
-    แปลว่าทำ midterm ให้ดีรอบเดียว เกมเปลี่ยนเลย ข้อสอบวิชานี้ <b>ออกซ้ำแนวเดิมทุกปี</b>:
-    คำนวณ T(n) → หา Big-O → trace sorting ลงตาราง → เขียน insert/delete linked list → เติมตาราง hash
-    ทั้งหมดคือ "ทำตามขั้นตอน" ไม่ใช่ความจำ ฝึก trace ให้มือจำ แล้วเข้าห้องสอบไปเก็บคะแนนได้เลย
-    <b>เรียงบทตามลำดับ อย่าข้าม</b> เพราะบทหลังใช้บทหน้าตลอด
+    <b>อ่านก่อนเริ่มติว (พูดตรงๆ):</b> เราไม่มีข้อสอบเก่า เดาข้อสอบจริงไม่ได้ — สิ่งที่เชื่อถือได้ที่สุดคือ
+    <b>ใบ practice กับ lab ที่อาจารย์แจกเอง</b> เพราะอาจารย์เขียนแบบฝึกหัดเองก็มักวัดผลตามแนวนั้น
+    คอร์สนี้จึงเอาโจทย์จากใบ practice ทุกใบมาทำให้ดูจริงทีละข้อ: คำนวณ T(n), trace sorting ลงตาราง,
+    เขียน insert/delete linked list, เติมตาราง hash, trace queue — ทั้งหมดคือ "ทำตามขั้นตอน" ไม่ใช่ความจำ
+    ฝึกให้มือจำ แล้วเข้าห้องสอบไปทำแบบเดิม <b>เรียงบทตามลำดับ อย่าข้าม</b> เพราะบทหลังใช้บทหน้าตลอด
+    · midterm หนัก 35% และเกณฑ์ F คือต่ำกว่า 35% รวมทั้งเทอม — ทำ midterm ดีรอบเดียว เกมเปลี่ยน
   </div>
 
   <div class="section">
     <div class="sec-hd">
       <div class="sec-icon">🎯</div>
       <div class="sec-info">
-        <div class="sec-title">ติว 5 บท ตามขอบเขตสอบจริง</div>
-        <div class="sec-desc">สรุปจากสไลด์อาจารย์ + ใบ practice + lab ทุกใบใน data-midterm — เจาะเฉพาะที่ออกสอบ</div>
+        <div class="sec-title">ติว 6 บท ตามเอกสารที่เรียนจริง (Lab1–6)</div>
+        <div class="sec-desc">สรุปจากสไลด์อาจารย์ + เฉลยใบ practice/lab ทุกใบตรงๆ — อะไรที่อาจารย์ให้ฝึก เราฝึกให้ครบ</div>
       </div>
       <div class="sec-line"></div>
     </div>
@@ -90,7 +91,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
 
       <a class="card" href="slides_ch2.html">
         <div class="card-top"><span class="em">⏱️</span><span class="arr">→</span></div>
-        <span class="badge">ติวบทที่ 2 · ออกแน่</span>
+        <span class="badge">ติวบทที่ 2 · มี practice</span>
         <div class="card-title">T(n) + Big-O — ข้อสอบตัวเป้ง</div>
         <div class="card-desc">นับ T(n) ทีละบรรทัดแบบที่อาจารย์ให้คะแนน, กฎหา Big-O, Best/Worst case + เฉลย function_A B C จากใบ practice จริง</div>
         <div class="chips"><span class="chip">14 slides</span><span class="chip">เฉลย practice ครบ</span></div>
@@ -98,7 +99,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
 
       <a class="card" href="slides_ch3.html">
         <div class="card-top"><span class="em">🔄</span><span class="arr">→</span></div>
-        <span class="badge">ติวบทที่ 3 · ออกแน่</span>
+        <span class="badge">ติวบทที่ 3 · มี practice</span>
         <div class="card-title">Sorting 3 ตัว — trace ลงตาราง</div>
         <div class="card-desc">Selection / Insertion / Bubble ตาม pseudocode อาจารย์เป๊ะๆ, วิธี trace ลงตารางข้อสอบ, นับจำนวน swap, Best/Worst ของแต่ละตัว</div>
         <div class="chips"><span class="chip">14 slides</span><span class="chip">ตารางแบบข้อสอบ</span></div>
@@ -106,7 +107,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
 
       <a class="card" href="slides_ch4.html">
         <div class="card-top"><span class="em">🔗</span><span class="arr">→</span></div>
-        <span class="badge">ติวบทที่ 4 · ออกแน่</span>
+        <span class="badge">ติวบทที่ 4 · เนื้อหาหนัก</span>
         <div class="card-title">Linked List — เขียนโค้ดให้เป็น</div>
         <div class="card-desc">Singly insert/delete ทีละกรณี (หัว/กลาง/ท้าย), Doubly, Circular, ตารางเทียบ Array vs LL ที่ชอบออก + applications</div>
         <div class="chips"><span class="chip">14 slides</span><span class="chip">โค้ด C ครบทุกเคส</span></div>
@@ -114,9 +115,17 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
 
       <a class="card" href="slides_ch5.html">
         <div class="card-top"><span class="em">#️⃣</span><span class="arr">→</span></div>
-        <span class="badge">ติวบทที่ 5 · ออกแน่</span>
+        <span class="badge">ติวบทที่ 5 · มี practice</span>
         <div class="card-title">Hashing — เติมตารางให้ถูก</div>
         <div class="card-desc">h(k)=k mod m, Separate Chaining, Linear/Quadratic/Double probing — ทำโจทย์ 15,22,95,56,63,13,27 จากใบ practice จริงทีละช่อง</div>
+        <div class="chips"><span class="chip">14 slides</span><span class="chip">เฉลย practice ครบ</span></div>
+      </a>
+
+      <a class="card" href="slides_ch6.html">
+        <div class="card-top"><span class="em">🎫</span><span class="arr">→</span></div>
+        <span class="badge">ติวบทที่ 6 · มี practice</span>
+        <div class="card-title">Queue — Front/Rear ทุกจังหวะ</div>
+        <div class="card-desc">FIFO, คิวด้วย LL, Linear vs Circular Array (เต็มปลอม!), เฉลย trace Q[4] จากใบ practice ครบทุกช่อง + Multiple Queue + Radix sort</div>
         <div class="chips"><span class="chip">14 slides</span><span class="chip">เฉลย practice ครบ</span></div>
       </a>
 
