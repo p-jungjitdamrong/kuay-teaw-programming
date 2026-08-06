@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 1 — Probability สำหรับ CS | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#6a2c91;--cal:#f3e9fa;--cam:#9b59b6;}
+.p-table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.p-table th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;}
+.p-table td{padding:6px 10px;border-bottom:1px solid var(--line);font-family:var(--mono);}
+.p-table tr:nth-child(even) td{background:var(--cal);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Math for CS</div>
+        <div class="cover-title">บทที่ 1<br><em>Probability สำหรับ CS</em></div>
+        <div class="cover-subtitle">ความน่าจะเป็นที่ใช้จริงในโค้ด — Hashing, Randomized Algorithms, Average Case</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Probability พื้นฐาน — นับแบบถูกวิธี</div>
+          <div class="topic-row"><div class="topic-dot"></div>กฎบวก กฎคูณ Independent Events</div>
+          <div class="topic-row"><div class="topic-dot"></div>Expected Value — หัวใจของ Average Case</div>
+          <div class="topic-row"><div class="topic-dot"></div>Birthday Paradox กับ Hash Collision</div>
+          <div class="topic-row"><div class="topic-dot"></div>rand() ใน C + Think! + แบบฝึกหัด</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">01</div>
+        <div class="cover-badge">PROBABILITY · FOR CS</div>
+        <div class="cover-slides-count">12 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 พื้นฐาน -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · พื้นฐาน</div>
+    <h2 class="slide-title">Probability = สิ่งที่สนใจ / ทั้งหมดที่เป็นไปได้</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">นิยาม + ตัวอย่าง</div>
+        <pre class="code-block">P(event) = จำนวนแบบที่สนใจ
+           ─────────────────
+           จำนวนแบบทั้งหมด
+
+<span class="cm">/* ทอยลูกเต๋า 1 ลูก */</span>
+P(ได้ 6)     = 1/6
+P(ได้เลขคู่)  = 3/6 = 1/2
+P(ได้ ≤ 4)   = 4/6 = 2/3
+
+<span class="cm">/* ค่าเสมออยู่ระหว่าง 0 ถึง 1
+   P = 0 → เป็นไปไม่ได้
+   P = 1 → แน่นอน 100% */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ในโลก CS</div>
+        <pre class="code-block"><span class="cm">/* hash function กระจาย uniform
+   ใส่ key ลง table ขนาด m ช่อง */</span>
+P(ลงช่องที่ 0) = 1/m
+
+<span class="cm">/* Quick Sort random pivot
+   จาก n ตัว */</span>
+P(ได้ pivot แย่สุด) = 1/n
+P(ได้ pivot ใน 50% กลาง) = 1/2
+  ← เหตุผลที่ average O(n log n)!
+
+<span class="cm">/* สุ่ม bit 32 ตัว */</span>
+P(ได้ค่าเจาะจงค่าหนึ่ง) = 1/2³²
+  ≈ 1 ใน 4 พันล้าน</pre>
+      </div>
+    </div>
+    <div class="callout">Probability คือเครื่องมือวิเคราะห์ "โค้ดที่มีการสุ่ม" และ "input ที่ไม่รู้ล่วงหน้า" — สองอย่างที่เจอทุกวัน</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 กฎบวก กฎคูณ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · กฎ</div>
+    <h2 class="slide-title">กฎบวก (OR) และ กฎคูณ (AND)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กฎบวก — "อย่างใดอย่างหนึ่ง"</div>
+        <pre class="code-block"><span class="cm">/* events ไม่ทับกัน (mutually exclusive) */</span>
+P(A หรือ B) = P(A) + P(B)
+
+ทอยเต๋า: P(1 หรือ 6) = 1/6 + 1/6 = 1/3
+
+<span class="cm">/* ถ้าทับกันได้ ต้องลบส่วนซ้ำ: */</span>
+P(A หรือ B) = P(A) + P(B) − P(A และ B)
+
+P(คู่ หรือ ≥4)
+= 3/6 + 3/6 − 2/6   <span class="cm">/* {4,6} ซ้ำ */</span>
+= 4/6 = 2/3</pre>
+      </div>
+      <div>
+        <div class="code-label">กฎคูณ — "ทั้งคู่เกิด" (independent)</div>
+        <pre class="code-block">P(A และ B) = P(A) × P(B)
+
+<span class="cm">/* ทอยเต๋า 2 ลูก ได้ 6 ทั้งคู่ */</span>
+P = 1/6 × 1/6 = 1/36
+
+<span class="cm">/* ใน CS: server 2 ตัว
+   แต่ละตัว down ด้วย P = 0.01 */</span>
+P(down พร้อมกัน) = 0.01 × 0.01
+                 = 0.0001
+<span class="cm">/* → redundancy ลดความเสี่ยง
+   จาก 1% เหลือ 0.01%! */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Trick ที่ใช้บ่อยสุด: P(อย่างน้อย 1 ครั้ง) = 1 − P(ไม่เกิดเลยสักครั้ง) — คำนวณฝั่งตรงข้ามง่ายกว่าเสมอ</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 Complement trick -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Trick</div>
+    <h2 class="slide-title">Trick: คิดจากฝั่งตรงข้าม (Complement)</h2>
+    <p class="slide-lead">"อย่างน้อยหนึ่งครั้ง" นับตรงๆ ยาก — นับ "ไม่เกิดเลย" แล้วเอา 1 ลบ ง่ายกว่ามาก</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่าง: ทอยเต๋า 4 ครั้ง</div>
+        <pre class="code-block">P(ได้ 6 อย่างน้อย 1 ครั้ง) = ?
+
+<span class="cm">/* ทางยาก: นับกรณีได้ 6
+   1 ครั้ง, 2 ครั้ง, 3, 4 ครั้ง... */</span>
+
+<span class="cm">/* ทางง่าย: */</span>
+P(ไม่ได้ 6 เลย) = (5/6)⁴ ≈ 0.482
+
+P(ได้อย่างน้อย 1) = 1 − 0.482
+                  = 0.518</pre>
+      </div>
+      <div>
+        <div class="code-label">ใน CS: retry logic</div>
+        <pre class="code-block"><span class="cm">/* API สำเร็จ 90% ต่อครั้ง
+   retry สูงสุด 3 ครั้ง
+   P(สำเร็จอย่างน้อย 1 ใน 3)? */</span>
+
+P(fail ทั้ง 3) = 0.1³ = 0.001
+
+P(สำเร็จ) = 1 − 0.001 = 0.999
+
+<span class="cm">/* retry 3 ครั้ง เปลี่ยน
+   ความสำเร็จ 90% → 99.9%!
+   นี่คือเหตุผลที่ระบบจริง
+   มี retry เสมอ */</span></pre>
+      </div>
+    </div>
+    <div class="callout">สูตรจำ: P(at least one) = 1 − (1−p)ⁿ — ใช้กับ retry, hash collision, packet loss</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 Expected Value -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Expected Value</div>
+    <h2 class="slide-title">Expected Value — ค่าเฉลี่ยระยะยาว</h2>
+    <p class="slide-lead">E[X] = Σ (ค่า × ความน่าจะเป็น) — ถ้าทำซ้ำหลายๆ ครั้ง ผลเฉลี่ยจะเข้าใกล้ค่านี้</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่าง</div>
+        <pre class="code-block"><span class="cm">/* ทอยเต๋า 1 ลูก ค่าคาดหวัง? */</span>
+E[X] = 1·(1/6) + 2·(1/6) + ... + 6·(1/6)
+     = 21/6 = 3.5
+
+<span class="cm">/* เกมพนัน: จ่าย 10 บาท
+   ถ้าทอยได้ 6 รับ 50 บาท */</span>
+E[กำไร] = (1/6)(+40) + (5/6)(−10)
+        = 6.67 − 8.33
+        = −1.67 บาท/ตา
+<span class="cm">/* เล่นนานๆ เจ๊งแน่นอน! */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ใน CS: Average Case Analysis</div>
+        <pre class="code-block"><span class="cm">/* Linear Search หา x ใน n ตัว
+   (x อยู่ในแน่ๆ สุ่มตำแหน่ง uniform) */</span>
+
+E[จำนวนเปรียบเทียบ]
+= 1·(1/n) + 2·(1/n) + ... + n·(1/n)
+= (1+2+...+n)/n
+= (n+1)/2
+≈ n/2  → O(n)
+
+<span class="cm">/* นี่คือที่มาของคำว่า
+   "average case = n/2"
+   ที่เรียนใน Big O! */</span></pre>
+      </div>
+    </div>
+    <div class="callout">คำว่า "average case O(...)" ทุกครั้งที่เห็น มาจาก Expected Value ทั้งนั้น — Quick Sort average O(n log n) ก็พิสูจน์ด้วย E[X]</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 Hashing -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Hashing</div>
+    <h2 class="slide-title">Probability ใน Hash Table</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Collision Probability</div>
+        <pre class="code-block"><span class="cm">/* table m ช่อง ใส่ key ที่ 2
+   (มี key เดิม 1 ตัวแล้ว) */</span>
+P(collision) = 1/m
+
+<span class="cm">/* ใส่ n keys ลง m ช่อง
+   Expected keys ต่อช่อง = n/m
+   เรียกว่า Load Factor (α) */</span>
+
+α = n/m
+α = 0.5  → เฉลี่ยครึ่งช่องว่าง เร็ว
+α = 1.0  → เริ่มชนบ่อย
+α > 1.0  → chain ยาว ช้าลง
+
+<span class="cm">/* Expected chain length = α
+   → lookup average O(1 + α) */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ทำไม Hash Table O(1)?</div>
+        <pre class="code-block"><span class="cm">/* คำตอบ: O(1) "average"
+   ไม่ใช่ O(1) worst!
+
+   Worst case: ทุก key ชนช่องเดียว
+   → chain ยาว n → O(n)
+
+   แต่ P(เกิด worst) น้อยมาก
+   ถ้า hash function ดี + α ต่ำ
+
+   → นี่คือ probabilistic
+     guarantee ไม่ใช่ absolute */</span>
+
+<span class="cm">/* กฎปฏิบัติ: resize เมื่อ α > 0.75
+   (Java HashMap ใช้ค่านี้) */</span></pre>
+      </div>
+    </div>
+    <div class="callout">Hash Table เร็วเพราะสถิติ — ความเข้าใจ probability คือความเข้าใจว่าทำไม data structure นี้ถึงทำงานได้</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 Birthday Paradox -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Birthday Paradox</div>
+    <h2 class="slide-title">Birthday Paradox — collision มาเร็วกว่าที่คิด</h2>
+    <p class="slide-lead">แค่ 23 คน โอกาสมีวันเกิดตรงกัน &gt; 50% — สวนสัญชาตญาณ แต่สำคัญมากกับ hashing</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คำนวณ</div>
+        <pre class="code-block"><span class="cm">/* คิดจากฝั่งตรงข้าม:
+   P(ไม่มีใครตรงกันเลย) */</span>
+
+คน 2: P = 364/365
+คน 3: P = 364/365 × 363/365
+...
+คน 23:
+P(ไม่ตรงเลย) ≈ 0.493
+P(มีคู่ตรง) ≈ 0.507  ← เกิน 50%!
+
+<span class="cm">/* n คน, d วัน:
+   P(collision) ≈ 1 − e^(−n²/2d)
+   collision เกิดเมื่อ n ≈ √d */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ผลต่อ Hashing จริง</div>
+        <pre class="code-block"><span class="cm">/* hash 32-bit: 2³² ≈ 4.3B ค่า
+   คิดว่าปลอดภัย? */</span>
+
+collision คาดว่าเกิดที่
+n ≈ √(2³²) = 2¹⁶ = 65,536 keys!
+
+<span class="cm">/* แค่ 65K keys ก็เริ่มชนแล้ว
+   ไม่ใช่ 4 พันล้าน! */</span>
+
+<span class="cm">/* นี่คือเหตุผลที่:
+   - git ใช้ SHA-1 160-bit (ตอนนี้ SHA-256)
+   - UUID ใช้ 128-bit
+   - อย่าใช้ hash 32-bit
+     กับข้อมูลเยอะๆ */</span></pre>
+      </div>
+    </div>
+    <div class="callout">กฎ √d: hash space ขนาด d จะเริ่มชนที่ประมาณ √d keys — จำไว้ตอนเลือกขนาด hash</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 rand() ใน C -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · โค้ด C</div>
+    <h2 class="slide-title">การสุ่มใน C — rand() ใช้ให้ถูก</h2>
+    <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="pp">#include</span> <span class="st">&lt;stdlib.h&gt;</span>
+<span class="pp">#include</span> <span class="st">&lt;time.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="fn">srand</span>(<span class="fn">time</span>(<span class="nm">NULL</span>));            <span class="cm">/* seed ครั้งเดียว! ไม่งั้นได้เลขเดิมทุกรอบ */</span>
+
+    <span class="kw">int</span> d6   = <span class="fn">rand</span>() % <span class="nm">6</span> + <span class="nm">1</span>;              <span class="cm">/* 1..6 ทอยเต๋า */</span>
+    <span class="kw">int</span> pct  = <span class="fn">rand</span>() % <span class="nm">100</span>;                <span class="cm">/* 0..99 */</span>
+    <span class="kw">double</span> p = (<span class="kw">double</span>)<span class="fn">rand</span>() / RAND_MAX;  <span class="cm">/* 0.0..1.0 */</span>
+
+    <span class="cm">/* เหตุการณ์ความน่าจะเป็น 30% */</span>
+    <span class="kw">if</span> (p &lt; <span class="nm">0.3</span>) <span class="fn">printf</span>(<span class="st">"เกิด! (P=0.3)\n"</span>);
+
+    <span class="cm">/* จำลองทอยเต๋า 60,000 ครั้ง — Law of Large Numbers */</span>
+    <span class="kw">int</span> count6 = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; <span class="nm">60000</span>; i++)
+        <span class="kw">if</span> (<span class="fn">rand</span>() % <span class="nm">6</span> == <span class="nm">5</span>) count6++;
+    <span class="fn">printf</span>(<span class="st">"ได้ 6: %d ครั้ง (คาด ~10000)\n"</span>, count6);
+    <span class="cm">/* รันจริงได้ ~9,950-10,050 — เข้าใกล้ E[X] เสมอ */</span>
+}</pre>
+    <div class="callout">Law of Large Numbers: ทำซ้ำมากพอ ค่าเฉลี่ยจริงจะลู่เข้า Expected Value — ฐานของ simulation ทุกชนิด</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 Monte Carlo -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Simulation</div>
+    <h2 class="slide-title">Monte Carlo — ประมาณค่า π ด้วยการสุ่ม</h2>
+    <p class="slide-lead">ปาเป้าสุ่มลงสี่เหลี่ยม แล้วนับสัดส่วนที่ตกในวงกลม — ได้ π โดยไม่ต้องรู้สูตรอะไรเลย</p>
+    <pre class="code-block"><span class="cm">/* วงกลมรัศมี 1 ในสี่เหลี่ยม 2×2
+   พื้นที่วงกลม/สี่เหลี่ยม = π/4
+   → สุ่มจุด แล้วนับสัดส่วน = ประมาณ π/4 */</span>
+
+<span class="kw">double</span> <span class="fn">estimate_pi</span>(<span class="kw">int</span> trials) {
+    <span class="kw">int</span> inside = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; trials; i++) {
+        <span class="kw">double</span> x = (<span class="kw">double</span>)<span class="fn">rand</span>() / RAND_MAX * <span class="nm">2</span> - <span class="nm">1</span>;  <span class="cm">/* -1..1 */</span>
+        <span class="kw">double</span> y = (<span class="kw">double</span>)<span class="fn">rand</span>() / RAND_MAX * <span class="nm">2</span> - <span class="nm">1</span>;
+        <span class="kw">if</span> (x*x + y*y &lt;= <span class="nm">1.0</span>) inside++;      <span class="cm">/* ในวงกลม? */</span>
+    }
+    <span class="kw">return</span> <span class="nm">4.0</span> * inside / trials;
+}
+
+<span class="cm">/* trials = 1,000      → π ≈ 3.16   (หยาบ)
+   trials = 1,000,000  → π ≈ 3.1421 (ใกล้แล้ว)
+   ยิ่งสุ่มเยอะ ยิ่งแม่น — Law of Large Numbers อีกแล้ว! */</span></pre>
+    <div class="callout">Monte Carlo ใช้จริงใน: การเงิน (ประเมินความเสี่ยง), เกม AI (MCTS ใน AlphaGo), physics simulation, ray tracing</div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">ระบบมี disk 3 ลูก แต่ละลูกพังใน 1 ปีด้วย P = 0.05<br><br>
+① P(พังทั้ง 3 ลูกพร้อมกันใน 1 ปี) = ?<br>
+② P(มีอย่างน้อย 1 ลูกพัง) = ?<br><br>
+<em>힌트: ข้อ ① กฎคูณ · ข้อ ② คิดจากฝั่งตรงข้าม 1−(0.95)³</em><br><br>
+ถ้าข้อมูลสำคัญเก็บ replica 3 ชุด (ลูกละชุด)<br>โอกาสสูญข้อมูล = ข้อไหน? ทำไม RAID ถึงช่วยได้มาก?</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · MCQ</div>
+    <h2 class="slide-title">API สำเร็จ 80% ต่อครั้ง — retry 2 ครั้ง (รวมยิง 3 ครั้ง) P(สำเร็จ)?</h2>
+    <div id="mc-pb1" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-pb1','A','C','❌ 0.8×3 เกิน 1 ไปแล้ว — probability บวกตรงๆ แบบนี้ไม่ได้')">A) 0.8 × 3 = 2.4 → 100%</button>
+      <button class="mc-btn" onclick="pickMC('mc-pb1','B','C','❌ 0.8³ = 0.512 คือ P(สำเร็จทั้ง 3 ครั้ง) — แต่เราต้องการแค่สำเร็จอย่างน้อย 1')">B) 0.8³ = 51.2%</button>
+      <button class="mc-btn" onclick="pickMC('mc-pb1','C','C','✅ P(fail ทั้ง 3) = 0.2³ = 0.008 → P(สำเร็จอย่างน้อย 1) = 1−0.008 = 99.2%')">C) 1 − 0.2³ = 99.2%</button>
+      <button class="mc-btn" onclick="pickMC('mc-pb1','D','C','❌ 0.8+0.2×0.8 = สำเร็จภายใน 2 ครั้ง (=96%) — โจทย์ให้ยิงได้ 3 ครั้ง')">D) 96%</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">คิดจากฝั่งตรงข้าม:
+P(fail 1 ครั้ง) = 0.2
+P(fail ติดกัน 3 ครั้ง) = 0.2 × 0.2 × 0.2 = 0.008
+P(สำเร็จอย่างน้อย 1 ครั้ง) = 1 − 0.008 = 0.992 = 99.2%
+
+retry 2 ครั้ง เปลี่ยน 80% → 99.2%</pre>
+  </div>
+</div>
+
+<!-- SLIDE 11 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 1 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① ทอยเต๋า 2 ลูก P(ได้ 6 ทั้งคู่) = 1/___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fpb1a" placeholder="ตัวเลข">
+      <button class="fill-btn" onclick="checkFill('fpb1a','36',['36'],[],'✅ กฎคูณ: 1/6 × 1/6 = 1/36','❌ กฎคูณ (independent): 1/6 × 1/6 = 1/36')">ตรวจ</button>
+    </div>
+    <div id="fpb1a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② P(อย่างน้อย 1 ครั้ง) = 1 − P(___)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fpb1b" placeholder="เหตุการณ์อะไร?">
+      <button class="fill-btn" onclick="checkFill('fpb1b','ไม่เกิดเลย',['ไม่เกิดเลยสักครั้ง','ไม่เกิดสักครั้ง','fail ทั้งหมด','none','ไม่เกิด'],[],'✅ complement trick: 1 − P(ไม่เกิดเลยสักครั้ง)','❌ คือ P(ไม่เกิดเลยสักครั้ง) — คิดฝั่งตรงข้ามง่ายกว่าเสมอ')">ตรวจ</button>
+    </div>
+    <div id="fpb1b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Hash space ขนาด d จะเริ่มเกิด collision ที่ประมาณ ___ keys (ตอบเป็นสูตร)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fpb1c" placeholder="สูตร">
+      <button class="fill-btn" onclick="checkFill('fpb1c','√d',['sqrt(d)','sqrt d','รูท d','root d','√(d)'],[],'✅ √d — Birthday Paradox: 32-bit hash ชนที่ ~65K keys ไม่ใช่ 4B','❌ คือ √d (Birthday Paradox) — เช่น 2³² จะชนที่ √(2³²) = 2¹⁶ = 65,536')">ตรวจ</button>
+    </div>
+    <div id="fpb1c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 12 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🎲</div>
+      <div class="summary-title">สรุปบทที่ 1 — Probability สำหรับ CS</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">พื้นฐาน</div><div class="sum-body">P = สนใจ/ทั้งหมด · อยู่ระหว่าง 0 ถึง 1 เสมอ</div></div>
+        <div class="sum-card"><div class="sum-head">กฎบวก / กฎคูณ</div><div class="sum-body">OR → บวก (ลบส่วนซ้ำ) · AND independent → คูณ</div></div>
+        <div class="sum-card"><div class="sum-head">Complement Trick</div><div class="sum-body">P(อย่างน้อย 1) = 1 − (1−p)ⁿ — ใช้กับ retry, RAID, collision</div></div>
+        <div class="sum-card"><div class="sum-head">Expected Value</div><div class="sum-body">E[X] = Σ ค่า×P — ที่มาของ "average case" ทุกอันใน Big O</div></div>
+        <div class="sum-card"><div class="sum-head">Birthday Paradox</div><div class="sum-body">hash ขนาด d ชนที่ √d keys — 32-bit ชนที่ 65K ไม่ใช่ 4B</div></div>
+        <div class="sum-card"><div class="sum-head">Law of Large Numbers</div><div class="sum-body">ทำซ้ำมากพอ ค่าเฉลี่ยลู่เข้า E[X] — ฐานของ Monte Carlo</div></div>
+      </div>
+      <a href="slides_ch2.html" class="summary-next">→ บทที่ 2: เลขฐาน 2 พื้นฐาน</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 1 — Probability สำหรับ CS</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Probability พื้นฐาน','กฎบวก กฎคูณ','Complement Trick','Expected Value','Hashing','Birthday Paradox','rand() ใน C','Monte Carlo','Think!','MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

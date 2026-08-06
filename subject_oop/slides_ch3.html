@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 3 — Class & Object | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>:root{--ca:#9b1d6a;--cal:#fce7f3;--cam:#d45fa0;}</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · OOP (02204172)</div>
+        <div class="cover-title">Lab 3<br><em>Class &amp; Object</em></div>
+        <div class="cover-subtitle">สร้าง class ของตัวเองครั้งแรก — Book, Box, Vector พร้อม constructor ครบทุกแบบ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Class = พิมพ์เขียว · Object = ของจริง</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 1-2: class Book + new + จุดพลาด null</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 3: Box, getVolume, this, constructor</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 4: Vector + constructor 2 แบบ (overload)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Pass by reference — ทำไม resizeBox เปลี่ยนกล่องจริง</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">L3</div>
+        <div class="cover-badge">CLASS · OBJECT · CONSTRUCTOR</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 Class vs Object -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 3 · แนวคิด</div>
+    <h2 class="slide-title">Class = พิมพ์เขียว · Object = บ้านจริง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Class — นิยามครั้งเดียว</div>
+        <pre class="code-block"><span class="cm">// "หนังสือทุกเล่มมี ชื่อ ราคา ปี ผู้แต่ง"
+// ← นี่คือพิมพ์เขียว ยังไม่มีเล่มจริง</span>
+
+<span class="kw">public class</span> <span class="fn">Book</span> {
+    String name;
+    <span class="kw">double</span> price;
+    <span class="kw">int</span> year;
+    String author;
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">Object — สร้างกี่ตัวก็ได้</div>
+        <pre class="code-block"><span class="cm">// สร้าง "เล่มจริง" ด้วย new</span>
+Book b1 = <span class="kw">new</span> <span class="fn">Book</span>();
+Book b2 = <span class="kw">new</span> <span class="fn">Book</span>();
+
+b1.name = <span class="st">"Harry Potter"</span>;
+b2.name = <span class="st">"สามก๊ก"</span>;
+
+<span class="cm">// b1, b2 เป็นคนละเล่ม
+// แก้ b1 ไม่กระทบ b2
+// แต่มาจากพิมพ์เขียวเดียวกัน</span></pre>
+      </div>
+    </div>
+    <div class="callout">ตอบคำถาม lab ข้อ 1: "คลาส Book เป็นตัวแทนของอะไร" → เป็นตัวแทนของหนังสือ 1 เล่ม · เลือก type: name/author เป็น String (ข้อความ), price เป็น double (มีทศนิยม), year เป็น int (จำนวนเต็ม)</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 ข้อ 2.1 เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 3 · ข้อ 2.1 เฉลย</div>
+    <h2 class="slide-title">ข้อ 2.1: กำหนดค่า + แสดงผล Book</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">Book</span> {
+    String name;
+    <span class="kw">double</span> price;
+    <span class="kw">int</span> year;
+    String author;
+}
+
+<span class="kw">class</span> <span class="fn">Program</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        Book book1 = <span class="kw">new</span> <span class="fn">Book</span>();
+
+        book1.name   = <span class="st">"Harry Potter and The Chamber of Secret"</span>;  <span class="cm">// เติมช่องว่าง</span>
+        book1.author = <span class="st">"J.K. Rowling"</span>;
+        book1.year   = <span class="nm">2542</span>;
+
+        System.out.<span class="fn">println</span>(<span class="st">"Book: "</span> + book1.name);
+        System.out.<span class="fn">println</span>(<span class="st">"Written by "</span> + book1.author + <span class="st">" in "</span> + book1.year);
+    }
+}
+<span class="cm">/* Book: Harry Potter and The Chamber of Secret
+   Written by J.K. Rowling in 2542  ✓ ตรงตามโจทย์ */</span></pre>
+    <div class="callout">ตอบคำถามท้ายข้อ: "ทำไมเรียก Book() ได้ทั้งที่ไม่ได้เขียน constructor" — Java แถม default constructor (ตัวว่างๆ) ให้อัตโนมัติ เมื่อเราไม่เขียน constructor เองเลย</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 ข้อ 2.2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 3 · ข้อ 2.2 เฉลย</div>
+    <h2 class="slide-title">ข้อ 2.2: เปลี่ยนเป็นรับค่าจากคีย์บอร์ด</h2>
+    <p class="slide-lead">โจทย์ให้เขียน "เฉพาะบรรทัดที่เปลี่ยน/เพิ่ม" — ใช้ความรู้ Scanner จาก Lab 2</p>
+    <pre class="code-block"><span class="cm">// เพิ่ม import บนสุดของไฟล์</span>
+<span class="kw">import</span> java.util.Scanner;
+
+<span class="cm">// เพิ่มใน main — สร้าง Scanner</span>
+Scanner scanner = <span class="kw">new</span> <span class="fn">Scanner</span>(System.in);
+
+<span class="cm">// เปลี่ยนบรรทัดกำหนด name เป็นรับจากคีย์บอร์ด</span>
+System.out.<span class="fn">print</span>(<span class="st">"Enter Book name: "</span>);
+book1.name = scanner.<span class="fn">nextLine</span>();            <span class="cm">// ชื่อหนังสือมีช่องว่างได้ → nextLine</span>
+
+<span class="cm">// เพิ่มรับราคา</span>
+System.out.<span class="fn">print</span>(<span class="st">"Enter Book price:"</span>);
+book1.price = scanner.<span class="fn">nextDouble</span>();
+
+<span class="cm">// เพิ่มบรรทัดแสดงราคา (ต่อจาก println เดิม)</span>
+System.out.<span class="fn">println</span>(<span class="st">"Price is "</span> + book1.price + <span class="st">" Bath"</span>);
+
+<span class="cm">/* Enter Book name: xxxxxxxxxxxxx
+   Enter Book price:150
+
+   Book: xxxxxxxxxxxxx
+   Written by J.K. Rowling in 2542
+   Price is 150 Bath  ✓ */</span></pre>
+    <div class="callout">สังเกต: รับ name ก่อน price — ถ้ารับ nextDouble() ก่อนแล้วค่อย nextLine() จะเจอปัญหา \n ค้าง (Lab 2 เตือนแล้ว!)</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 ข้อ 2.3 null -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 3 · ข้อ 2.3-2.4 เฉลย</div>
+    <h2 class="slide-title">ข้อ 2.3: ประกาศแต่ไม่ new — เกิดอะไรขึ้น?</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โค้ดในโจทย์</div>
+        <pre class="code-block">Book book2;                    <span class="cm">// ประกาศเฉยๆ</span>
+System.out.<span class="fn">println</span>(book2.name);
+
+<span class="cm">// ☑ เกิดข้อผิดพลาด
+
+// เหตุผล: book2 ยังไม่ได้ new
+// → ยังไม่มี object จริงใน memory
+// → compiler ฟ้อง:
+//   "variable book2 might not
+//    have been initialized"</span></pre>
+      </div>
+      <div>
+        <div class="code-label">วิธีแก้</div>
+        <pre class="code-block"><span class="cm">// ต้อง new ก่อนใช้เสมอ</span>
+Book book2 = <span class="kw">new</span> <span class="fn">Book</span>();
+System.out.<span class="fn">println</span>(book2.name);
+<span class="cm">// พิมพ์ null (ยังไม่กำหนดค่า)
+// แต่ไม่ error แล้ว</span></pre>
+        <div class="code-label" style="margin-top:10px">ข้อ 2.4: เทียบสองแบบ</div>
+        <pre class="code-block">Book book1 = <span class="kw">new</span> <span class="fn">Book</span>();
+<span class="cm">// ประกาศ + สร้าง object จริง
+// book1 ชี้ไป object ใน heap ใช้ได้เลย</span>
+
+Book book2;
+<span class="cm">// ประกาศตัวแปรอ้างอิง (reference) เฉยๆ
+// ยังไม่ชี้ไป object ใด → ใช้ไม่ได้</span></pre>
+      </div>
+    </div>
+    <div class="callout">ตัวแปร object ใน Java คือ "รีโมท" — ประกาศรีโมทแล้วแต่ยังไม่มีทีวี (new) กดปุ่มอะไรก็ไม่เกิดอะไรขึ้น</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 ข้อ 3 Box -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 3 · ข้อ 3</div>
+    <h2 class="slide-title">ข้อ 3: class Box — field + method + this</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">Box</span> {
+    <span class="kw">public double</span> width;
+    <span class="kw">public double</span> height;
+    <span class="kw">public double</span> depth;
+
+    <span class="kw">public double</span> <span class="fn">getVolume</span>() {
+        <span class="kw">return</span> width * height * depth;
+    }
+
+    <span class="kw">public void</span> <span class="fn">setDimension</span>(<span class="kw">double</span> width, <span class="kw">double</span> height, <span class="kw">double</span> depth) {
+        <span class="kw">this</span>.width  = width;    <span class="cm">// this.width = field ของ object</span>
+        <span class="kw">this</span>.height = height;   <span class="cm">// width เฉยๆ = parameter</span>
+        <span class="kw">this</span>.depth  = depth;
+    }
+}</pre>
+    <div class="two-col" style="margin-top:8px">
+      <div>
+        <pre class="code-block"><span class="cm">// ตอบ 3.1: สมาชิกของ Box
+// field 3 ตัว: width, height, depth
+// method 2 ตัว: getVolume(),
+//               setDimension()</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">// ทำไมต้องมี this?
+// parameter ชื่อซ้ำกับ field
+// ถ้าเขียน width = width;
+// คือ parameter = parameter ← ไร้ผล!
+// this.width บอกชัดว่าเอาของ object</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6 ข้อ 3.2 ตาราง TestBox -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 3 · ข้อ 3.2 เฉลย</div>
+    <h2 class="slide-title">ข้อ 3.2: TestBox ทีละขั้นตามตารางโจทย์</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">TestBox</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+
+        <span class="cm">// ① สร้างวัตถุ Box 1 ตัว — ใช้ new เพราะ class คือพิมพ์เขียว ต้อง new จึงได้ object จริง</span>
+        Box b = <span class="kw">new</span> <span class="fn">Box</span>();
+
+        <span class="cm">// ② เรียก getVolume() แสดงผล — ได้ 0.0 เพราะ double ยังไม่กำหนด = 0.0 ทุกตัว</span>
+        System.out.<span class="fn">println</span>(b.<span class="fn">getVolume</span>());     <span class="cm">// 0.0</span>
+
+        <span class="cm">// ③ setDimension(3,4,5) แล้ว getVolume()</span>
+        b.<span class="fn">setDimension</span>(<span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>);
+        System.out.<span class="fn">println</span>(b.<span class="fn">getVolume</span>());     <span class="cm">// 60.0</span>
+    }
+}
+
+<span class="cm">// ④ เปลี่ยน setDimension เป็น constructor (แก้ในคลาส Box):</span>
+<span class="kw">public</span> <span class="fn">Box</span>(<span class="kw">double</span> width, <span class="kw">double</span> height, <span class="kw">double</span> depth) {
+    <span class="kw">this</span>.width  = width;
+    <span class="kw">this</span>.height = height;
+    <span class="kw">this</span>.depth  = depth;
+}
+
+<span class="cm">// ⑤ เกิดอะไรกับวัตถุก่อนหน้า?
+//    Box b = new Box();  ← compile error!
+//    เพราะเมื่อเราเขียน constructor เอง Java จะ "ไม่แถม" default constructor ให้อีก
+
+// ⑥ สร้างวัตถุใหม่จาก constructor:</span>
+Box b2 = <span class="kw">new</span> <span class="fn">Box</span>(<span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>);
+System.out.<span class="fn">println</span>(b2.<span class="fn">getVolume</span>());        <span class="cm">// 60.0</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 7 ข้อ 3.3-3.4 resizeBox -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 3 · ข้อ 3.3-3.4 เฉลย</div>
+    <h2 class="slide-title">ข้อ 3.3-3.4: resizeBox — pass by reference</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">3.3: เขียน resizeBox ใน TestBox</div>
+        <pre class="code-block"><span class="kw">public static void</span> <span class="fn">resizeBox</span>(Box b, <span class="kw">int</span> fold) {
+    b.width  *= fold;
+    b.height *= fold;
+    b.depth  *= fold;
+}
+
+<span class="cm">// 3.4: เรียกใช้ใน main</span>
+Box b2 = <span class="kw">new</span> <span class="fn">Box</span>(<span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>);
+System.out.<span class="fn">println</span>(b2.<span class="fn">getVolume</span>());
+<span class="cm">// 60.0</span>
+
+<span class="fn">resizeBox</span>(b2, <span class="nm">2</span>);        <span class="cm">// ×2 ทุกด้าน</span>
+System.out.<span class="fn">println</span>(b2.<span class="fn">getVolume</span>());
+<span class="cm">// 480.0  ← เปลี่ยนจริง!</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ทำไมกล่องจริงเปลี่ยน?</div>
+        <pre class="code-block"><span class="cm">// Java ส่ง object เป็น
+// "ค่าของ reference"
+// b ใน resizeBox ชี้ไป object
+// เดียวกันกับ b2 ใน main!
+
+//   main: b2 ──┐
+//              ├──→ [Box 6×8×10]
+// method: b ──┘
+
+// แก้ผ่าน b = แก้ object จริง
+// → ปริมาตรเปลี่ยนตาม ✓
+
+// ตอบโจทย์ 3.4: "เปลี่ยนไหม?"
+// → เปลี่ยน! 60 → 480
+//   (2³ = 8 เท่า เพราะคูณ 3 มิติ)</span></pre>
+      </div>
+    </div>
+    <div class="callout">จุดสอบ: ×2 ทุกด้าน ปริมาตรไม่ใช่ ×2 แต่เป็น ×8 (2×2×2) — อาจารย์ชอบถามตรงนี้</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 Constructor Overloading -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 3 · แนวคิด</div>
+    <h2 class="slide-title">Constructor Overloading — มีได้หลายตัว</h2>
+    <p class="slide-lead">class เดียวมี constructor หลายแบบได้ ถ้า parameter ต่างกัน — Java เลือกตัวที่ตรงให้เอง</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">กติกา</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">Vector</span> {
+    <span class="cm">// ตัวที่ 1: ไม่มี parameter
+    // = "default constructor"</span>
+    <span class="kw">public</span> <span class="fn">Vector</span>() { ... }
+
+    <span class="cm">// ตัวที่ 2: มี 3 parameters</span>
+    <span class="kw">public</span> <span class="fn">Vector</span>(<span class="kw">double</span> p1,
+                  <span class="kw">double</span> p2,
+                  <span class="kw">double</span> p3) { ... }
+}
+
+<span class="kw">new</span> <span class="fn">Vector</span>()        <span class="cm">// → เรียกตัวที่ 1</span>
+<span class="kw">new</span> <span class="fn">Vector</span>(<span class="nm">3</span>,<span class="nm">4</span>,<span class="nm">5</span>)   <span class="cm">// → เรียกตัวที่ 2</span></pre>
+      </div>
+      <div>
+        <div class="code-label">กฎ constructor สรุป</div>
+        <pre class="code-block"><span class="cm">// 1. ชื่อ = ชื่อ class เป๊ะๆ
+// 2. ไม่มี return type (void ก็ไม่ใส่)
+// 3. ถูกเรียกอัตโนมัติตอน new
+// 4. ไม่เขียนเลย → Java แถมตัวว่างให้
+// 5. เขียนเองแล้ว → Java ไม่แถม!
+//    (บทเรียนจากข้อ 3 Box)
+// 6. overload ได้ถ้า parameter ต่างกัน</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9 ข้อ 4 เฉลย Vector -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 3 · ข้อ 4 เฉลย</div>
+    <h2 class="slide-title">ข้อ 4: Vector 3 มิติ — เติมโปรแกรมสมบูรณ์</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">Vector</span> {
+    <span class="kw">double</span> x;                                   <span class="cm">// เติม: field 3 แกน</span>
+    <span class="kw">double</span> y;
+    <span class="kw">double</span> z;
+
+    <span class="kw">public</span> <span class="fn">Vector</span>() {                           <span class="cm">// default constructor</span>
+        x = <span class="nm">0</span>;
+        y = <span class="nm">0</span>;
+        z = <span class="nm">0</span>;
+    }
+    <span class="kw">public</span> <span class="fn">Vector</span>(<span class="kw">double</span> p1, <span class="kw">double</span> p2, <span class="kw">double</span> p3) {
+        x = p1;
+        y = p2;
+        z = p3;
+    }
+    <span class="kw">public void</span> <span class="fn">printVector</span>() {
+        System.out.<span class="fn">println</span>(<span class="st">"("</span> + x + <span class="st">","</span> + y + <span class="st">","</span> + z + <span class="st">")"</span>);
+    }
+}
+
+<span class="kw">class</span> <span class="fn">Program</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        Vector v1 = <span class="kw">new</span> <span class="fn">Vector</span>();          <span class="cm">// default → (0,0,0)</span>
+        Vector v2 = <span class="kw">new</span> <span class="fn">Vector</span>(<span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>);  <span class="cm">// overload → (3,4,5)</span>
+        System.out.<span class="fn">print</span>(<span class="st">"Vector v1:"</span>);
+        v1.<span class="fn">printVector</span>();
+        System.out.<span class="fn">print</span>(<span class="st">"Vector v2:"</span>);
+        v2.<span class="fn">printVector</span>();
+    }
+}
+<span class="cm">/* Vector v1:(0.0,0.0,0.0)
+   Vector v2:(3.0,4.0,5.0)  ✓ */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 10 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">จากข้อ 3 — ถ้าเขียนแบบนี้:<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.8">
+Box a = new Box(3, 4, 5);<br>
+Box b = a;<br>
+b.width = 100;<br>
+System.out.println(a.getVolume());
+</code><br><br>
+ผลลัพธ์คืออะไร? 60 หรือ 2000?<br><br>
+<em>힌트: Box b = a; ไม่ได้สร้างกล่องใหม่<br>แค่เพิ่ม "รีโมท" อีกตัวที่ชี้กล่องเดิม</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 3 · MCQ</div>
+    <h2 class="slide-title">เขียน constructor เองแล้ว โค้ดไหน error?</h2>
+    <pre class="code-block" style="margin-bottom:14px"><span class="kw">public class</span> <span class="fn">Box</span> {
+    <span class="kw">public double</span> width, height, depth;
+    <span class="kw">public</span> <span class="fn">Box</span>(<span class="kw">double</span> w, <span class="kw">double</span> h, <span class="kw">double</span> d) {
+        width = w; height = h; depth = d;
+    }
+}</pre>
+    <div id="mc-l3" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-l3','A','A','✅ new Box() error! เพราะเขียน constructor เองแล้ว Java ไม่แถม default constructor ให้อีก — มีแต่ตัวรับ 3 arguments')">A) Box b = new Box();</button>
+      <button class="mc-btn" onclick="pickMC('mc-l3','B','A','❌ ตัวนี้ตรงกับ constructor ที่เขียนไว้พอดี — ใช้ได้')">B) Box b = new Box(1, 2, 3);</button>
+      <button class="mc-btn" onclick="pickMC('mc-l3','C','A','❌ ประกาศ reference เฉยๆ ยังไม่ new — compile ผ่าน (จะ error ตอนใช้โดยไม่ initialize)')">C) Box b;</button>
+      <button class="mc-btn" onclick="pickMC('mc-l3','D','A','❌ ข้อ B ใช้ได้ปกติ — มีข้อที่ error อยู่จริง')">D) ไม่มีข้อไหน error</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px"><span class="cm">// กฎ: Java แถม default constructor ให้เฉพาะเมื่อเรา "ไม่เขียนเลย"
+// เขียนเองเมื่อไหร่ ตัวแถมหายไปทันที
+// ถ้ายังอยากได้ new Box() ด้วย → เขียนเพิ่มเอง:</span>
+<span class="kw">public</span> <span class="fn">Box</span>() { }   <span class="cm">// overload เพิ่มอีกตัว</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 3 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① สร้าง object จาก class ใช้คีย์เวิร์ด ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl3a" placeholder="keyword">
+      <button class="fill-btn" onclick="checkFill('fl3a','new',['new'],[],'✅ new จองหน่วยความจำ + เรียก constructor → ได้ object จริง','❌ คือ new — Book b = new Book();')">ตรวจ</button>
+    </div>
+    <div id="fl3a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② ใน setDimension ใช้ ___.width เพื่อแยก field ออกจาก parameter ชื่อซ้ำ</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl3b" placeholder="keyword">
+      <button class="fill-btn" onclick="checkFill('fl3b','this',['this'],[],'✅ this.width = field ของ object ตัวเอง · width เฉยๆ = parameter','❌ คือ this — this.width หมายถึง field ของ object, width เฉยๆ คือ parameter')">ตรวจ</button>
+    </div>
+    <div id="fl3b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Box ขนาด 3×4×5 ผ่าน resizeBox(b, 2) แล้ว getVolume() ได้เท่าไหร่?</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl3c" placeholder="ตัวเลข">
+      <button class="fill-btn" onclick="checkFill('fl3c','480',['480.0','480'],[],'✅ 6×8×10 = 480 — ทุกด้าน ×2 ปริมาตร ×8','❌ ทุกด้าน ×2 → 6×8×10 = 480 (ปริมาตร ×2³ = ×8 ไม่ใช่ ×2)')">ตรวจ</button>
+    </div>
+    <div id="fl3c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">📦</div>
+      <div class="summary-title">สรุป Lab 3 — Class &amp; Object</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Class vs Object</div><div class="sum-body">Class = พิมพ์เขียว นิยามครั้งเดียว · Object = ของจริง new กี่ตัวก็ได้</div></div>
+        <div class="sum-card"><div class="sum-head">new</div><div class="sum-body">ประกาศเฉยๆ ยังใช้ไม่ได้ — ต้อง new จึงมี object จริงใน memory</div></div>
+        <div class="sum-card"><div class="sum-head">this</div><div class="sum-body">this.width = field ของ object · แยกจาก parameter ชื่อซ้ำ</div></div>
+        <div class="sum-card"><div class="sum-head">Constructor</div><div class="sum-body">ชื่อ = ชื่อ class, ไม่มี return type · เขียนเองแล้ว default ตัวแถมหาย!</div></div>
+        <div class="sum-card"><div class="sum-head">Overloading</div><div class="sum-body">constructor หลายตัวได้ถ้า parameter ต่างกัน — Vector() กับ Vector(3,4,5)</div></div>
+        <div class="sum-card"><div class="sum-head">Reference</div><div class="sum-body">ส่ง object เข้า method = ส่งรีโมทตัวเดียวกัน — แก้ในนั้นคือแก้ตัวจริง</div></div>
+      </div>
+      <a href="slides_ch4.html" class="summary-next">→ Lab 4: Encapsulation</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">Lab 3 — Class &amp; Object</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Class vs Object','ข้อ 2.1 เฉลย','ข้อ 2.2 เฉลย','ข้อ 2.3-2.4 null','ข้อ 3 Box + this','ข้อ 3.2 TestBox','ข้อ 3.3-3.4 resizeBox','Constructor Overloading','ข้อ 4 Vector เฉลย','Think!','MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
