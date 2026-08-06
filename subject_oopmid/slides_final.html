@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheat Sheet ก่อนเข้าห้องสอบ | ติวสอบ OOP Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#4338ca;--cal:#e7e5fc;--cam:#7a6ff0;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.cs{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.cs th{background:var(--ca);color:#fff;padding:5px 9px;text-align:left;font-weight:600;}
+.cs td{padding:5px 9px;border:1px solid var(--line);font-family:var(--mono);}
+.cs td:first-child{font-family:var(--sans);font-weight:600;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">☕ ติวสอบ Midterm · 02204172 OOP (Java)</div>
+        <div class="cover-title">ด่านสุดท้าย<br><em>Cheat Sheet</em></div>
+        <div class="cover-subtitle">ทวนรอบสุดท้าย — ศัพท์ทุกคำ ตารางทุกตาราง จุดหลอกทุกจุด ในที่เดียว</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ศัพท์ OOP ครบทุกคำในหน้าเดียว</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตาราง access modifiers (ทวนอีกรอบ)</div>
+          <div class="topic-row"><div class="topic-dot"></div>10 จุดหลอกที่เสียคะแนนฟรี</div>
+          <div class="topic-row"><div class="topic-dot"></div>แผนคืนก่อนสอบ + ในห้องสอบ</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">✓</div>
+        <div class="cover-badge">ทวน 30 นาทีจบ</div>
+        <div class="cover-slides-count">9 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 ศัพท์ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ศัพท์</div>
+    <h2 class="slide-title">ศัพท์ OOP ทุกคำของ Midterm ในหน้าเดียว</h2>
+    <table class="cs">
+      <thead><tr><th>ศัพท์</th><th>ความหมายสั้นที่สุดที่ยังถูก</th></tr></thead>
+      <tbody>
+        <tr><td>Class</td><td>พิมพ์เขียว (blueprint) ของวัตถุ — โรงงานผลิตวัตถุ</td></tr>
+        <tr><td>Object</td><td>สิ่งที่มีตัวตน มีข้อมูล (field) + พฤติกรรม (method) — สร้างด้วย new</td></tr>
+        <tr><td>Constructor</td><td>ชื่อ = คลาส ไม่มี return type · เรียกอัตโนมัติตอน new · เขียนเองแล้ว default หาย</td></tr>
+        <tr><td>Encapsulation</td><td>หลักข้อ 1 — ห่อหุ้มข้อมูล (private) มี method เป็นเปลือก (public)</td></tr>
+        <tr><td>Inheritance</td><td>หลักข้อ 2 — แม่ (super) ถ่ายทอดให้ลูก (sub) · ทดสอบด้วย is-a</td></tr>
+        <tr><td>Override</td><td>ลูกเขียนทับ method แม่ — หัว method เหมือนเป๊ะ</td></tr>
+        <tr><td>Overload</td><td>ชื่อซ้ำในคลาสเดียวกัน ต่าง parameter (constructor ก็ overload ได้)</td></tr>
+        <tr><td>Garbage Collector</td><td>เก็บวัตถุ unreachable (ไม่มี reference ชี้) คืน memory อัตโนมัติ</td></tr>
+        <tr><td>bytecode / JVM</td><td>.java —javac→ .class —JVM→ รัน · bytecode เหมือนกันทุกเครื่อง</td></tr>
+        <tr><td>JRE / JDK</td><td>JRE = JVM+API (รัน) · JDK = JRE+เครื่องมือ (พัฒนา)</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>วิธีใช้:</b> ปิดตาราง แล้วอธิบายแต่ละคำด้วยปากเปล่า — คำไหนติด กลับไปอ่านบทนั้น</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 ตาราง modifiers ทวน -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ตาราง</div>
+    <h2 class="slide-title">สองตารางที่ต้องวาดได้จากความจำ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Access Modifiers (4×4)</div>
+        <pre class="code-block">              ตัวเอง pkg ลูกต่างpkg ทุกที่
+public          ✓    ✓      ✓      ✓
+protected       ✓    ✓      ✓      ✗
+(default)       ✓    ✓      ✗      ✗
+private         ✓    ✗      ✗      ✗
+
+จุดเจาะ: protected vs default
+ต่างกันช่องเดียว = ลูกต่าง package</pre>
+      </div>
+      <div>
+        <div class="code-label">Class Diagram + Class Modifiers</div>
+        <pre class="code-block">Diagram:  − private · + public
+          # protected
+          ชื่อ : ชนิด = field
+          ชื่อ(...) : ชนิด = method
+          กล่อง 3 ชั้น: ชื่อ/attr/method
+
+Class modifiers:
+abstract  ต้องมีลูกสานต่อ (new ไม่ได้)
+final     ห้ามมีลูก (extends ไม่ได้)
+← สองตัวนี้เป็นคู่กันไม่ได้!</pre>
+      </div>
+    </div>
+    <div class="exam"><b>syntax บรรทัดเดียวที่ต้องจำ:</b> <code class="inline-code">class A extends B implements C, D</code> — extends ก่อน · extends เดียว · implements หลายได้</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 จุดหลอก 1-5 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ห้ามพลาด</div>
+    <h2 class="slide-title">10 จุดหลอกเสียคะแนนฟรี (ข้อ 1–5)</h2>
+    <pre class="code-block"><span class="cm">① javac กับ java สลับหน้าที่</span>
+   javac HelloWorld.java (compile) → java HelloWorld (รัน — ไม่มีนามสกุล!)
+
+<span class="cm">② array ประกาศเฉยๆ ยังใช้ไม่ได้</span>
+   int[] a; a[0]=1; ❌ — ต้อง a = new int[5]; ก่อน ("ไม่มีอาเรย์เกิดขึ้นจริง")
+
+<span class="cm">③ length คู่หลอก</span>
+   array.length (ไม่มีวงเล็บ) · String.length() (มีวงเล็บ) — สลับ = compile error
+
+<span class="cm">④ String immutable</span>
+   s.replace(...) เฉยๆ s ไม่เปลี่ยน — ต้อง s = s.replace(...)
+
+<span class="cm">⑤ == vs equals</span>
+   == เทียบ reference (ชี้ก้อนเดียวกัน?) · equals เทียบเนื้อหา
+   new String("abc") สองครั้ง → == false, equals true — วาดกล่องก่อนตอบเสมอ</pre>
+  </div>
+</div>
+
+<!-- SLIDE 4 จุดหลอก 6-10 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ห้ามพลาด</div>
+    <h2 class="slide-title">10 จุดหลอกเสียคะแนนฟรี (ข้อ 6–10)</h2>
+    <pre class="code-block"><span class="cm">⑥ default ≠ public</span>
+   ไม่เขียน modifier = จำกัดใน package เดียวกัน ไม่ใช่เปิดหมด
+
+<span class="cm">⑦ เขียน constructor เองแล้ว default constructor หาย</span>
+   มี Book(String, double) แล้ว new Book() จะ error — อยากได้ต้องเขียนเพิ่ม
+
+<span class="cm">⑧ super(...) ต้องบรรทัดแรก</span>
+   และถ้าแม่ไม่มี constructor ว่าง ลูกไม่เรียก super(...) = compile error
+
+<span class="cm">⑨ is-a มีทิศเดียว</span>
+   Student is a Person ✓ · Person is a Student ✗ — ข้อ T/F ชอบกลับทิศ
+
+<span class="cm">⑩ Override ≠ Overload</span>
+   Override: ลูกทับแม่ หัวเหมือนเป๊ะ · Overload: คลาสเดียวกัน ชื่อซ้ำ ต่าง parameter</pre>
+    <div class="exam"><b>คืนก่อนสอบอ่านหน้านี้กับหน้าก่อนรอบเดียว</b> — 10 ข้อนี้ครอบคลุมจุดที่นักศึกษาพลาดบ่อยที่สุดของบท 1–6</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 โค้ดท่องจำ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · โค้ดท่องจำ</div>
+    <h2 class="slide-title">โครงโค้ด 3 ท่า — เขียนได้จากความจำ</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">// ① โครงโปรแกรม + main</span>
+<span class="kw">public class</span> <span class="fn">App</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        System.out.<span class="fn">println</span>(<span class="st">"..."</span>);
+    }
+}
+
+<span class="cm">// ② คลาส encapsulation เต็มรูป</span>
+<span class="kw">public class</span> <span class="fn">Book</span> {
+    <span class="kw">private</span> String name;
+    <span class="kw">public</span> <span class="fn">Book</span>(String name) {
+        <span class="kw">this</span>.name = name;
+    }
+    <span class="kw">public</span> String <span class="fn">getName</span>() { <span class="kw">return</span> name; }
+    <span class="kw">public void</span> <span class="fn">setName</span>(String name) {
+        <span class="kw">this</span>.name = name;
+    }
+}</pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">// ③ inheritance + super + override</span>
+<span class="kw">public class</span> <span class="fn">Student</span> <span class="kw">extends</span> Person {
+    <span class="kw">private int</span> year;
+
+    <span class="kw">public</span> <span class="fn">Student</span>(String f, String l,
+                   <span class="kw">int</span> a, <span class="kw">int</span> y) {
+        <span class="kw">super</span>(f, l, a);   <span class="cm">// บรรทัดแรก!</span>
+        year = y;
+    }
+    <span class="kw">public void</span> <span class="fn">printInfo</span>() {  <span class="cm">// Override</span>
+        <span class="kw">super</span>.<span class="fn">printInfo</span>();     <span class="cm">// reuse แม่</span>
+        System.out.<span class="fn">println</span>(year);
+    }
+}</pre>
+      </div>
+    </div>
+    <div class="exam"><b>ทดสอบ:</b> ปิดจอ เขียนทั้ง 3 ท่าลงกระดาษใน 10 นาที — ผ่าน = ข้อเขียนโค้ดพร้อม · โจทย์เลข (ปริซึม/จตุภาค) ทวนที่ติวบทที่ 1</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 แผน -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · แผน</div>
+    <h2 class="slide-title">แผนคืนก่อนสอบ + ในห้องสอบ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คืนก่อนสอบ (2 ชั่วโมง)</div>
+        <pre class="code-block">□ 20 นาที: ศัพท์หน้า Cheat Sheet
+  อธิบายปากเปล่าทุกคำ
+□ 20 นาที: วาดตาราง modifiers +
+  กติกา diagram จากความจำ
+□ 30 นาที: เขียนโค้ด 3 ท่า
+  จากความจำ (main/encap/inherit)
+□ 30 นาที: ไล่ 10 จุดหลอก +
+  ทำ MCQ ท้ายบทที่ยังไม่มั่นใจ
+□ 20 นาที: เปิดเฉลย lab ในวิชา
+  OOP Lab 2–7 ผ่านตาอีกรอบ
+□ นอน!</pre>
+      </div>
+      <div>
+        <div class="code-label">ในห้องสอบ</div>
+        <pre class="code-block">① กวาดดูทั้งฉบับ 2 นาที
+   ข้อศัพท์/ตาราง ทำก่อน (เร็ว+ชัวร์)
+② ข้อ == vs equals → วาดกล่อง
+   ข้อ modifiers → วาดตาราง
+   อย่าตอบจากความรู้สึก
+③ ข้อเขียนโค้ด ทำท้ายสุด
+   เขียน syntax ให้ครบ semicolon
+④ เหลือเวลา: เช็ค
+   - constructor ไม่มี return type?
+   - super บรรทัดแรก?
+   - private field + public method?</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 MCQ รวม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ข้อสุดท้าย</div>
+    <h2 class="slide-title">ข้อรวบยอด — ผสมหลายบทในข้อเดียว</h2>
+    <pre class="code-block" style="margin-bottom:14px"><span class="kw">public class</span> <span class="fn">A</span> {
+    <span class="kw">public</span> <span class="fn">A</span>(<span class="kw">int</span> x) { }        <span class="cm">// มี constructor รับค่าตัวเดียว</span>
+}
+<span class="kw">public class</span> <span class="fn">B</span> <span class="kw">extends</span> A {
+    <span class="kw">public</span> <span class="fn">B</span>() { }              <span class="cm">// constructor ว่าง ไม่เรียก super</span>
+}</pre>
+    <div id="mc-jf" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-jf','A','B','❌ ไม่ผ่าน — มีปัญหาที่ constructor ของ B')">A) compile ผ่านปกติ</button>
+      <button class="mc-btn" onclick="pickMC('mc-jf','B','B','✅ B() ไม่เรียก super(...) → Java แอบเรียก super() ว่าง → แต่ A ไม่มี constructor ว่าง (เขียน A(int) เองแล้ว ตัวแถมหาย!) → compile error — จุดหลอก ⑦+⑧ รวมกัน')">B) compile error ที่ B()</button>
+      <button class="mc-btn" onclick="pickMC('mc-jf','C','B','❌ error ตั้งแต่ compile ไม่ทันได้รัน')">C) รันแล้ว exception</button>
+      <button class="mc-btn" onclick="pickMC('mc-jf','D','B','❌ A ปกติดี — ปัญหาอยู่ที่ B ที่หา super() ว่างไม่เจอ')">D) compile error ที่ A</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px"><span class="cm">// ไล่เหตุการณ์: B() ไม่เรียก super → Java เติม super() ให้
+// → หา A() ว่างๆ ใน A → ไม่มี! (A เขียน A(int) เอง default เลยหาย)
+// → compile error
+// วิธีแก้: public B() { super(0); }  หรือเพิ่ม public A() {} ใน A</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 8 Final -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🏆</div>
+      <div class="summary-title">พร้อมสอบ OOP Midterm แล้ว</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">บท 1</div><div class="sum-body">javac→.class→JVM · JRE รัน JDK พัฒนา · main 4 คำอธิบายได้</div></div>
+        <div class="sum-card"><div class="sum-head">บท 2</div><div class="sum-body">ประกาศ≠สร้าง (new!) · length คู่หลอก · immutable</div></div>
+        <div class="sum-card"><div class="sum-head">บท 3</div><div class="sum-body">4 รูปแบบตัวแปร-วัตถุ · == vs equals วาดกล่อง · GC เก็บ unreachable</div></div>
+        <div class="sum-card"><div class="sum-head">บท 4</div><div class="sum-body">ตาราง 4 modifiers · abstract↔final · extends ก่อน implements</div></div>
+        <div class="sum-card"><div class="sum-head">บท 5</div><div class="sum-body">กล่อง 3 ชั้น · − + # · แปลง diagram ↔ โค้ด 1:1</div></div>
+        <div class="sum-card"><div class="sum-head">บท 6</div><div class="sum-body">is-a มีทิศ · super บรรทัดแรก · ข้อดี 3 เสีย 1 · Override≠Overload</div></div>
+      </div>
+      <a href="index.html" class="summary-next">🏠 กลับหน้าหลัก — ทวนบทไหนอีกรอบก็ได้ สู้ๆ 💪</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 9</span>
+      <span class="nav-chapter" id="chapterLabel">Cheat Sheet ก่อนเข้าห้องสอบ</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ศัพท์ OOP','สองตาราง','จุดหลอก 1-5','จุดหลอก 6-10','โค้ด 3 ท่า','แผนก่อนสอบ','ข้อรวบยอด','พร้อมสอบแล้ว'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

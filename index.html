@@ -15,6 +15,7 @@
   --c-oop:#9b1d6a;--c-oopl:#fce7f3;--c-oopm:#d45fa0;
   --c-py:#b84c00;--c-pyl:#fff0e6;--c-pym:#e8763a;
   --c-sort:#005f73;--c-sortl:#e0f4f6;--c-sortm:#0a9396;
+  --c-om:#4338ca;--c-oml:#e7e5fc;--c-omm:#7a6ff0;
   --c-df:#6d1f7e;--c-dfl:#f6e8fa;--c-dfm:#a55cb5;
   --c-dm:#a4133c;--c-dml:#fde8ef;--c-dmm:#d45a7e;
   --c-math:#6a2c91;--c-mathl:#f3e9fa;--c-mathm:#9b59b6;
@@ -51,6 +52,8 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
 .card.py .badge{background:var(--c-pyl);color:var(--c-py)}
 .card.sort::after{background:linear-gradient(90deg,var(--c-sort),var(--c-sortm))}
 .card.sort .badge{background:var(--c-sortl);color:var(--c-sort)}
+.card.om::after{background:linear-gradient(90deg,var(--c-om),var(--c-omm))}
+.card.om .badge{background:var(--c-oml);color:var(--c-om)}
 .card.df::after{background:linear-gradient(90deg,var(--c-df),var(--c-dfm))}
 .card.df .badge{background:var(--c-dfl);color:var(--c-df)}
 .card.dm::after{background:linear-gradient(90deg,var(--c-dm),var(--c-dmm))}
@@ -108,6 +111,15 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
       <div class="chips"><span class="chip">7 บท</span><span class="chip">ครบ Linked List → Graph</span></div>
     </a>
 
+    <a class="card om" href="subject_oopmid/index.html">
+      <div class="card-top"><span class="em">☕</span><span class="arr">→</span></div>
+      <span class="badge">ติวเข้ม · สอบให้ผ่าน</span>
+      <div class="card-title">ติวสอบ Midterm — OOP (Java)</div>
+      <div class="card-desc">ทฤษฎีจาก lecture บท 1–6 (02204172) — JVM, ==/equals, ตาราง modifiers, Class Diagram, is-a + เฉลย Lab 1 และ Cheat Sheet</div>
+      <div class="chips"><span class="chip">6 บท + Cheat Sheet</span><span class="chip">คู่กับ OOP Lab 2–7</span></div>
+    </a>
+
+    <a class="card oop soon" href="subject_oop/index.html">
     <a class="card oop" href="subject_oop/index.html">
       <div class="card-top"><span class="em">🧩</span><span class="arr">→</span></div>
       <span class="badge">พร้อมเรียน</span>

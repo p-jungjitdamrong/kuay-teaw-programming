@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 2 — Array & String | ติวสอบ OOP Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#4338ca;--cal:#e7e5fc;--cam:#7a6ff0;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">☕ ติวสอบ Midterm · 02204172 OOP (Java)</div>
+        <div class="cover-title">ติวบทที่ 2<br><em>Array &amp; String</em></div>
+        <div class="cover-subtitle">จุดหลอกของบทนี้อยู่ที่ syntax — ประกาศ ≠ สร้าง, length vs length(), String immutable</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Array: ประกาศ → new → ใช้ (3 ขั้นแยกกัน!)</div>
+          <div class="topic-row"><div class="topic-dot"></div>length (array) vs length() (String) — จุดหลอกอมตะ</div>
+          <div class="topic-row"><div class="topic-dot"></div>foreach 1 มิติ / 2 มิติ ตาม syntax สไลด์</div>
+          <div class="topic-row"><div class="topic-dot"></div>String methods + immutable</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลยโจทย์ lab 2 เต็มทุกข้อ → วิชา OOP Lab 2–7</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">J2</div>
+        <div class="cover-badge">จุดหลอก SYNTAX</div>
+        <div class="cover-slides-count">11 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 array 3 ขั้น -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · จุดหลอกที่ 1</div>
+    <h2 class="slide-title">Array ใน Java: ประกาศ ≠ สร้าง — ต้อง new!</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">3 ขั้นตอน (สไลด์อาจารย์เน้นตรงนี้)</div>
+        <pre class="code-block"><span class="cm">// ① ประกาศ — "ยังไม่มีอาเรย์เกิดขึ้นจริง"
+//   (คำพูดในสไลด์ตรงๆ!)</span>
+<span class="kw">int</span> table[];
+<span class="kw">int</span>[] table2;   <span class="cm">// เขียนได้สองแบบ</span>
+
+<span class="cm">// ② สร้างด้วย new — ตอนนี้ค่อยมีจริง</span>
+table = <span class="kw">new int</span>[<span class="nm">5</span>];
+
+<span class="cm">// ③ ใช้งาน — index เริ่ม 0</span>
+table[<span class="nm">0</span>] = <span class="nm">1</span>;
+
+<span class="cm">// หรือรวบขั้น ② กับค่าเริ่มต้น:</span>
+<span class="kw">int</span> monthDays[] = {<span class="nm">31</span>,<span class="nm">28</span>,<span class="nm">31</span>,<span class="nm">30</span>,...};</pre>
+      </div>
+      <div>
+        <div class="code-label">ต่างจาก C ยังไง (ข้อเทียบภาษา)</div>
+        <pre class="code-block"><span class="cm">/* C:   int a[5];  ← ได้พื้นที่ทันที
+   Java: int[] a;   ← ได้แค่ตัวแปรอ้างอิง
+         a = new int[5]; ← จึงมีของจริง
+
+   เพราะ array ใน Java เป็น object!
+   (สร้างด้วย new เหมือน object อื่น)
+
+   ใช้ก่อน new → NullPointerException
+   ← ข้อ "โค้ดนี้ error เพราะอะไร"
+     ชอบเอาจุดนี้มาออก */</span>
+
+<span class="kw">int</span>[] a;
+a[<span class="nm">0</span>] = <span class="nm">5</span>;   <span class="cm">// ❌ ยังไม่ new!</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ประโยคจากสไลด์ที่เป็นข้อสอบได้เลย:</b> "หลังจากการประกาศ ไม่มีการสร้างอาเรย์เกิดขึ้นจริง" — array เกิดจริงตอน <b>new</b> หรือใส่ {ค่าเริ่มต้น} เท่านั้น</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 length -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · จุดหลอกที่ 2</div>
+    <h2 class="slide-title">length ไม่มีวงเล็บ vs length() มีวงเล็บ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Array → .length (field)</div>
+        <pre class="code-block"><span class="kw">int</span>[] arr = {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>};
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; arr.length; i++)
+    System.out.<span class="fn">println</span>(arr[i]);
+<span class="cm">// arr.length = 3  ← ไม่มีวงเล็บ!</span>
+
+<span class="cm">// 2 มิติ:
+// arr.length     = จำนวนแถว
+// arr[i].length  = จำนวนคอลัมน์แถว i</span></pre>
+      </div>
+      <div>
+        <div class="code-label">String → .length() (method)</div>
+        <pre class="code-block">String s = <span class="st">"Dot saw I was Tod"</span>;
+<span class="kw">int</span> len = s.<span class="fn">length</span>();   <span class="cm">// มีวงเล็บ!</span>
+
+<span class="cm">/* ทำไมต่างกัน?
+   array.length เป็น field พิเศษ
+   String.length() เป็น method
+
+   เขียนสลับ = compile error
+   arr.length()  ❌
+   s.length      ❌
+
+   ← ข้อ "บรรทัดใด compile ผ่าน"
+     เอาคู่นี้มาหลอกทุกปี */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ท่องสั้นๆ:</b> <b>array เปลือย (length) · String ใส่รองเท้า (length())</b> — และ charAt(i) ของ String มีวงเล็บเสมอเพราะเป็น method เหมือนกัน</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 foreach -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · foreach</div>
+    <h2 class="slide-title">foreach — syntax ตามสไลด์เป๊ะๆ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">1 มิติ</div>
+        <pre class="code-block"><span class="cm">// for (type var : array)</span>
+<span class="kw">int</span>[] arr = {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">2</span>, <span class="nm">3</span>};
+<span class="kw">for</span> (<span class="kw">int</span> eachArr : arr) {
+    System.out.<span class="fn">println</span>(eachArr);
+}
+
+<span class="cm">/* อ่านว่า "สำหรับแต่ละ int ใน arr"
+   ใช้เมื่อ: อ่านทุกตัวเรียงลำดับ
+   ไม่ใช้เมื่อ: ต้องรู้ index หรือ
+   ต้องแก้ค่าใน array */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">2 มิติ — ซ้อนสองชั้น</div>
+        <pre class="code-block"><span class="kw">int</span>[][] arr2D = { {<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>}, {<span class="nm">4</span>,<span class="nm">5</span>,<span class="nm">6</span>} };
+
+<span class="kw">for</span> (<span class="kw">int</span>[] arr1D : arr2D) {     <span class="cm">// ทีละแถว</span>
+    <span class="kw">for</span> (<span class="kw">int</span> elem : arr1D) {    <span class="cm">// ทีละตัว</span>
+        System.out.<span class="fn">print</span>(elem);
+    }
+}
+
+<span class="cm">/* จุดสอบ: ชั้นนอกรับ int[]
+   (ทั้งแถว) ไม่ใช่ int!
+   for (int x : arr2D) ❌ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อเติม syntax:</b> foreach 2 มิติ ชั้นนอกต้องเป็น <code class="inline-code">int[]</code> — เพราะสมาชิกของ array 2 มิติคือ "array 1 มิติ" ทั้งแถว ไม่ใช่ตัวเลขเดี่ยว</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 String สร้าง + methods -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · String</div>
+    <h2 class="slide-title">String — สร้าง 2 แบบ + methods หลัก</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">สร้าง (ตามสไลด์)</div>
+        <pre class="code-block"><span class="cm">// แบบ literal</span>
+String greeting = <span class="st">"Hello world !"</span>;
+
+<span class="cm">// แบบ char array → String</span>
+<span class="kw">char</span>[] helloArray =
+    {<span class="st">'h'</span>,<span class="st">'e'</span>,<span class="st">'l'</span>,<span class="st">'l'</span>,<span class="st">'o'</span>,<span class="st">'.'</span>};
+String helloString =
+    <span class="kw">new</span> <span class="fn">String</span>(helloArray);</pre>
+      </div>
+      <div>
+        <div class="code-label">methods ที่สไลด์ไล่ให้</div>
+        <pre class="code-block">s.<span class="fn">length</span>()        ความยาว
+s.<span class="fn">charAt</span>(<span class="nm">8</span>)       ตัวอักษรตำแหน่ง 8
+s.<span class="fn">substring</span>(<span class="nm">2</span>,<span class="nm">5</span>)  ตัดช่วง [2,5)
+s.<span class="fn">equals</span>(t)       เทียบ "เนื้อหา"
+s.<span class="fn">indexOf</span>(<span class="st">"ab"</span>)   หาตำแหน่ง
+s.<span class="fn">replace</span>(a, b)   แทนที่ (คืนตัวใหม่!)
+s.<span class="fn">split</span>(<span class="st">" "</span>)      แยกเป็น array
+
+<span class="cm">/* "Strings are immutable"
+   — ชื่อตัวอย่างในสไลด์บอกใบ้เอง!
+   ทุก method คืน String ใหม่
+   ตัวเดิมไม่เคยเปลี่ยน */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เก็งจากสไลด์:</b> ตัวอย่าง charAt ในสไลด์ใช้ s = "Strings are immutable", charAt(8) → นับจาก 0: S-t-r-i-n-g-s-␣-a → ได้ <b>'a'</b> — ฝึกนับ index จาก 0 ให้ชิน โจทย์ charAt ให้คะแนนฟรีถ้านับเป็น</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 immutable trap -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · จุดหลอกที่ 3</div>
+    <h2 class="slide-title">String immutable — bug เงียบที่ออกข้อสอบบ่อยสุด</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โค้ดหลอก</div>
+        <pre class="code-block">String s = <span class="st">"sad sad"</span>;
+s.<span class="fn">replace</span>(<span class="st">"sad"</span>, <span class="st">"ok"</span>);
+System.out.<span class="fn">println</span>(s);
+<span class="cm">// พิมพ์ "sad sad" — ไม่เปลี่ยน!
+
+// replace คืน String ใหม่
+// แต่ไม่มีใครรับ → ถูกทิ้ง</span>
+
+<span class="cm">// แก้ให้ถูก: รับค่ากลับ</span>
+s = s.<span class="fn">replace</span>(<span class="st">"sad"</span>, <span class="st">"ok"</span>);
+<span class="cm">// ตอนนี้ "ok ok" ✓</span></pre>
+      </div>
+      <div>
+        <div class="code-label">โยงถึงบท 3 (== vs equals)</div>
+        <pre class="code-block">String s1 = <span class="kw">new</span> <span class="fn">String</span>(<span class="st">"abc"</span>);
+String s2 = <span class="kw">new</span> <span class="fn">String</span>(<span class="st">"abc"</span>);
+
+s1.<span class="fn">equals</span>(s2)   <span class="cm">// true  (เนื้อหาเท่า)</span>
+s1 == s2        <span class="cm">// false (คนละวัตถุ!)</span>
+
+<span class="cm">/* == เทียบ "reference ชี้ตัวเดียวกันไหม"
+   equals เทียบ "เนื้อหาเหมือนกันไหม"
+   ← สไลด์บท 3 มีตัวอย่างนี้ตรงๆ
+   จะเจาะเต็มๆ บทหน้า */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เฉลยโจทย์ lab 2 ทุกข้อ (digit sum, ปฏิทิน, smiley)</b> อยู่ในวิชา <a href="../subject_oop/slides_ch2.html" style="color:var(--ca)">OOP Lab 2–7 → Lab 2</a> — ติวเล่มนี้เอาทฤษฎีให้แน่น แล้วไปไล่โค้ดเต็มที่นั่น</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 ทวนโจทย์ lab2 ย่อ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · โจทย์ lab สรุปย่อ</div>
+    <h2 class="slide-title">โจทย์ lab 2 — จำ "ท่าแก้" ของแต่ละข้อ</h2>
+    <pre class="code-block"><span class="cm">/* ข้อ 1 Digit Sum (1234 → 1+2+3+4 = 10)
+   ท่าแก้: รับเป็น String → วน charAt(i) - '0' บวกสะสม
+   เกร็ด: charAt(i) เป็น char — ลบ '0' จึงได้ int (ASCII) */</span>
+
+<span class="cm">/* ข้อ 2 Array 2 มิติ
+   ท่าแก้: loop ซ้อน i=แถว j=คอลัมน์ · println() ตอนจบแถว
+   หรือ foreach สองชั้น (ชั้นนอก int[]) */</span>
+
+<span class="cm">/* ข้อ 3 ปฏิทิน 31 วัน เริ่มวัน start
+   ท่าแก้: เว้น start-1 ช่อง → พิมพ์ 1..31
+   ขึ้นบรรทัดใหม่เมื่อ (start-1+d) % 7 == 0 */</span>
+
+<span class="cm">/* ข้อ 4 แทรก :) หลัง happy และ :( หลัง sad
+   ท่าแก้: nextLine() (มีช่องว่าง!) →
+   s = s.replace("happy", "happy :)")  ← ต้องรับค่ากลับ!
+   replace จัดการ "ทุกคำที่เจอ" ให้เอง */</span></pre>
+    <div class="exam"><b>วิธีใช้สไลด์นี้:</b> ปิดจอแล้วเล่า "ท่าแก้" ทั้ง 4 ข้อจากความจำ — เล่าได้ = เข้าใจโครง เขียนโค้ดเต็มได้แน่ · เล่าไม่ได้ข้อไหน ไปดูเฉลยเต็มใน OOP Lab 2</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โค้ด 3 บรรทัดนี้ บรรทัดไหน compile ไม่ผ่าน?<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+int[] a = {1, 2, 3};<br>
+System.out.println(a.length());&nbsp;&nbsp;// ①<br>
+String s = "abc";<br>
+System.out.println(s.length);&nbsp;&nbsp;&nbsp;&nbsp;// ②
+</code><br><br>
+<em>ใบ้: ทั้งคู่ผิด! ① array ใช้ .length ไม่มีวงเล็บ<br>
+② String ใช้ .length() มีวงเล็บ — สลับกันพอดี</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · ลองข้อสอบ</div>
+    <h2 class="slide-title">โค้ดนี้เกิดอะไรขึ้น?</h2>
+    <pre class="code-block" style="margin-bottom:14px"><span class="kw">int</span>[] arr;
+arr[<span class="nm">0</span>] = <span class="nm">10</span>;</pre>
+    <div id="mc-j2" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-j2','A','B','❌ ไม่ได้ค่า 10 — arr ยังไม่ได้ new ไม่มีอาเรย์จริงให้ใส่ค่า')">A) arr[0] มีค่า 10 ตามปกติ</button>
+      <button class="mc-btn" onclick="pickMC('mc-j2','B','B','✅ ประกาศเฉยๆ ยังไม่มีอาเรย์เกิดขึ้นจริง — ต้อง arr = new int[ขนาด] ก่อน (compiler ฟ้อง variable might not have been initialized)')">B) error — ต้อง new ก่อนใช้</button>
+      <button class="mc-btn" onclick="pickMC('mc-j2','C','B','❌ Java ไม่สร้าง array ให้อัตโนมัติ — ต่างจากการประกาศใน C')">C) Java สร้าง array ขนาด 1 ให้อัตโนมัติ</button>
+      <button class="mc-btn" onclick="pickMC('mc-j2','D','B','❌ ไม่ใช่ 0 — ยังไม่มี array เลย ไม่มีช่องให้เก็บอะไรทั้งนั้น')">D) arr[0] เป็น 0 (ค่า default)</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px"><span class="cm">// จำจากสไลด์: "หลังจากการประกาศ ไม่มีการสร้างอาเรย์เกิดขึ้นจริง"
+// ลำดับถูก: ประกาศ → new → ใช้</span>
+<span class="kw">int</span>[] arr = <span class="kw">new int</span>[<span class="nm">5</span>];
+arr[<span class="nm">0</span>] = <span class="nm">10</span>;   <span class="cm">// ✓</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 3</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① หาความยาว array ใช้ arr.___ (มี/ไม่มีวงเล็บ เขียนให้ครบ)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj2a" placeholder="เขียนให้ครบ">
+      <button class="fill-btn" onclick="checkFill('fj2a','length',['.length','length ไม่มีวงเล็บ'],['length()'],'✅ arr.length ไม่มีวงเล็บ (field) — String ถึงจะใช้ length() มีวงเล็บ','❌ arr.length ไม่มีวงเล็บ! length() มีวงเล็บคือของ String')">ตรวจ</button>
+    </div>
+    <div id="fj2a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② foreach อ่าน array 2 มิติ ชั้นนอกประกาศตัวแปรชนิด ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj2b" placeholder="ชนิดตัวแปร">
+      <button class="fill-btn" onclick="checkFill('fj2b','int[]',['int []','array','int array'],[],'✅ int[] — สมาชิกของ array 2 มิติคือ array 1 มิติทั้งแถว','❌ int[] — for (int[] row : arr2D)')">ตรวจ</button>
+    </div>
+    <div id="fj2b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ s.replace(...) แล้วค่าใน s ไม่เปลี่ยน เพราะ String เป็น ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fj2c" placeholder="คำศัพท์">
+      <button class="fill-btn" onclick="checkFill('fj2c','immutable',['อิมมิวเทเบิล','เปลี่ยนค่าไม่ได้'],[],'✅ immutable — ทุก method คืน String ใหม่ ต้องรับค่ากลับ s = s.replace(...)','❌ immutable (เปลี่ยนค่าไม่ได้) — ต้องรับค่ากลับเสมอ')">ตรวจ</button>
+    </div>
+    <div id="fj2c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔤</div>
+      <div class="summary-title">จบติวบทที่ 2 — Array &amp; String</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">3 ขั้นของ Array</div><div class="sum-body">ประกาศ → new → ใช้ · ประกาศเฉยๆ "ไม่มีอาเรย์เกิดขึ้นจริง"</div></div>
+        <div class="sum-card"><div class="sum-head">length คู่หลอก</div><div class="sum-body">array.length (ไม่มีวงเล็บ) · String.length() (มีวงเล็บ)</div></div>
+        <div class="sum-card"><div class="sum-head">foreach</div><div class="sum-body">for (int x : arr) · 2 มิติชั้นนอกเป็น int[]</div></div>
+        <div class="sum-card"><div class="sum-head">String immutable</div><div class="sum-body">ทุก method คืนตัวใหม่ — ต้อง s = s.replace(...)</div></div>
+        <div class="sum-card"><div class="sum-head">== vs equals</div><div class="sum-body">== เทียบ reference · equals เทียบเนื้อหา (เจาะต่อบท 3)</div></div>
+        <div class="sum-card"><div class="sum-head">เฉลย lab เต็ม</div><div class="sum-body">digit sum / ปฏิทิน / smiley → วิชา OOP Lab 2–7 บท Lab 2</div></div>
+      </div>
+      <a href="slides_ch3.html" class="summary-next">→ ติวบทที่ 3: Object &amp; Class</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 2 — Array &amp; String</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ประกาศ ≠ สร้าง','length คู่หลอก','foreach','String methods','immutable','โจทย์ lab ย่อ','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
