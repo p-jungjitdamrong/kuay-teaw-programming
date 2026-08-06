@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 5 — Class Relationships | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#9b1d6a;--cal:#fce7f3;--cam:#d45fa0;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:16px 20px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · OOP (02204172)</div>
+        <div class="cover-title">Lab 5<br><em>Class Relationships</em></div>
+        <div class="cover-subtitle">คลาสทำงานร่วมกันยังไง — ระบบร้านค้า Product → InventoryCart → Cashier</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ความสัมพันธ์ 3 แบบ: Association / Aggregation / Composition</div>
+          <div class="topic-row"><div class="topic-dot"></div>อ่าน main ก่อน — ถอดสเปคจากโค้ดที่ให้มา</div>
+          <div class="topic-row"><div class="topic-dot"></div>เขียน Product, InventoryCart, Cashier ครบ</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 2: วาด Class Diagram</div>
+          <div class="topic-row"><div class="topic-dot"></div>ปูทาง Lab 6 — ระบบนี้จะถูก extend ต่อ</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">L5</div>
+        <div class="cover-badge">HAS-A · CLASS DIAGRAM</div>
+        <div class="cover-slides-count">12 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 ความสัมพันธ์ 3 แบบ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 5 · แนวคิด</div>
+    <h2 class="slide-title">คลาสสัมพันธ์กัน 3 แบบ (has-a)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① Association — รู้จักกัน ใช้งานกัน</div>
+        <pre class="code-block"><span class="cm">// Cashier "ใช้" Cart ตอนคิดเงิน
+// แต่ไม่ได้เป็นเจ้าของ</span>
+<span class="kw">public void</span> <span class="fn">printReceipt</span>(InventoryCart ic) {
+    <span class="cm">// รับมาใช้ชั่วคราวผ่าน parameter</span>
+}</pre>
+        <div class="code-label" style="margin-top:8px">② Aggregation — มีเป็นของ แต่แยกกันอยู่ได้</div>
+        <pre class="code-block"><span class="cm">// Cart "มี" Products
+// แต่ Product สร้างข้างนอก ใส่เข้ามา
+// Cart หายไป Product ยังอยู่</span>
+ic.<span class="fn">add</span>(p1);   <span class="cm">// p1 สร้างจากข้างนอก</span></pre>
+      </div>
+      <div>
+        <div class="code-label">③ Composition — เป็นส่วนหนึ่งของกันจริงๆ</div>
+        <pre class="code-block"><span class="cm">// BankAccount สร้าง Date เองข้างใน
+// (Lab 4!) — บัญชีหาย วันเปิดก็หาย</span>
+<span class="kw">public</span> <span class="fn">BankAccount</span>(String name) {
+    <span class="kw">this</span>.openDate = <span class="kw">new</span> <span class="fn">Date</span>(...);
+    <span class="cm">// ← new ข้างใน = composition</span>
+}</pre>
+        <div class="code-label" style="margin-top:8px">สังเกตง่ายๆ</div>
+        <pre class="code-block">รับผ่าน parameter ใช้แล้วคืน → Association
+รับเข้ามาเก็บใน field       → Aggregation
+new เองข้างใน constructor  → Composition</pre>
+      </div>
+    </div>
+    <div class="callout">ทั้งสามแบบคือ "has-a / uses-a" — ต่างจาก "is-a" (inheritance) ที่จะเรียนใน Lab 6</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 อ่าน main ถอดสเปค -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 5 · วิเคราะห์โจทย์</div>
+    <h2 class="slide-title">อ่าน main ที่โจทย์ให้ → ถอดสเปคทุกคลาส</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">main ในโจทย์</div>
+        <pre class="code-block">Product p1 = <span class="kw">new</span> <span class="fn">Product</span>(<span class="st">"XA1101"</span>,<span class="st">"Milk"</span>,<span class="nm">150</span>);
+Product p2 = <span class="kw">new</span> <span class="fn">Product</span>(<span class="st">"XA1102"</span>,<span class="st">"Suger"</span>,<span class="nm">50</span>);
+Product p3 = <span class="kw">new</span> <span class="fn">Product</span>(<span class="st">"XA1103"</span>,<span class="st">"Coffee"</span>,<span class="nm">250</span>);
+
+InventoryCart ic = <span class="kw">new</span> <span class="fn">InventoryCart</span>(<span class="nm">10</span>);
+ic.<span class="fn">add</span>(p1);
+ic.<span class="fn">add</span>(p2);
+ic.<span class="fn">add</span>(p3);
+
+Cashier c = <span class="kw">new</span> <span class="fn">Cashier</span>(<span class="st">"John Doe"</span>);
+c.<span class="fn">printReceipt</span>(ic);</pre>
+      </div>
+      <div>
+        <div class="code-label">สเปคที่ถอดได้</div>
+        <pre class="code-block"><span class="cm">// Product:
+//   constructor(code, name, price)
+//   → field 3 ตัว + getters
+
+// InventoryCart:
+//   constructor(int ความจุ)
+//   add(Product)        ใส่ของ
+//   getProduct()        หยิบทีละชิ้น (โจทย์)
+//   getAllProducts()    หยิบทั้งหมด (โจทย์)
+
+// Cashier:
+//   constructor(String ชื่อ)
+//   printReceipt(InventoryCart)
+//   → ดึงของจากรถ + รวมราคา</span></pre>
+      </div>
+    </div>
+    <div class="callout">ทักษะสำคัญของ lab นี้: โจทย์ไม่บอกโครงสร้างคลาสตรงๆ — ต้องอ่าน main แล้ว "reverse engineer" ว่าแต่ละคลาสต้องมีอะไร</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 Product -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 5 · เฉลย (1/3)</div>
+    <h2 class="slide-title">class Product</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">Product</span> {
+    <span class="kw">private</span> String code;
+    <span class="kw">private</span> String name;
+    <span class="kw">private double</span> price;
+
+    <span class="kw">public</span> <span class="fn">Product</span>(String code, String name, <span class="kw">double</span> price) {
+        <span class="kw">this</span>.code = code;
+        <span class="kw">this</span>.name = name;
+        <span class="kw">this</span>.price = price;
+    }
+
+    <span class="kw">public</span> String <span class="fn">getCode</span>()  { <span class="kw">return</span> code; }
+    <span class="kw">public</span> String <span class="fn">getName</span>()  { <span class="kw">return</span> name; }
+    <span class="kw">public double</span> <span class="fn">getPrice</span>() { <span class="kw">return</span> price; }
+}</pre>
+    <div class="callout">ใช้ความรู้ Lab 4 เต็มๆ — private + constructor + getter · ไม่มี setter เพราะสินค้าไม่ควรเปลี่ยนรหัส/ราคากลางทาง (read-only)</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 InventoryCart -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 5 · เฉลย (2/3)</div>
+    <h2 class="slide-title">class InventoryCart — รถเข็นเก็บ Product</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">InventoryCart</span> {
+    <span class="kw">private</span> Product[] products;              <span class="cm">// Aggregation: มี Product หลายตัว</span>
+    <span class="kw">private int</span> count;                       <span class="cm">// จำนวนของในรถตอนนี้</span>
+
+    <span class="kw">public</span> <span class="fn">InventoryCart</span>(<span class="kw">int</span> capacity) {    <span class="cm">// constructor กำหนดความจุ (โจทย์: 10)</span>
+        products = <span class="kw">new</span> Product[capacity];
+        count = <span class="nm">0</span>;
+    }
+
+    <span class="kw">public void</span> <span class="fn">add</span>(Product p) {             <span class="cm">// addProduct — ใส่ของลงรถ</span>
+        <span class="kw">if</span> (count &lt; products.length) {
+            products[count] = p;
+            count++;
+        }
+    }
+
+    <span class="kw">public</span> Product <span class="fn">getProduct</span>() {            <span class="cm">// หยิบออกทีละชิ้น (จากท้าย)</span>
+        <span class="kw">if</span> (count == <span class="nm">0</span>) <span class="kw">return null</span>;         <span class="cm">// รถว่าง → null</span>
+        count--;
+        Product p = products[count];
+        products[count] = <span class="kw">null</span>;              <span class="cm">// เอาออกจากรถจริงๆ</span>
+        <span class="kw">return</span> p;
+    }
+
+    <span class="kw">public</span> Product[] <span class="fn">getAllProducts</span>() {      <span class="cm">// หยิบออกทั้งหมด</span>
+        Product[] all = <span class="kw">new</span> Product[count];
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; all.length; i++)
+            all[i] = <span class="fn">getProduct</span>();           <span class="cm">// reuse getProduct ทีละชิ้น!</span>
+        <span class="kw">return</span> all;
+    }
+
+    <span class="kw">public int</span> <span class="fn">getCount</span>() { <span class="kw">return</span> count; }
+}</pre>
+    <div class="callout">สังเกต: getAllProducts วน getProduct ซ้ำ — reuse เหมือน transfer ใน Lab 4 · โครงสร้างนี้คือ Stack จากวิชา Data Structures นั่นเอง!</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 Cashier -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 5 · เฉลย (3/3)</div>
+    <h2 class="slide-title">class Cashier — คิดเงิน + พิมพ์ใบเสร็จ</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">Cashier</span> {
+    <span class="kw">private</span> String name;
+
+    <span class="kw">public</span> <span class="fn">Cashier</span>(String name) {
+        <span class="kw">this</span>.name = name;
+    }
+
+    <span class="kw">public void</span> <span class="fn">printReceipt</span>(InventoryCart ic) {      <span class="cm">// Association: รับ cart มาใช้</span>
+        System.out.<span class="fn">println</span>(<span class="st">"Pumpkin Shop ("</span> + name + <span class="st">")"</span>);
+        System.out.<span class="fn">println</span>();
+
+        <span class="kw">double</span> total = <span class="nm">0</span>;
+        Product[] items = ic.<span class="fn">getAllProducts</span>();        <span class="cm">// ดึงของออกจากรถทั้งหมด</span>
+
+        <span class="kw">for</span> (Product p : items) {
+            System.out.<span class="fn">printf</span>(<span class="st">"1 x %-7s(%s)  %8.0f%n"</span>,
+                p.<span class="fn">getName</span>(), p.<span class="fn">getCode</span>(), p.<span class="fn">getPrice</span>());
+            total += p.<span class="fn">getPrice</span>();                    <span class="cm">// สะสมราคารวม</span>
+        }
+
+        System.out.<span class="fn">println</span>(<span class="st">"---------------"</span>);
+        System.out.<span class="fn">printf</span>(<span class="st">"       Total   %8.0f $%n"</span>, total);
+    }
+}
+<span class="cm">/* Pumpkin Shop (John Doe)
+
+   1 x Milk   (XA1101)    150
+   1 x Suger  (XA1102)    50
+   1 x Coffee (XA1103)    250
+   ---------------
+                  Total      450 $   ✓ ตรงตามโจทย์ */</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 6 ภาพรวมการไหล -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 5 · ภาพรวม</div>
+    <h2 class="slide-title">ของไหลผ่านระบบยังไง</h2>
+    <div class="diagram">main
+ │  new Product ×3        (สร้างสินค้า)
+ │       ↓
+ │  ic.add(p1..p3)        (ใส่รถเข็น — Aggregation)
+ │       ↓
+ │  c.printReceipt(ic)    (ส่งรถให้แคชเชียร์ — Association)
+ │       ↓
+ │  Cashier → ic.getAllProducts()   (ดึงของออกจากรถ)
+ │       ↓
+ │  วนพิมพ์ + รวมราคา → ใบเสร็จ Total 450 $</div>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">// แต่ละคลาสมีหน้าที่เดียวชัดเจน:
+// Product       = เก็บข้อมูลสินค้า
+// InventoryCart = จัดการของเข้า-ออก
+// Cashier       = คิดเงิน แสดงผล</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">// หลักนี้เรียก
+// "Single Responsibility"
+// — คลาสละหนึ่งหน้าที่
+// แก้การพิมพ์ใบเสร็จ → แก้แค่ Cashier
+// แก้วิธีเก็บของ → แก้แค่ Cart</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Class Diagram -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 5 · ข้อ 2 เฉลย</div>
+    <h2 class="slide-title">ข้อ 2: Class Diagram</h2>
+    <div class="diagram">┌─────────────────────┐         ┌──────────────────────────┐         ┌─────────────────────────┐
+│       Product       │         │      InventoryCart       │         │         Cashier         │
+├─────────────────────┤         ├──────────────────────────┤         ├─────────────────────────┤
+│ - code : String     │         │ - products : Product[]   │         │ - name : String         │
+│ - name : String     │ 0..10   │ - count : int            │  uses   ├─────────────────────────┤
+│ - price : double    │◆────────├──────────────────────────┤&lt;- - - - │ + Cashier(name)         │
+├─────────────────────┤         │ + InventoryCart(cap)     │         │ + printReceipt(ic)      │
+│ + Product(c, n, p)  │         │ + add(p : Product)       │         └─────────────────────────┘
+│ + getCode()         │         │ + getProduct() : Product │
+│ + getName()         │         │ + getAllProducts()       │
+│ + getPrice()        │         └──────────────────────────┘
+└─────────────────────┘</div>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">// สัญลักษณ์ UML ที่ต้องรู้:
+//  -  = private
+//  +  = public
+//  ◆── = aggregation (มีเป็นของ)
+//  &lt;- - = dependency/uses (ใช้งาน)
+//  0..10 = multiplicity (มีได้กี่ตัว)</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">// อ่านว่า:
+// InventoryCart มี Product 0-10 ตัว
+//   (aggregation — สร้างจากข้างนอก)
+// Cashier ใช้ InventoryCart
+//   (รับผ่าน parameter ตอน
+//    printReceipt — ไม่ได้เก็บเป็น field)</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 เตรียมไป Lab 6 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 5 · มองไปข้างหน้า</div>
+    <h2 class="slide-title">ระบบนี้ยังไม่จบ — Lab 6 จะ extend ต่อ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตอนนี้ (Lab 5)</div>
+        <pre class="code-block"><span class="cm">// Product ตัวเดียว ใช้กับทุกสินค้า
+// Milk, Sugar, Coffee ต่างกันแค่ข้อมูล</span>
+
+Product p1 = <span class="kw">new</span> <span class="fn">Product</span>(<span class="st">"XA1101"</span>,
+                         <span class="st">"Milk"</span>, <span class="nm">150</span>);
+
+<span class="cm">// แต่ถ้านมต้องมี "ปริมาตร CC"
+// น้ำตาลต้องมี "น้ำหนักกรัม" ล่ะ?
+// ยัดทุก field ใส่ Product เดียว?
+// → รก และผิดหลักการ!</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Lab 6 จะทำแบบนี้</div>
+        <pre class="code-block"><span class="cm">// Milk, Sugar, Coffee
+// สืบทอด (extends) จาก Product</span>
+
+Milk p1 = <span class="kw">new</span> <span class="fn">Milk</span>(<span class="nm">150</span>);
+p1.<span class="fn">setVolumn</span>(<span class="nm">250</span>);      <span class="cm">// เฉพาะนม</span>
+
+Sugar p2 = <span class="kw">new</span> <span class="fn">Sugar</span>(<span class="nm">50</span>);
+p2.<span class="fn">setWeight</span>(<span class="nm">250</span>);      <span class="cm">// เฉพาะน้ำตาล</span>
+
+<span class="cm">// Cart กับ Cashier ใช้ตัวเดิมได้เลย
+// เพราะทุกตัว "is-a" Product!</span></pre>
+      </div>
+    </div>
+    <div class="callout">เขียน Lab 5 ให้ดี Lab 6 จะแก้นิดเดียว — โจทย์ชุดนี้ผูกกันยาว อาจารย์ออกแบบให้เห็นวิวัฒนาการของ design</div>
+  </div>
+</div>
+
+<!-- SLIDE 9 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">getAllProducts() ดึงของออกด้วย getProduct() ซึ่งหยิบ "จากท้าย"<br><br>
+ใส่ Milk → Sugar → Coffee<br>ใบเสร็จจะพิมพ์เรียงอะไรก่อน?<br><br>
+<em>힌트: หยิบจากท้าย = Last In, First Out<br>โครงสร้างนี้ชื่ออะไรในวิชา Data Structures?</em><br><br>
+ถ้าอยากให้ใบเสร็จเรียงตามลำดับที่ใส่ (First In, First Out)<br>ต้องแก้ getProduct() ยังไง? แล้ว trade-off คืออะไร?</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 5 · MCQ</div>
+    <h2 class="slide-title">BankAccount สร้าง Date เองใน constructor — ความสัมพันธ์แบบไหน?</h2>
+    <pre class="code-block" style="margin-bottom:14px"><span class="kw">public</span> <span class="fn">BankAccount</span>(String name) {
+    <span class="kw">this</span>.openDate = <span class="kw">new</span> <span class="fn">Date</span>(<span class="nm">19</span>, <span class="nm">7</span>, <span class="nm">2026</span>);   <span class="cm">// ← new ข้างใน</span>
+}</pre>
+    <div id="mc-l5" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-l5','A','C','❌ Association คือรับมาใช้ชั่วคราวผ่าน parameter — อันนี้สร้างเองเก็บเอง')">A) Association</button>
+      <button class="mc-btn" onclick="pickMC('mc-l5','B','C','❌ Aggregation คือรับ object จากข้างนอกมาเก็บ — อันนี้ new เองข้างใน')">B) Aggregation</button>
+      <button class="mc-btn" onclick="pickMC('mc-l5','C','C','✅ Composition — new เองข้างใน constructor, Date เป็นส่วนหนึ่งของบัญชี บัญชีหายวันเปิดก็หายตาม')">C) Composition</button>
+      <button class="mc-btn" onclick="pickMC('mc-l5','D','C','❌ Inheritance คือ is-a (extends) — BankAccount ไม่ได้ "เป็น" Date แต่ "มี" Date')">D) Inheritance</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px"><span class="cm">// เทียบสามแบบในระบบร้านค้า:
+// Cashier รับ cart ผ่าน parameter    → Association (ใช้แล้วคืน)
+// Cart รับ Product จากข้างนอกมาเก็บ  → Aggregation (ของแยกกันอยู่ได้)
+// BankAccount new Date เองข้างใน     → Composition (เกิด-ตายด้วยกัน)</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 11 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 5 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① ใน UML เครื่องหมาย − หน้า field หมายถึง access modifier อะไร</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl5a" placeholder="modifier">
+      <button class="fill-btn" onclick="checkFill('fl5a','private',['private'],[],'✅ − คือ private · + คือ public','❌ − = private, + = public')">ตรวจ</button>
+    </div>
+    <div id="fl5a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② InventoryCart หยิบของ "ใส่ทีหลัง ออกก่อน" — ตรงกับโครงสร้างข้อมูลชื่ออะไร</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl5b" placeholder="data structure">
+      <button class="fill-btn" onclick="checkFill('fl5b','stack',['สแตก','Stack'],[],'✅ Stack (LIFO) — push=add, pop=getProduct · วิชา DS โผล่มาในร้านค้า!','❌ คือ Stack — Last In First Out เหมือน push/pop')">ตรวจ</button>
+    </div>
+    <div id="fl5b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ ความสัมพันธ์แบบ "มีเป็นของ แต่รับมาจากข้างนอก แยกกันอยู่ได้" เรียกว่า</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl5c" placeholder="ชื่อความสัมพันธ์">
+      <button class="fill-btn" onclick="checkFill('fl5c','aggregation',['Aggregation','แอกกรีเกชัน'],[],'✅ Aggregation — Cart มี Product ที่สร้างจากข้างนอก · Cart หาย Product ยังอยู่','❌ คือ Aggregation — ต่างจาก Composition ที่ new เองข้างในและตายด้วยกัน')">ตรวจ</button>
+    </div>
+    <div id="fl5c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 12 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔗</div>
+      <div class="summary-title">สรุป Lab 5 — Class Relationships</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">3 ความสัมพันธ์</div><div class="sum-body">Association ใช้ชั่วคราว · Aggregation รับมาเก็บ · Composition new เองข้างใน</div></div>
+        <div class="sum-card"><div class="sum-head">ถอดสเปคจาก main</div><div class="sum-body">โจทย์ให้ main มา → reverse engineer ว่าคลาสต้องมี constructor/method อะไร</div></div>
+        <div class="sum-card"><div class="sum-head">ระบบร้านค้า</div><div class="sum-body">Product เก็บข้อมูล · Cart จัดการเข้าออก (คือ Stack!) · Cashier คิดเงิน</div></div>
+        <div class="sum-card"><div class="sum-head">Single Responsibility</div><div class="sum-body">คลาสละหนึ่งหน้าที่ — แก้ใบเสร็จแก้แค่ Cashier</div></div>
+        <div class="sum-card"><div class="sum-head">Class Diagram</div><div class="sum-body">− private · + public · ◆ aggregation · ⇢ uses · 0..10 multiplicity</div></div>
+        <div class="sum-card"><div class="sum-head">ต่อยอด</div><div class="sum-body">Lab 6 จะ extends Product เป็น Milk/Sugar/Coffee — ระบบเดิมใช้ต่อได้</div></div>
+      </div>
+      <a href="slides_ch6.html" class="summary-next">→ Lab 6: Inheritance</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">Lab 5 — Class Relationships</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ความสัมพันธ์ 3 แบบ','ถอดสเปคจาก main','Product','InventoryCart','Cashier','ภาพรวมการไหล','Class Diagram','เตรียมไป Lab 6','Think!','MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

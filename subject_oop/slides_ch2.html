@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 2 — Array & String | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>:root{--ca:#9b1d6a;--cal:#fce7f3;--cam:#d45fa0;}</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · OOP (02204172)</div>
+        <div class="cover-title">Lab 2<br><em>Array &amp; String</em></div>
+        <div class="cover-subtitle">พื้นฐาน Java ก่อนเข้า OOP — Scanner, Array 2 มิติ, String methods พร้อมเฉลยแนวทางทั้ง 4 ข้อ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Scanner — รับ input จากคีย์บอร์ด</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 1: Digit Sum (1234 → 1+2+3+4)</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 2: Array 2 มิติ</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 3: ปฏิทินเดือน 31 วัน</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 4: แทรก smiley หลัง happy/sad</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">L2</div>
+        <div class="cover-badge">JAVA · ARRAY · STRING</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 Scanner -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 2 · พื้นฐาน</div>
+    <h2 class="slide-title">Scanner — รับ input ใน Java</h2>
+    <p class="slide-lead">ตามโจทย์ lab กำหนดให้ใช้ <code class="inline-code">Scanner</code> — มี 2 ท่าหลักที่ต้องแยกให้ออก</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ท่าที่ 1: nextInt() รับตัวเลขตรงๆ</div>
+        <pre class="code-block"><span class="kw">import</span> java.util.Scanner;
+
+Scanner scanner = <span class="kw">new</span> <span class="fn">Scanner</span>(System.in);
+<span class="kw">int</span> value = scanner.<span class="fn">nextInt</span>();
+
+<span class="cm">// อ่านเฉพาะตัวเลข
+// ไม่กิน \n ที่ค้างใน buffer!
+// ← จุดที่ bug บ่อยสุดใน Java</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ท่าที่ 2: nextLine() + parseInt</div>
+        <pre class="code-block">String s = scanner.<span class="fn">nextLine</span>();
+<span class="kw">int</span> value = Integer.<span class="fn">parseInt</span>(s);
+
+<span class="cm">// อ่านทั้งบรรทัด (รวมช่องว่าง)
+// แล้วค่อยแปลง String → int
+
+// ข้อ 4 ต้องรับประโยคมีช่องว่าง
+// → ต้องใช้ nextLine() เท่านั้น
+// nextInt() หยุดที่ช่องว่าง!</span></pre>
+      </div>
+    </div>
+    <div class="callout">กับดักคลาสสิก: เรียก nextInt() แล้วตามด้วย nextLine() → ได้ String ว่าง เพราะ \n ค้างอยู่ — แก้ด้วย scanner.nextLine() คั่นหนึ่งครั้ง</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 ข้อ 1 วิเคราะห์ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 2 · ข้อ 1</div>
+    <h2 class="slide-title">ข้อ 1: Digit Sum — วิธีคิด</h2>
+    <p class="slide-lead">โจทย์: รับ 1234 → พิมพ์ <code class="inline-code">1234 = 1 + 2 + 3 + 4 = 10</code></p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">วิธีคิด: แยกหลักด้วย % และ /</div>
+        <pre class="code-block">1234 % 10 = 4   ← หลักหน่วย
+1234 / 10 = 123 ← ตัดหลักหน่วยทิ้ง
+
+123 % 10 = 3
+123 / 10 = 12
+
+12 % 10 = 2
+12 / 10 = 1
+
+1 % 10 = 1
+1 / 10 = 0  ← หยุดเมื่อเหลือ 0
+
+<span class="cm">// ได้หลักจากขวาไปซ้าย: 4,3,2,1
+// แต่โจทย์ให้พิมพ์ซ้ายไปขวา!
+// → ใช้ String แทนจะง่ายกว่า</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ท่าง่ายกว่า: วนตาม String</div>
+        <pre class="code-block"><span class="cm">// อ่านเป็น String แล้ววนทีละตัวอักษร
+// charAt(i) - '0' แปลง char เป็นตัวเลข</span>
+
+String s = <span class="st">"1234"</span>;
+s.<span class="fn">charAt</span>(<span class="nm">0</span>)         <span class="cm">// '1' (char)</span>
+s.<span class="fn">charAt</span>(<span class="nm">0</span>) - <span class="st">'0'</span>   <span class="cm">// 1  (int)</span>
+
+<span class="cm">// เพราะ char คือรหัส ASCII:
+// '1' = 49, '0' = 48
+// 49 - 48 = 1 ← ใช้ความรู้เลขฐาน!</span></pre>
+      </div>
+    </div>
+    <div class="callout">เลือกท่า String เพราะโจทย์ต้องพิมพ์ "1 + 2 + 3 + 4" เรียงซ้ายไปขวา — ตรงกับลำดับ charAt พอดี</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 ข้อ 1 เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 2 · ข้อ 1 เฉลย</div>
+    <h2 class="slide-title">ข้อ 1: โค้ดเต็ม</h2>
+    <pre class="code-block"><span class="kw">import</span> java.util.Scanner;
+
+<span class="kw">public class</span> <span class="fn">DigitSum</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        Scanner scanner = <span class="kw">new</span> <span class="fn">Scanner</span>(System.in);
+
+        System.out.<span class="fn">print</span>(<span class="st">"Please input the number : "</span>);
+        String s = scanner.<span class="fn">nextLine</span>();          <span class="cm">// รับเป็น String</span>
+
+        <span class="kw">int</span> sum = <span class="nm">0</span>;
+        StringBuilder sb = <span class="kw">new</span> <span class="fn">StringBuilder</span>();
+
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; s.<span class="fn">length</span>(); i++) {
+            <span class="kw">int</span> digit = s.<span class="fn">charAt</span>(i) - <span class="st">'0'</span>;   <span class="cm">// char → int</span>
+            sum += digit;
+
+            <span class="kw">if</span> (i > <span class="nm">0</span>) sb.<span class="fn">append</span>(<span class="st">" + "</span>);      <span class="cm">// คั่นด้วย + ยกเว้นตัวแรก</span>
+            sb.<span class="fn">append</span>(digit);
+        }
+
+        System.out.<span class="fn">println</span>(s + <span class="st">" = "</span> + sb + <span class="st">" = "</span> + sum);
+    }
+}
+<span class="cm">/* Please input the number : 1234
+   1234 = 1 + 2 + 3 + 4 = 10
+
+   Please input the number : 10
+   10 = 1 + 0 = 1 ✓ */</span></pre>
+    <div class="callout">เทคนิค "if (i > 0) ใส่ตัวคั่น" — pattern มาตรฐานสำหรับพิมพ์ list ที่มีตัวคั่นระหว่างกลาง ไม่เกินไม่ขาด</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 ข้อ 2 Array 2 มิติ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 2 · ข้อ 2</div>
+    <h2 class="slide-title">ข้อ 2: Array 2 มิติ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ประกาศ + กำหนดค่า</div>
+        <pre class="code-block"><span class="cm">// แบบกำหนดค่าทันที</span>
+<span class="kw">int</span>[][] arr = {
+    {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>},
+    {<span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">6</span>},
+    {<span class="nm">7</span>, <span class="nm">8</span>, <span class="nm">9</span>}
+};
+
+<span class="cm">// แบบกำหนดขนาดก่อน</span>
+<span class="kw">int</span>[][] arr2 = <span class="kw">new int</span>[<span class="nm">3</span>][<span class="nm">4</span>];
+arr2[<span class="nm">0</span>][<span class="nm">0</span>] = <span class="nm">1</span>;
+
+<span class="cm">// arr.length     = จำนวนแถว
+// arr[0].length  = จำนวนคอลัมน์</span></pre>
+      </div>
+      <div>
+        <div class="code-label">วนแสดงผลทุกช่อง</div>
+        <pre class="code-block"><span class="cm">// loop ซ้อน: แถวนอก คอลัมน์ใน</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; arr.length; i++) {
+    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="nm">0</span>; j &lt; arr[i].length; j++) {
+        System.out.<span class="fn">print</span>(arr[i][j] + <span class="st">"\t"</span>);
+    }
+    System.out.<span class="fn">println</span>();  <span class="cm">// ขึ้นบรรทัดจบแถว</span>
+}
+
+<span class="cm">/* 1    2    3
+   4    5    6
+   7    8    9 */</span>
+
+<span class="cm">// หรือใช้ for-each อ่านง่าย:</span>
+<span class="kw">for</span> (<span class="kw">int</span>[] row : arr) {
+    <span class="kw">for</span> (<span class="kw">int</span> x : row)
+        System.out.<span class="fn">print</span>(x + <span class="st">"\t"</span>);
+    System.out.<span class="fn">println</span>();
+}</pre>
+      </div>
+    </div>
+    <div class="callout">จำ pattern: loop นอก = แถว (i), loop ใน = คอลัมน์ (j), println() ตอนจบแถว — ใช้กับข้อ 3 (ปฏิทิน) ต่อได้เลย</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 ข้อ 3 วิเคราะห์ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 2 · ข้อ 3</div>
+    <h2 class="slide-title">ข้อ 3: ปฏิทิน — วิธีคิดก่อนเขียน</h2>
+    <p class="slide-lead">รับวันเริ่มต้น (1=อาทิตย์ … 7=เสาร์) → พิมพ์ปฏิทิน 31 วันให้ตรงคอลัมน์</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แตกปัญหาเป็น 3 ส่วน</div>
+        <pre class="code-block"><span class="cm">// ① พิมพ์หัว Su Mo Tu We Th Fr Sa
+
+// ② พิมพ์ช่องว่างนำหน้า
+//    start = 5 (พฤหัส)
+//    → ต้องเว้น 4 ช่องก่อนพิมพ์ 1
+//    → เว้น (start - 1) ช่อง
+
+// ③ พิมพ์ 1..31
+//    ขึ้นบรรทัดใหม่เมื่อถึงเสาร์
+//    → เมื่อไหร่ถึงเสาร์?</span></pre>
+      </div>
+      <div>
+        <div class="code-label">หา "เมื่อไหร่ขึ้นบรรทัดใหม่"</div>
+        <pre class="code-block"><span class="cm">// นับตำแหน่งคอลัมน์ (1-7)
+// วัน d อยู่คอลัมน์:
+//   (start - 1 + d) % 7
+//   ถ้า = 0 → คือเสาร์ → ขึ้นบรรทัด
+
+// เช็ค: start=1, d=7
+//   (0+7) % 7 = 0 → เสาร์ ✓
+// เช็ค: start=5, d=3
+//   (4+3) % 7 = 0 → เสาร์ ✓
+//   ตรงตัวอย่างในโจทย์!</span></pre>
+      </div>
+    </div>
+    <div class="callout">โจทย์ปฏิทินคือโจทย์ modulo แต่งตัว — หา pattern "ทุกๆ 7" ให้เจอ ที่เหลือคือ printf จัดคอลัมน์</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 ข้อ 3 เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 2 · ข้อ 3 เฉลย</div>
+    <h2 class="slide-title">ข้อ 3: โค้ดเต็ม</h2>
+    <pre class="code-block"><span class="kw">import</span> java.util.Scanner;
+
+<span class="kw">public class</span> <span class="fn">Calendar31</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        Scanner scanner = <span class="kw">new</span> <span class="fn">Scanner</span>(System.in);
+        System.out.<span class="fn">print</span>(<span class="st">"Enter started day: "</span>);
+        <span class="kw">int</span> start = scanner.<span class="fn">nextInt</span>();          <span class="cm">// 1=Su .. 7=Sa</span>
+
+        System.out.<span class="fn">println</span>(<span class="st">"Su\tMo\tTu\tWe\tTh\tFr\tSa"</span>);  <span class="cm">// ① หัวตาราง</span>
+
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">1</span>; i &lt; start; i++)          <span class="cm">// ② เว้น start-1 ช่อง</span>
+            System.out.<span class="fn">print</span>(<span class="st">"\t"</span>);
+
+        <span class="kw">for</span> (<span class="kw">int</span> d = <span class="nm">1</span>; d &lt;= <span class="nm">31</span>; d++) {          <span class="cm">// ③ พิมพ์วัน 1..31</span>
+            System.out.<span class="fn">print</span>(d + <span class="st">"\t"</span>);
+
+            <span class="kw">if</span> ((start - <span class="nm">1</span> + d) % <span class="nm">7</span> == <span class="nm">0</span>)      <span class="cm">// ถึงเสาร์ → ขึ้นบรรทัด</span>
+                System.out.<span class="fn">println</span>();
+        }
+    }
+}
+<span class="cm">/* Enter started day: 5
+   Su   Mo   Tu   We   Th   Fr   Sa
+                       1    2    3
+   4    5    6    7    8    9    10
+   11   12   13   14   15   16   17
+   ... ✓ ตรงตามตัวอย่างโจทย์ */</span></pre>
+    <div class="callout">3 loop สั้นๆ จบ — ถ้าเริ่มจากวิธีคิด (สไลด์ก่อน) โค้ดจะเขียนเองแทบอัตโนมัติ</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 String methods -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 2 · String</div>
+    <h2 class="slide-title">String methods ที่ต้องรู้ก่อนทำข้อ 4</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">methods หลัก</div>
+        <pre class="code-block">String s = <span class="st">"I am happy today"</span>;
+
+s.<span class="fn">length</span>()            <span class="cm">// 16</span>
+s.<span class="fn">charAt</span>(<span class="nm">2</span>)           <span class="cm">// 'a'</span>
+s.<span class="fn">contains</span>(<span class="st">"happy"</span>)   <span class="cm">// true</span>
+s.<span class="fn">indexOf</span>(<span class="st">"happy"</span>)    <span class="cm">// 5</span>
+s.<span class="fn">substring</span>(<span class="nm">5</span>, <span class="nm">10</span>)    <span class="cm">// "happy"</span>
+s.<span class="fn">split</span>(<span class="st">" "</span>)          <span class="cm">// ["I","am","happy","today"]</span>
+s.<span class="fn">replace</span>(<span class="st">"a"</span>, <span class="st">"@"</span>)   <span class="cm">// "I @m h@ppy tod@y"</span></pre>
+      </div>
+      <div>
+        <div class="code-label">สำคัญ: String เปลี่ยนค่าไม่ได้!</div>
+        <pre class="code-block"><span class="cm">// String ใน Java เป็น immutable</span>
+String s = <span class="st">"sad"</span>;
+s.<span class="fn">replace</span>(<span class="st">"sad"</span>, <span class="st">"happy"</span>);
+System.out.<span class="fn">println</span>(s);   <span class="cm">// "sad" ?!</span>
+
+<span class="cm">// replace คืนค่า String ใหม่
+// ต้องรับค่ากลับเสมอ:</span>
+s = s.<span class="fn">replace</span>(<span class="st">"sad"</span>, <span class="st">"happy"</span>);
+System.out.<span class="fn">println</span>(s);   <span class="cm">// "happy" ✓</span></pre>
+      </div>
+    </div>
+    <div class="callout">ลืมรับค่ากลับจาก replace/substring คือ bug อันดับ 1 ของมือใหม่ Java — method ของ String ไม่แก้ตัวเดิม แต่คืนตัวใหม่เสมอ</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 ข้อ 4 เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 2 · ข้อ 4 เฉลย</div>
+    <h2 class="slide-title">ข้อ 4: แทรก smiley หลัง happy / sad</h2>
+    <p class="slide-lead">โจทย์: <code class="inline-code">happy</code> → <code class="inline-code">happy :)</code> และ <code class="inline-code">sad</code> → <code class="inline-code">sad :(</code> ทุกคำที่เจอ</p>
+    <pre class="code-block"><span class="kw">import</span> java.util.Scanner;
+
+<span class="kw">public class</span> <span class="fn">Smiley</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        Scanner scanner = <span class="kw">new</span> <span class="fn">Scanner</span>(System.in);
+        System.out.<span class="fn">print</span>(<span class="st">"Enter sentence: "</span>);
+        String s = scanner.<span class="fn">nextLine</span>();       <span class="cm">// ต้อง nextLine เพราะมีช่องว่าง!</span>
+
+        s = s.<span class="fn">replace</span>(<span class="st">"happy"</span>, <span class="st">"happy :)"</span>); <span class="cm">// replace ทำทุกคำที่เจอให้เอง</span>
+        s = s.<span class="fn">replace</span>(<span class="st">"sad"</span>,   <span class="st">"sad :("</span>);
+
+        System.out.<span class="fn">println</span>(s);
+    }
+}
+<span class="cm">/* Enter sentence: I'm happy. You're sad.
+   I'm happy :). You're sad :(.  ✓
+
+   Enter sentence: If u r happy, i am happy too. But although u r sad, ...
+   If u r happy :), i am happy :) too. But although u r sad :(, ...  ✓ */</span></pre>
+    <div class="two-col" style="margin-top:8px">
+      <div>
+        <pre class="code-block"><span class="cm">// ทางเลือก: ทำเองด้วย split + loop
+// เผื่ออาจารย์ห้ามใช้ replace</span>
+String[] words = s.<span class="fn">split</span>(<span class="st">" "</span>);
+StringBuilder out = <span class="kw">new</span> <span class="fn">StringBuilder</span>();
+<span class="kw">for</span> (String w : words) {
+    out.<span class="fn">append</span>(w);
+    <span class="kw">if</span> (w.<span class="fn">contains</span>(<span class="st">"happy"</span>)) out.<span class="fn">append</span>(<span class="st">" :)"</span>);
+    <span class="kw">if</span> (w.<span class="fn">contains</span>(<span class="st">"sad"</span>))   out.<span class="fn">append</span>(<span class="st">" :("</span>);
+    out.<span class="fn">append</span>(<span class="st">" "</span>);
+}</pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">// ระวังเคสของ replace:
+// "happy." → replace เจอ "happy"
+// ใน "happy." ด้วย (substring match)
+// ผลคือ "happy :)." ตรงโจทย์พอดี ✓
+
+// แต่ถ้าโจทย์ต้องการ match
+// ทั้งคำเป๊ะๆ ต้องใช้ regex:
+// s.replaceAll("\\bhappy\\b", ...)</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9 สะพานเข้า OOP -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 2 · มองไปข้างหน้า</div>
+    <h2 class="slide-title">String ก็คือ Object! — สะพานเข้า OOP</h2>
+    <p class="slide-lead">สังเกตไหมว่าเราเรียก <code class="inline-code">s.length()</code> ไม่ใช่ <code class="inline-code">length(s)</code> — เพราะ String เป็น object ที่มี method ในตัว</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">C คิดแบบ function</div>
+        <pre class="code-block"><span class="cm">/* ข้อมูลกับฟังก์ชันแยกกัน */</span>
+<span class="kw">char</span> s[<span class="nm">20</span>] = <span class="st">"hello"</span>;
+<span class="fn">strlen</span>(s);      <span class="cm">/* ฟังก์ชันรับ data */</span>
+<span class="fn">strcpy</span>(d, s);
+
+<span class="cm">/* function(data) */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Java คิดแบบ object</div>
+        <pre class="code-block"><span class="cm">// ข้อมูลกับ method อยู่ด้วยกัน</span>
+String s = <span class="st">"hello"</span>;
+s.<span class="fn">length</span>();     <span class="cm">// data.method()</span>
+s.<span class="fn">toUpperCase</span>();
+
+<span class="cm">// object "รู้วิธีจัดการตัวเอง"
+// นี่แหละแก่นของ OOP
+// ที่จะเรียนเต็มๆ ใน Lab 3!</span></pre>
+      </div>
+    </div>
+    <div class="callout">Lab 2 ใช้ object ของคนอื่น (String, Scanner) — Lab 3 เราจะสร้าง class ของตัวเองบ้าง</div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">โจทย์ปฏิทิน ถ้าเปลี่ยนจาก "เดือน 31 วัน" เป็น<br>"รับจำนวนวันของเดือน (28/29/30/31) ด้วย"<br><br>ต้องแก้โค้ดกี่จุด? ตรงไหนบ้าง?<br><br><em>힌트: มีเลข 31 hardcode อยู่กี่ที่ในโค้ด?<br>ถ้าเขียนดีตั้งแต่แรก ควรแก้แค่จุดเดียว</em><br><br>นี่คือแนวคิด "แยกค่าคงที่ออกจาก logic" ที่จะสำคัญมากใน OOP</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 2 · MCQ</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
+    <pre class="code-block" style="margin-bottom:14px">String s = <span class="st">"sad sad happy"</span>;
+s.<span class="fn">replace</span>(<span class="st">"sad"</span>, <span class="st">"ok"</span>);
+System.out.<span class="fn">println</span>(s);</pre>
+    <div id="mc-l2" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-l2','A','C','❌ replace ทำทุกคำก็จริง แต่ดูดีๆ ว่ารับค่ากลับหรือเปล่า')">A) ok ok happy</button>
+      <button class="mc-btn" onclick="pickMC('mc-l2','B','C','❌ replace ไม่ได้แทนแค่ตัวแรก — แต่นั่นไม่ใช่ประเด็นของข้อนี้')">B) ok sad happy</button>
+      <button class="mc-btn" onclick="pickMC('mc-l2','C','C','✅ String เป็น immutable — replace คืน String ใหม่แต่ไม่มีใครรับ ค่า s เดิมไม่เปลี่ยน')">C) sad sad happy</button>
+      <button class="mc-btn" onclick="pickMC('mc-l2','D','C','❌ ไม่ error — โค้ด valid แค่ผลของ replace ถูกทิ้งไปเฉยๆ')">D) compile error</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px"><span class="cm">// s.replace(...) คืน String ใหม่ แต่ไม่มีตัวแปรรับ → ถูกทิ้ง
+// s ตัวเดิมไม่เปลี่ยน (immutable) → พิมพ์ "sad sad happy"
+
+// แก้ให้ถูก:</span>
+s = s.<span class="fn">replace</span>(<span class="st">"sad"</span>, <span class="st">"ok"</span>);   <span class="cm">// → "ok ok happy"</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 2 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① รับประโยคที่มีช่องว่างจากคีย์บอร์ด ต้องใช้ scanner.___()</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl2a" placeholder="method">
+      <button class="fill-btn" onclick="checkFill('fl2a','nextLine',['nextline','nextLine()'],[],'✅ nextLine() อ่านทั้งบรรทัดรวมช่องว่าง — nextInt/next หยุดที่ช่องว่าง','❌ ต้องใช้ nextLine() — nextInt() กับ next() หยุดที่ช่องว่าง')">ตรวจ</button>
+    </div>
+    <div id="fl2a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② แปลง char '7' เป็น int 7 เขียนว่า charAt(i) - ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl2b" placeholder="อะไร?">
+      <button class="fill-btn" onclick="checkFill('fl2b',&quot;'0'&quot;,['0','\'0\''],[],'✅ ลบด้วย char \'0\' — ASCII \'7\'(55) − \'0\'(48) = 7','❌ ลบด้วย \'0\' (char ศูนย์) — ใช้หลัก ASCII: \'7\' − \'0\' = 55 − 48 = 7')">ตรวจ</button>
+    </div>
+    <div id="fl2b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ ปฏิทิน: วัน d ตรงกับวันเสาร์เมื่อ (start − 1 + d) % ___ == 0</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl2c" placeholder="ตัวเลข">
+      <button class="fill-btn" onclick="checkFill('fl2c','7',['7'],[],'✅ % 7 เพราะสัปดาห์มี 7 วัน — pattern ซ้ำทุก 7','❌ % 7 — pattern วนซ้ำทุก 7 วัน (1 สัปดาห์)')">ตรวจ</button>
+    </div>
+    <div id="fl2c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔤</div>
+      <div class="summary-title">สรุป Lab 2 — Array &amp; String</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Scanner</div><div class="sum-body">nextInt() รับเลข · nextLine() รับทั้งบรรทัด (มีช่องว่างต้องใช้ตัวนี้)</div></div>
+        <div class="sum-card"><div class="sum-head">ข้อ 1 Digit Sum</div><div class="sum-body">วน charAt(i) − '0' บวกสะสม + ตัวคั่น "if (i>0)"</div></div>
+        <div class="sum-card"><div class="sum-head">ข้อ 2 Array 2D</div><div class="sum-body">loop นอก=แถว ใน=คอลัมน์ · println() จบแถว</div></div>
+        <div class="sum-card"><div class="sum-head">ข้อ 3 ปฏิทิน</div><div class="sum-body">เว้น start−1 ช่อง · ขึ้นบรรทัดเมื่อ (start−1+d)%7==0</div></div>
+        <div class="sum-card"><div class="sum-head">ข้อ 4 Smiley</div><div class="sum-body">nextLine + replace — และจำไว้ String เป็น immutable!</div></div>
+        <div class="sum-card"><div class="sum-head">สะพานเข้า OOP</div><div class="sum-body">s.length() คือ data.method() — String เป็น object อยู่แล้ว</div></div>
+      </div>
+      <a href="slides_ch3.html" class="summary-next">→ Lab 3: Class &amp; Object</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">Lab 2 — Array &amp; String</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Scanner','ข้อ 1 วิธีคิด','ข้อ 1 เฉลย','ข้อ 2 Array 2D','ข้อ 3 วิธีคิด','ข้อ 3 เฉลย','String methods','ข้อ 4 เฉลย','สะพานเข้า OOP','Think!','MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

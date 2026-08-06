@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 4 — Encapsulation | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>:root{--ca:#9b1d6a;--cal:#fce7f3;--cam:#d45fa0;}</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · OOP (02204172)</div>
+        <div class="cover-title">Lab 4<br><em>Encapsulation</em></div>
+        <div class="cover-subtitle">ปกป้องข้อมูลด้วย private + getter/setter — Date, BankAccount และร้านโชห่วย</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ทำไมต้อง private? — ปัญหาของ public</div>
+          <div class="topic-row"><div class="topic-dot"></div>getter / setter + validation</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 1: class Date (วัน 1-31, เดือน 1-12, ปี พ.ศ.)</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 2: BankAccount — deposit/withdraw/transfer</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 3: ร้านโชห่วย — Product + ระบบซื้อขาย</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">L4</div>
+        <div class="cover-badge">PRIVATE · GETTER · SETTER</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 ทำไมต้อง private -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 4 · แนวคิด</div>
+    <h2 class="slide-title">ปัญหาของ public — ใครก็พังข้อมูลได้</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แบบ Lab 3 (public หมด)</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">Date</span> {
+    <span class="kw">public int</span> day;
+    <span class="kw">public int</span> month;
+    <span class="kw">public int</span> year;
+}
+
+<span class="cm">// ใครก็ยัดค่าพังๆ ได้:</span>
+Date d = <span class="kw">new</span> <span class="fn">Date</span>();
+d.day = <span class="nm">99</span>;      <span class="cm">// วันที่ 99?!</span>
+d.month = -<span class="nm">5</span>;    <span class="cm">// เดือน -5?!</span>
+
+<span class="cm">// compile ผ่าน รันผ่าน
+// แต่ข้อมูลผิดเพี้ยนทั้งระบบ 💀</span></pre>
+      </div>
+      <div>
+        <div class="code-label">แบบ Encapsulation (Lab 4)</div>
+        <pre class="code-block"><span class="kw">public class</span> <span class="fn">Date</span> {
+    <span class="kw">private int</span> day;    <span class="cm">// ← ซ่อน!</span>
+    <span class="kw">private int</span> month;
+    <span class="kw">private int</span> year;
+
+    <span class="kw">public void</span> <span class="fn">setDay</span>(<span class="kw">int</span> d) {
+        <span class="kw">if</span> (d >= <span class="nm">1</span> && d &lt;= <span class="nm">31</span>)
+            day = d;   <span class="cm">// รับเฉพาะค่าดี</span>
+        <span class="cm">// ค่าเพี้ยน → ไม่รับ เก็บค่าเดิม</span>
+    }
+}
+
+d.day = <span class="nm">99</span>;      <span class="cm">// ❌ compile error!</span>
+d.<span class="fn">setDay</span>(<span class="nm">99</span>);    <span class="cm">// ✓ แต่ถูกปฏิเสธ</span></pre>
+      </div>
+    </div>
+    <div class="callout">Encapsulation = ซ่อน field เป็น private แล้วเปิด "ประตูที่มียาม" (getter/setter) — ยามคือ validation ที่คัดค่าเพี้ยนออก</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 getter setter pattern -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 4 · Pattern</div>
+    <h2 class="slide-title">Getter / Setter — สูตรมาตรฐาน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โครงสร้างพื้นฐาน</div>
+        <pre class="code-block"><span class="kw">private int</span> day;
+
+<span class="cm">// getter: อ่านค่า</span>
+<span class="kw">public int</span> <span class="fn">getDay</span>() {
+    <span class="kw">return</span> day;
+}
+
+<span class="cm">// setter: เขียนค่า (+ validation)</span>
+<span class="kw">public void</span> <span class="fn">setDay</span>(<span class="kw">int</span> day) {
+    <span class="kw">if</span> (day >= <span class="nm">1</span> && day &lt;= <span class="nm">31</span>)
+        <span class="kw">this</span>.day = day;
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">getter ไม่จำเป็นต้องคืนค่าดิบ</div>
+        <pre class="code-block"><span class="cm">// โจทย์ Date: "ปีต้องส่งกลับเป็น พ.ศ."
+// เก็บ ค.ศ. ข้างใน แต่ getter แปลงให้:</span>
+
+<span class="kw">private int</span> year;      <span class="cm">// เก็บ ค.ศ.</span>
+
+<span class="kw">public int</span> <span class="fn">getYear</span>() {
+    <span class="kw">return</span> year + <span class="nm">543</span>;  <span class="cm">// คืน พ.ศ.!</span>
+}
+
+<span class="cm">// คนใช้ไม่ต้องรู้ว่าข้างในเก็บยังไง
+// นี่คือพลังของ encapsulation:
+// เปลี่ยนข้างในได้โดยไม่กระทบคนใช้</span></pre>
+      </div>
+    </div>
+    <div class="callout">สูตรจำ: getX() คืนค่า · setX(v) ตรวจก่อนเซ็ต — IDE (IntelliJ/Eclipse) generate ให้ได้ แต่ validation ต้องเขียนเอง</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 ข้อ 1 เฉลย Date -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 4 · ข้อ 1 เฉลย</div>
+    <h2 class="slide-title">ข้อ 1: class Date ครบทุกเงื่อนไข</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">Date</span> {
+    <span class="kw">private int</span> day;
+    <span class="kw">private int</span> month;
+    <span class="kw">private int</span> year;                        <span class="cm">// เก็บเป็น ค.ศ.</span>
+
+    <span class="kw">public</span> <span class="fn">Date</span>(<span class="kw">int</span> day, <span class="kw">int</span> month, <span class="kw">int</span> year) {   <span class="cm">// constructor ตามโจทย์</span>
+        <span class="kw">this</span>.day = day;
+        <span class="kw">this</span>.month = month;
+        <span class="kw">this</span>.year = year;
+    }
+
+    <span class="kw">public int</span> <span class="fn">getDay</span>() { <span class="kw">return</span> day; }
+    <span class="kw">public void</span> <span class="fn">setDay</span>(<span class="kw">int</span> day) {
+        <span class="kw">if</span> (day >= <span class="nm">1</span> && day &lt;= <span class="nm">31</span>)          <span class="cm">// เงื่อนไข: 1-31 เท่านั้น</span>
+            <span class="kw">this</span>.day = day;                  <span class="cm">// นอกช่วง → เก็บค่าเดิม (ไม่ทำอะไร)</span>
+    }
+
+    <span class="kw">public int</span> <span class="fn">getMonth</span>() { <span class="kw">return</span> month; }
+    <span class="kw">public void</span> <span class="fn">setMonth</span>(<span class="kw">int</span> month) {
+        <span class="kw">if</span> (month >= <span class="nm">1</span> && month &lt;= <span class="nm">12</span>)      <span class="cm">// เงื่อนไข: 1-12 เท่านั้น</span>
+            <span class="kw">this</span>.month = month;
+    }
+
+    <span class="kw">public int</span> <span class="fn">getYear</span>() {
+        <span class="kw">return</span> year + <span class="nm">543</span>;                   <span class="cm">// เงื่อนไข: คืนเป็น พ.ศ.</span>
+    }
+    <span class="kw">public void</span> <span class="fn">setYear</span>(<span class="kw">int</span> year) { <span class="kw">this</span>.year = year; }
+
+    <span class="kw">public</span> String <span class="fn">getInfo</span>() {
+        <span class="kw">return</span> day + <span class="st">"/"</span> + month + <span class="st">"/"</span> + <span class="fn">getYear</span>();
+    }
+}</pre>
+  </div>
+</div>
+
+<!-- SLIDE 4 ข้อ 2 วิเคราะห์ BankAccount -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 4 · ข้อ 2</div>
+    <h2 class="slide-title">ข้อ 2: BankAccount — วิเคราะห์โจทย์ก่อน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์ต้องการ</div>
+        <pre class="code-block"><span class="cm">// field:
+//   name (ชื่อบัญชี)
+//   balance (เงินคงเหลือ)
+//   openDate (ใช้ Date จากข้อ 1!)
+
+// constructor 2 ตัว (overload):
+//   BankAccount(name)
+//     → เงิน 0, วันนี้
+//   BankAccount(name, amount, date)
+
+// methods:
+//   deposit(amount)      ฝาก
+//   withdraw(amount)     ถอน → boolean
+//   transfer(other, amt) โอน
+//   getBalance()         ดูเงิน
+//   getInfo()            ชื่อ+วันเปิด</span></pre>
+      </div>
+      <div>
+        <div class="code-label">จุดคิดสำคัญ</div>
+        <pre class="code-block"><span class="cm">// ① withdraw ต้องเช็คเงินพอ
+//    ถอนเกิน → คืน false ไม่หักเงิน
+
+// ② transfer = withdraw ตัวเอง
+//              + deposit ให้ other
+//    → reuse method ที่มีอยู่!
+//    ถ้า withdraw สำเร็จค่อย deposit
+
+// ③ balance ต้อง private
+//    ห้ามใครมาแก้เงินตรงๆ:
+//    acc.balance = 999999; ← ห้าม!
+
+// ④ Date จากข้อ 1 มาเป็น field
+//    = object ซ้อน object
+//    (composition — เจอเต็มๆ Lab 5)</span></pre>
+      </div>
+    </div>
+    <div class="callout">transfer อย่าเขียน logic ซ้ำ — เรียก withdraw + deposit ที่เขียนแล้ว ทั้งสั้นกว่าและแก้ bug ที่เดียว</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 ข้อ 2 เฉลย BankAccount -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 4 · ข้อ 2 เฉลย</div>
+    <h2 class="slide-title">ข้อ 2: โค้ด BankAccount</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">BankAccount</span> {
+    <span class="kw">private</span> String name;
+    <span class="kw">private double</span> balance;
+    <span class="kw">private</span> Date openDate;
+
+    <span class="kw">public</span> <span class="fn">BankAccount</span>(String name) {                  <span class="cm">// เปิดบัญชีเงิน 0 วันนี้</span>
+        <span class="kw">this</span>.name = name;
+        <span class="kw">this</span>.balance = <span class="nm">0</span>;
+        <span class="kw">this</span>.openDate = <span class="kw">new</span> <span class="fn">Date</span>(<span class="nm">19</span>, <span class="nm">7</span>, <span class="nm">2026</span>);     <span class="cm">// วันปัจจุบัน</span>
+    }
+    <span class="kw">public</span> <span class="fn">BankAccount</span>(String name, <span class="kw">double</span> amount, Date date) {
+        <span class="kw">this</span>.name = name;
+        <span class="kw">this</span>.balance = amount;
+        <span class="kw">this</span>.openDate = date;
+    }
+
+    <span class="kw">public void</span> <span class="fn">deposit</span>(<span class="kw">double</span> amount) {
+        <span class="kw">if</span> (amount > <span class="nm">0</span>) balance += amount;             <span class="cm">// กันฝากติดลบด้วย</span>
+    }
+
+    <span class="kw">public boolean</span> <span class="fn">withdraw</span>(<span class="kw">double</span> amount) {
+        <span class="kw">if</span> (amount &lt;= balance) {                       <span class="cm">// เช็คเงินพอตามโจทย์</span>
+            balance -= amount;
+            <span class="kw">return true</span>;                               <span class="cm">// คืนสถานะการถอน</span>
+        }
+        <span class="kw">return false</span>;
+    }
+
+    <span class="kw">public void</span> <span class="fn">transfer</span>(BankAccount other, <span class="kw">double</span> amount) {
+        <span class="kw">if</span> (<span class="fn">withdraw</span>(amount))                          <span class="cm">// reuse! ถอนสำเร็จ...</span>
+            other.<span class="fn">deposit</span>(amount);                     <span class="cm">// ...ค่อยฝากให้อีกบัญชี</span>
+    }
+
+    <span class="kw">public double</span> <span class="fn">getBalance</span>() { <span class="kw">return</span> balance; }   <span class="cm">// property ดึงเงินคงเหลือ</span>
+    <span class="kw">public</span> String <span class="fn">getInfo</span>() {
+        <span class="kw">return</span> name + <span class="st">" (opened "</span> + openDate.<span class="fn">getInfo</span>() + <span class="st">")"</span>;
+    }
+}</pre>
+  </div>
+</div>
+
+<!-- SLIDE 6 ข้อ 2 Test + trace -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 4 · ข้อ 2 ทดสอบ</div>
+    <h2 class="slide-title">ทดสอบตามโจทย์ + ไล่ผลลัพธ์</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">TestBank</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        BankAccount a1 = <span class="kw">new</span> <span class="fn">BankAccount</span>(<span class="st">"Somchai"</span>);                    <span class="cm">// เงิน 0, วันนี้</span>
+        BankAccount a2 = <span class="kw">new</span> <span class="fn">BankAccount</span>(<span class="st">"Somsri"</span>, <span class="nm">500</span>,
+                             <span class="kw">new</span> <span class="fn">Date</span>(<span class="nm">1</span>, <span class="nm">11</span>, <span class="nm">2015</span>));                <span class="cm">// 500 บาท, 1 พ.ย. 2015</span>
+
+        a1.<span class="fn">deposit</span>(<span class="nm">1000</span>);        <span class="cm">// a1: 0 → 1000</span>
+        a2.<span class="fn">transfer</span>(a1, <span class="nm">300</span>);    <span class="cm">// a2: 500 → 200, a1: 1000 → 1300</span>
+        a2.<span class="fn">withdraw</span>(<span class="nm">300</span>);        <span class="cm">// a2 มี 200 &lt; 300 → false ไม่หัก!</span>
+
+        System.out.<span class="fn">println</span>(a1.<span class="fn">getInfo</span>() + <span class="st">" balance: "</span> + a1.<span class="fn">getBalance</span>());
+        System.out.<span class="fn">println</span>(a2.<span class="fn">getInfo</span>() + <span class="st">" balance: "</span> + a2.<span class="fn">getBalance</span>());
+    }
+}
+<span class="cm">/* ── ไล่ทีละบรรทัด (ตอบ "จงบอกผลลัพธ์") ──
+   a1 เปิด 0 บาท → deposit 1000 → 1000
+   a2 เปิด 500 → โอนให้ a1 300 → a2=200, a1=1300
+   a2 ถอน 300 → มีแค่ 200 → withdraw คืน false เงินไม่เปลี่ยน
+
+   Somchai (opened 19/7/2569) balance: 1300.0
+   Somsri (opened 1/11/2558) balance: 200.0
+   ← ปีแสดงเป็น พ.ศ. เพราะ getYear() บวก 543! */</span></pre>
+    <div class="callout">จุดหลอกของโจทย์: ถอน 300 จากบัญชีที่เหลือ 200 — ต้องไม่หัก! ถ้าโค้ดใครได้ −100 แสดงว่าลืมเช็คใน withdraw</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 ข้อ 3 วิเคราะห์ร้านโชห่วย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 4 · ข้อ 3</div>
+    <h2 class="slide-title">ข้อ 3: ร้านโชห่วย — แผนก่อนเขียน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์แตกเป็น 4 ส่วน</div>
+        <pre class="code-block"><span class="cm">// a) class Product
+//    code, name, price + get/set
+
+// b) สินค้า 5 ชิ้น รหัส 0,10,20,30,40
+//    รหัส 0  = Mama 5.5   (fix ในโค้ด)
+//    รหัส 10 = Lays 10.5  (fix ในโค้ด)
+//    รหัส 20,30,40 รับจากคีย์บอร์ด
+
+// c) วนแสดงสินค้าทั้งหมด
+
+// d) วนรับซื้อจนกว่าจะใส่ -1
+//    → รวมราคา แล้วสรุปยอด</span></pre>
+      </div>
+      <div>
+        <div class="code-label">เคล็ด: map รหัส → index</div>
+        <pre class="code-block"><span class="cm">// รหัสคือ 0,10,20,30,40
+// เก็บใน array 5 ช่อง index 0-4
+
+// แปลงรหัส → index:
+//   index = code / 10
+//   0→0, 10→1, 20→2, 30→3, 40→4 ✓
+
+// ตอนซื้อ: รับ code มา
+//   products[code / 10]
+//   → ได้ Product ตัวนั้นทันที O(1)
+
+// ไม่ต้อง if-else 5 ชั้น!</span></pre>
+      </div>
+    </div>
+    <div class="callout">เห็น pattern รหัสห่างเท่ากัน (0,10,20,...) → แปลงเป็น index ด้วยการหาร — โจทย์จงใจออกแบบให้ใช้ท่านี้</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 ข้อ 3 เฉลย Product -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 4 · ข้อ 3 เฉลย (1/2)</div>
+    <h2 class="slide-title">ข้อ 3.1-3.3: Product + กำหนดสินค้า</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">Product</span> {                             <span class="cm">// 3.1 นิยาม Product</span>
+    <span class="kw">private int</span> code;
+    <span class="kw">private</span> String name;
+    <span class="kw">private double</span> price;
+
+    <span class="kw">public</span> <span class="fn">Product</span>(<span class="kw">int</span> code, String name, <span class="kw">double</span> price) {
+        <span class="kw">this</span>.code = code;
+        <span class="kw">this</span>.name = name;
+        <span class="kw">this</span>.price = price;
+    }
+    <span class="kw">public int</span> <span class="fn">getCode</span>() { <span class="kw">return</span> code; }
+    <span class="kw">public</span> String <span class="fn">getName</span>() { <span class="kw">return</span> name; }
+    <span class="kw">public double</span> <span class="fn">getPrice</span>() { <span class="kw">return</span> price; }
+    <span class="kw">public void</span> <span class="fn">setName</span>(String name) { <span class="kw">this</span>.name = name; }
+    <span class="kw">public void</span> <span class="fn">setPrice</span>(<span class="kw">double</span> price) { <span class="kw">this</span>.price = price; }
+}
+
+<span class="cm">// ── ใน main ──</span>
+Scanner sc = <span class="kw">new</span> <span class="fn">Scanner</span>(System.in);
+Product[] products = <span class="kw">new</span> Product[<span class="nm">5</span>];               <span class="cm">// 3.2 array 5 ช่อง</span>
+
+products[<span class="nm">0</span>] = <span class="kw">new</span> <span class="fn">Product</span>(<span class="nm">0</span>,  <span class="st">"Mama"</span>, <span class="nm">5.5</span>);      <span class="cm">// 3.3 รหัส 0, 10 fix ค่า</span>
+products[<span class="nm">1</span>] = <span class="kw">new</span> <span class="fn">Product</span>(<span class="nm">10</span>, <span class="st">"Lays"</span>, <span class="nm">10.5</span>);
+
+System.out.<span class="fn">println</span>(<span class="st">"======== Enter Products detail========"</span>);
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">2</span>; i &lt; <span class="nm">5</span>; i++) {                    <span class="cm">// รหัส 20,30,40 รับจากคีย์บอร์ด</span>
+    <span class="kw">int</span> code = i * <span class="nm">10</span>;                             <span class="cm">// index → รหัส</span>
+    System.out.<span class="fn">println</span>(<span class="st">"Product code "</span> + code);
+    System.out.<span class="fn">print</span>(<span class="st">"name:"</span>);
+    String name = sc.<span class="fn">next</span>();
+    System.out.<span class="fn">print</span>(<span class="st">"price:"</span>);
+    <span class="kw">double</span> price = sc.<span class="fn">nextDouble</span>();
+    products[i] = <span class="kw">new</span> <span class="fn">Product</span>(code, name, price);
+}</pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 ข้อ 3 เฉลยต่อ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 4 · ข้อ 3 เฉลย (2/2)</div>
+    <h2 class="slide-title">ข้อ 3.4-3.5: แสดงรายการ + รับซื้อจนใส่ −1</h2>
+    <pre class="code-block"><span class="cm">// 3.4 วนแสดงสินค้าทั้งหมด</span>
+System.out.<span class="fn">println</span>(<span class="st">"========== List of Products ==========="</span>);
+<span class="kw">for</span> (Product p : products) {
+    System.out.<span class="fn">println</span>(<span class="st">"Product code "</span> + p.<span class="fn">getCode</span>());
+    System.out.<span class="fn">println</span>(<span class="st">"Name:"</span> + p.<span class="fn">getName</span>() + <span class="st">" , Price: "</span> + p.<span class="fn">getPrice</span>());
+}
+
+<span class="cm">// 3.5 วนรับซื้อจนกว่าจะใส่ -1 (sentinel loop)</span>
+System.out.<span class="fn">println</span>(<span class="st">"===== What do you want to buy? ======"</span>);
+System.out.<span class="fn">println</span>(<span class="st">"Enter product code (press -1 to exit)"</span>);
+
+<span class="kw">double</span> total = <span class="nm">0</span>;
+<span class="kw">while</span> (<span class="kw">true</span>) {
+    System.out.<span class="fn">print</span>(<span class="st">"Product Code:"</span>);
+    <span class="kw">int</span> code = sc.<span class="fn">nextInt</span>();
+
+    <span class="kw">if</span> (code == -<span class="nm">1</span>) <span class="kw">break</span>;                       <span class="cm">// เงื่อนไขออกจาก loop</span>
+
+    Product p = products[code / <span class="nm">10</span>];              <span class="cm">// รหัส → index ทันที O(1)</span>
+    System.out.<span class="fn">print</span>(<span class="st">"Amount of "</span> + p.<span class="fn">getName</span>() + <span class="st">":"</span>);
+    <span class="kw">int</span> amount = sc.<span class="fn">nextInt</span>();
+
+    total += p.<span class="fn">getPrice</span>() * amount;              <span class="cm">// สะสมราคารวม</span>
+}
+System.out.<span class="fn">println</span>(<span class="st">"You have to pay "</span> + total + <span class="st">" Bath"</span>);
+
+<span class="cm">/* Product Code:20 → Amount of Magnum:2   (40×2 = 80)
+   Product Code:0  → Amount of Mama:2     (5.5×2 = 11)
+   Product Code:-1
+   You have to pay 91.0 Bath  ✓ ตรงโจทย์เป๊ะ */</span></pre>
+    <div class="callout">Pattern "วนจนเจอค่าพิเศษ" (sentinel loop): while(true) + if(x == -1) break — ใช้บ่อยมากในโจทย์รับ input ไม่จำกัดจำนวน</div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Think! -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">BankAccount มี getBalance() แต่ไม่มี setBalance()<br><br>
+ทำไมถึงจงใจไม่ให้มี setter ของ balance?<br><br>
+<em>힌트: ถ้ามี setBalance ใครก็เขียน<br>acc.setBalance(999999) ได้...<br>แล้วเงินควรเปลี่ยนผ่านทางไหนเท่านั้น?</em><br><br>
+นี่เรียกว่า "read-only property" — บาง field ควรอ่านได้แต่ห้ามเซ็ตตรงๆ ต้องผ่าน business logic (deposit/withdraw) เท่านั้น</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 4 · MCQ</div>
+    <h2 class="slide-title">Date d = new Date(15, 6, 2020); d.setDay(45); — getDay() ได้อะไร?</h2>
+    <div id="mc-l4" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-l4','A','B','❌ 45 เกินช่วง 1-31 — setter ต้องปฏิเสธตามโจทย์')">A) 45</button>
+      <button class="mc-btn" onclick="pickMC('mc-l4','B','B','✅ 15 — setDay(45) ไม่ผ่าน validation (1-31) จึง \"กำหนดค่าเป็นวันเดิม\" ตามโจทย์เป๊ะ')">B) 15</button>
+      <button class="mc-btn" onclick="pickMC('mc-l4','C','B','❌ ไม่ throw exception — โจทย์บอกให้เก็บค่าเดิมเฉยๆ (silent reject)')">C) โปรแกรม error</button>
+      <button class="mc-btn" onclick="pickMC('mc-l4','D','B','❌ ไม่ใช่ 0 — ค่าเดิม 15 จาก constructor ยังอยู่')">D) 0</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px"><span class="kw">public void</span> <span class="fn">setDay</span>(<span class="kw">int</span> day) {
+    <span class="kw">if</span> (day >= <span class="nm">1</span> && day &lt;= <span class="nm">31</span>)   <span class="cm">// 45 ไม่ผ่านเงื่อนไข</span>
+        <span class="kw">this</span>.day = day;           <span class="cm">// → บรรทัดนี้ไม่ทำงาน</span>
+}                                 <span class="cm">// → day ยังเป็น 15 เดิม</span></pre>
+  </div>
+</div>
+
+<!-- SLIDE 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 4 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① ซ่อน field ไม่ให้ภายนอกเข้าถึงตรงๆ ใช้ access modifier ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl4a" placeholder="keyword">
+      <button class="fill-btn" onclick="checkFill('fl4a','private',['private'],[],'✅ private — เข้าถึงได้เฉพาะในคลาสตัวเอง ภายนอกต้องผ่าน getter/setter','❌ คือ private — หัวใจของ encapsulation')">ตรวจ</button>
+    </div>
+    <div id="fl4a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② getYear() คืนเป็น พ.ศ. ทั้งที่เก็บ ค.ศ. — ต้อง return year + ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl4b" placeholder="ตัวเลข">
+      <button class="fill-btn" onclick="checkFill('fl4b','543',['543'],[],'✅ พ.ศ. = ค.ศ. + 543 — getter แปลงค่าก่อนคืนได้ คนใช้ไม่ต้องรู้ว่าข้างในเก็บอะไร','❌ + 543 (พ.ศ. = ค.ศ. + 543)')">ตรวจ</button>
+    </div>
+    <div id="fl4b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ transfer ควรเรียก method ___ ก่อน แล้วถ้าสำเร็จค่อย deposit ให้อีกบัญชี</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fl4c" placeholder="method">
+      <button class="fill-btn" onclick="checkFill('fl4c','withdraw',['withdraw()','withdraw'],[],'✅ if (withdraw(amount)) other.deposit(amount); — reuse ไม่เขียน logic ซ้ำ','❌ คือ withdraw — โอน = ถอนตัวเอง (เช็คเงินพอในตัว) + ฝากให้เขา')">ตรวจ</button>
+    </div>
+    <div id="fl4c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔒</div>
+      <div class="summary-title">สรุป Lab 4 — Encapsulation</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">ทำไม private</div><div class="sum-body">public = ใครก็ยัดค่าพังได้ · private + setter = มียามคัดกรอง</div></div>
+        <div class="sum-card"><div class="sum-head">Getter / Setter</div><div class="sum-body">getX() อ่าน · setX(v) ตรวจก่อนเซ็ต — ค่าเพี้ยนเก็บค่าเดิม</div></div>
+        <div class="sum-card"><div class="sum-head">Getter แปลงค่าได้</div><div class="sum-body">เก็บ ค.ศ. คืน พ.ศ. — ข้างในเปลี่ยนได้โดยคนใช้ไม่กระทบ</div></div>
+        <div class="sum-card"><div class="sum-head">BankAccount</div><div class="sum-body">withdraw เช็คเงินพอคืน boolean · transfer = reuse withdraw+deposit</div></div>
+        <div class="sum-card"><div class="sum-head">Read-only</div><div class="sum-body">balance มี getter ไม่มี setter — เงินเปลี่ยนผ่าน business logic เท่านั้น</div></div>
+        <div class="sum-card"><div class="sum-head">ร้านโชห่วย</div><div class="sum-body">รหัส/10 = index · sentinel loop รับซื้อจน −1 · สะสม total</div></div>
+      </div>
+      <a href="slides_ch5.html" class="summary-next">→ Lab 5: Class Relationships</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">Lab 4 — Encapsulation</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ทำไม private','Getter/Setter','ข้อ 1 Date เฉลย','ข้อ 2 วิเคราะห์','ข้อ 2 BankAccount เฉลย','ข้อ 2 ทดสอบ+trace','ข้อ 3 วิเคราะห์','ข้อ 3 เฉลย 1/2','ข้อ 3 เฉลย 2/2','Think!','MCQ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
