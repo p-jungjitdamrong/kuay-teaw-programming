@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 10 — Event Handling | ติวสอบ OOP Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#0f766e;--cal:#dcf5f2;--cam:#3fa89e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🎭 ติวสอบ Final · 02204172 OOP (Java)</div>
+        <div class="cover-title">ติวบทที่ 10<br><em>Event Handling</em></div>
+        <div class="cover-subtitle">กดปุ่มแล้วเกิดอะไรขึ้น — AWT/Swing และ ActionListener 3 ขั้นตอน</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>AWT → Swing (ประวัติที่ออกปรนัย)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Event Source / Listener / Object</div>
+          <div class="topic-row"><div class="topic-dot"></div>ActionListener — 3 ขั้นที่ต้องครบ</div>
+          <div class="topic-row"><div class="topic-dot"></div>getSource() vs getActionCommand()</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลยโครง Calculator จาก lab 10</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">O10</div>
+        <div class="cover-badge">GUI · EVENT</div>
+        <div class="cover-slides-count">11 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 AWT Swing -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · ประวัติ</div>
+    <h2 class="slide-title">AWT → Swing — เรื่องเล่าที่กลายเป็นข้อปรนัย</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">AWT (Java 1.0)</div>
+        <pre class="code-block">AWT = Abstract Window Toolkit
+
+"เรียกใช้ native GUI Toolkit
+ ของแต่ละ platform อีกที
+ (Windows, Macintosh, Solaris)"
+
+ทฤษฎี: "Write once, run anywhere"
+       หน้าตาต่างกันตาม platform
+
+ความจริง (สไลด์เขียนเอง):
+• ส่วนประกอบแต่ละ platform ไม่เท่ากัน
+  (linux น้อยกว่า Windows/Mac)
+• การตอบสนองต่างกัน
+• มี bug ต่างกันในแต่ละ platform
+→ <b>"Write once, debug everywhere"</b> 😅</pre>
+      </div>
+      <div>
+        <div class="code-label">Swing (ร่วมกับ Netscape)</div>
+        <pre class="code-block">"บริษัทซันขอความร่วมมือจาก Netscape
+ ใช้ชื่อโปรเจ็คว่า Swing"
+
+ข้อสำคัญ (ข้อสอบชอบหลอก):
+<b>Swing ไม่ได้แทนที่ AWT</b>
+ — Swing ถูกพัฒนา "บนสถาปัตยกรรม
+   ของ AWT" และยังใช้
+   event handling จาก AWT อยู่
+
+ข้อดีของ Swing:
+① component หลากหลายกว่า
+② ขึ้นกับ platform น้อย → bug น้อย
+③ หน้าตาเหมือนกันทุก platform
+   (ซึ่งเป็นข้อเสียด้วย → จึงมี
+    library "look and feel" ให้เลือก)</pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดหลอกอันดับ 1 ของบทนี้:</b> "Swing มาแทนที่ AWT ทั้งหมด" → <b>ผิด!</b> Swing สร้างบน AWT และยังใช้ event handling ของ AWT · สังเกตชื่อคลาส: <code class="inline-code">ActionListener</code>, <code class="inline-code">ActionEvent</code> อยู่ใน <code class="inline-code">java.awt.event</code> ไม่ใช่ javax.swing</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 event model -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · แบบจำลอง</div>
+    <h2 class="slide-title">Event Handling ทำงานยังไง — 3 ตัวละคร</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">flow ตามสไลด์</div>
+        <pre class="code-block">① ระบบปฏิบัติการ "เฝ้าดูเหตุการณ์"
+   (คลิกเมาส์ กดคีย์บอร์ด)
+② OS แยกประเภทและส่งไปยัง
+   "โปรแกรมที่ถูกต้อง"
+③ โปรแกรมที่ได้รับแจ้ง
+   "จัดการกับเหตุการณ์นั้น"</pre>
+        <div class="diagram">ผู้ใช้คลิกปุ่ม
+     │
+     ▼
+Event Source  (JButton ที่ถูกคลิก)
+     │  สร้าง ActionEvent
+     ▼
+Event Object  (ข้อมูลของเหตุการณ์)
+     │  ส่งให้
+     ▼
+Event Listener (คลาสที่ implements
+     ActionListener) → actionPerformed()</pre>
+      </div>
+      <div>
+        <div class="code-label">3 ศัพท์ที่ต้องแยกออก</div>
+        <pre class="code-block">Event Source
+  = ตัวที่ "ทำให้เกิด" เหตุการณ์
+    เช่น JButton, JTextField
+
+Event Object
+  = วัตถุที่เก็บ "ข้อมูลของเหตุการณ์"
+    เช่น ActionEvent
+    (รู้ว่าใครถูกกด เวลาไหน)
+
+Event Listener
+  = ตัวที่ "รอฟังและจัดการ"
+    คลาสที่ implements ActionListener
+    ต้องเขียน actionPerformed(ActionEvent e)
+
+<span class="cm">/* ต้อง "ลงทะเบียน" listener กับ source ก่อน:
+   button.addActionListener(listener);
+   ไม่ลงทะเบียน = กดปุ่มแล้วเงียบ! */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ทำไม event ใช้ interface:</b> ActionListener คือ interface (บท 7!) — คลาสไหนก็ได้ที่ implements แล้วเขียน actionPerformed() ก็เป็น listener ได้ · นี่คือ polymorphism ทำงานจริงในไลบรารีมาตรฐาน</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 3 ขั้น -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · ท่าบังคับ</div>
+    <h2 class="slide-title">ActionListener — 3 ขั้นที่ขาดข้อไหนก็ไม่ทำงาน</h2>
+    <pre class="code-block"><span class="kw">import</span> java.awt.event.*;      <span class="cm">// ← ActionListener/ActionEvent อยู่ที่ awt!</span>
+<span class="kw">import</span> javax.swing.*;
+
+<span class="kw">public class</span> <span class="fn">Demo</span> <span class="kw">extends</span> JFrame <span class="kw">implements</span> ActionListener {  <span class="cm">// ① implements</span>
+    <span class="kw">private</span> JButton btn;
+    <span class="kw">private</span> JTextField field;
+
+    <span class="kw">public</span> <span class="fn">Demo</span>() {
+        btn = <span class="kw">new</span> <span class="fn">JButton</span>(<span class="st">"Click"</span>);
+        field = <span class="kw">new</span> <span class="fn">JTextField</span>(<span class="nm">10</span>);
+        btn.<span class="fn">addActionListener</span>(<span class="kw">this</span>);        <span class="cm">// ② ลงทะเบียน (this = ตัวเองเป็น listener)</span>
+
+        JPanel pane = <span class="kw">new</span> <span class="fn">JPanel</span>();
+        pane.<span class="fn">add</span>(field);
+        pane.<span class="fn">add</span>(btn);
+        <span class="fn">add</span>(pane);
+        <span class="fn">setSize</span>(<span class="nm">250</span>, <span class="nm">120</span>);
+        <span class="fn">setDefaultCloseOperation</span>(JFrame.EXIT_ON_CLOSE);
+        <span class="fn">setVisible</span>(<span class="kw">true</span>);
+    }
+
+    <span class="kw">public void</span> <span class="fn">actionPerformed</span>(ActionEvent e) {   <span class="cm">// ③ เขียน method (บังคับ!)</span>
+        field.<span class="fn">setText</span>(<span class="st">"ถูกกดแล้ว!"</span>);
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) { <span class="kw">new</span> <span class="fn">Demo</span>(); }
+}</pre>
+    <div class="exam"><b>3 ขั้นที่ข้อสอบชอบเว้นให้เติม:</b> ① <code class="inline-code">implements ActionListener</code> ② <code class="inline-code">btn.addActionListener(this)</code> ③ <code class="inline-code">public void actionPerformed(ActionEvent e)</code> — ขาดข้อ ① หรือ ③ = compile error · ขาดข้อ ② = compile ผ่านแต่กดปุ่มไม่มีอะไรเกิดขึ้น (bug เงียบ!)</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 getSource -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · หลายปุ่ม</div>
+    <h2 class="slide-title">ปุ่มหลายตัวใช้ listener เดียว — แยกด้วยอะไร?</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">วิธี 1: getSource() — เทียบ object</div>
+        <pre class="code-block"><span class="kw">public void</span> <span class="fn">actionPerformed</span>(ActionEvent e) {
+    <span class="kw">if</span> (e.<span class="fn">getSource</span>() == btnAdd) {
+        <span class="cm">// ปุ่มบวก</span>
+    } <span class="kw">else if</span> (e.<span class="fn">getSource</span>() == btnSub) {
+        <span class="cm">// ปุ่มลบ</span>
+    }
+}
+
+<span class="cm">/* getSource() คืน Object
+   → เทียบด้วย == (เทียบ reference
+     ว่าเป็น "ตัวเดียวกัน" ไหม)
+   ปลอดภัยกว่า ไม่พลาดเรื่องข้อความ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">วิธี 2: getActionCommand() — เทียบข้อความ</div>
+        <pre class="code-block"><span class="kw">public void</span> <span class="fn">actionPerformed</span>(ActionEvent e) {
+    String cmd = e.<span class="fn">getActionCommand</span>();
+    <span class="kw">if</span> (cmd.<span class="fn">equals</span>(<span class="st">"+"</span>)) { ... }
+    <span class="kw">else if</span> (cmd.<span class="fn">equals</span>(<span class="st">"="</span>)) { ... }
+}
+
+<span class="cm">/* getActionCommand() คืน String
+   = ข้อความบนปุ่ม (label) โดยปริยาย
+   → เทียบด้วย .equals() ไม่ใช่ ==
+     (String! บทเรียนจาก midterm) */</span>
+
+<span class="cm">/* เหมาะกับเครื่องคิดเลข —
+   ปุ่มตัวเลข 0-9 ใช้ command
+   เป็นตัวเลขบนปุ่มได้เลย */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดหลอกที่โยงกลับ midterm:</b> getActionCommand() คืน String → ต้องเทียบด้วย <code class="inline-code">.equals()</code> · ใช้ <code class="inline-code">==</code> อาจได้ false แม้ข้อความเหมือนกัน (คนละ object) — ข้อสอบชอบเอาจุดนี้มาผสม</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 Calculator -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · เฉลย lab 10</div>
+    <h2 class="slide-title">เฉลยโครง Calculator — ตามที่โจทย์กำหนด</h2>
+    <pre class="code-block"><span class="kw">public class</span> <span class="fn">Calculator</span> <span class="kw">extends</span> JFrame <span class="kw">implements</span> ActionListener {
+    <span class="kw">private</span> JButton button_1, button_2, ..., button_0;   <span class="cm">// component เป็น field ตามโจทย์</span>
+    <span class="kw">private</span> JButton btnAdd, btnSub, btnMul, btnDiv, btnEq, btnClear;
+    <span class="kw">private</span> JTextField display;
+    <span class="kw">private double</span> num1 = <span class="nm">0</span>;          <span class="cm">// ตัวเลขตัวแรก</span>
+    <span class="kw">private</span> String op = <span class="st">""</span>;           <span class="cm">// เครื่องหมายที่กดค้างไว้</span>
+
+    <span class="kw">public</span> <span class="fn">Calculator</span>(String title) {
+        <span class="kw">super</span>(title);                                <span class="cm">// ตั้งชื่อหน้าต่าง</span>
+        display = <span class="kw">new</span> <span class="fn">JTextField</span>(<span class="nm">15</span>);
+        button_1 = <span class="kw">new</span> <span class="fn">JButton</span>(<span class="st">"1"</span>);
+        button_1.<span class="fn">addActionListener</span>(<span class="kw">this</span>);           <span class="cm">// ลงทะเบียน "ทุกปุ่ม"</span>
+        <span class="cm">// ... ปุ่มอื่นทำเหมือนกัน ...</span>
+
+        JPanel panel = <span class="kw">new</span> <span class="fn">JPanel</span>(<span class="kw">new</span> <span class="fn">GridLayout</span>(<span class="nm">4</span>, <span class="nm">4</span>));  <span class="cm">// ปุ่มเรียงตาราง</span>
+        panel.<span class="fn">add</span>(button_1); <span class="cm">/* ... */</span>
+        <span class="fn">add</span>(display, BorderLayout.NORTH);            <span class="cm">// จอบน</span>
+        <span class="fn">add</span>(panel, BorderLayout.CENTER);             <span class="cm">// ปุ่มกลาง</span>
+        <span class="fn">setSize</span>(<span class="nm">300</span>, <span class="nm">350</span>);
+        <span class="fn">setDefaultCloseOperation</span>(JFrame.EXIT_ON_CLOSE);
+        <span class="fn">setVisible</span>(<span class="kw">true</span>);
+    }
+
+    <span class="kw">public void</span> <span class="fn">actionPerformed</span>(ActionEvent e) {
+        String cmd = e.<span class="fn">getActionCommand</span>();
+        <span class="kw">if</span> (cmd.<span class="fn">matches</span>(<span class="st">"[0-9]"</span>)) {                    <span class="cm">// กดตัวเลข → ต่อท้ายจอ</span>
+            display.<span class="fn">setText</span>(display.<span class="fn">getText</span>() + cmd);
+        } <span class="kw">else if</span> (cmd.<span class="fn">equals</span>(<span class="st">"="</span>)) {                  <span class="cm">// กด = → คำนวณ</span>
+            <span class="kw">double</span> num2 = Double.<span class="fn">parseDouble</span>(display.<span class="fn">getText</span>());
+            <span class="kw">double</span> result = <span class="nm">0</span>;
+            <span class="kw">switch</span> (op) {
+                <span class="kw">case</span> <span class="st">"+"</span>: result = num1 + num2; <span class="kw">break</span>;
+                <span class="kw">case</span> <span class="st">"-"</span>: result = num1 - num2; <span class="kw">break</span>;
+                <span class="kw">case</span> <span class="st">"*"</span>: result = num1 * num2; <span class="kw">break</span>;
+                <span class="kw">case</span> <span class="st">"/"</span>:
+                    <span class="kw">if</span> (num2 == <span class="nm">0</span>) { display.<span class="fn">setText</span>(<span class="st">"Error"</span>); <span class="kw">return</span>; }  <span class="cm">// บท 9!</span>
+                    result = num1 / num2; <span class="kw">break</span>;
+            }
+            display.<span class="fn">setText</span>(String.<span class="fn">valueOf</span>(result));
+        } <span class="kw">else if</span> (cmd.<span class="fn">equals</span>(<span class="st">"C"</span>)) {                  <span class="cm">// เคลียร์</span>
+            display.<span class="fn">setText</span>(<span class="st">""</span>); num1 = <span class="nm">0</span>; op = <span class="st">""</span>;
+        } <span class="kw">else</span> {                                       <span class="cm">// เครื่องหมาย + − × ÷</span>
+            num1 = Double.<span class="fn">parseDouble</span>(display.<span class="fn">getText</span>());
+            op = cmd;
+            display.<span class="fn">setText</span>(<span class="st">""</span>);
+        }
+    }
+}</pre>
+    <div class="exam"><b>โครงที่ให้คะแนน:</b> ① extends JFrame + implements ActionListener ② component เป็น field (โจทย์กำหนด) ③ addActionListener ทุกปุ่ม ④ actionPerformed แยกกรณีด้วย getActionCommand ⑤ เช็คหารศูนย์ (ผูกกับบท 9)</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 listener แบบอื่น -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · Listener อื่นๆ</div>
+    <h2 class="slide-title">Listener ตระกูลอื่นที่ควรรู้จักชื่อ</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block">ActionListener   → actionPerformed()
+   กดปุ่ม / Enter ใน JTextField
+
+MouseListener    → mouseClicked()
+   mousePressed(), mouseReleased(),
+   mouseEntered(), mouseExited()
+   ← ต้องเขียนครบ 5 method!
+
+KeyListener      → keyPressed()
+   keyReleased(), keyTyped()
+
+WindowListener   → windowClosing() ฯลฯ
+
+ItemListener     → itemStateChanged()
+   JCheckBox, JComboBox</pre>
+      </div>
+      <div>
+        <div class="code-label">ปัญหา "ต้องเขียนครบทุก method"</div>
+        <pre class="code-block"><span class="cm">/* implements MouseListener
+   → ต้องเขียนครบ 5 method
+     แม้ใช้จริงแค่ 1
+
+   ทางแก้: ใช้ Adapter class
+   (abstract class ที่เขียน method
+    ว่างๆ ไว้ให้หมดแล้ว) */</span>
+
+<span class="kw">class</span> <span class="fn">MyMouse</span> <span class="kw">extends</span> MouseAdapter {
+    <span class="kw">public void</span> <span class="fn">mouseClicked</span>(MouseEvent e) {
+        <span class="cm">// เขียนแค่ตัวที่ใช้!</span>
+    }
+}
+<span class="cm">/* แต่ extends ได้แม่เดียว —
+   ถ้า class ไป extends JFrame แล้ว
+   ใช้ Adapter ไม่ได้ ต้อง implements
+   ← trade-off ของบท 7 กลับมา */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ทำไม ActionListener นิยมสุด:</b> มี method เดียว (actionPerformed) — implements แล้วเขียนตัวเดียวจบ ไม่ต้องพึ่ง Adapter · ข้อสอบเขียนโค้ดจึงมักใช้ ActionListener</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">เพื่อนเขียนโปรแกรมมี JButton แล้วบ่นว่า<br>"compile ผ่าน หน้าต่างขึ้น ปุ่มก็เห็น แต่กดแล้วไม่มีอะไรเกิดขึ้นเลย"<br><br>
+ขาดอะไร?<br><br>
+<em>ใบ้: ไล่ 3 ขั้นของ ActionListener<br>
+① implements ActionListener — ถ้าขาด compile ไม่ผ่าน ✓ ผ่านแล้ว<br>
+③ actionPerformed() — ถ้าขาด compile ไม่ผ่าน ✓ ผ่านแล้ว<br>
+เหลือข้อเดียวที่ "ขาดแล้วยัง compile ผ่าน"...</em><br><br>
+คำตอบ: ลืม <code style="font-family:monospace;background:var(--cal);padding:2px 8px;border-radius:6px">btn.addActionListener(this)</code> — ปุ่มไม่รู้จักคนฟัง</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ข้อใดถูกต้องเกี่ยวกับ Swing และ AWT?</h2>
+    <div id="mc-o10" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-o10','A','C','❌ Swing ไม่ได้แทนที่ AWT — สไลด์ระบุชัดว่า "Swing ไม่ได้แทนที่ AWT"')">A) Swing มาแทนที่ AWT ทั้งหมด</button>
+      <button class="mc-btn" onclick="pickMC('mc-o10','B','C','❌ กลับกัน — AWT ต่างหากที่เรียก native toolkit ของแต่ละ platform')">B) AWT ไม่ขึ้นกับ platform เลย</button>
+      <button class="mc-btn" onclick="pickMC('mc-o10','C','C','✅ Swing ถูกพัฒนาบนสถาปัตยกรรมของ AWT และยังใช้ event handling ของ AWT อยู่ (ActionListener อยู่ใน java.awt.event)')">C) Swing สร้างบน AWT และใช้ event handling ของ AWT</button>
+      <button class="mc-btn" onclick="pickMC('mc-o10','D','C','❌ ตรงข้าม — Swing ขึ้นกับ platform "น้อยกว่า" จึง bug น้อยกว่า')">D) Swing ขึ้นกับ platform มากกว่า AWT</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">AWT: เรียก native toolkit ของแต่ละ OS → หน้าตาต่างกัน bug ต่างกัน ("write once, debug everywhere")
+Swing: วาดเอง ขึ้นกับ platform น้อย → หน้าตาเหมือนกันทุกที่ + มี look-and-feel ให้เลือก
+แต่ Swing ยังยืมโครง event handling ของ AWT มาใช้ทั้งดุ้น</pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 10 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 11</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① คลาสที่ implements ActionListener ต้องเขียน method ชื่อ ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo10a" placeholder="ชื่อ method">
+      <button class="fill-btn" onclick="checkFill('fo10a','actionPerformed',['actionperformed','actionPerformed()'],[],'✅ actionPerformed(ActionEvent e) — method เดียวของ interface นี้','❌ actionPerformed — รับ ActionEvent เป็น parameter')">ตรวจ</button>
+    </div>
+    <div id="fo10a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② ลงทะเบียนให้ปุ่มรู้จัก listener ใช้คำสั่ง btn.___(this)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo10b" placeholder="method">
+      <button class="fill-btn" onclick="checkFill('fo10b','addActionListener',['addactionlistener'],[],'✅ addActionListener(this) — ขาดบรรทัดนี้ compile ผ่านแต่กดปุ่มเงียบ','❌ addActionListener — จุดที่ลืมแล้วหา bug ไม่เจอ')">ตรวจ</button>
+    </div>
+    <div id="fo10b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ e.getActionCommand() คืนค่าเป็นชนิด ___ จึงต้องเทียบด้วย .equals()</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo10c" placeholder="ชนิดข้อมูล">
+      <button class="fill-btn" onclick="checkFill('fo10c','String',['string'],[],'✅ String → ใช้ .equals() ไม่ใช่ == (บทเรียนจาก midterm)','❌ String — เทียบด้วย equals() เสมอ')">ตรวจ</button>
+    </div>
+    <div id="fo10c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🖱️</div>
+      <div class="summary-title">จบติวบทที่ 10 — Event Handling</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">AWT vs Swing</div><div class="sum-body">AWT เรียก native (debug everywhere) · Swing สร้างบน AWT ไม่ได้แทนที่!</div></div>
+        <div class="sum-card"><div class="sum-head">3 ตัวละคร</div><div class="sum-body">Source (ปุ่ม) → Event Object (ActionEvent) → Listener (actionPerformed)</div></div>
+        <div class="sum-card"><div class="sum-head">3 ขั้นบังคับ</div><div class="sum-body">implements · addActionListener(this) · เขียน actionPerformed</div></div>
+        <div class="sum-card"><div class="sum-head">แยกปุ่ม</div><div class="sum-body">getSource()==btn (object) หรือ getActionCommand().equals() (String)</div></div>
+        <div class="sum-card"><div class="sum-head">Listener อื่น</div><div class="sum-body">Mouse/Key/Window/Item — ตัวที่มีหลาย method ใช้ Adapter ช่วยได้</div></div>
+        <div class="sum-card"><div class="sum-head">Calculator</div><div class="sum-body">field เก็บ component + num1/op · แยกกรณีใน actionPerformed · กันหารศูนย์</div></div>
+      </div>
+      <a href="slides_ch11.html" class="summary-next">→ ติวบทที่ 11: Swing Components</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 10 — Event Handling</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','AWT → Swing','3 ตัวละคร','3 ขั้น ActionListener','แยกปุ่มหลายตัว','เฉลย Calculator','Listener อื่นๆ','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

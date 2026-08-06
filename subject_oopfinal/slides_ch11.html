@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 11 — Swing Components | ติวสอบ OOP Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#0f766e;--cal:#dcf5f2;--cam:#3fa89e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.ct{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.ct th{background:var(--ca);color:#fff;padding:5px 9px;text-align:left;font-weight:600;}
+.ct td{padding:5px 9px;border:1px solid var(--line);}
+.ct td:first-child{font-weight:600;color:var(--ca);font-family:var(--mono);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🎭 ติวสอบ Final · 02204172 OOP (Java)</div>
+        <div class="cover-title">ติวบทที่ 11<br><em>Swing Components</em></div>
+        <div class="cover-subtitle">ประกอบหน้าต่างให้เป็น — container 3 ระดับ + component ที่ต้องรู้จัก</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Container 3 ระดับ (top-level / intermediate / atomic)</div>
+          <div class="topic-row"><div class="topic-dot"></div>โครงหน้าต่าง 6 บรรทัดท่องจำ</div>
+          <div class="topic-row"><div class="topic-dot"></div>JTextField / JLabel / JPasswordField / JTextArea</div>
+          <div class="topic-row"><div class="topic-dot"></div>JScrollPane — ห่อยังไงให้ scroll ได้</div>
+          <div class="topic-row"><div class="topic-dot"></div>Layout Manager 3 ตัวหลัก</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">O11</div>
+        <div class="cover-badge">เขียน GUI ให้เป็น</div>
+        <div class="cover-slides-count">11 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 3 ระดับ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · โครงสร้าง</div>
+    <h2 class="slide-title">Component 3 ระดับ — จัดกลุ่มตามสไลด์</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block">① top-level container
+   frame หรือ main window
+   → <b>JFrame</b> (+ JDialog, JApplet)
+   "มีหน้าที่ไว้ให้ component อื่นมาวาง"
+
+② intermediate container
+   "มีเพื่อให้ง่ายต่อการวางตำแหน่ง"
+   → <b>JPanel</b>, JScrollPane, JTabbedPane
+
+③ atomic components
+   "องค์ประกอบที่มีข้อมูลและ
+    มีความหมายในตัว"
+   → <b>JTextField, JComboBox, JLabel,
+      JTable, JButton</b></pre>
+      </div>
+      <div>
+        <div class="diagram">┌─ JFrame ─────────────────────┐ ① top-level
+│ ┌─ JPanel ─────────────────┐ │ ② intermediate
+│ │  [JLabel] [JTextField]   │ │ ③ atomic
+│ │  [JButton]  [JButton]    │ │
+│ └──────────────────────────┘ │
+└──────────────────────────────┘</div>
+        <pre class="code-block"><span class="cm">/* ลำดับการประกอบ (จากในออกนอก):
+   ① สร้าง atomic (ปุ่ม/ช่องกรอก)
+   ② add ลง JPanel
+   ③ add JPanel ลง JFrame
+   ④ setVisible(true)
+
+   ⚠️ JFrame ต้องมีเสมอ 1 อัน —
+   ไม่มี top-level container
+   = ไม่มีหน้าต่างให้แสดง */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อปรนัยเก็ง:</b> "JPanel จัดอยู่ในระดับใด" → intermediate container · "component ใดเป็น top-level" → JFrame/JDialog/JApplet · "JButton จัดเป็น" → atomic component</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 โครง 6 บรรทัด -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · ท่าบังคับ</div>
+    <h2 class="slide-title">โครงหน้าต่าง 6 บรรทัด — เขียนได้หลับตา</h2>
+    <pre class="code-block"><span class="kw">import</span> javax.swing.*;
+
+JFrame f = <span class="kw">new</span> <span class="fn">JFrame</span>(<span class="st">"ชื่อหน้าต่าง"</span>);      <span class="cm">// ① สร้างหน้าต่าง</span>
+f.<span class="fn">setSize</span>(<span class="nm">200</span>, <span class="nm">100</span>);                        <span class="cm">// ② กำหนดขนาด (กว้าง, สูง)</span>
+
+JPanel pane = <span class="kw">new</span> <span class="fn">JPanel</span>();                  <span class="cm">// ③ สร้างแผงรอง</span>
+JTextField textField = <span class="kw">new</span> <span class="fn">JTextField</span>(<span class="st">"default text"</span>, <span class="nm">10</span>);
+pane.<span class="fn">add</span>(textField);                          <span class="cm">// ④ ใส่ component ลงแผง</span>
+f.<span class="fn">add</span>(pane);                                  <span class="cm">// ⑤ ใส่แผงลงหน้าต่าง</span>
+
+f.<span class="fn">setDefaultCloseOperation</span>(JFrame.EXIT_ON_CLOSE); <span class="cm">// ⑥ กด X แล้วจบโปรแกรม</span>
+f.<span class="fn">setVisible</span>(<span class="kw">true</span>);                            <span class="cm">// ⑦ แสดงผล — บรรทัดสุดท้ายเสมอ!</span></pre>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">/* 2 บรรทัดที่ลืมแล้วเจ็บ:
+
+   ลืม setVisible(true)
+   → รันแล้ว "ไม่มีอะไรขึ้น"
+     (โปรแกรมทำงานแต่ไม่แสดง)
+
+   ลืม setDefaultCloseOperation
+   → กด X ปิดหน้าต่างแล้ว
+     โปรแกรมยังค้างอยู่เบื้องหลัง */</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">/* setVisible(true) ต้องอยู่
+   "หลังจาก add component ครบแล้ว"
+   ไม่งั้นบาง component อาจไม่แสดง
+
+   อีกแบบ: เขียนเป็นคลาส
+   public class MyWin extends JFrame {
+       public MyWin() {
+           ... ทุกอย่างข้างบน
+           แต่ใช้ this แทน f ...
+       }
+   }  ← แบบที่ lab 10 ใช้ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อเขียนโค้ด GUI ให้คะแนนตาม 7 บรรทัดนี้</b> — จำลำดับ "สร้าง → ใส่ลงแผง → ใส่แผงลง frame → setVisible ท้ายสุด" แล้วเปลี่ยนแค่ component ตรงกลางตามโจทย์</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 components -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · Component หลัก</div>
+    <h2 class="slide-title">Component ที่สไลด์ไล่ให้ — constructor ที่ต้องจำ</h2>
+    <table class="ct">
+      <thead><tr><th>Component</th><th>ใช้ทำอะไร</th><th>Constructor ที่ใช้บ่อย</th></tr></thead>
+      <tbody>
+        <tr><td>JTextField</td><td>กรอกข้อความ 1 บรรทัด</td><td>JTextField(int cols)<br>JTextField(String text, int cols)</td></tr>
+        <tr><td>JLabel</td><td>ข้อความกำกับ "ไม่ตอบสนองผู้ใช้"</td><td>JLabel(String text)<br>JLabel(String text, int align)</td></tr>
+        <tr><td>JPasswordField</td><td>กรอกรหัสผ่าน (ไม่เห็นตัวอักษร)</td><td>JPasswordField(int columns)</td></tr>
+        <tr><td>JTextArea</td><td>กรอกข้อความ "มากกว่า 1 บรรทัด"</td><td>JTextArea(int lines, int columns)</td></tr>
+        <tr><td>JButton</td><td>ปุ่มกด (ผูก ActionListener)</td><td>JButton(String text)</td></tr>
+        <tr><td>JScrollPane</td><td>container ที่มี scroll bar</td><td>JScrollPane(component)</td></tr>
+        <tr><td>JPanel</td><td>แผงรองจัดวาง</td><td>JPanel() / JPanel(layout)</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>คู่ที่ข้อสอบชอบสลับ:</b> <b>JTextField</b> = 1 บรรทัด (parameter คือ "จำนวน column") · <b>JTextArea</b> = หลายบรรทัด (parameter คือ "lines, columns" — บรรทัดมาก่อน!) · <b>JLabel</b> = แสดงอย่างเดียว ผู้ใช้แก้ไม่ได้</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 scrollpane -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · JScrollPane</div>
+    <h2 class="slide-title">JScrollPane — "ห่อ" ไม่ใช่ "ใส่"</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">❌ ผิด (คนพลาดบ่อย)</div>
+        <pre class="code-block">JTextArea area = <span class="kw">new</span> <span class="fn">JTextArea</span>(<span class="nm">5</span>, <span class="nm">15</span>);
+JScrollPane sp = <span class="kw">new</span> <span class="fn">JScrollPane</span>();
+sp.<span class="fn">add</span>(area);          <span class="cm">// ❌ ไม่ทำงาน!</span>
+pane.<span class="fn">add</span>(sp);</pre>
+        <div class="code-label" style="margin-top:10px">✅ ถูก — ส่งเข้า constructor</div>
+        <pre class="code-block">JTextArea area = <span class="kw">new</span> <span class="fn">JTextArea</span>(<span class="nm">5</span>, <span class="nm">15</span>);
+JScrollPane sp = <span class="kw">new</span> <span class="fn">JScrollPane</span>(area);  <span class="cm">// ห่อ!</span>
+pane.<span class="fn">add</span>(sp);          <span class="cm">// ใส่ตัวที่ห่อแล้วลงแผง</span>
+
+<span class="cm">/* คิดว่า JScrollPane เป็น "กรอบ
+   ที่ครอบของ" ไม่ใช่กล่องที่ใส่ของ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่างเต็มจากสไลด์</div>
+        <pre class="code-block">JFrame f = <span class="kw">new</span> <span class="fn">JFrame</span>();
+f.<span class="fn">setSize</span>(<span class="nm">200</span>, <span class="nm">200</span>);
+JPanel pane = <span class="kw">new</span> <span class="fn">JPanel</span>();
+
+JTextArea area = <span class="kw">new</span> <span class="fn">JTextArea</span>(<span class="nm">5</span>, <span class="nm">15</span>);
+pane.<span class="fn">add</span>(<span class="kw">new</span> <span class="fn">JScrollPane</span>(area));   <span class="cm">// ห่อแล้วใส่เลย</span>
+
+f.<span class="fn">add</span>(pane);
+f.<span class="fn">setDefaultCloseOperation</span>(JFrame.EXIT_ON_CLOSE);
+f.<span class="fn">setVisible</span>(<span class="kw">true</span>);
+
+<span class="cm">/* ใช้กับอะไรได้บ้าง:
+   JTextArea (ข้อความยาว)
+   JTable (ตารางแถวเยอะ)
+   JList (รายการยาว)
+   → อะไรก็ตามที่ "ล้นกรอบ" ได้ */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เหตุผลเชิงเทคนิค:</b> JScrollPane มี "viewport" ข้างในที่จัดการการเลื่อนเอง — ต้องส่ง component เข้าไปตอนสร้าง (หรือ <code class="inline-code">sp.setViewportView(area)</code>) การ add ตรงๆ จะไปวางผิดที่</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 layout -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · Layout Manager</div>
+    <h2 class="slide-title">Layout Manager 3 ตัวหลัก — ตัวจัดตำแหน่งอัตโนมัติ</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><b>FlowLayout</b> — เรียงต่อกันเป็นแถว
+  ล้นแล้วขึ้นบรรทัดใหม่
+  → <b>ค่าเริ่มต้นของ JPanel</b>
+  new JPanel();  <span class="cm">// FlowLayout อัตโนมัติ</span>
+
+<b>BorderLayout</b> — แบ่ง 5 ทิศ
+  NORTH / SOUTH / EAST / WEST / CENTER
+  → <b>ค่าเริ่มต้นของ JFrame</b>
+  f.add(comp, BorderLayout.NORTH);
+  <span class="cm">// ไม่ระบุทิศ = CENTER</span>
+
+<b>GridLayout</b> — ตารางช่องเท่ากัน
+  new GridLayout(4, 4);  <span class="cm">// 4×4 = 16 ช่อง</span>
+  → เหมาะกับ "ปุ่มเครื่องคิดเลข"!</pre>
+      </div>
+      <div>
+        <div class="diagram">BorderLayout:        GridLayout(2,3):
+┌─── NORTH ───┐      ┌───┬───┬───┐
+│W│ CENTER  │E│      │ 1 │ 2 │ 3 │
+│ │         │ │      ├───┼───┼───┤
+└─── SOUTH ───┘      │ 4 │ 5 │ 6 │
+                     └───┴───┴───┘
+
+FlowLayout:
+[btn1] [btn2] [btn3]
+[btn4]   ← ล้นแล้วขึ้นบรรทัดใหม่</div>
+        <pre class="code-block"><span class="cm">/* ตั้ง layout ให้ panel:
+   JPanel p = new JPanel(new GridLayout(4,4));
+   หรือ p.setLayout(new GridLayout(4,4)); */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>สูตรจัดหน้าเครื่องคิดเลข (ใช้กับ lab 10):</b> JFrame ใช้ BorderLayout อยู่แล้ว → ใส่จอ (JTextField) ที่ <b>NORTH</b> · ใส่ JPanel ที่ตั้ง <b>GridLayout(4,4)</b> เก็บปุ่มไว้ที่ <b>CENTER</b> — จบสวยด้วย 2 บรรทัด</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 get set -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · อ่าน/เขียนค่า</div>
+    <h2 class="slide-title">method อ่าน-เขียนค่าที่ใช้จริงในโจทย์</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">// อ่านค่าที่ผู้ใช้กรอก</span>
+String s = textField.<span class="fn">getText</span>();
+String t = textArea.<span class="fn">getText</span>();
+
+<span class="cm">// เขียนค่าลงไป</span>
+textField.<span class="fn">setText</span>(<span class="st">"ข้อความใหม่"</span>);
+textField.<span class="fn">setText</span>(<span class="st">""</span>);         <span class="cm">// ล้างช่อง</span>
+label.<span class="fn">setText</span>(<span class="st">"ผลลัพธ์: "</span> + x);
+
+<span class="cm">// แปลง String → ตัวเลข (ใช้บ่อยมาก!)</span>
+<span class="kw">int</span> n = Integer.<span class="fn">parseInt</span>(textField.<span class="fn">getText</span>());
+<span class="kw">double</span> d = Double.<span class="fn">parseDouble</span>(textField.<span class="fn">getText</span>());</pre>
+      </div>
+      <div>
+        <div class="code-label">จุดที่ต้องระวัง (โยงบท 9)</div>
+        <pre class="code-block"><span class="cm">/* getText() คืน String เสมอ
+   ผู้ใช้พิมพ์ "abc" แล้ว parseInt
+   → NumberFormatException!
+     (Unchecked แต่ควรจับ) */</span>
+
+<span class="kw">try</span> {
+    <span class="kw">int</span> n = Integer.<span class="fn">parseInt</span>(
+                field.<span class="fn">getText</span>());
+    label.<span class="fn">setText</span>(<span class="st">"OK: "</span> + n);
+} <span class="kw">catch</span> (NumberFormatException ex) {
+    label.<span class="fn">setText</span>(<span class="st">"กรุณากรอกตัวเลข"</span>);
+}
+
+<span class="cm">/* JPasswordField ต่าง:
+   getPassword() คืน char[]
+   ไม่ใช่ String (เหตุผลด้านความปลอดภัย)
+   → new String(pass.getPassword()) */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>โจทย์ GUI ที่สมบูรณ์มักผสม 3 บท:</b> component (บท 11) + ActionListener (บท 10) + try-catch ตอนแปลงตัวเลข (บท 9) — เขียนครบสามอย่างนี้ = คำตอบที่อาจารย์อยากเห็น</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">อยากทำหน้าจอ Login: มี Label "Password:" กับช่องกรอกรหัสที่ไม่เห็นตัวอักษร<br>แล้วมีปุ่ม Login ข้างล่าง<br><br>
+ต้องใช้ component อะไรบ้าง? เรียงโค้ดยังไง?<br><br>
+<em>เฉลยโครง:<br>
+JFrame f + JPanel pane<br>
+JLabel label = new JLabel("Password: ", JLabel.RIGHT)<br>
+JPasswordField pass = new JPasswordField(10)<br>
+JButton btn = new JButton("Login")<br>
+pane.add ทั้งสาม → f.add(pane) → setDefaultCloseOperation → setVisible(true)<br><br>
+อ่านรหัส: new String(pass.getPassword()) — ไม่ใช่ getText()!</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · ลองข้อสอบ</div>
+    <h2 class="slide-title">อยากให้ JTextArea เลื่อนดูข้อความยาวๆ ได้ ต้องทำอย่างไร?</h2>
+    <div id="mc-o11" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-o11','A','B','❌ setScrollable() ไม่มีใน JTextArea — Swing ใช้วิธีห่อด้วย JScrollPane')">A) area.setScrollable(true);</button>
+      <button class="mc-btn" onclick="pickMC('mc-o11','B','B','✅ ห่อด้วย JScrollPane โดยส่งเข้า constructor แล้ว add ตัวที่ห่อแล้วลง panel')">B) pane.add(new JScrollPane(area));</button>
+      <button class="mc-btn" onclick="pickMC('mc-o11','C','B','❌ สร้าง JScrollPane เปล่าแล้ว add เข้าไปทีหลัง — ไม่ทำงาน ต้องส่งเข้า constructor')">C) JScrollPane sp = new JScrollPane(); sp.add(area);</button>
+      <button class="mc-btn" onclick="pickMC('mc-o11','D','B','❌ JTextArea ไม่มี scroll bar ในตัว ต้องพึ่ง JScrollPane เสมอ')">D) JTextArea มี scroll bar ในตัวอยู่แล้ว</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">JScrollPane เป็น "กรอบที่ครอบของ" — ต้องส่ง component เข้า constructor:
+  new JScrollPane(component)     ✓
+  scrollPane.add(component)      ✗ (ไม่ทำงาน)
+ใช้ได้กับทุกอย่างที่ล้นกรอบ: JTextArea, JTable, JList</pre>
+  </div>
+</div>
+
+<!-- SLIDE 9 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 11 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 12</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① บรรทัดสุดท้ายที่ต้องเรียกเพื่อให้หน้าต่างแสดงผลคือ f.___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo11a" placeholder="method">
+      <button class="fill-btn" onclick="checkFill('fo11a','setVisible(true)',['setvisible(true)','setVisible','setvisible'],[],'✅ setVisible(true) — ลืมแล้วรันไปก็ไม่เห็นอะไร','❌ setVisible(true) — ต้องเรียกหลัง add component ครบแล้ว')">ตรวจ</button>
+    </div>
+    <div id="fo11a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② component ที่รับข้อความหลายบรรทัดคือ ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo11b" placeholder="ชื่อคลาส">
+      <button class="fill-btn" onclick="checkFill('fo11b','JTextArea',['jtextarea','textarea'],[],'✅ JTextArea(lines, columns) — JTextField ได้บรรทัดเดียว','❌ JTextArea — รับหลายบรรทัด · JTextField รับบรรทัดเดียว')">ตรวจ</button>
+    </div>
+    <div id="fo11b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Layout ที่แบ่งพื้นที่เป็น NORTH/SOUTH/EAST/WEST/CENTER คือ ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo11c" placeholder="ชื่อ layout">
+      <button class="fill-btn" onclick="checkFill('fo11c','BorderLayout',['borderlayout','border layout'],[],'✅ BorderLayout — เป็นค่าเริ่มต้นของ JFrame ด้วย','❌ BorderLayout — 5 ทิศ และเป็น default ของ JFrame')">ตรวจ</button>
+    </div>
+    <div id="fo11c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 10 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🪟</div>
+      <div class="summary-title">จบติวบทที่ 11 — Swing Components</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">3 ระดับ</div><div class="sum-body">top-level (JFrame) · intermediate (JPanel/JScrollPane) · atomic (JButton ฯลฯ)</div></div>
+        <div class="sum-card"><div class="sum-head">โครง 7 บรรทัด</div><div class="sum-body">new JFrame → setSize → panel+component → add → close operation → setVisible ท้ายสุด</div></div>
+        <div class="sum-card"><div class="sum-head">คู่หลอก</div><div class="sum-body">JTextField 1 บรรทัด (cols) · JTextArea หลายบรรทัด (lines, cols)</div></div>
+        <div class="sum-card"><div class="sum-head">JScrollPane</div><div class="sum-body">ห่อด้วย constructor: new JScrollPane(area) — add() ไม่ทำงาน</div></div>
+        <div class="sum-card"><div class="sum-head">Layout</div><div class="sum-body">Flow (default JPanel) · Border 5 ทิศ (default JFrame) · Grid ตาราง</div></div>
+        <div class="sum-card"><div class="sum-head">อ่าน/เขียน</div><div class="sum-body">getText()/setText() · parseInt ต้องระวัง NumberFormatException</div></div>
+      </div>
+      <a href="slides_ch12.html" class="summary-next">→ ติวบทที่ 12: Collection Framework</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 11 — Swing Components</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Container 3 ระดับ','โครง 7 บรรทัด','Component หลัก','JScrollPane','Layout Manager','อ่าน/เขียนค่า','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

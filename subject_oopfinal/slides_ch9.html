@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 9 — Exception Handling | ติวสอบ OOP Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#0f766e;--cal:#dcf5f2;--cam:#3fa89e;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;overflow-x:auto;white-space:pre;}
+.ct{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.ct th{background:var(--ca);color:#fff;padding:5px 9px;text-align:left;font-weight:600;}
+.ct td{padding:5px 9px;border:1px solid var(--line);}
+.ct td:first-child{font-weight:600;color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🎭 ติวสอบ Final · 02204172 OOP (Java)</div>
+        <div class="cover-title">ติวบทที่ 9<br><em>Exception Handling</em></div>
+        <div class="cover-subtitle">จับข้อผิดพลาดไม่ให้โปรแกรมตาย — Checked vs Unchecked คือจุดวัดคน</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Exception คืออะไร ต่างจาก Error ยังไง</div>
+          <div class="topic-row"><div class="topic-dot"></div>ลำดับชั้น Throwable → Error / Exception</div>
+          <div class="topic-row"><div class="topic-dot"></div>Checked vs Unchecked (จุดสอบหลัก!)</div>
+          <div class="topic-row"><div class="topic-dot"></div>try-catch-finally + ลำดับ catch</div>
+          <div class="topic-row"><div class="topic-dot"></div>เฉลย lab 9: num[5] เกิดอะไรขึ้น + แก้ยังไง</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">O9</div>
+        <div class="cover-badge">CHECKED vs UNCHECKED</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1 นิยาม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · นิยาม</div>
+    <h2 class="slide-title">Exception vs Error — ทั้งคู่สืบจาก Throwable</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">นิยามตามสไลด์</div>
+        <pre class="code-block">"Exception คือการที่โปรแกรมพยายาม
+ ทำงานบางอย่าง แต่เกิดข้อผิดพลาดขึ้น
+ แล้วโปรแกรมไม่สามารถจัดการได้
+ → ทำให้โปรแกรมหยุดทำงาน
+
+ เกิดขึ้นในขณะที่โปรแกรมทำงาน (run-time)
+ เช่น จะเปิดไฟล์ แต่ไฟล์ไม่มีอยู่"
+
+<span class="cm">/* ทั้ง Error และ Exception
+   สืบทอดมาจาก java.lang.Throwable
+   → มี getMessage() ใช้ได้ทั้งคู่ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ต่างกันตรงไหน (ปรนัยชอบถาม)</div>
+        <pre class="code-block">Error = ร้ายแรง "ยากที่จะแก้ไข
+        ให้โปรแกรมดำเนินต่อไปได้"
+        → ปกติ "เราจะไม่ดักจับ"
+  เช่น OutOfMemoryError
+      StackOverflowError
+
+Exception = ไม่ร้ายแรง "พอจะจัดการ
+        แก้ไขให้โปรแกรมทำงานต่อได้"
+        → ควรดักจับ!
+  เช่น IOException
+      ArithmeticException
+      ArrayIndexOutOfBoundsException
+      NullPointerException</pre>
+      </div>
+    </div>
+    <div class="diagram">                    Throwable
+                  ╱          ╲
+              Error          Exception
+          (ไม่ควรจับ)      ╱          ╲
+                   RuntimeException   IOException ฯลฯ
+                   (Unchecked)        (Checked)</div>
+    <div class="exam"><b>method ที่ Throwable ให้มา (ใช้ได้ทั้งสองฝั่ง):</b> <code class="inline-code">getMessage()</code> คืนข้อความบอกว่าผิดอย่างไร · <code class="inline-code">printStackTrace()</code> พิมพ์เส้นทางที่ error เกิด</div>
+  </div>
+</div>
+
+<!-- SLIDE 2 checked unchecked -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · จุดสอบหลัก</div>
+    <h2 class="slide-title">Checked vs Unchecked — เส้นแบ่งอยู่ที่ RuntimeException</h2>
+    <table class="ct">
+      <thead><tr><th></th><th>Unchecked Exception</th><th>Checked Exception</th></tr></thead>
+      <tbody>
+        <tr><td>คือตระกูลไหน</td><td><b>Error + RuntimeException</b></td><td>ที่เหลือทั้งหมด</td></tr>
+        <tr><td>compiler บังคับจับไหม</td><td><b>ไม่บังคับ</b> (จะจับหรือไม่ก็ได้)</td><td><b>บังคับ!</b> ต้องมี try-catch หรือ throws</td></tr>
+        <tr><td>ถ้าไม่จับ</td><td>compile ผ่าน แต่รันแล้วโปรแกรม<br>จบแบบไม่ปกติ</td><td><b>compile ไม่ผ่าน</b></td></tr>
+        <tr><td>ตัวอย่าง</td><td>ArithmeticException (หารศูนย์)<br>NullPointerException<br>ArrayIndexOutOfBoundsException</td><td>IOException<br>FileNotFoundException<br>ClassNotFoundException</td></tr>
+        <tr><td>สาเหตุมักมาจาก</td><td>บั๊กของโปรแกรมเมอร์<br>(แก้ที่โค้ดได้)</td><td>ปัจจัยภายนอก<br>(ไฟล์หาย เน็ตหลุด)</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>วิธีจำแบบไม่พลาด:</b> ชื่อมีคำว่า <b>Runtime</b> หรืออยู่ใต้ RuntimeException → Unchecked (compiler ปล่อยผ่าน) · พวก IO/File/ClassNotFound → Checked (compiler บังคับ) — ข้อสอบชอบให้รายชื่อ exception มาแล้วให้แยกประเภท</div>
+  </div>
+</div>
+
+<!-- SLIDE 3 try catch -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · Syntax</div>
+    <h2 class="slide-title">try-catch-finally — โครงจากสไลด์</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โครงสร้าง</div>
+        <pre class="code-block"><span class="kw">try</span> {
+    &lt;statements&gt;;          <span class="cm">// โค้ดที่อาจพัง</span>
+}
+<span class="kw">catch</span> (Throwable t) {      <span class="cm">// [ ]+ = มีได้หลายบล็อก</span>
+    &lt;statements&gt;;          <span class="cm">// จัดการเมื่อพัง</span>
+}
+<span class="kw">finally</span> {                 <span class="cm">// [ ] = มีหรือไม่ก็ได้</span>
+    &lt;statements&gt;;          <span class="cm">// ทำเสมอ!</span>
+}
+
+<span class="cm">/* ศัพท์: try block / catch block
+   / finally block */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">finally สำคัญยังไง</div>
+        <pre class="code-block"><span class="cm">/* finally ทำงาน "เสมอ"
+   ไม่ว่าจะ:
+   - ไม่เกิด exception
+   - เกิดแล้วถูก catch
+   - เกิดแล้วไม่มีใคร catch
+   - มี return ใน try!
+
+   → ใช้สำหรับ "เก็บกวาด"
+     ปิดไฟล์ ปิด connection */</span>
+
+<span class="kw">try</span> { ... <span class="kw">return</span> <span class="nm">1</span>; }
+<span class="kw">finally</span> { System.out.<span class="fn">println</span>(<span class="st">"bye"</span>); }
+<span class="cm">// พิมพ์ bye ก่อน return จริงๆ!</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>กฎลำดับ catch ที่ออกสอบ:</b> ถ้ามีหลาย catch ต้องเรียง <b>ลูกก่อน แม่ทีหลัง</b> — เขียน <code class="inline-code">catch(Exception e)</code> ไว้บนสุดแล้วตามด้วย catch ตัวเฉพาะ = compile error ("exception has already been caught") เพราะตัวแม่ดักไปหมดแล้ว</div>
+  </div>
+</div>
+
+<!-- SLIDE 4 lab9 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · เฉลย lab 9</div>
+    <h2 class="slide-title">เฉลยจริง: num[5] เกิดอะไรขึ้น?</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์จาก lab</div>
+        <pre class="code-block"><span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+    <span class="kw">int</span> num[] = {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>};
+    System.out.<span class="fn">println</span>(num[<span class="nm">5</span>]);
+    <span class="kw">for</span> (<span class="kw">int</span> i : num) {
+        System.out.<span class="fn">println</span>(i);
+    }
+}</pre>
+        <div class="code-label" style="margin-top:8px">คำตอบ "อธิบายสิ่งที่เกิดขึ้น"</div>
+        <pre class="code-block"><span class="cm">/* array มี 4 ช่อง index 0–3
+   แต่เรียก num[5] → เกินขอบเขต
+
+   → เกิด
+   ArrayIndexOutOfBoundsException
+   (เป็น Unchecked / RuntimeException
+    → compile ผ่าน! แต่พังตอนรัน)
+
+   ผลลัพธ์: โปรแกรมหยุดทันที
+   → for loop ข้างล่าง "ไม่ได้ทำงานเลย"
+   ← จุดที่ข้อสอบอยากได้ */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">แก้ด้วย try-catch</div>
+        <pre class="code-block"><span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+    <span class="kw">int</span> num[] = {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>};
+
+    <span class="kw">try</span> {
+        System.out.<span class="fn">println</span>(num[<span class="nm">5</span>]);
+    } <span class="kw">catch</span> (ArrayIndexOutOfBoundsException e) {
+        System.out.<span class="fn">println</span>(<span class="st">"Index เกินขอบเขต: "</span>
+                           + e.<span class="fn">getMessage</span>());
+    }
+
+    <span class="kw">for</span> (<span class="kw">int</span> i : num) {      <span class="cm">// คราวนี้ได้ทำงาน!</span>
+        System.out.<span class="fn">println</span>(i);
+    }
+}
+<span class="cm">/* Output:
+   Index เกินขอบเขต: Index 5 out of
+     bounds for length 4
+   1
+   2
+   3
+   4                    ← โปรแกรมรอดแล้ว */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>บทเรียนของข้อนี้:</b> จุดประสงค์ของ exception handling คือ "โปรแกรมกู้คืนจากข้อผิดพลาดแล้วทำงานต่อได้" ตามที่สไลด์บอก — เทียบผลก่อน/หลังใส่ try-catch ให้เห็นว่า for loop ได้ทำงานหรือไม่</div>
+  </div>
+</div>
+
+<!-- SLIDE 5 throw throws -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · throw vs throws</div>
+    <h2 class="slide-title">throw กับ throws — ต่างกันแค่ตัว s แต่คนละเรื่อง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">throw — "โยนออกมาเดี๋ยวนี้"</div>
+        <pre class="code-block"><span class="kw">public void</span> <span class="fn">withdraw</span>(<span class="kw">double</span> amount) {
+    <span class="kw">if</span> (amount > balance) {
+        <span class="kw">throw new</span> <span class="fn">IllegalArgumentException</span>(
+            <span class="st">"เงินไม่พอ"</span>);
+    }
+    balance -= amount;
+}
+
+<span class="cm">/* throw = คำสั่ง (statement)
+   สร้าง exception object แล้วโยน
+   อยู่ "ในตัว method"
+   ตามด้วย object 1 ตัว */</span></pre>
+      </div>
+      <div>
+        <div class="code-label">throws — "ประกาศเตือนไว้ก่อน"</div>
+        <pre class="code-block"><span class="kw">public void</span> <span class="fn">readFile</span>(String path)
+        <span class="kw">throws</span> IOException {     <span class="cm">// ที่หัว method</span>
+    FileReader fr = <span class="kw">new</span> <span class="fn">FileReader</span>(path);
+    <span class="cm">// ไม่ต้อง try-catch ที่นี่</span>
+    <span class="cm">// โยนต่อให้คนเรียกจัดการ</span>
+}
+
+<span class="cm">/* throws = ส่วนหนึ่งของ signature
+   บอกว่า "method นี้อาจโยน ... นะ"
+   ตามด้วยชื่อคลาสได้หลายตัว (คั่น ,)
+
+   คนเรียก readFile() ต้อง try-catch
+   หรือ throws ต่อไปอีก */</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>สองทางเลือกเมื่อเจอ checked exception:</b> ① <b>จัดการเอง</b> ด้วย try-catch ② <b>โยนต่อ</b> ด้วย throws ที่หัว method — เลือกอย่างใดอย่างหนึ่ง ไม่งั้น compile ไม่ผ่าน</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 custom exception -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · Custom Exception</div>
+    <h2 class="slide-title">สร้าง Exception เอง — แค่ extends</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">สร้างคลาส</div>
+        <pre class="code-block"><span class="cm">// Checked (extends Exception)</span>
+<span class="kw">public class</span> <span class="fn">InsufficientFundException</span>
+        <span class="kw">extends</span> Exception {
+    <span class="kw">public</span> <span class="fn">InsufficientFundException</span>(String msg) {
+        <span class="kw">super</span>(msg);      <span class="cm">// ส่งข้อความให้ Throwable</span>
+    }
+}
+
+<span class="cm">// Unchecked (extends RuntimeException)</span>
+<span class="kw">public class</span> <span class="fn">InvalidAgeException</span>
+        <span class="kw">extends</span> RuntimeException {
+    <span class="kw">public</span> <span class="fn">InvalidAgeException</span>(String msg) {
+        <span class="kw">super</span>(msg);
+    }
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">ใช้งาน</div>
+        <pre class="code-block"><span class="kw">public void</span> <span class="fn">withdraw</span>(<span class="kw">double</span> amt)
+        <span class="kw">throws</span> InsufficientFundException {
+    <span class="kw">if</span> (amt > balance)
+        <span class="kw">throw new</span> <span class="fn">InsufficientFundException</span>(
+            <span class="st">"ยอดคงเหลือไม่พอ"</span>);
+    balance -= amt;
+}
+
+<span class="cm">// ฝั่งเรียกใช้</span>
+<span class="kw">try</span> {
+    acc.<span class="fn">withdraw</span>(<span class="nm">5000</span>);
+} <span class="kw">catch</span> (InsufficientFundException e) {
+    System.out.<span class="fn">println</span>(e.<span class="fn">getMessage</span>());
+    <span class="cm">// → ยอดคงเหลือไม่พอ</span>
+}</pre>
+      </div>
+    </div>
+    <div class="exam"><b>เลือก extends อะไร:</b> สืบจาก <b>Exception</b> → เป็น checked (บังคับคนเรียกจัดการ — เหมาะกับเงื่อนไขธุรกิจที่ต้องรับมือ) · สืบจาก <b>RuntimeException</b> → unchecked (เหมาะกับบั๊กที่ควรแก้โค้ด ไม่ใช่ดักจับ)</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 flow -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · อ่านผลลัพธ์</div>
+    <h2 class="slide-title">ข้อ "โปรแกรมนี้พิมพ์อะไร" — ไล่ flow ให้เป็น</h2>
+    <pre class="code-block"><span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+    <span class="kw">try</span> {
+        System.out.<span class="fn">println</span>(<span class="st">"A"</span>);
+        <span class="kw">int</span> x = <span class="nm">10</span> / <span class="nm">0</span>;              <span class="cm">// ← ArithmeticException ตรงนี้!</span>
+        System.out.<span class="fn">println</span>(<span class="st">"B"</span>);          <span class="cm">// ไม่ได้ทำงาน (ข้ามทันที)</span>
+    } <span class="kw">catch</span> (ArithmeticException e) {
+        System.out.<span class="fn">println</span>(<span class="st">"C"</span>);
+    } <span class="kw">finally</span> {
+        System.out.<span class="fn">println</span>(<span class="st">"D"</span>);
+    }
+    System.out.<span class="fn">println</span>(<span class="st">"E"</span>);
+}
+<span class="cm">/* ผลลัพธ์: A C D E
+
+   ไล่ทีละขั้น:
+   ① พิมพ์ A
+   ② 10/0 → โยน ArithmeticException ทันที
+   ③ บรรทัด B "ถูกข้าม" — โค้ดหลังจุดที่พังใน try ไม่ทำงาน
+   ④ กระโดดเข้า catch ที่ตรงชนิด → พิมพ์ C
+   ⑤ finally ทำเสมอ → พิมพ์ D
+   ⑥ ออกจากบล็อก ทำงานต่อปกติ → พิมพ์ E */</span></pre>
+    <div class="exam"><b>กฎ 3 ข้อสำหรับไล่ flow:</b> ① โค้ดใน try "หลังบรรทัดที่พัง" ไม่ทำงาน ② เข้า catch ที่ชนิดตรงกันเพียงบล็อกเดียว ③ finally ทำเสมอ · ถ้าไม่มี catch ที่ตรง → finally ยังทำ แล้วโปรแกรมค่อยตาย</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โค้ดนี้ compile ผ่านไหม?<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:8px 14px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+try {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;FileReader f = new FileReader("data.txt");<br>
+} catch (Exception e) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;e.printStackTrace();<br>
+} catch (IOException e) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("IO error");<br>
+}
+</code><br><br>
+<em>ใบ้: Exception เป็นแม่ของ IOException<br>
+catch(Exception) ดักไปหมดแล้ว → catch(IOException) ไม่มีทางถูกเรียก<br>
+→ <b>compile error!</b> ต้องเรียง <b>ลูกก่อน แม่ทีหลัง</b></em></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ข้อใดเป็น Checked Exception?</h2>
+    <div id="mc-o9" class="mc-group">
+      <button class="mc-btn" onclick="pickMC('mc-o9','A','C','❌ NullPointerException อยู่ใต้ RuntimeException = Unchecked')">A) NullPointerException</button>
+      <button class="mc-btn" onclick="pickMC('mc-o9','B','C','❌ ArithmeticException (หารศูนย์) อยู่ใต้ RuntimeException = Unchecked')">B) ArithmeticException</button>
+      <button class="mc-btn" onclick="pickMC('mc-o9','C','C','✅ IOException ไม่อยู่ในตระกูล Error/RuntimeException → Checked → compiler บังคับให้ try-catch หรือ throws')">C) IOException</button>
+      <button class="mc-btn" onclick="pickMC('mc-o9','D','C','❌ ArrayIndexOutOfBoundsException อยู่ใต้ RuntimeException = Unchecked (แบบ lab num[5])')">D) ArrayIndexOutOfBoundsException</button>
+    </div>
+    <pre class="code-block" style="margin-top:12px">Unchecked = Error + RuntimeException (compiler ปล่อยผ่าน)
+Checked   = ที่เหลือทั้งหมด (compiler บังคับ) — IOException, FileNotFoundException, ClassNotFoundException
+
+ข้อ A, B, D ล้วนเป็นลูกของ RuntimeException ทั้งหมด → Unchecked</pre>
+  </div>
+</div>
+
+<!-- SLIDE 10 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 9 · Fill-in</div>
+    <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 10</h2>
+
+    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Error และ Exception ต่างสืบทอดมาจากคลาส ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo9a" placeholder="ชื่อคลาส">
+      <button class="fill-btn" onclick="checkFill('fo9a','Throwable',['throwable','java.lang.Throwable'],[],'✅ java.lang.Throwable — ให้ getMessage() และ printStackTrace() มา','❌ Throwable — เป็นรากของทั้ง Error และ Exception')">ตรวจ</button>
+    </div>
+    <div id="fo9a-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② บล็อกที่ทำงาน "เสมอ" ไม่ว่าจะเกิด exception หรือไม่ คือ ___</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo9b" placeholder="ชื่อบล็อก">
+      <button class="fill-btn" onclick="checkFill('fo9b','finally',['finally block','ไฟนอลลี่'],[],'✅ finally block — ใช้เก็บกวาด ปิดไฟล์/connection','❌ finally — ทำงานเสมอ แม้มี return ใน try')">ตรวจ</button>
+    </div>
+    <div id="fo9b-msg" class="fill-msg"></div>
+
+    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ ประกาศที่หัว method ว่าอาจโยน exception ใช้คีย์เวิร์ด ___ (throw หรือ throws)</p>
+    <div class="fill-row">
+      <input class="fill-input" id="fo9c" placeholder="keyword">
+      <button class="fill-btn" onclick="checkFill('fo9c','throws',['throws'],['throw '],'✅ throws (มี s) ที่หัว method · throw (ไม่มี s) คือคำสั่งโยนจริงในตัว method','❌ throws — มี s ใช้ประกาศที่หัว method, ไม่มี s ใช้โยนจริง')">ตรวจ</button>
+    </div>
+    <div id="fo9c-msg" class="fill-msg"></div>
+  </div>
+</div>
+
+<!-- SLIDE 11 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">⚠️</div>
+      <div class="summary-title">จบติวบทที่ 9 — Exception Handling</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Throwable</div><div class="sum-body">แยกเป็น Error (ร้ายแรง ไม่จับ) และ Exception (จัดการได้ ควรจับ)</div></div>
+        <div class="sum-card"><div class="sum-head">Unchecked</div><div class="sum-body">Error + RuntimeException — compiler ไม่บังคับ พังตอนรัน</div></div>
+        <div class="sum-card"><div class="sum-head">Checked</div><div class="sum-body">ที่เหลือ (IOException ฯลฯ) — ต้อง try-catch หรือ throws ไม่งั้น compile ไม่ผ่าน</div></div>
+        <div class="sum-card"><div class="sum-head">try-catch-finally</div><div class="sum-body">catch เรียงลูกก่อนแม่ · finally ทำเสมอ · โค้ดหลังจุดพังใน try ถูกข้าม</div></div>
+        <div class="sum-card"><div class="sum-head">throw vs throws</div><div class="sum-body">throw = โยนจริงในตัว method · throws = ประกาศเตือนที่หัว method</div></div>
+        <div class="sum-card"><div class="sum-head">เฉลย lab</div><div class="sum-body">num[5] → ArrayIndexOutOfBounds (unchecked) → for loop ไม่ทำงาน จนกว่าจะใส่ try-catch</div></div>
+      </div>
+      <a href="slides_ch10.html" class="summary-next">→ ติวบทที่ 10: Event Handling</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 9 — Exception Handling</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Exception vs Error','Checked vs Unchecked','try-catch-finally','เฉลย lab num[5]','throw vs throws','Custom Exception','ไล่ flow','เช็คตัวเอง','ลองข้อสอบ','Fill-in','Summary'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
