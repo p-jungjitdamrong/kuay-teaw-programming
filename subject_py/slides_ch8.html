@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 8 — Nested Loop &amp; break/continue | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#b84c00;--cal:#fff3ec;--cam:#d98a5a;}
+.tr{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;margin:8px 0;}
+.tr th{background:var(--ca);color:#fff;padding:5px 9px;font-weight:600;}
+.tr td{padding:4px 9px;border:1px solid var(--line);text-align:center;}
+.tr td.hl{background:var(--cal);color:var(--ca);font-weight:700;}
+.out{font-family:var(--mono);font-size:13px;line-height:1.5;background:var(--cal);border-radius:8px;padding:12px 16px;margin:8px 0;white-space:pre;color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ก๋วยเตี๋ยวเรือ Programming · Python</div>
+        <div class="cover-title">บทที่ 8<br><em>Nested Loop<br>&amp; break / continue</em></div>
+        <div class="cover-subtitle">ลูปซ้อนลูป — พิมพ์ตาราง วาดรูปดาว และควบคุมการวนด้วย break/continue</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Nested Loop ทำงานยังไง — ไล่ทีละรอบ</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์คลาสสิก: ตารางสูตรคูณ</div>
+          <div class="topic-row"><div class="topic-dot"></div>วาดรูปดาว 4 แบบ (สี่เหลี่ยม สามเหลี่ยม)</div>
+          <div class="topic-row"><div class="topic-dot"></div>break — ออกจากลูปทันที</div>
+          <div class="topic-row"><div class="topic-dot"></div>continue — ข้ามรอบนี้ไปรอบถัดไป</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">08</div>
+        <div class="cover-badge">NESTED LOOP</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 nested loop คือ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 8 · แนวคิด</div>
+    <h2 class="slide-title">Nested Loop — ลูปในลูป</h2>
+    <p class="slide-lead">ใช้เมื่อลูปรอบเดียวทำไม่ได้ เช่น <strong>ข้อมูลแบบตาราง</strong> ที่มีทั้งแถวและคอลัมน์</p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์: พิมพ์ * เป็นสี่เหลี่ยม 3×3</div>
+        <pre class="code-block"><span class="cm"># แบบไม่ใช้ nested loop — เขียน 3 ชุด</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):
+    <span class="fn">print</span>(<span class="st">"*"</span>, end=<span class="st">''</span>)
+<span class="fn">print</span>(<span class="st">''</span>)
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):
+    <span class="fn">print</span>(<span class="st">"*"</span>, end=<span class="st">''</span>)
+<span class="fn">print</span>(<span class="st">''</span>)
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):
+    <span class="fn">print</span>(<span class="st">"*"</span>, end=<span class="st">''</span>)
+<span class="fn">print</span>(<span class="st">''</span>)
+<span class="cm"># ← ซ้ำ 3 ชุด ถ้า 100 แถวล่ะ?</span></pre>
+      </div>
+      <div>
+        <div class="code-label">แบบ nested loop</div>
+        <pre class="code-block"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):        <span class="cm"># ลูปนอก = แถว</span>
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):    <span class="cm"># ลูปใน = คอลัมน์</span>
+        <span class="fn">print</span>(<span class="st">"*"</span>, end=<span class="st">''</span>)
+    <span class="fn">print</span>(<span class="st">''</span>)          <span class="cm"># จบแถว → ขึ้นบรรทัดใหม่</span></pre>
+        <div class="out">***
+***
+***</div>
+        <pre class="code-block"><span class="cm"># กฎทอง:
+# ลูปนอกหมุน 1 รอบ
+#   → ลูปในหมุน "ครบทุกรอบ"
+# 3 × 3 = พิมพ์ * ทั้งหมด 9 ครั้ง</span></pre>
+      </div>
+    </div>
+    <div class="callout">จุดที่ต้องระวังที่สุด: <strong><code class="inline-code">print('')</code> ต้องอยู่ในลูปนอก ไม่ใช่ลูปใน</strong> — ถ้าเยื้องเข้าไปในลูปใน จะขึ้นบรรทัดใหม่ทุกดาว กลายเป็นแนวตั้ง</div>
+  </div>
+</div>
+
+<!-- 2 trace -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 8 · ไล่ทีละรอบ</div>
+    <h2 class="slide-title">Trace: ลูปนอก i × ลูปใน j</h2>
+    <pre class="code-block"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">2</span>):
+        <span class="fn">print</span>(i, j)</pre>
+    <table class="tr">
+      <thead><tr><th>ลำดับ</th><th>i</th><th>j</th><th>พิมพ์</th><th>เกิดอะไรขึ้น</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="hl">0</td><td>0</td><td>0 0</td><td>i เข้ารอบแรก · j เริ่มนับ</td></tr>
+        <tr><td>2</td><td class="hl">0</td><td>1</td><td>0 1</td><td>j รอบสุดท้าย</td></tr>
+        <tr><td>—</td><td>0</td><td>—</td><td></td><td>j หมด → กลับไปลูปนอก</td></tr>
+        <tr><td>3</td><td class="hl">1</td><td>0</td><td>1 0</td><td>i รอบ 2 · <b>j เริ่มนับใหม่จาก 0!</b></td></tr>
+        <tr><td>4</td><td class="hl">1</td><td>1</td><td>1 1</td><td></td></tr>
+        <tr><td>5</td><td class="hl">2</td><td>0</td><td>2 0</td><td>i รอบ 3 · j เริ่มใหม่อีก</td></tr>
+        <tr><td>6</td><td class="hl">2</td><td>1</td><td>2 1</td><td>จบทั้งหมด</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">หัวใจของ nested loop: <strong>ตัวแปรลูปในถูกรีเซ็ตใหม่ทุกครั้งที่ลูปนอกหมุน</strong> — จำนวนรอบทั้งหมด = รอบนอก × รอบใน = 3 × 2 = 6 ครั้ง</div>
+  </div>
+</div>
+
+<!-- 3 สูตรคูณ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 8 · โจทย์คลาสสิก</div>
+    <h2 class="slide-title">ตารางสูตรคูณ 2×1 ถึง 8×8</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แบบ while (ตามสไลด์อาจารย์)</div>
+        <pre class="code-block">i = <span class="nm">2</span>
+<span class="kw">while</span> i &lt;= <span class="nm">8</span>:
+    j = <span class="nm">1</span>              <span class="cm"># รีเซ็ต j ทุกแถว!</span>
+    <span class="kw">while</span> j &lt;= <span class="nm">8</span>:
+        <span class="fn">print</span>(i*j, end=<span class="st">' '</span>)
+        j += <span class="nm">1</span>
+    <span class="fn">print</span>(<span class="st">''</span>)         <span class="cm"># จบแถว</span>
+    i += <span class="nm">1</span></pre>
+        <div class="code-label" style="margin-top:8px">แบบ for — สั้นกว่า</div>
+        <pre class="code-block"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">2</span>, <span class="nm">8</span>+<span class="nm">1</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">8</span>+<span class="nm">1</span>):
+        <span class="fn">print</span>(i*j, end=<span class="st">' '</span>)
+    <span class="fn">print</span>(<span class="st">''</span>)</pre>
+      </div>
+      <div>
+        <div class="code-label">ผลลัพธ์</div>
+        <div class="out">2  4  6  8  10 12 14 16
+3  6  9  12 15 18 21 24
+4  8  12 16 20 24 28 32
+5  10 15 20 25 30 35 40
+6  12 18 24 30 36 42 48
+7  14 21 28 35 42 49 56
+8  16 24 32 40 48 56 64</div>
+        <pre class="code-block"><span class="cm"># จัดคอลัมน์ให้ตรงด้วย f-string:</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">2</span>, <span class="nm">9</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">9</span>):
+        <span class="fn">print</span>(<span class="st">f"</span>{i*j:<span class="nm">4</span>}<span class="st">"</span>, end=<span class="st">''</span>)
+    <span class="fn">print</span>()
+<span class="cm"># :4 = จองความกว้าง 4 ช่อง ชิดขวา</span></pre>
+      </div>
+    </div>
+    <div class="callout">อย่าลืม <code class="inline-code">range(2, 8+1)</code> — เขียน <code class="inline-code">range(2, 8)</code> จะได้แค่ถึง 7 เพราะ range ไม่รวมตัวสุดท้าย · เขียน <code class="inline-code">8+1</code> ไว้จะอ่านง่ายกว่า 9</div>
+  </div>
+</div>
+
+<!-- 4 star patterns -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 8 · รูปดาว</div>
+    <h2 class="slide-title">วาดรูปดาว — ความลับอยู่ที่ range ของลูปใน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① สี่เหลี่ยม — ลูปในคงที่</div>
+        <pre class="code-block"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">4</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">4</span>):   <span class="cm"># คงที่ 4</span>
+        <span class="fn">print</span>(<span class="st">"*"</span>, end=<span class="st">''</span>)
+    <span class="fn">print</span>()</pre>
+        <div class="out">****
+****
+****
+****</div>
+        <div class="code-label" style="margin-top:6px">② สามเหลี่ยมเพิ่มขึ้น — ลูปในตาม i</div>
+        <pre class="code-block"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">5</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i):  <span class="cm"># ← ตาม i!</span>
+        <span class="fn">print</span>(<span class="st">"*"</span>, end=<span class="st">''</span>)
+    <span class="fn">print</span>()</pre>
+        <div class="out">*
+**
+***
+****</div>
+      </div>
+      <div>
+        <div class="code-label">③ สามเหลี่ยมลดลง</div>
+        <pre class="code-block"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">4</span>, <span class="nm">0</span>, -<span class="nm">1</span>):  <span class="cm"># นับถอยหลัง</span>
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i):
+        <span class="fn">print</span>(<span class="st">"*"</span>, end=<span class="st">''</span>)
+    <span class="fn">print</span>()</pre>
+        <div class="out">****
+***
+**
+*</div>
+        <div class="code-label" style="margin-top:6px">④ สามเหลี่ยมชิดขวา — เติมช่องว่างก่อน</div>
+        <pre class="code-block"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">5</span>):
+    <span class="kw">for</span> s <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">4</span>-i):   <span class="cm"># ช่องว่าง</span>
+        <span class="fn">print</span>(<span class="st">" "</span>, end=<span class="st">''</span>)
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i):     <span class="cm"># ดาว</span>
+        <span class="fn">print</span>(<span class="st">"*"</span>, end=<span class="st">''</span>)
+    <span class="fn">print</span>()</pre>
+        <div class="out">   *
+  **
+ ***
+****</div>
+      </div>
+    </div>
+    <div class="callout">สูตรทำโจทย์รูปดาว: ดูว่า <strong>แต่ละแถวมีกี่ตัว</strong> แล้วเขียนเป็นฟังก์ชันของ i — คงที่ → <code class="inline-code">range(n)</code> · เพิ่มขึ้น → <code class="inline-code">range(i)</code> · ลดลง → <code class="inline-code">range(n-i)</code></div>
+  </div>
+</div>
+
+<!-- 5 break -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 8 · break</div>
+    <h2 class="slide-title">break — ออกจากลูปทันที</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างพื้นฐาน</div>
+        <pre class="code-block"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">11</span>):
+    <span class="kw">if</span> i == <span class="nm">5</span>:
+        <span class="kw">break</span>          <span class="cm"># ออกทันที</span>
+    <span class="fn">print</span>(i, end=<span class="st">' '</span>)</pre>
+        <div class="out">1 2 3 4</div>
+        <pre class="code-block"><span class="cm"># พอ i เป็น 5 → break
+# ไม่พิมพ์ 5 และไม่วนต่อถึง 10</span></pre>
+        <div class="code-label" style="margin-top:8px">ใช้จริง: ค้นหาแล้วหยุด</div>
+        <pre class="code-block">nums = [<span class="nm">4</span>, <span class="nm">8</span>, <span class="nm">15</span>, <span class="nm">16</span>, <span class="nm">23</span>]
+target = <span class="nm">15</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(nums)):
+    <span class="kw">if</span> nums[i] == target:
+        <span class="fn">print</span>(<span class="st">"เจอที่ตำแหน่ง"</span>, i)
+        <span class="kw">break</span>      <span class="cm"># เจอแล้ว ไม่ต้องหาต่อ</span></pre>
+      </div>
+      <div>
+        <div class="code-label">break ใน nested loop — ออกแค่ลูปเดียว!</div>
+        <pre class="code-block"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):
+        <span class="kw">if</span> j == <span class="nm">1</span>:
+            <span class="kw">break</span>      <span class="cm"># ออกจากลูป j เท่านั้น</span>
+        <span class="fn">print</span>(i, j)</pre>
+        <div class="out">0 0
+1 0
+2 0</div>
+        <pre class="code-block"><span class="cm"># ลูปนอก i ยังวนครบ 3 รอบ!
+# break ออกได้แค่ "ลูปชั้นที่มันอยู่"
+
+# อยากออกทั้งสองชั้น → ใช้ flag:
+found = False
+for i in range(3):
+    for j in range(3):
+        if ...:
+            found = True
+            break
+    if found:
+        break</span></pre>
+      </div>
+    </div>
+    <div class="callout">ข้อสอบชอบถาม: "break ใน nested loop ออกจากลูปไหน" → <strong>ออกจากลูปชั้นในสุดที่มันอยู่เท่านั้น</strong> ลูปนอกยังทำงานต่อ</div>
+  </div>
+</div>
+
+<!-- 6 continue -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 8 · continue</div>
+    <h2 class="slide-title">continue — ข้ามรอบนี้ ไปรอบถัดไป</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เทียบกับ break ให้ชัด</div>
+        <pre class="code-block"><span class="cm"># continue — ข้ามเฉพาะรอบนี้</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">6</span>):
+    <span class="kw">if</span> i == <span class="nm">3</span>:
+        <span class="kw">continue</span>       <span class="cm"># ข้าม 3</span>
+    <span class="fn">print</span>(i, end=<span class="st">' '</span>)</pre>
+        <div class="out">1 2 4 5</div>
+        <pre class="code-block"><span class="cm"># break — หยุดทั้งลูป</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">6</span>):
+    <span class="kw">if</span> i == <span class="nm">3</span>:
+        <span class="kw">break</span>
+    <span class="fn">print</span>(i, end=<span class="st">' '</span>)</pre>
+        <div class="out">1 2</div>
+      </div>
+      <div>
+        <div class="code-label">ใช้จริง: กรองข้อมูล</div>
+        <pre class="code-block"><span class="cm"># พิมพ์เฉพาะเลขคู่</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">11</span>):
+    <span class="kw">if</span> i % <span class="nm">2</span> != <span class="nm">0</span>:
+        <span class="kw">continue</span>       <span class="cm"># เลขคี่ → ข้าม</span>
+    <span class="fn">print</span>(i, end=<span class="st">' '</span>)
+<span class="cm"># 2 4 6 8 10</span></pre>
+        <pre class="code-block"><span class="cm"># ข้ามค่าที่ผิดปกติ</span>
+scores = [<span class="nm">85</span>, -<span class="nm">1</span>, <span class="nm">90</span>, <span class="nm">200</span>, <span class="nm">78</span>]
+total = <span class="nm">0</span>
+count = <span class="nm">0</span>
+<span class="kw">for</span> s <span class="kw">in</span> scores:
+    <span class="kw">if</span> s &lt; <span class="nm">0</span> <span class="kw">or</span> s &gt; <span class="nm">100</span>:
+        <span class="kw">continue</span>   <span class="cm"># ข้ามค่าที่ใช้ไม่ได้</span>
+    total += s
+    count += <span class="nm">1</span>
+<span class="fn">print</span>(total / count)  <span class="cm"># 84.33</span></pre>
+      </div>
+    </div>
+    <div class="callout">จำง่ายๆ: <strong>break = "พอแล้ว เลิกวน"</strong> · <strong>continue = "รอบนี้ข้ามไป วนต่อ"</strong> — ทั้งคู่ใช้ได้ทั้ง for และ while</div>
+  </div>
+</div>
+
+<!-- 7 use case -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 8 · Use Case</div>
+    <h2 class="slide-title">🏦 รวมทุกอย่าง — ระบบตรวจสอบธุรกรรม</h2>
+    <pre class="code-block"><span class="cm"># ข้อมูลธุรกรรมของลูกค้า 3 คน คนละหลายรายการ</span>
+customers = {
+    <span class="st">"สมชาย"</span>: [<span class="nm">1200</span>, <span class="nm">500</span>, -<span class="nm">100</span>, <span class="nm">8000</span>],
+    <span class="st">"สมศรี"</span>: [<span class="nm">300</span>, <span class="nm">450</span>, <span class="nm">200</span>],
+    <span class="st">"สมหญิง"</span>: [<span class="nm">50000</span>, <span class="nm">100</span>],
+}
+
+LIMIT = <span class="nm">10000</span>      <span class="cm"># วงเงินที่ต้องแจ้งเตือน</span>
+
+<span class="kw">for</span> name, txns <span class="kw">in</span> customers.<span class="fn">items</span>():    <span class="cm"># ลูปนอก = ลูกค้าแต่ละคน</span>
+    total = <span class="nm">0</span>
+    <span class="fn">print</span>(<span class="st">f"── </span>{name}<span class="st"> ──"</span>)
+
+    <span class="kw">for</span> t <span class="kw">in</span> txns:                       <span class="cm"># ลูปใน = ธุรกรรมของคนนั้น</span>
+        <span class="kw">if</span> t &lt;= <span class="nm">0</span>:
+            <span class="fn">print</span>(<span class="st">f"  ข้าม </span>{t}<span class="st"> (ยอดไม่ถูกต้อง)"</span>)
+            <span class="kw">continue</span>                    <span class="cm"># ข้ามรายการเสีย วนต่อ</span>
+
+        <span class="kw">if</span> t &gt;= LIMIT:
+            <span class="fn">print</span>(<span class="st">f"  ⚠️ พบยอด </span>{t}<span class="st"> เกินวงเงิน — หยุดตรวจ"</span>)
+            <span class="kw">break</span>                       <span class="cm"># เจอแล้วหยุดเลย</span>
+
+        total += t
+        <span class="fn">print</span>(<span class="st">f"  + </span>{t}<span class="st">"</span>)
+
+    <span class="fn">print</span>(<span class="st">f"  รวม: </span>{total}<span class="st">\n"</span>)         <span class="cm"># อยู่ในลูปนอก = สรุปต่อคน</span>
+
+<span class="cm">"""
+── สมชาย ──          ← continue ข้าม -100
+  + 1200                break ตอนเจอ 8000? ไม่ (8000 < 10000)
+  + 500
+  ข้าม -100 (ยอดไม่ถูกต้อง)
+  + 8000
+  รวม: 9700
+
+── สมหญิง ──         ← break ทันทีที่เจอ 50000
+  ⚠️ พบยอด 50000 เกินวงเงิน — หยุดตรวจ
+  รวม: 0
+"""</span></pre>
+    <div class="callout">โจทย์จริงมักผสม nested loop + break + continue แบบนี้ — <strong>continue คัดข้อมูลเสียทิ้ง · break หยุดเมื่อเจอสิ่งที่ตามหา</strong> · สังเกตว่า break ออกแค่ลูปใน ลูกค้าคนถัดไปยังถูกตรวจต่อ</div>
+  </div>
+</div>
+
+<!-- 8 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">โค้ดสองชุดนี้ต่างกันตรงไหน?<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:10px 16px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+# ชุด A<br>
+for i in range(3):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;for j in range(3):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("*", end='')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print('')<br>
+<br>
+# ชุด B<br>
+for i in range(3):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;for j in range(3):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("*", end='')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print('')
+</code><br><br>
+<em>ต่างกันแค่ระดับการเยื้องของ print('') บรรทัดสุดท้าย<br>
+ชุด A อยู่ในลูป j · ชุด B อยู่ในลูป i<br><br>
+ลองวาดผลลัพธ์ทั้งสองชุดดู — ชุดไหนได้สี่เหลี่ยม 3×3?</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- 9 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 8 · ทดสอบ</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
+    <pre class="code-block" style="margin-bottom:14px"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">6</span>):
+    <span class="kw">if</span> i % <span class="nm">2</span> == <span class="nm">0</span>:
+        <span class="kw">continue</span>
+    <span class="kw">if</span> i == <span class="nm">5</span>:
+        <span class="kw">break</span>
+    <span class="fn">print</span>(i, end=<span class="st">' '</span>)</pre>
+    <div class="mc-opts" id="mc-nl">
+      <div class="mc-opt" onclick="pickMC('mc-nl',0,1,'ถ้าไม่มี continue กับ break จะได้ 1 2 3 4 5 — แต่โค้ดนี้มีทั้งคู่')"><span class="mc-ltr">A</span> 1 2 3 4 5</div>
+      <div class="mc-opt" onclick="pickMC('mc-nl',1,1,'i=1 พิมพ์ · i=2 คู่→continue · i=3 พิมพ์ · i=4 คู่→continue · i=5 คี่ผ่าน continue แต่ติด break → ออกก่อนพิมพ์ → ได้ 1 3')"><span class="mc-ltr">B</span> 1 3</div>
+      <div class="mc-opt" onclick="pickMC('mc-nl',2,1,'i=5 ติด break ก่อนถึง print จึงไม่ถูกพิมพ์ออกมา')"><span class="mc-ltr">C</span> 1 3 5</div>
+      <div class="mc-opt" onclick="pickMC('mc-nl',3,1,'continue ข้ามเลขคู่ ไม่ใช่เลขคี่ — เงื่อนไขคือ i % 2 == 0')"><span class="mc-ltr">D</span> 2 4</div>
+    </div>
+    <div class="ex-feedback" id="mc-nl-fb"></div>
+    <pre class="code-block" style="margin-top:12px">i=1 → คี่ ผ่าน continue · ไม่ใช่ 5 · <b>พิมพ์ 1</b>
+i=2 → คู่ → continue (ข้าม)
+i=3 → คี่ ผ่าน · ไม่ใช่ 5 · <b>พิมพ์ 3</b>
+i=4 → คู่ → continue (ข้าม)
+i=5 → คี่ ผ่าน · เป็น 5 → <b>break ออกก่อนถึง print</b>
+ผลลัพธ์: 1 3</pre>
+  </div>
+</div>
+
+<!-- 10 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 8 · เติมคำ</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <div class="exercise">
+      <div class="ex-q">① คำสั่งที่ใช้ "ข้ามรอบปัจจุบัน แล้ววนต่อ" คือ</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="คำสั่ง">
+        <button class="ex-btn" onclick="checkFill('in1','continue',['continue'],['break'],'continue = ข้ามรอบนี้ วนต่อ · break = หยุดทั้งลูป','continue — ส่วน break คือหยุดออกจากลูปเลย')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">② nested loop: ลูปนอกวน 4 รอบ ลูปในวน 5 รอบ คำสั่งในลูปในทำงานทั้งหมดกี่ครั้ง</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="จำนวนครั้ง">
+        <button class="ex-btn" onclick="checkFill('in2','20',['20 ครั้ง'],['9'],'4 × 5 = 20 ครั้ง — ลูปนอก 1 รอบ ลูปในหมุนครบทุกรอบ','คูณกัน 4 × 5 = 20 ครั้ง (ไม่ใช่บวกกัน)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">③ ต้องการพิมพ์สามเหลี่ยมที่แถว i มีดาว i ตัว ลูปในต้องเขียนว่า for j in ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="range(...)">
+        <button class="ex-btn" onclick="checkFill('in3','range(i)',['range(i):','range(0,i)'],['range(3)'],'range(i) — จำนวนรอบของลูปในผูกกับ i จึงเพิ่มขึ้นทีละแถว','range(i) — ถ้าใส่ค่าคงที่จะได้สี่เหลี่ยม ไม่ใช่สามเหลี่ยม')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 11 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔁</div>
+      <div class="summary-title">สรุปบทที่ 8 — Nested Loop &amp; break/continue</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Nested Loop</div><div class="sum-body">ลูปนอก 1 รอบ → ลูปในหมุนครบทุกรอบ · จำนวนครั้งรวม = นอก × ใน</div></div>
+        <div class="sum-card"><div class="sum-head">ตัวแปรลูปใน</div><div class="sum-body">ถูกรีเซ็ตใหม่ทุกครั้งที่ลูปนอกหมุน</div></div>
+        <div class="sum-card"><div class="sum-head">ตำแหน่ง print()</div><div class="sum-body">ขึ้นบรรทัดใหม่ต้องอยู่ในลูปนอก — เยื้องผิดชั้น รูปเพี้ยนทันที</div></div>
+        <div class="sum-card"><div class="sum-head">รูปดาว</div><div class="sum-body">คงที่ range(n) · เพิ่มขึ้น range(i) · ลดลง range(n−i) · ชิดขวา = ช่องว่าง + ดาว</div></div>
+        <div class="sum-card"><div class="sum-head">break</div><div class="sum-body">ออกจากลูปทันที — ใน nested ออกแค่ลูปชั้นที่มันอยู่</div></div>
+        <div class="sum-card"><div class="sum-head">continue</div><div class="sum-body">ข้ามรอบนี้ วนต่อรอบถัดไป — เหมาะกับกรองข้อมูลเสีย</div></div>
+      </div>
+      <a href="slides_ch9.html" class="summary-next">→ บทที่ 9: File I/O</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 8 — Nested Loop &amp; break/continue</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Nested Loop คืออะไร','Trace ทีละรอบ','ตารางสูตรคูณ','วาดรูปดาว','break','continue','Banking Use Case','Think!','ทดสอบ','เติมคำ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

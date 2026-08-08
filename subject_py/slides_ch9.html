@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 9 — File I/O | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#b84c00;--cal:#fff3ec;--cam:#d98a5a;}
+.md{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.md th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;}
+.md td{padding:6px 10px;border:1px solid var(--line);}
+.md td:first-child{font-family:var(--mono);font-weight:700;color:var(--ca);text-align:center;}
+.out{font-family:var(--mono);font-size:13px;line-height:1.5;background:var(--cal);border-radius:8px;padding:12px 16px;margin:8px 0;white-space:pre;color:var(--ca);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ก๋วยเตี๋ยวเรือ Programming · Python</div>
+        <div class="cover-title">บทที่ 9<br><em>File I/O</em></div>
+        <div class="cover-subtitle">อ่านและเขียนไฟล์ — เก็บข้อมูลไว้ใช้ต่อได้ ไม่หายตอนปิดโปรแกรม</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ทำไมต้องใช้ไฟล์ — ข้อมูลไม่หายเมื่อปิดโปรแกรม</div>
+          <div class="topic-row"><div class="topic-dot"></div>open() + โหมด r / w / a / x</div>
+          <div class="topic-row"><div class="topic-dot"></div>อ่าน 4 วิธี: read / readline / readlines / for</div>
+          <div class="topic-row"><div class="topic-dot"></div>เขียน write / writelines + ทำไม w ลบของเดิม</div>
+          <div class="topic-row"><div class="topic-dot"></div>with — ปิดไฟล์อัตโนมัติ · ลบไฟล์ด้วย os</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">09</div>
+        <div class="cover-badge">FILE I/O</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 ทำไม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 9 · ทำไมต้องมี</div>
+    <h2 class="slide-title">ข้อมูลในตัวแปรหายเมื่อปิดโปรแกรม</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ปัญหา</div>
+        <pre class="code-block"><span class="cm"># โปรแกรมบันทึกคะแนน</span>
+scores = []
+<span class="kw">while</span> <span class="kw">True</span>:
+    s = <span class="fn">input</span>(<span class="st">"คะแนน (0=จบ): "</span>)
+    <span class="kw">if</span> s == <span class="st">"0"</span>: <span class="kw">break</span>
+    scores.<span class="fn">append</span>(<span class="fn">int</span>(s))
+
+<span class="fn">print</span>(scores)   <span class="cm"># [85, 90, 78]</span>
+
+<span class="cm"># ปิดโปรแกรม → ข้อมูลหายหมด!
+# เปิดใหม่ต้องพิมพ์ใหม่ทั้งหมด 😱</span></pre>
+        <div class="code-label" style="margin-top:8px">ทางแก้: เก็บลงไฟล์</div>
+        <pre class="code-block"><span class="cm"># ข้อมูลอยู่ในดิสก์ → เปิดใหม่ก็ยังอยู่</span>
+f = <span class="fn">open</span>(<span class="st">"scores.txt"</span>, <span class="st">"w"</span>)
+f.<span class="fn">write</span>(<span class="st">"85\n90\n78\n"</span>)
+f.<span class="fn">close</span>()</pre>
+      </div>
+      <div>
+        <div class="code-label">3 ขั้นตอนของงานไฟล์ — ท่องไว้</div>
+        <div class="diagram">   ① เปิดไฟล์
+        open()
+          │
+          ▼
+   ② อ่าน / เขียน
+    read() / write()
+          │
+          ▼
+   ③ ปิดไฟล์
+       close()</div>
+        <pre class="code-block"><span class="cm">/* งานที่ทำกับไฟล์ได้ (4 อย่าง):
+   • สร้าง  (creating)
+   • อ่าน   (reading)
+   • เขียน  (writing)
+   • ลบ     (deleting)
+
+   ⚠️ ลืม close() = ข้อมูลอาจ
+   เขียนไม่ครบ หรือไฟล์ถูกล็อกค้าง
+   → มีวิธีที่ปิดให้อัตโนมัติ (with)
+     ดูสไลด์ท้ายบท */</span></pre>
+      </div>
+    </div>
+    <div class="callout">คำศัพท์: ข้อมูลในตัวแปรอยู่ใน <strong>RAM (หายเมื่อปิด)</strong> · ข้อมูลในไฟล์อยู่ใน <strong>ดิสก์ (อยู่ถาวร)</strong> — เรียกว่า persistent data</div>
+  </div>
+</div>
+
+<!-- 2 open modes -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 9 · open()</div>
+    <h2 class="slide-title">open() รับ 2 อย่าง — ชื่อไฟล์ + โหมด</h2>
+    <pre class="code-block">ชื่อตัวแปร = <span class="fn">open</span>( <span class="st">"ชื่อไฟล์"</span> , <span class="st">"โหมด"</span> )
+
+f = <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>)     <span class="cm"># เปิดอ่าน</span></pre>
+    <table class="md">
+      <thead><tr><th style="text-align:center">โหมด</th><th>ชื่อเต็ม</th><th>ทำอะไร</th><th>ถ้าไฟล์ยังไม่มี</th><th>ของเดิม</th></tr></thead>
+      <tbody>
+        <tr><td>"r"</td><td>Read</td><td>อ่านอย่างเดียว (ค่าเริ่มต้น)</td><td><b>Error!</b></td><td>—</td></tr>
+        <tr><td>"w"</td><td>Write</td><td>เขียน</td><td>สร้างให้ใหม่</td><td><b>ลบทิ้งหมด!</b></td></tr>
+        <tr><td>"a"</td><td>Append</td><td>เขียนต่อท้าย</td><td>สร้างให้ใหม่</td><td>เก็บไว้</td></tr>
+        <tr><td>"x"</td><td>Create</td><td>สร้างไฟล์ใหม่</td><td>สร้างให้</td><td><b>Error ถ้ามีแล้ว</b></td></tr>
+      </tbody>
+    </table>
+    <div class="two-col" style="margin-top:6px">
+      <div>
+        <pre class="code-block"><span class="cm"># โหมดเสริม (ต่อท้ายได้)
+# "t" = text (ค่าเริ่มต้น)
+# "b" = binary (รูป เสียง)</span>
+<span class="fn">open</span>(<span class="st">"a.txt"</span>, <span class="st">"rt"</span>)   <span class="cm"># = "r"</span>
+<span class="fn">open</span>(<span class="st">"pic.jpg"</span>, <span class="st">"rb"</span>)  <span class="cm"># อ่านไฟล์รูป</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm"># ⚠️ กับดักที่เจ็บที่สุด:
+f = open("สำคัญมาก.txt", "w")
+# ← ไฟล์ที่มีข้อมูลอยู่ ถูกล้างทันที
+#   ตั้งแต่บรรทัด open เลย!
+#   ยังไม่ทันเขียนอะไรก็หายแล้ว
+
+# อยากเขียนเพิ่มโดยไม่ลบ → ใช้ "a"</span></pre>
+      </div>
+    </div>
+    <div class="callout">วิธีจำ: <strong>r</strong>ead อ่าน · <strong>w</strong>rite เขียนทับ · <strong>a</strong>ppend เขียนต่อ · e<strong>x</strong>clusive สร้างใหม่เท่านั้น — ข้อสอบชอบถาม "โหมดใดลบข้อมูลเดิม" คำตอบคือ <strong>w</strong></div>
+  </div>
+</div>
+
+<!-- 3 read -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 9 · อ่านไฟล์</div>
+    <h2 class="slide-title">อ่านได้ 4 วิธี — เลือกให้ถูกงาน</h2>
+    <p class="slide-lead">สมมติไฟล์ <code class="inline-code">data.txt</code> มี 3 บรรทัด: <code class="inline-code">Somchai / Somsri / Somying</code></p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① read() — ทั้งไฟล์เป็น string เดียว</div>
+        <pre class="code-block">f = <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>)
+<span class="fn">print</span>(f.<span class="fn">read</span>())
+f.<span class="fn">close</span>()</pre>
+        <div class="out">Somchai
+Somsri
+Somying</div>
+        <div class="code-label" style="margin-top:6px">② readline() — ทีละบรรทัด</div>
+        <pre class="code-block">f = <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>)
+<span class="fn">print</span>(f.<span class="fn">readline</span>())   <span class="cm"># Somchai</span>
+<span class="fn">print</span>(f.<span class="fn">readline</span>())   <span class="cm"># Somsri</span>
+f.<span class="fn">close</span>()
+<span class="cm"># เรียกครั้งถัดไปได้บรรทัดถัดไป
+# (ตัวชี้ตำแหน่งเลื่อนไปเอง)</span></pre>
+      </div>
+      <div>
+        <div class="code-label">③ readlines() — ได้ list</div>
+        <pre class="code-block">f = <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>)
+lines = f.<span class="fn">readlines</span>()
+f.<span class="fn">close</span>()
+<span class="fn">print</span>(lines)</pre>
+        <div class="out">['Somchai\n', 'Somsri\n', 'Somying']</div>
+        <pre class="code-block"><span class="cm"># มี \n ติดมาด้วย! ลบด้วย strip()</span>
+<span class="kw">for</span> line <span class="kw">in</span> lines:
+    <span class="fn">print</span>(line.<span class="fn">strip</span>())</pre>
+        <div class="code-label" style="margin-top:6px">④ วนด้วย for — นิยมที่สุด</div>
+        <pre class="code-block">f = <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>)
+<span class="kw">for</span> line <span class="kw">in</span> f:          <span class="cm"># วนได้เลย!</span>
+    <span class="fn">print</span>(line.<span class="fn">strip</span>())
+f.<span class="fn">close</span>()
+<span class="cm"># ประหยัดหน่วยความจำสุด
+# (ไม่โหลดทั้งไฟล์เข้า RAM)</span></pre>
+      </div>
+    </div>
+    <div class="callout">อย่าลืม <code class="inline-code">.strip()</code> — ทุกบรรทัดในไฟล์มี <code class="inline-code">\n</code> ติดท้าย ถ้าไม่ลบจะได้บรรทัดว่างแทรก หรือเทียบ string ไม่ตรง</div>
+  </div>
+</div>
+
+<!-- 4 write -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 9 · เขียนไฟล์</div>
+    <h2 class="slide-title">write() — เขียนได้เฉพาะ string</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เขียนทับ (w) vs เขียนต่อ (a)</div>
+        <pre class="code-block"><span class="cm"># "w" — ล้างของเดิมแล้วเขียนใหม่</span>
+f = <span class="fn">open</span>(<span class="st">"log.txt"</span>, <span class="st">"w"</span>)
+f.<span class="fn">write</span>(<span class="st">"บรรทัดที่ 1\n"</span>)
+f.<span class="fn">write</span>(<span class="st">"บรรทัดที่ 2\n"</span>)
+f.<span class="fn">close</span>()</pre>
+        <div class="out">บรรทัดที่ 1
+บรรทัดที่ 2</div>
+        <pre class="code-block"><span class="cm"># "a" — ต่อท้ายของเดิม</span>
+f = <span class="fn">open</span>(<span class="st">"log.txt"</span>, <span class="st">"a"</span>)
+f.<span class="fn">write</span>(<span class="st">"บรรทัดที่ 3\n"</span>)
+f.<span class="fn">close</span>()</pre>
+        <div class="out">บรรทัดที่ 1
+บรรทัดที่ 2
+บรรทัดที่ 3</div>
+      </div>
+      <div>
+        <div class="code-label">2 จุดพลาดที่เจอบ่อย</div>
+        <pre class="code-block"><span class="cm"># ❌ ลืม \n — ทุกอย่างติดกันหมด</span>
+f.<span class="fn">write</span>(<span class="st">"A"</span>)
+f.<span class="fn">write</span>(<span class="st">"B"</span>)
+f.<span class="fn">write</span>(<span class="st">"C"</span>)
+<span class="cm"># ไฟล์ได้: ABC   (บรรทัดเดียว)
+# write ไม่ขึ้นบรรทัดให้เอง! ต่างจาก print</span>
+
+<span class="cm"># ❌ เขียนตัวเลขตรงๆ → TypeError</span>
+f.<span class="fn">write</span>(<span class="nm">100</span>)          <span class="cm"># Error!</span>
+f.<span class="fn">write</span>(<span class="fn">str</span>(<span class="nm">100</span>))     <span class="cm"># ✓ แปลงก่อน</span>
+f.<span class="fn">write</span>(<span class="st">f"</span>{score}<span class="st">\n"</span>)  <span class="cm"># ✓ f-string</span></pre>
+        <div class="code-label" style="margin-top:6px">writelines() — เขียน list ทีเดียว</div>
+        <pre class="code-block">names = [<span class="st">"Somchai\n"</span>, <span class="st">"Somsri\n"</span>]
+f = <span class="fn">open</span>(<span class="st">"out.txt"</span>, <span class="st">"w"</span>)
+f.<span class="fn">writelines</span>(names)
+f.<span class="fn">close</span>()
+<span class="cm"># ก็ไม่เติม \n ให้เหมือนกัน
+# ต้องใส่มาในแต่ละตัวเอง</span></pre>
+      </div>
+    </div>
+    <div class="callout">เทียบให้จำ: <code class="inline-code">print()</code> ขึ้นบรรทัดใหม่ให้อัตโนมัติ · <code class="inline-code">write()</code> <strong>ไม่ขึ้นให้</strong> ต้องใส่ <code class="inline-code">\n</code> เอง — และ write รับ string เท่านั้น ตัวเลขต้อง <code class="inline-code">str()</code> ก่อน</div>
+  </div>
+</div>
+
+<!-- 5 with -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 9 · with</div>
+    <h2 class="slide-title">with — เปิดแล้วปิดให้เอง (วิธีที่ควรใช้)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แบบธรรมดา — ต้องปิดเอง</div>
+        <pre class="code-block">f = <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>)
+data = f.<span class="fn">read</span>()
+f.<span class="fn">close</span>()          <span class="cm"># ← ลืมบ่อย!</span>
+
+<span class="cm"># ถ้าโค้ดตรงกลางพัง (error)
+# → close() ไม่ถูกเรียก
+# → ไฟล์ค้างเปิด</span></pre>
+        <div class="code-label" style="margin-top:8px">แบบ with — ปิดอัตโนมัติ</div>
+        <pre class="code-block"><span class="kw">with</span> <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    data = f.<span class="fn">read</span>()
+    <span class="fn">print</span>(data)
+<span class="cm"># ออกจากบล็อก → ปิดให้เอง
+# แม้เกิด error ก็ยังปิด ✓</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ใช้จริง — อ่านและเขียน</div>
+        <pre class="code-block"><span class="cm"># อ่านทีละบรรทัด</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"scores.txt"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    <span class="kw">for</span> line <span class="kw">in</span> f:
+        <span class="fn">print</span>(line.<span class="fn">strip</span>())
+
+<span class="cm"># เขียน</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"out.txt"</span>, <span class="st">"w"</span>) <span class="kw">as</span> f:
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">6</span>):
+        f.<span class="fn">write</span>(<span class="st">f"บรรทัดที่ </span>{i}<span class="st">\n"</span>)
+
+<span class="cm"># เปิด 2 ไฟล์พร้อมกัน (copy)</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"in.txt"</span>) <span class="kw">as</span> src, \
+     <span class="fn">open</span>(<span class="st">"out.txt"</span>, <span class="st">"w"</span>) <span class="kw">as</span> dst:
+    dst.<span class="fn">write</span>(src.<span class="fn">read</span>())</pre>
+      </div>
+    </div>
+    <div class="callout">โครงที่ควรใช้ตลอด: <code class="inline-code">with open(ชื่อไฟล์, โหมด) as f:</code> แล้วเขียนงานไว้ในบล็อก — ไม่ต้องเขียน <code class="inline-code">close()</code> เลย และปลอดภัยกว่า</div>
+  </div>
+</div>
+
+<!-- 6 exists + delete -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 9 · ตรวจสอบ &amp; ลบ</div>
+    <h2 class="slide-title">เช็คว่ามีไฟล์ไหม + ลบไฟล์ (ใช้ os)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ปัญหา: เปิดไฟล์ที่ไม่มี → พัง</div>
+        <pre class="code-block">f = <span class="fn">open</span>(<span class="st">"ไม่มีจริง.txt"</span>, <span class="st">"r"</span>)
+<span class="cm"># FileNotFoundError: [Errno 2]
+# No such file or directory</span></pre>
+        <div class="code-label" style="margin-top:8px">ทางแก้ 1: เช็คก่อนเปิด</div>
+        <pre class="code-block"><span class="kw">import</span> os
+
+<span class="kw">if</span> os.path.<span class="fn">exists</span>(<span class="st">"data.txt"</span>):
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="st">"data.txt"</span>) <span class="kw">as</span> f:
+        <span class="fn">print</span>(f.<span class="fn">read</span>())
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"ไม่พบไฟล์"</span>)</pre>
+        <div class="code-label" style="margin-top:8px">ทางแก้ 2: ดักด้วย try</div>
+        <pre class="code-block"><span class="kw">try</span>:
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="st">"data.txt"</span>) <span class="kw">as</span> f:
+        <span class="fn">print</span>(f.<span class="fn">read</span>())
+<span class="kw">except</span> FileNotFoundError:
+    <span class="fn">print</span>(<span class="st">"ไม่พบไฟล์"</span>)</pre>
+      </div>
+      <div>
+        <div class="code-label">ลบไฟล์</div>
+        <pre class="code-block"><span class="kw">import</span> os
+
+<span class="cm"># ลบตรงๆ (พังถ้าไม่มีไฟล์)</span>
+os.<span class="fn">remove</span>(<span class="st">"old.txt"</span>)
+
+<span class="cm"># ลบแบบปลอดภัย</span>
+<span class="kw">if</span> os.path.<span class="fn">exists</span>(<span class="st">"old.txt"</span>):
+    os.<span class="fn">remove</span>(<span class="st">"old.txt"</span>)
+    <span class="fn">print</span>(<span class="st">"ลบแล้ว"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"ไม่มีไฟล์นี้"</span>)</pre>
+        <pre class="code-block"><span class="cm"># คำสั่ง os อื่นที่ควรรู้จัก</span>
+os.path.<span class="fn">exists</span>(<span class="st">"f.txt"</span>)   <span class="cm"># มีไหม</span>
+os.<span class="fn">rename</span>(<span class="st">"a.txt"</span>,<span class="st">"b.txt"</span>) <span class="cm"># เปลี่ยนชื่อ</span>
+os.<span class="fn">mkdir</span>(<span class="st">"folder"</span>)        <span class="cm"># สร้างโฟลเดอร์</span>
+os.<span class="fn">rmdir</span>(<span class="st">"folder"</span>)        <span class="cm"># ลบโฟลเดอร์</span>
+os.<span class="fn">listdir</span>(<span class="st">"."</span>)           <span class="cm"># ดูไฟล์ในโฟลเดอร์</span></pre>
+      </div>
+    </div>
+    <div class="callout">ต้อง <code class="inline-code">import os</code> ก่อนเสมอ — คำสั่งจัดการไฟล์/โฟลเดอร์อยู่ในโมดูล os ไม่ใช่คำสั่งพื้นฐานของ Python</div>
+  </div>
+</div>
+
+<!-- 7 use case -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 9 · Use Case</div>
+    <h2 class="slide-title">🏦 โปรแกรมบันทึกธุรกรรม — เขียนแล้วอ่านกลับ</h2>
+    <pre class="code-block"><span class="kw">import</span> os
+
+FILE = <span class="st">"transactions.txt"</span>
+
+<span class="cm"># ── ① บันทึกธุรกรรมใหม่ (ต่อท้าย ไม่ลบของเดิม) ──</span>
+<span class="kw">def</span> <span class="fn">add_txn</span>(name, amount):
+    <span class="kw">with</span> <span class="fn">open</span>(FILE, <span class="st">"a"</span>) <span class="kw">as</span> f:          <span class="cm"># "a" = append!</span>
+        f.<span class="fn">write</span>(<span class="st">f"</span>{name}<span class="st">,</span>{amount}<span class="st">\n"</span>)   <span class="cm"># คั่นด้วย , (รูปแบบ CSV)</span>
+
+<span class="cm"># ── ② อ่านทั้งหมดมาสรุป ──</span>
+<span class="kw">def</span> <span class="fn">summary</span>():
+    <span class="kw">if</span> <span class="kw">not</span> os.path.<span class="fn">exists</span>(FILE):            <span class="cm"># เช็คก่อนเสมอ</span>
+        <span class="fn">print</span>(<span class="st">"ยังไม่มีข้อมูล"</span>)
+        <span class="kw">return</span>
+
+    total = <span class="nm">0</span>
+    count = <span class="nm">0</span>
+    <span class="kw">with</span> <span class="fn">open</span>(FILE, <span class="st">"r"</span>) <span class="kw">as</span> f:
+        <span class="kw">for</span> line <span class="kw">in</span> f:                      <span class="cm"># วนทีละบรรทัด</span>
+            line = line.<span class="fn">strip</span>()               <span class="cm"># ตัด \n ทิ้ง</span>
+            <span class="kw">if</span> line == <span class="st">""</span>:                    <span class="cm"># ข้ามบรรทัดว่าง</span>
+                <span class="kw">continue</span>
+            name, amount = line.<span class="fn">split</span>(<span class="st">","</span>)    <span class="cm"># แยกด้วย ,</span>
+            amount = <span class="fn">float</span>(amount)             <span class="cm"># แปลงกลับเป็นตัวเลข</span>
+            <span class="fn">print</span>(<span class="st">f"  </span>{name:&lt;<span class="nm">10</span>}{amount:&gt;<span class="nm">10</span>,.<span class="nm">2</span>f}<span class="st">"</span>)
+            total += amount
+            count += <span class="nm">1</span>
+
+    <span class="fn">print</span>(<span class="st">f"  รวม </span>{count}<span class="st"> รายการ = </span>{total:,.<span class="nm">2</span>f}<span class="st"> บาท"</span>)
+
+<span class="cm"># ── ใช้งาน ──</span>
+<span class="fn">add_txn</span>(<span class="st">"สมชาย"</span>, <span class="nm">1200</span>)
+<span class="fn">add_txn</span>(<span class="st">"สมศรี"</span>, <span class="nm">850.50</span>)
+<span class="fn">add_txn</span>(<span class="st">"สมหญิง"</span>, <span class="nm">3000</span>)
+<span class="fn">summary</span>()
+
+<span class="cm">"""
+ไฟล์ transactions.txt ที่ได้:
+สมชาย,1200
+สมศรี,850.5
+สมหญิง,3000
+
+ผลลัพธ์:
+  สมชาย        1,200.00
+  สมศรี          850.50
+  สมหญิง       3,000.00
+  รวม 3 รายการ = 5,050.50 บาท
+"""</span></pre>
+    <div class="callout">รูปแบบ <strong>CSV</strong> (คั่นด้วยจุลภาค) เป็นวิธีเก็บข้อมูลหลายฟิลด์ที่ง่ายที่สุด — เขียนด้วย <code class="inline-code">f"{a},{b}\n"</code> อ่านกลับด้วย <code class="inline-code">line.strip().split(",")</code> · เปิดด้วย Excel ได้ด้วย</div>
+  </div>
+</div>
+
+<!-- 8 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">ไฟล์ <code style="font-family:monospace">note.txt</code> มีข้อมูลสำคัญอยู่แล้ว 100 บรรทัด<br><br>
+เพื่อนรันโค้ดนี้เพื่อ "เพิ่มบรรทัดใหม่":<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:10px 16px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+f = open("note.txt", "w")<br>
+f.write("บรรทัดใหม่\n")<br>
+f.close()
+</code><br><br>
+<em>เปิดไฟล์มาดู เหลือกี่บรรทัด?<br><br>
+ใบ้: โหมด "w" ทำอะไรกับข้อมูลเดิม — และมันเกิดขึ้นตั้งแต่บรรทัดไหน?<br>
+ควรใช้โหมดอะไรแทน?</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- 9 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 9 · ทดสอบ</div>
+    <h2 class="slide-title">ต้องการเขียนข้อมูลต่อท้ายไฟล์เดิมโดยไม่ลบของเก่า ใช้โหมดใด?</h2>
+    <div class="mc-opts" id="mc-file">
+      <div class="mc-opt" onclick="pickMC('mc-file',0,2,'โหมด r เปิดอ่านอย่างเดียว เขียนไม่ได้')"><span class="mc-ltr">A</span> open(f, "r")</div>
+      <div class="mc-opt" onclick="pickMC('mc-file',1,2,'โหมด w ลบข้อมูลเดิมทิ้งทั้งหมดทันทีที่เปิด — ตรงข้ามกับที่โจทย์ต้องการ')"><span class="mc-ltr">B</span> open(f, "w")</div>
+      <div class="mc-opt" onclick="pickMC('mc-file',2,2,'โหมด a (append) เขียนต่อท้ายของเดิม และสร้างไฟล์ให้ถ้ายังไม่มี')"><span class="mc-ltr">C</span> open(f, "a")</div>
+      <div class="mc-opt" onclick="pickMC('mc-file',3,2,'โหมด x สร้างไฟล์ใหม่เท่านั้น ถ้าไฟล์มีอยู่แล้วจะ error')"><span class="mc-ltr">D</span> open(f, "x")</div>
+    </div>
+    <div class="ex-feedback" id="mc-file-fb"></div>
+    <pre class="code-block" style="margin-top:12px">r = อ่านอย่างเดียว (ไฟล์ต้องมีอยู่)
+w = เขียน — <b>ล้างของเดิมทิ้งหมด</b>
+a = เขียนต่อท้าย — เก็บของเดิมไว้ ✓
+x = สร้างใหม่เท่านั้น (error ถ้ามีแล้ว)</pre>
+  </div>
+</div>
+
+<!-- 10 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 9 · เติมคำ</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <div class="exercise">
+      <div class="ex-q">① คำสั่งที่เปิดไฟล์แล้วปิดให้อัตโนมัติ เขียนขึ้นต้นด้วยคีย์เวิร์ดอะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in1','with',['with open'],[],'with open(...) as f: — ออกจากบล็อกแล้วปิดให้เอง แม้เกิด error','with — เขียน with open(ชื่อไฟล์, โหมด) as f:')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">② อ่านไฟล์ด้วย readlines() แล้วแต่ละบรรทัดมี ___ ติดท้ายมาด้วย ต้องลบด้วย strip()</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="อักขระอะไร">
+        <button class="ex-btn" onclick="checkFill('in2','\\n',['newline','ขึ้นบรรทัดใหม่','n'],[],'\\n (newline) — ทุกบรรทัดในไฟล์ข้อความจบด้วย \\n','\\n — อักขระขึ้นบรรทัดใหม่ ลบด้วย .strip()')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">③ ต้องการลบไฟล์ ต้อง import โมดูลชื่ออะไรก่อน</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ชื่อโมดูล">
+        <button class="ex-btn" onclick="checkFill('in3','os',['import os'],[],'import os แล้วใช้ os.remove(ชื่อไฟล์) · เช็คก่อนด้วย os.path.exists()','os — ใช้ os.remove() ลบไฟล์ และ os.path.exists() เช็คว่ามีไหม')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 11 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">💾</div>
+      <div class="summary-title">สรุปบทที่ 9 — File I/O</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">3 ขั้นตอน</div><div class="sum-body">เปิด open() → อ่าน/เขียน → ปิด close() (หรือใช้ with ปิดให้เอง)</div></div>
+        <div class="sum-card"><div class="sum-head">4 โหมด</div><div class="sum-body">r อ่าน · w เขียนทับ (<b>ลบของเดิม!</b>) · a เขียนต่อ · x สร้างใหม่</div></div>
+        <div class="sum-card"><div class="sum-head">อ่าน 4 วิธี</div><div class="sum-body">read() ทั้งไฟล์ · readline() ทีละบรรทัด · readlines() เป็น list · for วนตรงๆ</div></div>
+        <div class="sum-card"><div class="sum-head">write()</div><div class="sum-body">รับ string เท่านั้น · ไม่ขึ้นบรรทัดให้ ต้องใส่ \n เอง</div></div>
+        <div class="sum-card"><div class="sum-head">with</div><div class="sum-body">with open(...) as f: — ปลอดภัยกว่า ไม่ต้องเขียน close()</div></div>
+        <div class="sum-card"><div class="sum-head">os</div><div class="sum-body">os.path.exists() เช็คก่อนเปิด · os.remove() ลบไฟล์</div></div>
+      </div>
+      <a href="slides_ch10.html" class="summary-next">→ บทที่ 10: GUI ด้วย Tkinter</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 9 — File I/O</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ทำไมต้องใช้ไฟล์','open() + 4 โหมด','อ่าน 4 วิธี','เขียนไฟล์','with','เช็ค + ลบไฟล์','Banking Use Case','Think!','ทดสอบ','เติมคำ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

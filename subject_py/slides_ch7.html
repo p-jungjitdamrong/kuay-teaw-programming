@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 7 — Flowchart &amp; การออกแบบโปรแกรม | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#b84c00;--cal:#fff3ec;--cam:#d98a5a;}
+.fc{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.fc th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;}
+.fc td{padding:6px 10px;border:1px solid var(--line);}
+.fc td:first-child{text-align:center;font-family:var(--mono);font-weight:700;color:var(--ca);white-space:nowrap;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;overflow-x:auto;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ก๋วยเตี๋ยวเรือ Programming · Python</div>
+        <div class="cover-title">บทที่ 7<br><em>Flowchart &amp;<br>การออกแบบโปรแกรม</em></div>
+        <div class="cover-subtitle">คิดให้ออกก่อนเขียน — ผังงาน สัญลักษณ์มาตรฐาน และการแปลงเป็นโค้ด Python</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ภาษาคอมพิวเตอร์ 3 ระดับ + ทำไม Python เป็นระดับสูง</div>
+          <div class="topic-row"><div class="topic-dot"></div>สัญลักษณ์ Flowchart 8 ตัวที่ต้องรู้จัก</div>
+          <div class="topic-row"><div class="topic-dot"></div>แปลง Flowchart → โค้ด Python (3 รูปแบบ)</div>
+          <div class="topic-row"><div class="topic-dot"></div>Nested if — ผังงานซ้อนกัน</div>
+          <div class="topic-row"><div class="topic-dot"></div>เขียนผังงานจากโจทย์จริง</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">07</div>
+        <div class="cover-badge">FLOWCHART · DESIGN</div>
+        <div class="cover-slides-count">12 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 ภาษาคอมพิวเตอร์ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · ปูพื้น</div>
+    <h2 class="slide-title">ภาษาคอมพิวเตอร์ 3 ระดับ — Python อยู่ตรงไหน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ไล่จากล่างขึ้นบน</div>
+        <pre class="code-block"><span class="cm">① ภาษาเครื่อง (Machine Language)</span>
+   เขียนด้วย 0 กับ 1 เท่านั้น
+   00000101 10101010 00000110  ← 5+6
+   • ภาษาเดียวที่คอมพิวเตอร์เข้าใจทันที
+   • เร็วที่สุด แต่คนเขียนแทบไม่ไหว
+   • ผูกกับ CPU รุ่นนั้นๆ (Machine Dependent)
+
+<span class="cm">② ภาษาระดับต่ำ (Assembly)</span>
+   ใช้ชื่อย่อแทนคำสั่ง: ADD, LD, MUL, SUB
+   ใช้ชื่อแทนตำแหน่งหน่วยความจำ: R1, R2
+   • คนอ่านง่ายขึ้น แต่ยังผูกกับเครื่อง
+
+<span class="cm">③ ภาษาระดับสูง (High-Level)</span>
+   Python, C, Java — ใกล้ภาษาคน
+   • ไม่ผูกกับเครื่อง เขียนครั้งเดียวใช้ได้หลายที่</pre>
+      </div>
+      <div>
+        <div class="code-label">ทุกภาษาต้องกลายเป็นภาษาเครื่อง</div>
+        <div class="diagram">โค้ด Python (คนเขียน)
+      │
+      │  ตัวแปลภาษา
+      ▼
+  ภาษาเครื่อง (CPU รัน)</div>
+        <pre class="code-block"><span class="cm">/* ตัวแปลภาษามี 2 แบบ:
+
+   Compiler — แปลทั้งไฟล์ก่อน
+     แล้วค่อยรัน (C, Java)
+     → เร็วตอนรัน
+
+   Interpreter — แปลทีละบรรทัด
+     แล้วรันเลย (Python)
+     → เขียนแล้วลองได้ทันที
+       แต่ช้ากว่าตอนรัน
+
+   Python = Interpreted
+   จึงลองโค้ดทีละบรรทัดใน
+   Shell ได้ ← ข้อดีตอนหัดเขียน */</span></pre>
+      </div>
+    </div>
+    <div class="callout">ที่มาของคำว่า "โปรแกรม" — ชุดคำสั่งที่มีขั้นตอน เพื่อสั่งคอมพิวเตอร์ให้ทำงานสิ่งหนึ่งสิ่งใด · คำสำคัญคือ <strong>"มีขั้นตอน"</strong> ซึ่งเป็นที่มาของผังงานในสไลด์ถัดไป</div>
+  </div>
+</div>
+
+<!-- 2 สัญลักษณ์ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · สัญลักษณ์</div>
+    <h2 class="slide-title">สัญลักษณ์ Flowchart 8 ตัว — จำให้ครบ</h2>
+    <table class="fc">
+      <thead><tr><th style="text-align:center">รูป</th><th>ชื่อ</th><th>ใช้ทำอะไร</th><th>ตรงกับโค้ด Python</th></tr></thead>
+      <tbody>
+        <tr><td>⬭</td><td>Terminal</td><td>จุดเริ่มต้น / จุดจบ</td><td>เริ่มโปรแกรม / จบโปรแกรม</td></tr>
+        <tr><td>▱</td><td>Input / Output</td><td>รับข้อมูลเข้า / ส่งออก</td><td><code class="inline-code">input()</code></td></tr>
+        <tr><td>▭</td><td>Process</td><td>ประมวลผล คำนวณ</td><td><code class="inline-code">x = a + b</code></td></tr>
+        <tr><td>◇</td><td>Decision</td><td>ตัดสินใจ (จริง/เท็จ)</td><td><code class="inline-code">if / while</code></td></tr>
+        <tr><td>▽</td><td>Display</td><td>แสดงผลทางจอภาพ</td><td><code class="inline-code">print()</code></td></tr>
+        <tr><td>→</td><td>Flow Line</td><td>ทิศทางการทำงาน</td><td>ลำดับบรรทัด</td></tr>
+        <tr><td>◯</td><td>Connector</td><td>จุดเชื่อม (หน้าเดียวกัน)</td><td>— (ใช้ตอนวาดยาว)</td></tr>
+        <tr><td>⬠</td><td>Off Page Connector</td><td>จุดเชื่อม (คนละหน้า)</td><td>— (ใช้ตอนวาดยาว)</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">คู่ที่คนสับสนบ่อย: <strong>Input/Output (▱ สี่เหลี่ยมเอียง)</strong> ใช้ตอนรับข้อมูล · <strong>Display (▽)</strong> ใช้ตอนแสดงผลออกจอ — บางตำราใช้ ▱ ทั้งคู่ ให้ดูที่อาจารย์สอน</div>
+  </div>
+</div>
+
+<!-- 3 sequence -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · รูปแบบที่ 1</div>
+    <h2 class="slide-title">Sequence — ทำเรียงลงมาทีละขั้น</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ผังงาน: หาพื้นที่สี่เหลี่ยมผืนผ้า</div>
+        <div class="diagram">   ⬭ เริ่มต้น
+        │
+   ▱ รับ w, h
+        │
+   ▭ area = w × h
+        │
+   ▽ แสดง area
+        │
+   ⬭ จบ</div>
+      </div>
+      <div>
+        <div class="code-label">แปลงเป็นโค้ด</div>
+        <pre class="code-block"><span class="cm"># ⬭ เริ่มต้น — ไม่ต้องเขียนอะไร</span>
+
+<span class="cm"># ▱ รับข้อมูล</span>
+w = <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"กว้าง: "</span>))
+h = <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"ยาว: "</span>))
+
+<span class="cm"># ▭ ประมวลผล</span>
+area = w * h
+
+<span class="cm"># ▽ แสดงผล</span>
+<span class="fn">print</span>(<span class="st">"พื้นที่ ="</span>, area)
+
+<span class="cm"># ⬭ จบ — จบไฟล์</span></pre>
+      </div>
+    </div>
+    <div class="callout">โครง <strong>รับ → คำนวณ → แสดง</strong> คือแม่แบบของโจทย์ 80% ในบทต้นๆ — วาดผังงานได้ก็เขียนโค้ดได้ทันที เพราะแต่ละกล่อง = 1 บรรทัด</div>
+  </div>
+</div>
+
+<!-- 4 selection -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · รูปแบบที่ 2</div>
+    <h2 class="slide-title">Selection — แยกทางด้วย ◇</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">if เดี่ยว (ทางเดียว)</div>
+        <div class="diagram">      │
+   ◇ x &lt; 0 ─── เท็จ ──┐
+      │ จริง           │
+   ▽ "ติดลบ"           │
+      │                │
+      └────────────────┘
+      │</div>
+        <pre class="code-block"><span class="kw">if</span> x &lt; <span class="nm">0</span>:
+    <span class="fn">print</span>(<span class="st">"ติดลบ"</span>)</pre>
+      </div>
+      <div>
+        <div class="code-label">if-else (สองทาง)</div>
+        <div class="diagram">          │
+      ◇ score &gt;= 50
+     จริง │  │ เท็จ
+   ▽"ผ่าน" │  ▽"ตก"
+        │  │
+        └──┴──┐
+             │</div>
+        <pre class="code-block"><span class="kw">if</span> score &gt;= <span class="nm">50</span>:
+    <span class="fn">print</span>(<span class="st">"ผ่าน"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"ตก"</span>)</pre>
+      </div>
+    </div>
+    <div class="callout">กฎการอ่าน ◇: <strong>ต้องมีทางออก 2 ทางเสมอ</strong> (จริง/เท็จ) และทั้งสองทางต้องกลับมาบรรจบกันก่อนไปต่อ — ถ้าวาดแล้วมีเส้นค้าง แสดงว่าลืมเคสใดเคสหนึ่ง</div>
+  </div>
+</div>
+
+<!-- 5 nested if -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · Nested if</div>
+    <h2 class="slide-title">◇ ซ้อน ◇ — เงื่อนไขหลายชั้น</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ผังงาน: ตัดเกรด</div>
+        <div class="diagram">      ◇ s &gt;= 80
+     จริง│  │เท็จ
+    ▽"A" │  ◇ s &gt;= 70
+         │ จริง│ │เท็จ
+         │ ▽"B"│ ◇ s &gt;= 60
+         │     │จริง│ │เท็จ
+         │     │▽"C"│ ▽"F"</div>
+      </div>
+      <div>
+        <div class="code-label">2 วิธีเขียน — ผลเหมือนกัน</div>
+        <pre class="code-block"><span class="cm"># แบบซ้อนจริง (ตามผังงานเป๊ะ)</span>
+<span class="kw">if</span> s &gt;= <span class="nm">80</span>:
+    <span class="fn">print</span>(<span class="st">"A"</span>)
+<span class="kw">else</span>:
+    <span class="kw">if</span> s &gt;= <span class="nm">70</span>:
+        <span class="fn">print</span>(<span class="st">"B"</span>)
+    <span class="kw">else</span>:
+        <span class="kw">if</span> s &gt;= <span class="nm">60</span>:
+            <span class="fn">print</span>(<span class="st">"C"</span>)
+        <span class="kw">else</span>:
+            <span class="fn">print</span>(<span class="st">"F"</span>)
+
+<span class="cm"># แบบ elif — Python นิยมกว่า</span>
+<span class="kw">if</span> s &gt;= <span class="nm">80</span>:   <span class="fn">print</span>(<span class="st">"A"</span>)
+<span class="kw">elif</span> s &gt;= <span class="nm">70</span>: <span class="fn">print</span>(<span class="st">"B"</span>)
+<span class="kw">elif</span> s &gt;= <span class="nm">60</span>: <span class="fn">print</span>(<span class="st">"C"</span>)
+<span class="kw">else</span>:         <span class="fn">print</span>(<span class="st">"F"</span>)</pre>
+      </div>
+    </div>
+    <div class="callout">จุดพลาดคลาสสิก: <strong>เรียงเงื่อนไขผิดลำดับ</strong> — ถ้าเช็ค <code class="inline-code">s &gt;= 60</code> ก่อน คนได้ 90 จะได้ "C" เพราะเข้าเงื่อนไขแรกแล้วหยุด · เรียงจาก<strong>แคบไปกว้าง</strong>เสมอ</div>
+  </div>
+</div>
+
+<!-- 6 loop -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · รูปแบบที่ 3</div>
+    <h2 class="slide-title">Loop — ◇ ที่มีเส้นย้อนกลับ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ผังงาน: พิมพ์ Hello 2000 ครั้ง</div>
+        <div class="diagram">   ▭ i = 0
+        │
+        ▼
+   ┌─▶ ◇ i &lt; 2000 ── เท็จ ──▶ จบ
+   │      │ จริง
+   │  ▽ "Hello"
+   │      │
+   │  ▭ i = i + 1
+   │      │
+   └──────┘  ← เส้นย้อนกลับ!</div>
+      </div>
+      <div>
+        <div class="code-label">แปลงได้ 2 แบบ</div>
+        <pre class="code-block"><span class="cm"># while — ตามผังงานตรงตัว</span>
+i = <span class="nm">0</span>
+<span class="kw">while</span> i &lt; <span class="nm">2000</span>:
+    <span class="fn">print</span>(<span class="st">"Hello, Kitty"</span>)
+    i = i + <span class="nm">1</span>
+
+<span class="cm"># for — สั้นกว่า เมื่อรู้จำนวนรอบ</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">2000</span>):
+    <span class="fn">print</span>(<span class="st">"Hello, Kitty"</span>)</pre>
+        <pre class="code-block"><span class="cm"># คำศัพท์ 2 แบบของการวนซ้ำ:
+# Counting Loop — รู้จำนวนรอบล่วงหน้า
+#   → ใช้ for
+# Sentinel Loop — วนจนเจอค่าหยุด
+#   → ใช้ while</span>
+
+<span class="cm"># Sentinel: วนจนกว่าจะใส่ 0</span>
+n = <span class="fn">int</span>(<span class="fn">input</span>())
+<span class="kw">while</span> n != <span class="nm">0</span>:
+    <span class="fn">print</span>(n * <span class="nm">2</span>)
+    n = <span class="fn">int</span>(<span class="fn">input</span>())</pre>
+      </div>
+    </div>
+    <div class="callout">วิธีดูว่าเป็นลูปในผังงาน: <strong>มีเส้นย้อนกลับขึ้นไปหา ◇ เดิม</strong> — ถ้าลืมกล่อง <code class="inline-code">i = i + 1</code> จะกลายเป็น infinite loop ทันที (ข้อสอบชอบเว้นกล่องนี้ให้เติม)</div>
+  </div>
+</div>
+
+<!-- 7 โจทย์แปลง -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · ฝึกแปลง</div>
+    <h2 class="slide-title">อ่านผังงาน → เขียนโค้ด (ทำให้ดูจบๆ)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์: หาผลรวม 1..n</div>
+        <div class="diagram">   ▱ รับ n
+        │
+   ▭ sum = 0, i = 1
+        │
+        ▼
+   ┌─▶ ◇ i &lt;= n ── เท็จ ─┐
+   │      │ จริง          │
+   │  ▭ sum = sum + i     │
+   │      │               │
+   │  ▭ i = i + 1         │
+   │      │               │
+   └──────┘         ▽ แสดง sum
+                          │
+                          ⬭ จบ</div>
+      </div>
+      <div>
+        <div class="code-label">เฉลย</div>
+        <pre class="code-block">n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"n = "</span>))
+
+sum = <span class="nm">0</span>          <span class="cm"># กล่อง ▭ ตัวแรก</span>
+i = <span class="nm">1</span>
+
+<span class="kw">while</span> i &lt;= n:     <span class="cm"># กล่อง ◇</span>
+    sum = sum + i  <span class="cm"># ▭ ในลูป</span>
+    i = i + <span class="nm">1</span>      <span class="cm"># ▭ เพิ่มตัวนับ</span>
+
+<span class="fn">print</span>(<span class="st">"ผลรวม ="</span>, sum)   <span class="cm"># ▽</span>
+
+<span class="cm"># n = 5 → 1+2+3+4+5 = 15</span></pre>
+        <pre class="code-block"><span class="cm"># เขียนด้วย for ก็ได้:</span>
+sum = <span class="nm">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, n+<span class="nm">1</span>):
+    sum += i
+<span class="fn">print</span>(sum)</pre>
+      </div>
+    </div>
+    <div class="callout">เทคนิคทำข้อสอบ: เขียน <strong>ตัวแปรกับค่าของมันกำกับข้างผังงาน</strong> แล้วไล่ทีละรอบ (i=1 sum=1 → i=2 sum=3 → i=3 sum=6...) — เห็นแพตเทิร์นแล้วเขียนโค้ดถูกแน่</div>
+  </div>
+</div>
+
+<!-- 8 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">ผังงานนี้มีปัญหาอะไร?<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:10px 16px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+▭ i = 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+┌─▶ ◇ i &lt;= 10<br>
+│&nbsp;&nbsp;&nbsp;&nbsp;│ จริง<br>
+│&nbsp;&nbsp;▽ แสดง i<br>
+└────┘
+</code><br><br>
+<em>ใบ้: ไล่ดูว่า i เปลี่ยนค่าตรงไหนบ้าง<br>
+i=1 → แสดง 1 → กลับไปเช็ค i&lt;=10 → i ยังเป็น 1 → แสดง 1 อีก...</em><br><br>
+ขาดกล่องอะไร? และถ้าเขียนเป็นโค้ดจะเกิดอะไรขึ้น?</div>
+    </div>
+  </div>
+</div>
+
+<!-- 9 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · ทดสอบ</div>
+    <h2 class="slide-title">สัญลักษณ์ ◇ ในผังงานตรงกับคำสั่งใดใน Python?</h2>
+    <div class="mc-opts" id="mc-fc">
+      <div class="mc-opt" onclick="pickMC('mc-fc',0,2,'print() คือการแสดงผล ตรงกับสัญลักษณ์ ▽ (Display)')"><span class="mc-ltr">A</span> print()</div>
+      <div class="mc-opt" onclick="pickMC('mc-fc',1,2,'input() คือการรับข้อมูล ตรงกับสัญลักษณ์ ▱ (Input/Output)')"><span class="mc-ltr">B</span> input()</div>
+      <div class="mc-opt" onclick="pickMC('mc-fc',2,2,'◇ Decision คือการตัดสินใจ มีทางออก 2 ทาง (จริง/เท็จ) ตรงกับ if และ while')"><span class="mc-ltr">C</span> if หรือ while</div>
+      <div class="mc-opt" onclick="pickMC('mc-fc',3,2,'การกำหนดค่า x = 5 คือการประมวลผล ตรงกับ ▭ (Process)')"><span class="mc-ltr">D</span> x = 5</div>
+    </div>
+    <div class="ex-feedback" id="mc-fc-fb"></div>
+    <pre class="code-block" style="margin-top:12px">◇ Decision = จุดที่โปรแกรม "ต้องเลือกทาง" → มีเส้นออก 2 เส้นเสมอ (จริง/เท็จ)
+ใช้กับทั้ง if (เลือกครั้งเดียว) และ while (เลือกซ้ำ — มีเส้นย้อนกลับ)</pre>
+  </div>
+</div>
+
+<!-- 10 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 7 · เติมคำ</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <div class="exercise">
+      <div class="ex-q">① สัญลักษณ์ ▭ (สี่เหลี่ยมผืนผ้า) ในผังงานหมายถึงอะไร (ภาษาอังกฤษ)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ชื่อสัญลักษณ์">
+        <button class="ex-btn" onclick="checkFill('in1','process',['กระบวนการ','ประมวลผล'],[],'Process = การประมวลผล/คำนวณ เช่น area = w * h','Process (การประมวลผล) — ส่วน Decision คือ ◇ สี่เหลี่ยมข้าวหลามตัด')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">② ลูปที่ "รู้จำนวนรอบล่วงหน้า" เรียกว่า ___ Loop (ภาษาอังกฤษ)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ชื่อประเภทลูป">
+        <button class="ex-btn" onclick="checkFill('in2','counting',['counting loop','นับรอบ'],[],'Counting Loop — ใช้ for · ส่วน Sentinel Loop วนจนเจอค่าหยุด ใช้ while','Counting Loop (ใช้ for) — คู่กับ Sentinel Loop ที่วนจนเจอค่าหยุด')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">③ ในผังงานลูป ถ้าลืมกล่องเพิ่มค่าตัวนับ (i = i + 1) จะเกิดปัญหาอะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ปัญหาอะไร">
+        <button class="ex-btn" onclick="checkFill('in3','infinite loop',['วนไม่รู้จบ','loop ไม่จบ','วนซ้ำไม่สิ้นสุด','วนลูปไม่จบ','infinite'],[],'Infinite Loop — เงื่อนไขเป็นจริงตลอด โปรแกรมค้าง ต้องกด Ctrl+C หยุด','Infinite Loop (วนไม่รู้จบ) — เพราะค่าที่ใช้เช็คเงื่อนไขไม่เคยเปลี่ยน')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 11 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">📐</div>
+      <div class="summary-title">สรุปบทที่ 7 — Flowchart &amp; การออกแบบ</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">ภาษา 3 ระดับ</div><div class="sum-body">เครื่อง (0/1) → ระดับต่ำ (Assembly) → ระดับสูง (Python) · ทุกภาษาต้องแปลเป็นภาษาเครื่อง</div></div>
+        <div class="sum-card"><div class="sum-head">Python = Interpreted</div><div class="sum-body">แปลทีละบรรทัดแล้วรันเลย → ลองโค้ดได้ทันที</div></div>
+        <div class="sum-card"><div class="sum-head">สัญลักษณ์หลัก</div><div class="sum-body">⬭ เริ่ม/จบ · ▱ รับข้อมูล · ▭ คำนวณ · ◇ ตัดสินใจ · ▽ แสดงผล</div></div>
+        <div class="sum-card"><div class="sum-head">3 รูปแบบ</div><div class="sum-body">Sequence (เรียงลง) · Selection (◇ แยกทาง) · Loop (◇ + เส้นย้อนกลับ)</div></div>
+        <div class="sum-card"><div class="sum-head">Nested if</div><div class="sum-body">◇ ซ้อน ◇ → เขียนด้วย elif · เรียงเงื่อนไขแคบไปกว้าง</div></div>
+        <div class="sum-card"><div class="sum-head">Counting vs Sentinel</div><div class="sum-body">รู้จำนวนรอบ → for · วนจนเจอค่าหยุด → while</div></div>
+      </div>
+      <a href="slides_ch8.html" class="summary-next">→ บทที่ 8: Nested Loop &amp; break/continue</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 7 — Flowchart &amp; การออกแบบ</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ภาษาคอมพิวเตอร์ 3 ระดับ','สัญลักษณ์ 8 ตัว','Sequence','Selection','Nested if','Loop','ฝึกแปลงผังงาน','Think!','ทดสอบ','เติมคำ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
