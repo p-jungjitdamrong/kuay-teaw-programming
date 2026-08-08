@@ -1,1 +1,8 @@
 .DS_Store
+
+# เอกสารเรียนต้นฉบับของอาจารย์ (lecture/lab PDF, PPTX, DOCX)
+# ใช้เป็นแหล่งอ้างอิงตอนทำสไลด์ติว — ไม่ commit ขึ้น repo สาธารณะ
+data-midterm/
+data-final/
+oop-midterm/
+oop-final/
