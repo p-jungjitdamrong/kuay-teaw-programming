@@ -416,13 +416,13 @@ System.out.println(a.getVolume());
         width = w; height = h; depth = d;
     }
 }</pre>
-    <div id="mc-l3" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-l3','A','A','✅ new Box() error! เพราะเขียน constructor เองแล้ว Java ไม่แถม default constructor ให้อีก — มีแต่ตัวรับ 3 arguments')">A) Box b = new Box();</button>
-      <button class="mc-btn" onclick="pickMC('mc-l3','B','A','❌ ตัวนี้ตรงกับ constructor ที่เขียนไว้พอดี — ใช้ได้')">B) Box b = new Box(1, 2, 3);</button>
-      <button class="mc-btn" onclick="pickMC('mc-l3','C','A','❌ ประกาศ reference เฉยๆ ยังไม่ new — compile ผ่าน (จะ error ตอนใช้โดยไม่ initialize)')">C) Box b;</button>
-      <button class="mc-btn" onclick="pickMC('mc-l3','D','A','❌ ข้อ B ใช้ได้ปกติ — มีข้อที่ error อยู่จริง')">D) ไม่มีข้อไหน error</button>
+    <div class="mc-opts" id="mc-l3">
+      <div class="mc-opt" onclick="pickMC('mc-l3',0,0,'new Box() error! เพราะเขียน constructor เองแล้ว Java ไม่แถม default constructor ให้อีก — มีแต่ตัวรับ 3 arguments')"><span class="mc-ltr">A</span> Box b = new Box();</div>
+      <div class="mc-opt" onclick="pickMC('mc-l3',1,0,'ตัวนี้ตรงกับ constructor ที่เขียนไว้พอดี — ใช้ได้')"><span class="mc-ltr">B</span> Box b = new Box(1, 2, 3);</div>
+      <div class="mc-opt" onclick="pickMC('mc-l3',2,0,'ประกาศ reference เฉยๆ ยังไม่ new — compile ผ่าน (จะ error ตอนใช้โดยไม่ initialize)')"><span class="mc-ltr">C</span> Box b;</div>
+      <div class="mc-opt" onclick="pickMC('mc-l3',3,0,'ข้อ B ใช้ได้ปกติ — มีข้อที่ error อยู่จริง')"><span class="mc-ltr">D</span> ไม่มีข้อไหน error</div>
     </div>
-    <pre class="code-block" style="margin-top:12px"><span class="cm">// กฎ: Java แถม default constructor ให้เฉพาะเมื่อเรา "ไม่เขียนเลย"
+    <div class="ex-feedback" id="mc-l3-fb"></div><pre class="code-block" style="margin-top:12px"><span class="cm">// กฎ: Java แถม default constructor ให้เฉพาะเมื่อเรา "ไม่เขียนเลย"
 // เขียนเองเมื่อไหร่ ตัวแถมหายไปทันที
 // ถ้ายังอยากได้ new Box() ด้วย → เขียนเพิ่มเอง:</span>
 <span class="kw">public</span> <span class="fn">Box</span>() { }   <span class="cm">// overload เพิ่มอีกตัว</span></pre>
@@ -436,26 +436,32 @@ System.out.println(a.getVolume());
     <div class="slide-eyebrow">Lab 3 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① สร้าง object จาก class ใช้คีย์เวิร์ด ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl3a" placeholder="keyword">
-      <button class="fill-btn" onclick="checkFill('fl3a','new',['new'],[],'✅ new จองหน่วยความจำ + เรียก constructor → ได้ object จริง','❌ คือ new — Book b = new Book();')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① สร้าง object จาก class ใช้คีย์เวิร์ด ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in1','new',['new'],[],'new จองหน่วยความจำ + เรียก constructor → ได้ object จริง','คือ new — Book b = new Book();')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fl3a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② ใน setDimension ใช้ ___.width เพื่อแยก field ออกจาก parameter ชื่อซ้ำ</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl3b" placeholder="keyword">
-      <button class="fill-btn" onclick="checkFill('fl3b','this',['this'],[],'✅ this.width = field ของ object ตัวเอง · width เฉยๆ = parameter','❌ คือ this — this.width หมายถึง field ของ object, width เฉยๆ คือ parameter')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② ใน setDimension ใช้ ___.width เพื่อแยก field ออกจาก parameter ชื่อซ้ำ</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in2','this',['this'],[],'this.width = field ของ object ตัวเอง · width เฉยๆ = parameter','คือ this — this.width หมายถึง field ของ object, width เฉยๆ คือ parameter')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fl3b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Box ขนาด 3×4×5 ผ่าน resizeBox(b, 2) แล้ว getVolume() ได้เท่าไหร่?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl3c" placeholder="ตัวเลข">
-      <button class="fill-btn" onclick="checkFill('fl3c','480',['480.0','480'],[],'✅ 6×8×10 = 480 — ทุกด้าน ×2 ปริมาตร ×8','❌ ทุกด้าน ×2 → 6×8×10 = 480 (ปริมาตร ×2³ = ×8 ไม่ใช่ ×2)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ Box ขนาด 3×4×5 ผ่าน resizeBox(b, 2) แล้ว getVolume() ได้เท่าไหร่?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ตัวเลข">
+        <button class="ex-btn" onclick="checkFill('in3','480',['480.0','480'],[],'6×8×10 = 480 — ทุกด้าน ×2 ปริมาตร ×8','ทุกด้าน ×2 → 6×8×10 = 480 (ปริมาตร ×2³ = ×8 ไม่ใช่ ×2)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fl3c-msg" class="fill-msg"></div>
   </div>
 </div>
 

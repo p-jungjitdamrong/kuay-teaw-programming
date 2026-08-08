@@ -316,13 +316,13 @@ squares = [i**<span class="nm">2</span> <span class="kw">for</span> i <span clas
         <span class="kw">break</span>
     total += n
 <span class="fn">print</span>(total)</pre>
-    <div id="mc-t2" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-t2','A','B','❌ 15 คือ sum ทั้งหมด — แต่มี break ที่ n==3')">A) 15</button>
-      <button class="mc-btn" onclick="pickMC('mc-t2','B','B','✅ วน 1,2 แล้วพอ n==3 break — total = 1+2 = 3')">B) 3</button>
-      <button class="mc-btn" onclick="pickMC('mc-t2','C','B','❌ 6 คือ 1+2+3 — แต่ break เกิดก่อน total += 3')">C) 6</button>
-      <button class="mc-btn" onclick="pickMC('mc-t2','D','B','❌ 12 = 3+4+5 — ไม่ใช่ค่าที่เหลือหลัง break')">D) 12</button>
+    <div class="mc-opts" id="mc-t2">
+      <div class="mc-opt" onclick="pickMC('mc-t2',0,1,'15 คือ sum ทั้งหมด — แต่มี break ที่ n==3')"><span class="mc-ltr">A</span> 15</div>
+      <div class="mc-opt" onclick="pickMC('mc-t2',1,1,'วน 1,2 แล้วพอ n==3 break — total = 1+2 = 3')"><span class="mc-ltr">B</span> 3</div>
+      <div class="mc-opt" onclick="pickMC('mc-t2',2,1,'6 คือ 1+2+3 — แต่ break เกิดก่อน total += 3')"><span class="mc-ltr">C</span> 6</div>
+      <div class="mc-opt" onclick="pickMC('mc-t2',3,1,'12 = 3+4+5 — ไม่ใช่ค่าที่เหลือหลัง break')"><span class="mc-ltr">D</span> 12</div>
     </div>
-  </div>
+    <div class="ex-feedback" id="mc-t2-fb"></div></div>
 </div>
 
 <!-- ════ SLIDE 10 — Fill-in ════ -->
@@ -332,26 +332,32 @@ squares = [i**<span class="nm">2</span> <span class="kw">for</span> i <span clas
     <div class="slide-eyebrow">บทที่ 2 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① เติม List Comprehension — สร้าง list ตัวเลขคู่จาก 1 ถึง 10</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f2a" placeholder="[... for ...]">
-      <button class="fill-btn" onclick="checkFill('f2a','[x for x in range(1,11) if x%2==0]',['[x for x in range(1, 11) if x % 2 == 0]','[x for x in range(2,11,2)]','[x for x in range(2,12,2)]'],[],'✅ ถูกต้อง!','❌ Hint: [x for x in range(1,11) if x%2==0]')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① เติม List Comprehension — สร้าง list ตัวเลขคู่จาก 1 ถึง 10</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="[... for ...]">
+        <button class="ex-btn" onclick="checkFill('in1','[x for x in range(1,11) if x%2==0]',['[x for x in range(1, 11) if x % 2 == 0]','[x for x in range(2,11,2)]','[x for x in range(2,12,2)]'],[],'ถูกต้อง!','Hint: [x for x in range(1,11) if x%2==0]')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="f2a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② Python ใช้คำอะไรแทน <code class="inline-code">else if</code> ของ C?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f2b" placeholder="คำสงวน">
-      <button class="fill-btn" onclick="checkFill('f2b','elif',[],[],  '✅ elif — ย่อจาก else if','❌ Python ใช้ elif (ไม่มีช่องว่าง)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② Python ใช้คำอะไรแทน <code class="inline-code">else if</code> ของ C?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="คำสงวน">
+        <button class="ex-btn" onclick="checkFill('in2','elif',[],[],  '✅ elif — ย่อจาก else if','Python ใช้ elif (ไม่มีช่องว่าง)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="f2b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ <code class="inline-code">range(0, 10, 2)</code> ให้ค่าอะไรบ้าง? (ตอบแบบ list)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f2c" placeholder="0, 2, 4, ...">
-      <button class="fill-btn" onclick="checkFill('f2c','0, 2, 4, 6, 8',['0,2,4,6,8','0 2 4 6 8'],[],'✅ 0,2,4,6,8 — step=2','❌ range(0,10,2) → 0,2,4,6,8 (ไม่รวม 10)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ <code class="inline-code">range(0, 10, 2)</code> ให้ค่าอะไรบ้าง? (ตอบแบบ list)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="0, 2, 4, ...">
+        <button class="ex-btn" onclick="checkFill('in3','0, 2, 4, 6, 8',['0,2,4,6,8','0 2 4 6 8'],[],'0,2,4,6,8 — step=2','range(0,10,2) → 0,2,4,6,8 (ไม่รวม 10)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="f2c-msg" class="fill-msg"></div>
   </div>
 </div>
 

@@ -256,13 +256,13 @@
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 6 · ลองข้อสอบ</div>
     <h2 class="slide-title">ข้อใดคือ "ข้อเสีย" ของ Inheritance ตามที่เรียน?</h2>
-    <div id="mc-j6" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-j6','A','C','❌ ตรงข้าม — inheritance ช่วย "ลด" โค้ดซ้ำ (เป็นข้อดี)')">A) ทำให้โค้ดซ้ำซ้อนมากขึ้น</button>
-      <button class="mc-btn" onclick="pickMC('mc-j6','B','C','❌ สืบทอดไม่ได้ทำให้ช้า — ไม่ใช่ประเด็นในสไลด์')">B) โปรแกรมทำงานช้าลง</button>
-      <button class="mc-btn" onclick="pickMC('mc-j6','C','C','✅ ตามสไลด์: ความสัมพันธ์แน่นแฟ้น (tightly coupled) — แก้โค้ดคลาสแม่กระทบคลาสลูกทั้งหมด')">C) แก้คลาสแม่แล้วกระทบคลาสลูกทั้งหมด</button>
-      <button class="mc-btn" onclick="pickMC('mc-j6','D','C','❌ Java extends ได้แม่เดียวจริง แต่นั่นเป็นข้อจำกัดของภาษา ไม่ใช่ข้อเสียที่สไลด์ระบุ')">D) สืบทอดได้เพียงคลาสเดียว</button>
+    <div class="mc-opts" id="mc-j6">
+      <div class="mc-opt" onclick="pickMC('mc-j6',0,2,'ตรงข้าม — inheritance ช่วย "ลด" โค้ดซ้ำ (เป็นข้อดี)')"><span class="mc-ltr">A</span> ทำให้โค้ดซ้ำซ้อนมากขึ้น</div>
+      <div class="mc-opt" onclick="pickMC('mc-j6',1,2,'สืบทอดไม่ได้ทำให้ช้า — ไม่ใช่ประเด็นในสไลด์')"><span class="mc-ltr">B</span> โปรแกรมทำงานช้าลง</div>
+      <div class="mc-opt" onclick="pickMC('mc-j6',2,2,'ตามสไลด์: ความสัมพันธ์แน่นแฟ้น (tightly coupled) — แก้โค้ดคลาสแม่กระทบคลาสลูกทั้งหมด')"><span class="mc-ltr">C</span> แก้คลาสแม่แล้วกระทบคลาสลูกทั้งหมด</div>
+      <div class="mc-opt" onclick="pickMC('mc-j6',3,2,'Java extends ได้แม่เดียวจริง แต่นั่นเป็นข้อจำกัดของภาษา ไม่ใช่ข้อเสียที่สไลด์ระบุ')"><span class="mc-ltr">D</span> สืบทอดได้เพียงคลาสเดียว</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">ข้อดี 3: ลดโค้ดซ้ำ (ย้ายขึ้น superclass) · จัดกลุ่มคลาส · ยืดหยุ่น ใช้สลับกันได้
+    <div class="ex-feedback" id="mc-j6-fb"></div><pre class="code-block" style="margin-top:12px">ข้อดี 3: ลดโค้ดซ้ำ (ย้ายขึ้น superclass) · จัดกลุ่มคลาส · ยืดหยุ่น ใช้สลับกันได้
 ข้อเสีย 1: tightly coupled — เปลี่ยนแม่ กระทบลูกทุกตัว</pre>
   </div>
 </div>
@@ -274,26 +274,32 @@
     <div class="slide-eyebrow">ติวบทที่ 6 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — บทสุดท้ายก่อน Cheat Sheet</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① คลาสแม่เรียกว่า ___ class (ศัพท์ตามสไลด์)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj6a" placeholder="ศัพท์">
-      <button class="fill-btn" onclick="checkFill('fj6a','super',['superclass','super class'],[],'✅ super class · ลูกคือ sub class','❌ super class (แม่) / sub class (ลูก)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① คลาสแม่เรียกว่า ___ class (ศัพท์ตามสไลด์)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ศัพท์">
+        <button class="ex-btn" onclick="checkFill('in1','super',['superclass','super class'],[],'super class · ลูกคือ sub class','super class (แม่) / sub class (ลูก)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fj6a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② super(...) ต้องอยู่บรรทัด ___ ของ constructor ลูก</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj6b" placeholder="ตำแหน่ง">
-      <button class="fill-btn" onclick="checkFill('fj6b','แรก',['บรรทัดแรก','first','1'],[],'✅ บรรทัดแรกเสมอ — แม่ต้องสร้างเสร็จก่อน ลูกค่อยเติมของตัวเอง','❌ บรรทัดแรก — กฎเหล็กของ super(...)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② super(...) ต้องอยู่บรรทัด ___ ของ constructor ลูก</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ตำแหน่ง">
+        <button class="ex-btn" onclick="checkFill('in2','แรก',['บรรทัดแรก','first','1'],[],'บรรทัดแรกเสมอ — แม่ต้องสร้างเสร็จก่อน ลูกค่อยเติมของตัวเอง','บรรทัดแรก — กฎเหล็กของ super(...)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fj6b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ method ชื่อเดียวกันหลายตัวในคลาสเดียว ต่าง parameter เรียกว่า ___ (ไม่ใช่ Override!)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj6c" placeholder="ศัพท์">
-      <button class="fill-btn" onclick="checkFill('fj6c','overload',['overloading','โอเวอร์โหลด'],[],'✅ Overload — คลาสเดียวกัน ชื่อซ้ำ ต่าง parameter · Override คือลูกทับของแม่','❌ Overload(ing) — Override คือลูกเขียนทับ method แม่หัวเหมือนเป๊ะ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ method ชื่อเดียวกันหลายตัวในคลาสเดียว ต่าง parameter เรียกว่า ___ (ไม่ใช่ Override!)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ศัพท์">
+        <button class="ex-btn" onclick="checkFill('in3','overload',['overloading','โอเวอร์โหลด'],[],'Overload — คลาสเดียวกัน ชื่อซ้ำ ต่าง parameter · Override คือลูกทับของแม่','Overload(ing) — Override คือลูกเขียนทับ method แม่หัวเหมือนเป๊ะ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fj6c-msg" class="fill-msg"></div>
   </div>
 </div>
 

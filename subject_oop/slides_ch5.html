@@ -366,13 +366,13 @@ p2.<span class="fn">setWeight</span>(<span class="nm">250</span>);      <span cl
     <pre class="code-block" style="margin-bottom:14px"><span class="kw">public</span> <span class="fn">BankAccount</span>(String name) {
     <span class="kw">this</span>.openDate = <span class="kw">new</span> <span class="fn">Date</span>(<span class="nm">19</span>, <span class="nm">7</span>, <span class="nm">2026</span>);   <span class="cm">// ← new ข้างใน</span>
 }</pre>
-    <div id="mc-l5" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-l5','A','C','❌ Association คือรับมาใช้ชั่วคราวผ่าน parameter — อันนี้สร้างเองเก็บเอง')">A) Association</button>
-      <button class="mc-btn" onclick="pickMC('mc-l5','B','C','❌ Aggregation คือรับ object จากข้างนอกมาเก็บ — อันนี้ new เองข้างใน')">B) Aggregation</button>
-      <button class="mc-btn" onclick="pickMC('mc-l5','C','C','✅ Composition — new เองข้างใน constructor, Date เป็นส่วนหนึ่งของบัญชี บัญชีหายวันเปิดก็หายตาม')">C) Composition</button>
-      <button class="mc-btn" onclick="pickMC('mc-l5','D','C','❌ Inheritance คือ is-a (extends) — BankAccount ไม่ได้ "เป็น" Date แต่ "มี" Date')">D) Inheritance</button>
+    <div class="mc-opts" id="mc-l5">
+      <div class="mc-opt" onclick="pickMC('mc-l5',0,2,'Association คือรับมาใช้ชั่วคราวผ่าน parameter — อันนี้สร้างเองเก็บเอง')"><span class="mc-ltr">A</span> Association</div>
+      <div class="mc-opt" onclick="pickMC('mc-l5',1,2,'Aggregation คือรับ object จากข้างนอกมาเก็บ — อันนี้ new เองข้างใน')"><span class="mc-ltr">B</span> Aggregation</div>
+      <div class="mc-opt" onclick="pickMC('mc-l5',2,2,'Composition — new เองข้างใน constructor, Date เป็นส่วนหนึ่งของบัญชี บัญชีหายวันเปิดก็หายตาม')"><span class="mc-ltr">C</span> Composition</div>
+      <div class="mc-opt" onclick="pickMC('mc-l5',3,2,'Inheritance คือ is-a (extends) — BankAccount ไม่ได้ "เป็น" Date แต่ "มี" Date')"><span class="mc-ltr">D</span> Inheritance</div>
     </div>
-    <pre class="code-block" style="margin-top:12px"><span class="cm">// เทียบสามแบบในระบบร้านค้า:
+    <div class="ex-feedback" id="mc-l5-fb"></div><pre class="code-block" style="margin-top:12px"><span class="cm">// เทียบสามแบบในระบบร้านค้า:
 // Cashier รับ cart ผ่าน parameter    → Association (ใช้แล้วคืน)
 // Cart รับ Product จากข้างนอกมาเก็บ  → Aggregation (ของแยกกันอยู่ได้)
 // BankAccount new Date เองข้างใน     → Composition (เกิด-ตายด้วยกัน)</span></pre>
@@ -386,26 +386,32 @@ p2.<span class="fn">setWeight</span>(<span class="nm">250</span>);      <span cl
     <div class="slide-eyebrow">Lab 5 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① ใน UML เครื่องหมาย − หน้า field หมายถึง access modifier อะไร</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl5a" placeholder="modifier">
-      <button class="fill-btn" onclick="checkFill('fl5a','private',['private'],[],'✅ − คือ private · + คือ public','❌ − = private, + = public')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① ใน UML เครื่องหมาย − หน้า field หมายถึง access modifier อะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="modifier">
+        <button class="ex-btn" onclick="checkFill('in1','private',['private'],[],'− คือ private · + คือ public','− = private, + = public')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fl5a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② InventoryCart หยิบของ "ใส่ทีหลัง ออกก่อน" — ตรงกับโครงสร้างข้อมูลชื่ออะไร</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl5b" placeholder="data structure">
-      <button class="fill-btn" onclick="checkFill('fl5b','stack',['สแตก','Stack'],[],'✅ Stack (LIFO) — push=add, pop=getProduct · วิชา DS โผล่มาในร้านค้า!','❌ คือ Stack — Last In First Out เหมือน push/pop')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② InventoryCart หยิบของ "ใส่ทีหลัง ออกก่อน" — ตรงกับโครงสร้างข้อมูลชื่ออะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="data structure">
+        <button class="ex-btn" onclick="checkFill('in2','stack',['สแตก','Stack'],[],'Stack (LIFO) — push=add, pop=getProduct · วิชา DS โผล่มาในร้านค้า!','คือ Stack — Last In First Out เหมือน push/pop')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fl5b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ ความสัมพันธ์แบบ "มีเป็นของ แต่รับมาจากข้างนอก แยกกันอยู่ได้" เรียกว่า</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl5c" placeholder="ชื่อความสัมพันธ์">
-      <button class="fill-btn" onclick="checkFill('fl5c','aggregation',['Aggregation','แอกกรีเกชัน'],[],'✅ Aggregation — Cart มี Product ที่สร้างจากข้างนอก · Cart หาย Product ยังอยู่','❌ คือ Aggregation — ต่างจาก Composition ที่ new เองข้างในและตายด้วยกัน')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ ความสัมพันธ์แบบ "มีเป็นของ แต่รับมาจากข้างนอก แยกกันอยู่ได้" เรียกว่า</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ชื่อความสัมพันธ์">
+        <button class="ex-btn" onclick="checkFill('in3','aggregation',['Aggregation','แอกกรีเกชัน'],[],'Aggregation — Cart มี Product ที่สร้างจากข้างนอก · Cart หาย Product ยังอยู่','คือ Aggregation — ต่างจาก Composition ที่ new เองข้างในและตายด้วยกัน')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fl5c-msg" class="fill-msg"></div>
   </div>
 </div>
 

@@ -308,13 +308,13 @@ b = null;
 String s2 = <span class="kw">new</span> <span class="fn">String</span>(<span class="st">"abc"</span>);
 System.out.<span class="fn">println</span>(s1 == s2);
 System.out.<span class="fn">println</span>(s1.<span class="fn">equals</span>(s2));</pre>
-    <div id="mc-j3" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-j3','A','C','❌ true true จะเกิดเมื่อชี้วัตถุเดียวกัน — แต่ new สองครั้ง = สองวัตถุ')">A) true / true</button>
-      <button class="mc-btn" onclick="pickMC('mc-j3','B','C','❌ equals เทียบเนื้อหา — "abc" กับ "abc" เท่ากันแน่นอน')">B) false / false</button>
-      <button class="mc-btn" onclick="pickMC('mc-j3','C','C','✅ new สองครั้ง = คนละวัตถุ → == false · เนื้อหาเหมือนกัน → equals true (แบบ ③ ในสไลด์อาจารย์เป๊ะ)')">C) false / true</button>
-      <button class="mc-btn" onclick="pickMC('mc-j3','D','C','❌ กลับด้าน — == เทียบตัวชี้ (false), equals เทียบเนื้อหา (true)')">D) true / false</button>
+    <div class="mc-opts" id="mc-j3">
+      <div class="mc-opt" onclick="pickMC('mc-j3',0,2,'true true จะเกิดเมื่อชี้วัตถุเดียวกัน — แต่ new สองครั้ง = สองวัตถุ')"><span class="mc-ltr">A</span> true / true</div>
+      <div class="mc-opt" onclick="pickMC('mc-j3',1,2,'equals เทียบเนื้อหา — "abc" กับ "abc" เท่ากันแน่นอน')"><span class="mc-ltr">B</span> false / false</div>
+      <div class="mc-opt" onclick="pickMC('mc-j3',2,2,'new สองครั้ง = คนละวัตถุ → == false · เนื้อหาเหมือนกัน → equals true (แบบ ③ ในสไลด์อาจารย์เป๊ะ)')"><span class="mc-ltr">C</span> false / true</div>
+      <div class="mc-opt" onclick="pickMC('mc-j3',3,2,'กลับด้าน — == เทียบตัวชี้ (false), equals เทียบเนื้อหา (true)')"><span class="mc-ltr">D</span> true / false</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">s1 ───▶ ["abc"]     ← กล่องคนละใบ (new 2 ครั้ง)
+    <div class="ex-feedback" id="mc-j3-fb"></div><pre class="code-block" style="margin-top:12px">s1 ───▶ ["abc"]     ← กล่องคนละใบ (new 2 ครั้ง)
 s2 ───▶ ["abc"]
 == ถามว่า "ลูกศรชี้กล่องเดียวกันไหม" → false
 equals ถามว่า "ในกล่องเขียนเหมือนกันไหม" → true</pre>
@@ -328,26 +328,32 @@ equals ถามว่า "ในกล่องเขียนเหมือ�
     <div class="slide-eyebrow">ติวบทที่ 3 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 4</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① เปรียบเทียบ "เนื้อหา" ของ String สองตัว ใช้ method ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj3a" placeholder="method">
-      <button class="fill-btn" onclick="checkFill('fj3a','equals',['equals()','.equals'],[],'✅ equals เทียบเนื้อหา · == เทียบว่าชี้วัตถุเดียวกันไหม','❌ equals — ส่วน == เทียบ reference')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① เปรียบเทียบ "เนื้อหา" ของ String สองตัว ใช้ method ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="method">
+        <button class="ex-btn" onclick="checkFill('in1','equals',['equals()','.equals'],[],'equals เทียบเนื้อหา · == เทียบว่าชี้วัตถุเดียวกันไหม','equals — ส่วน == เทียบ reference')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fj3a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② GC จะเก็บวัตถุที่มีสถานะ ___ (ภาษาอังกฤษหรือไทยก็ได้)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj3b" placeholder="สถานะ">
-      <button class="fill-btn" onclick="checkFill('fj3b','unreachable',['เข้าถึงไม่ได้','ไม่มีใครชี้','ไม่มี reference','เข้าถึงไม่ได้แล้ว'],[],'✅ unreachable — ไม่มี reference ใดชี้ถึง','❌ unreachable (เข้าถึงไม่ได้แล้ว) — เงื่อนไขเดียวของ GC')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② GC จะเก็บวัตถุที่มีสถานะ ___ (ภาษาอังกฤษหรือไทยก็ได้)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="สถานะ">
+        <button class="ex-btn" onclick="checkFill('in2','unreachable',['เข้าถึงไม่ได้','ไม่มีใครชี้','ไม่มี reference','เข้าถึงไม่ได้แล้ว'],[],'unreachable — ไม่มี reference ใดชี้ถึง','unreachable (เข้าถึงไม่ได้แล้ว) — เงื่อนไขเดียวของ GC')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fj3b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ s2 = s1; ทำให้เกิดรูปแบบ "___ ตัวแปร ___ วัตถุ" (ตอบเลขสองตัว เช่น 1 1)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj3c" placeholder="เลขสองตัว">
-      <button class="fill-btn" onclick="checkFill('fj3c','2 1',['2ตัวแปร1วัตถุ','2 ตัวแปร 1 วัตถุ','2,1'],[],'✅ 2 ตัวแปร 1 วัตถุ — assignment ไม่ copy วัตถุ แค่เพิ่มตัวชี้','❌ 2 ตัวแปร 1 วัตถุ — s1 กับ s2 ชี้ก้อนเดียวกัน')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ s2 = s1; ทำให้เกิดรูปแบบ "___ ตัวแปร ___ วัตถุ" (ตอบเลขสองตัว เช่น 1 1)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="เลขสองตัว">
+        <button class="ex-btn" onclick="checkFill('in3','2 1',['2ตัวแปร1วัตถุ','2 ตัวแปร 1 วัตถุ','2,1'],[],'2 ตัวแปร 1 วัตถุ — assignment ไม่ copy วัตถุ แค่เพิ่มตัวชี้','2 ตัวแปร 1 วัตถุ — s1 กับ s2 ชี้ก้อนเดียวกัน')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fj3c-msg" class="fill-msg"></div>
   </div>
 </div>
 

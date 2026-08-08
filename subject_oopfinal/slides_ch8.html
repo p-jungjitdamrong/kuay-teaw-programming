@@ -309,13 +309,13 @@ public class Outer {<br>
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 8 · ลองข้อสอบ</div>
     <h2 class="slide-title">Outer มี inner class ธรรมดา (ไม่ static) — สร้างยังไงถูก?</h2>
-    <div id="mc-o8" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-o8','A','C','❌ new Outer.Inner() ใช้กับ static nested class เท่านั้น')">A) Outer.Inner i = new Outer.Inner();</button>
-      <button class="mc-btn" onclick="pickMC('mc-o8','B','C','❌ new Inner() ตรงๆ ทำได้เฉพาะ "ภายในคลาส Outer เอง" ไม่ใช่จากข้างนอก')">B) Inner i = new Inner();</button>
-      <button class="mc-btn" onclick="pickMC('mc-o8','C','C','✅ ต้องมี object ของ outer ก่อน แล้วใช้ syntax outerObj.new Inner() — เพราะ inner class ผูกกับ instance ของ outer')">C) Outer o = new Outer(); Outer.Inner i = o.new Inner();</button>
-      <button class="mc-btn" onclick="pickMC('mc-o8','D','C','❌ Outer.new Inner() ผิด syntax — ต้องเป็น object ไม่ใช่ชื่อคลาส')">D) Outer.Inner i = Outer.new Inner();</button>
+    <div class="mc-opts" id="mc-o8">
+      <div class="mc-opt" onclick="pickMC('mc-o8',0,2,'new Outer.Inner() ใช้กับ static nested class เท่านั้น')"><span class="mc-ltr">A</span> Outer.Inner i = new Outer.Inner();</div>
+      <div class="mc-opt" onclick="pickMC('mc-o8',1,2,'new Inner() ตรงๆ ทำได้เฉพาะ "ภายในคลาส Outer เอง" ไม่ใช่จากข้างนอก')"><span class="mc-ltr">B</span> Inner i = new Inner();</div>
+      <div class="mc-opt" onclick="pickMC('mc-o8',2,2,'ต้องมี object ของ outer ก่อน แล้วใช้ syntax outerObj.new Inner() — เพราะ inner class ผูกกับ instance ของ outer')"><span class="mc-ltr">C</span> Outer o = new Outer(); Outer.Inner i = o.new Inner();</div>
+      <div class="mc-opt" onclick="pickMC('mc-o8',3,2,'Outer.new Inner() ผิด syntax — ต้องเป็น object ไม่ใช่ชื่อคลาส')"><span class="mc-ltr">D</span> Outer.Inner i = Outer.new Inner();</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">มี static → new Outer.Inner()        (ไม่ผูกกับ instance)
+    <div class="ex-feedback" id="mc-o8-fb"></div><pre class="code-block" style="margin-top:12px">มี static → new Outer.Inner()        (ไม่ผูกกับ instance)
 ไม่มี static → outerObj.new Inner()   (ต้องมี outer object ก่อน)
 ⚠️ ข้อ B ใช้ได้เฉพาะเมื่อเขียนอยู่ "ข้างในคลาส Outer" — จากข้างนอกใช้ไม่ได้</pre>
   </div>
@@ -328,26 +328,32 @@ public class Outer {<br>
     <div class="slide-eyebrow">ติวบทที่ 8 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 9</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① inner class (ไม่ static) เข้าถึง field ที่เป็น private ของ outer class ได้หรือไม่</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo8a" placeholder="ได้/ไม่ได้">
-      <button class="fill-btn" onclick="checkFill('fo8a','ได้',['yes','ได้ครับ','เข้าถึงได้'],[],'✅ ได้ — นี่คือจุดเด่นข้อ "increase encapsulation" ในสไลด์','❌ ได้ — inner class เข้าถึงทุก field ของ outer แม้ private')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① inner class (ไม่ static) เข้าถึง field ที่เป็น private ของ outer class ได้หรือไม่</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ได้/ไม่ได้">
+        <button class="ex-btn" onclick="checkFill('in1','ได้',['yes','ได้ครับ','เข้าถึงได้'],[],'ได้ — นี่คือจุดเด่นข้อ "increase encapsulation" ในสไลด์','ได้ — inner class เข้าถึงทุก field ของ outer แม้ private')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fo8a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② static nested class เข้าถึงได้เฉพาะสมาชิกที่เป็น ___ ของ outer</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo8b" placeholder="keyword">
-      <button class="fill-btn" onclick="checkFill('fo8b','static',['static เท่านั้น','สแตติก'],[],'✅ static — static nested เข้าถึงได้เฉพาะ static attribute/method ของ outer','❌ static — เพราะไม่ผูกกับ instance ใดของ outer')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② static nested class เข้าถึงได้เฉพาะสมาชิกที่เป็น ___ ของ outer</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in2','static',['static เท่านั้น','สแตติก'],[],'static — static nested เข้าถึงได้เฉพาะ static attribute/method ของ outer','static — เพราะไม่ผูกกับ instance ใดของ outer')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fo8b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ คลาสภายในที่ถูกเรียกใช้โดยคลาสเดียว สไลด์เรียกว่า ___ class</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo8c" placeholder="คำศัพท์">
-      <button class="fill-btn" onclick="checkFill('fo8c','helper',['helper class','เฮลเปอร์'],[],'✅ helper class — เหตุผลข้อ logical grouping of classes','❌ helper class — คลาสผู้ช่วยที่ถูกใช้โดยคลาสเดียว จึงควรฝังไว้ข้างใน')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ คลาสภายในที่ถูกเรียกใช้โดยคลาสเดียว สไลด์เรียกว่า ___ class</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="คำศัพท์">
+        <button class="ex-btn" onclick="checkFill('in3','helper',['helper class','เฮลเปอร์'],[],'helper class — เหตุผลข้อ logical grouping of classes','helper class — คลาสผู้ช่วยที่ถูกใช้โดยคลาสเดียว จึงควรฝังไว้ข้างใน')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fo8c-msg" class="fill-msg"></div>
   </div>
 </div>
 

@@ -285,13 +285,13 @@ A → B → C → D → E — เห็นไหมว่าคนละลำ�
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 12 · ลองข้อสอบ</div>
     <h2 class="slide-title">Adjacency matrix ที่ "สมมาตร" บอกอะไร?</h2>
-    <div id="mc-f12" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-f12','A','B','❌ วงจรปิดดูจาก matrix ตรงๆ ไม่ได้ — สมมาตรบอกเรื่องทิศทาง')">A) กราฟมีวงจรปิด (cycle)</button>
-      <button class="mc-btn" onclick="pickMC('mc-f12','B','B','✅ M[i][j] = M[j][i] ทุกคู่ = ทุกเส้นไปกลับได้ = กราฟไม่มีทิศทาง (undirected)')">B) กราฟไม่มีทิศทาง (undirected)</button>
-      <button class="mc-btn" onclick="pickMC('mc-f12','C','B','❌ เชื่อมถึงกันหมด (connected) ต้องไล่เส้นทางดู — สมมาตรไม่ได้บอก')">C) กราฟเชื่อมถึงกันทุกโหนด</button>
-      <button class="mc-btn" onclick="pickMC('mc-f12','D','B','❌ น้ำหนักเส้นคือค่าใน matrix (weighted graph) — ไม่เกี่ยวกับสมมาตร')">D) กราฟมีน้ำหนักเท่ากันทุกเส้น</button>
+    <div class="mc-opts" id="mc-f12">
+      <div class="mc-opt" onclick="pickMC('mc-f12',0,1,'วงจรปิดดูจาก matrix ตรงๆ ไม่ได้ — สมมาตรบอกเรื่องทิศทาง')"><span class="mc-ltr">A</span> กราฟมีวงจรปิด (cycle)</div>
+      <div class="mc-opt" onclick="pickMC('mc-f12',1,1,'M[i][j] = M[j][i] ทุกคู่ = ทุกเส้นไปกลับได้ = กราฟไม่มีทิศทาง (undirected)')"><span class="mc-ltr">B</span> กราฟไม่มีทิศทาง (undirected)</div>
+      <div class="mc-opt" onclick="pickMC('mc-f12',2,1,'เชื่อมถึงกันหมด (connected) ต้องไล่เส้นทางดู — สมมาตรไม่ได้บอก')"><span class="mc-ltr">C</span> กราฟเชื่อมถึงกันทุกโหนด</div>
+      <div class="mc-opt" onclick="pickMC('mc-f12',3,1,'น้ำหนักเส้นคือค่าใน matrix (weighted graph) — ไม่เกี่ยวกับสมมาตร')"><span class="mc-ltr">D</span> กราฟมีน้ำหนักเท่ากันทุกเส้น</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">สมมาตร (M[i][j] == M[j][i]) ⇔ undirected — เส้น (u,v) คือเส้น (v,u)
+    <div class="ex-feedback" id="mc-f12-fb"></div><pre class="code-block" style="margin-top:12px">สมมาตร (M[i][j] == M[j][i]) ⇔ undirected — เส้น (u,v) คือเส้น (v,u)
 ไม่สมมาตรแม้ช่องเดียว → directed ("มี A→B แต่ไม่มี B→A")</pre>
   </div>
 </div>
@@ -303,26 +303,32 @@ A → B → C → D → E — เห็นไหมว่าคนละลำ�
     <div class="slide-eyebrow">ติวบทที่ 12 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — บทสุดท้ายแล้ว!</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① BFS ใช้โครงสร้างข้อมูล ___ ช่วยท่องกราф</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff12a" placeholder="โครงสร้าง">
-      <button class="fill-btn" onclick="checkFill('ff12a','queue',['คิว','Queue'],[],'✅ Queue (FIFO) — แผ่ทีละชั้น · DFS ใช้ Stack','❌ Queue — Breadth=กว้าง=คิว / Depth=ลึก=สแตค')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① BFS ใช้โครงสร้างข้อมูล ___ ช่วยท่องกราф</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="โครงสร้าง">
+        <button class="ex-btn" onclick="checkFill('in1','queue',['คิว','Queue'],[],'Queue (FIFO) — แผ่ทีละชั้น · DFS ใช้ Stack','Queue — Breadth=กว้าง=คิว / Depth=ลึก=สแตค')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="ff12a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② In-degree ของโหนด k อ่านจาก ___ ที่ k ของ adjacency matrix (แถว/คอลัมน์)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff12b" placeholder="แถวหรือคอลัมน์">
-      <button class="fill-btn" onclick="checkFill('ff12b','คอลัมน์',['column','คอลัม','หลัก'],[],'✅ คอลัมน์ k (เส้นชี้เข้า) · แถว k = out-degree (เส้นชี้ออก)','❌ คอลัมน์ — เข้า=คอลัมน์ ออก=แถว')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② In-degree ของโหนด k อ่านจาก ___ ที่ k ของ adjacency matrix (แถว/คอลัมน์)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="แถวหรือคอลัมน์">
+        <button class="ex-btn" onclick="checkFill('in2','คอลัมน์',['column','คอลัม','หลัก'],[],'คอลัมน์ k (เส้นชี้เข้า) · แถว k = out-degree (เส้นชี้ออก)','คอลัมน์ — เข้า=คอลัมน์ ออก=แถว')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="ff12b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ กราฟเส้นน้อย (sparse) ควรแทนด้วย Adjacency ___ เพื่อประหยัด memory</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff12c" placeholder="แบบไหน">
-      <button class="fill-btn" onclick="checkFill('ff12c','list',['ลิสต์','List','adjacency list'],[],'✅ List — O(V+E) ตามเส้นจริง · Matrix กิน O(V²) เสมอ','❌ List — sparse ใช้ List, dense ใช้ Matrix')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ กราฟเส้นน้อย (sparse) ควรแทนด้วย Adjacency ___ เพื่อประหยัด memory</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="แบบไหน">
+        <button class="ex-btn" onclick="checkFill('in3','list',['ลิสต์','List','adjacency list'],[],'List — O(V+E) ตามเส้นจริง · Matrix กิน O(V²) เสมอ','List — sparse ใช้ List, dense ใช้ Matrix')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="ff12c-msg" class="fill-msg"></div>
   </div>
 </div>
 

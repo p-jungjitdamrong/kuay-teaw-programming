@@ -230,13 +230,13 @@ main: new Product ×3
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 5 · ลองข้อสอบ</div>
     <h2 class="slide-title">"- gpa : double" ใน Class Diagram แปลว่าอะไร?</h2>
-    <div id="mc-j5" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-j5','A','C','❌ + ถึงจะเป็น public — เครื่องหมาย − คือ private')">A) public double gpa;</button>
-      <button class="mc-btn" onclick="pickMC('mc-j5','B','C','❌ มี : double กำกับชนิดชัดเจน ไม่ใช่ method (method ต้องมีวงเล็บ)')">B) private method ชื่อ gpa</button>
-      <button class="mc-btn" onclick="pickMC('mc-j5','C','C','✅ − = private · gpa = ชื่อ field · : double = ชนิด → private double gpa;')">C) private double gpa;</button>
-      <button class="mc-btn" onclick="pickMC('mc-j5','D','C','❌ # ถึงจะเป็น protected')">D) protected double gpa;</button>
+    <div class="mc-opts" id="mc-j5">
+      <div class="mc-opt" onclick="pickMC('mc-j5',0,2,'+ ถึงจะเป็น public — เครื่องหมาย − คือ private')"><span class="mc-ltr">A</span> public double gpa;</div>
+      <div class="mc-opt" onclick="pickMC('mc-j5',1,2,'มี : double กำกับชนิดชัดเจน ไม่ใช่ method (method ต้องมีวงเล็บ)')"><span class="mc-ltr">B</span> private method ชื่อ gpa</div>
+      <div class="mc-opt" onclick="pickMC('mc-j5',2,2,'− = private · gpa = ชื่อ field · : double = ชนิด → private double gpa;')"><span class="mc-ltr">C</span> private double gpa;</div>
+      <div class="mc-opt" onclick="pickMC('mc-j5',3,2,'# ถึงจะเป็น protected')"><span class="mc-ltr">D</span> protected double gpa;</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">สัญลักษณ์:  − private · + public · # protected
+    <div class="ex-feedback" id="mc-j5-fb"></div><pre class="code-block" style="margin-top:12px">สัญลักษณ์:  − private · + public · # protected
 รูปแบบ:     ชื่อ : ชนิด (ไม่มีวงเล็บ = field) · ชื่อ(...) : ชนิด (มีวงเล็บ = method)</pre>
   </div>
 </div>
@@ -248,26 +248,32 @@ main: new Product ×3
     <div class="slide-eyebrow">ติวบทที่ 5 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 6</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① กล่อง Class Diagram ชั้นกลางเก็บอะไร (ชั้นบน=ชื่อคลาส, ชั้นล่าง=method)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj5a" placeholder="คำตอบ">
-      <button class="fill-btn" onclick="checkFill('fj5a','attribute',['field','แอททริบิวต์','ข้อมูล','attributes'],[],'✅ attribute/field — ชื่อคลาส / attribute / method จากบนลงล่าง','❌ attribute (field) — 3 ชั้น: ชื่อ, attribute, method')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① กล่อง Class Diagram ชั้นกลางเก็บอะไร (ชั้นบน=ชื่อคลาส, ชั้นล่าง=method)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="คำตอบ">
+        <button class="ex-btn" onclick="checkFill('in1','attribute',['field','แอททริบิวต์','ข้อมูล','attributes'],[],'attribute/field — ชื่อคลาส / attribute / method จากบนลงล่าง','attribute (field) — 3 ชั้น: ชื่อ, attribute, method')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fj5a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② เครื่องหมาย # หน้าชื่อใน diagram หมายถึง modifier ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj5b" placeholder="modifier">
-      <button class="fill-btn" onclick="checkFill('fj5b','protected',['protected'],[],'✅ # = protected · − = private · + = public','❌ protected — จำสามตัว: − private, + public, # protected')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② เครื่องหมาย # หน้าชื่อใน diagram หมายถึง modifier ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="modifier">
+        <button class="ex-btn" onclick="checkFill('in2','protected',['protected'],[],'# = protected · − = private · + = public','protected — จำสามตัว: − private, + public, # protected')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fj5b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ ความสัมพันธ์ที่ new object ข้างใน constructor แล้วเกิด-ตายด้วยกัน เรียกว่า ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj5c" placeholder="ชื่อความสัมพันธ์">
-      <button class="fill-btn" onclick="checkFill('fj5c','composition',['Composition','คอมโพสิชัน'],[],'✅ Composition — ต่างจาก Aggregation ที่รับ object จากข้างนอก','❌ Composition (new เองข้างใน) — Aggregation รับจากนอก, Association ใช้ชั่วคราว')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ ความสัมพันธ์ที่ new object ข้างใน constructor แล้วเกิด-ตายด้วยกัน เรียกว่า ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ชื่อความสัมพันธ์">
+        <button class="ex-btn" onclick="checkFill('in3','composition',['Composition','คอมโพสิชัน'],[],'Composition — ต่างจาก Aggregation ที่รับ object จากข้างนอก','Composition (new เองข้างใน) — Aggregation รับจากนอก, Association ใช้ชั่วคราว')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fj5c-msg" class="fill-msg"></div>
   </div>
 </div>
 

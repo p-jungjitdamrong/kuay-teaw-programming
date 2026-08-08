@@ -288,13 +288,13 @@ Postfix: เครื่องหมายอยู่ "หลัง"
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 7 · ลองข้อสอบ</div>
     <h2 class="slide-title">a+b*c เป็น postfix คือ?</h2>
-    <div id="mc-f7" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-f7','A','B','❌ ab+c* คือ (a+b)*c — บวกก่อนคูณ ผิดลำดับความสำคัญ')">A) a b + c *</button>
-      <button class="mc-btn" onclick="pickMC('mc-f7','B','B','✅ * สำคัญกว่า + → b*c ทำก่อน → a bc* + = a b c * +')">B) a b c * +</button>
-      <button class="mc-btn" onclick="pickMC('mc-f7','C','B','❌ นี่ยังเป็น infix อยู่เลย')">C) a + b c *</button>
-      <button class="mc-btn" onclick="pickMC('mc-f7','D','B','❌ + อยู่หน้า = prefix ไม่ใช่ postfix')">D) + a * b c</button>
+    <div class="mc-opts" id="mc-f7">
+      <div class="mc-opt" onclick="pickMC('mc-f7',0,1,'ab+c* คือ (a+b)*c — บวกก่อนคูณ ผิดลำดับความสำคัญ')"><span class="mc-ltr">A</span> a b + c *</div>
+      <div class="mc-opt" onclick="pickMC('mc-f7',1,1,'* สำคัญกว่า + → b*c ทำก่อน → a bc* + = a b c * +')"><span class="mc-ltr">B</span> a b c * +</div>
+      <div class="mc-opt" onclick="pickMC('mc-f7',2,1,'นี่ยังเป็น infix อยู่เลย')"><span class="mc-ltr">C</span> a + b c *</div>
+      <div class="mc-opt" onclick="pickMC('mc-f7',3,1,'+ อยู่หน้า = prefix ไม่ใช่ postfix')"><span class="mc-ltr">D</span> + a * b c</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">a → out "a" · + → push · b → out "ab" · * → * สำคัญกว่า + บน stack → push
+    <div class="ex-feedback" id="mc-f7-fb"></div><pre class="code-block" style="margin-top:12px">a → out "a" · + → push · b → out "ab" · * → * สำคัญกว่า + บน stack → push
 c → out "abc" · จบ → pop * แล้ว + → <b>a b c * +</b>
 เช็ค: eval ได้ a+(b×c) ตรง infix ✓</pre>
   </div>
@@ -307,26 +307,32 @@ c → out "abc" · จบ → pop * แล้ว + → <b>a b c * +</b>
     <div class="slide-eyebrow">ติวบทที่ 7 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 8</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Stack ทำงานแบบ ___ (ตัวย่อ 4 ตัวอักษร)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff7a" placeholder="ตัวย่อ">
-      <button class="fill-btn" onclick="checkFill('ff7a','LIFO',['lifo','last in first out'],[],'✅ LIFO — เข้าทีหลังออกก่อน · Queue คือ FIFO','❌ LIFO (Last In First Out)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① Stack ทำงานแบบ ___ (ตัวย่อ 4 ตัวอักษร)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ตัวย่อ">
+        <button class="ex-btn" onclick="checkFill('in1','LIFO',['lifo','last in first out'],[],'LIFO — เข้าทีหลังออกก่อน · Queue คือ FIFO','LIFO (Last In First Out)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="ff7a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② การคำนวณ postfix เจอ operator ต้อง pop กี่ตัว</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff7b" placeholder="จำนวน">
-      <button class="fill-btn" onclick="checkFill('ff7b','2',['สอง','2 ตัว'],[],'✅ pop 2 ตัว — ตัวหลังเป็นขวา ตัวแรกเป็นซ้าย (สำคัญกับ − และ /)','❌ 2 ตัว — ระวังลำดับ: pop ได้ b ก่อน a → คำนวณ a op b')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② การคำนวณ postfix เจอ operator ต้อง pop กี่ตัว</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="จำนวน">
+        <button class="ex-btn" onclick="checkFill('in2','2',['สอง','2 ตัว'],[],'pop 2 ตัว — ตัวหลังเป็นขวา ตัวแรกเป็นซ้าย (สำคัญกับ − และ /)','2 ตัว — ระวังลำดับ: pop ได้ b ก่อน a → คำนวณ a op b')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="ff7b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ แปลง infix→postfix เจอ ) ต้อง pop จนเจอ ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff7c" placeholder="อะไร?">
-      <button class="fill-btn" onclick="checkFill('ff7c','(',['วงเล็บเปิด','( วงเล็บเปิด'],[],'✅ pop ทุกตัวออก output จนเจอ ( แล้วทิ้งวงเล็บทั้งคู่ (ไม่ออก output)','❌ วงเล็บเปิด ( — pop ออกจนเจอ แล้วทิ้ง ไม่เอาวงเล็บลง postfix')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ แปลง infix→postfix เจอ ) ต้อง pop จนเจอ ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="อะไร?">
+        <button class="ex-btn" onclick="checkFill('in3','(',['วงเล็บเปิด','( วงเล็บเปิด'],[],'pop ทุกตัวออก output จนเจอ ( แล้วทิ้งวงเล็บทั้งคู่ (ไม่ออก output)','วงเล็บเปิด ( — pop ออกจนเจอ แล้วทิ้ง ไม่เอาวงเล็บลง postfix')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="ff7c-msg" class="fill-msg"></div>
   </div>
 </div>
 

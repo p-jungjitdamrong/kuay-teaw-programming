@@ -280,13 +280,13 @@ search 5 ต้องเดิน 5 ครั้ง = O(n)<br>
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 9 · ลองข้อสอบ</div>
     <h2 class="slide-title">ลบโหนดที่มีลูกสองตัวออกจาก BST ต้องทำอย่างไร?</h2>
-    <div id="mc-f9" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-f9','A','C','❌ ตัดทิ้งเลยได้เฉพาะโหนดใบ (กรณี 1) — สองลูกทำแบบนั้นต้นไม้ขาด')">A) ตัดโหนดทิ้งได้เลย</button>
-      <button class="mc-btn" onclick="pickMC('mc-f9','B','C','❌ เอาลูกซ้ายขึ้นแทนตรงๆ ไม่ได้ — ลูกขวาของโหนดที่ลบจะไม่มีที่อยู่')">B) เอาลูกซ้ายขึ้นมาแทนที่ทันที</button>
-      <button class="mc-btn" onclick="pickMC('mc-f9','C','C','✅ หา min ของต้นย่อยขวา (successor) มาทับค่า แล้วไปลบตัว min เดิม ซึ่งเหลือกรณีง่ายแน่นอน')">C) เอา min ของต้นย่อยขวามาแทน แล้วลบตัวนั้น</button>
-      <button class="mc-btn" onclick="pickMC('mc-f9','D','C','❌ ไม่ต้องสร้างใหม่ทั้งต้น — แทนที่จุดเดียวพอ')">D) สร้างต้นไม้ใหม่ทั้งหมด</button>
+    <div class="mc-opts" id="mc-f9">
+      <div class="mc-opt" onclick="pickMC('mc-f9',0,2,'ตัดทิ้งเลยได้เฉพาะโหนดใบ (กรณี 1) — สองลูกทำแบบนั้นต้นไม้ขาด')"><span class="mc-ltr">A</span> ตัดโหนดทิ้งได้เลย</div>
+      <div class="mc-opt" onclick="pickMC('mc-f9',1,2,'เอาลูกซ้ายขึ้นแทนตรงๆ ไม่ได้ — ลูกขวาของโหนดที่ลบจะไม่มีที่อยู่')"><span class="mc-ltr">B</span> เอาลูกซ้ายขึ้นมาแทนที่ทันที</div>
+      <div class="mc-opt" onclick="pickMC('mc-f9',2,2,'หา min ของต้นย่อยขวา (successor) มาทับค่า แล้วไปลบตัว min เดิม ซึ่งเหลือกรณีง่ายแน่นอน')"><span class="mc-ltr">C</span> เอา min ของต้นย่อยขวามาแทน แล้วลบตัวนั้น</div>
+      <div class="mc-opt" onclick="pickMC('mc-f9',3,2,'ไม่ต้องสร้างใหม่ทั้งต้น — แทนที่จุดเดียวพอ')"><span class="mc-ltr">D</span> สร้างต้นไม้ใหม่ทั้งหมด</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">ทำไมต้อง min ของฝั่งขวา? — มันคือ "ตัวถัดไปตามลำดับ" (successor)
+    <div class="ex-feedback" id="mc-f9-fb"></div><pre class="code-block" style="margin-top:12px">ทำไมต้อง min ของฝั่งขวา? — มันคือ "ตัวถัดไปตามลำดับ" (successor)
 เอามาสวมแล้วกฎ ซ้าย&lt;ราก&lt;ขวา ยังจริงเป๊ะ และตัว min ไม่มีลูกซ้ายแน่นอน (ลบง่าย)</pre>
   </div>
 </div>
@@ -298,26 +298,32 @@ search 5 ต้องเดิน 5 ครั้ง = O(n)<br>
     <div class="slide-eyebrow">ติวบทที่ 9 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 10</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① FindMin ของ BST ทำโดยเดินไปทาง ___ สุดทาง</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff9a" placeholder="ทิศ">
-      <button class="fill-btn" onclick="checkFill('ff9a','ซ้าย',['left','ซ้ายสุด'],[],'✅ ซ้ายสุดทาง = min · ขวาสุดทาง = max','❌ ซ้าย — min อยู่ซ้ายล่างสุดเสมอ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① FindMin ของ BST ทำโดยเดินไปทาง ___ สุดทาง</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ทิศ">
+        <button class="ex-btn" onclick="checkFill('in1','ซ้าย',['left','ซ้ายสุด'],[],'ซ้ายสุดทาง = min · ขวาสุดทาง = max','ซ้าย — min อยู่ซ้ายล่างสุดเสมอ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="ff9a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Tree sort กับข้อมูลที่ "เรียงอยู่แล้ว" ใช้เวลา O(___) เพราะต้นไม้เบี้ยว</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff9b" placeholder="complexity">
-      <button class="fill-btn" onclick="checkFill('ff9b','n^2',['n²','n2','O(n²)','O(n^2)'],[],'✅ O(n²) — ต้นเบี้ยวเป็นเส้น insert ตัวละ O(n) · นี่คือ Worst case!','❌ O(n²) — ข้อมูลเรียงแล้ว = worst ของ BST (ต้นเบี้ยว H=n)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② Tree sort กับข้อมูลที่ "เรียงอยู่แล้ว" ใช้เวลา O(___) เพราะต้นไม้เบี้ยว</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="complexity">
+        <button class="ex-btn" onclick="checkFill('in2','n^2',['n²','n2','O(n²)','O(n^2)'],[],'O(n²) — ต้นเบี้ยวเป็นเส้น insert ตัวละ O(n) · นี่คือ Worst case!','O(n²) — ข้อมูลเรียงแล้ว = worst ของ BST (ต้นเบี้ยว H=n)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="ff9b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ ท่อง BST แบบใดได้ข้อมูลเรียงจากน้อยไปมาก</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff9c" placeholder="วิธีท่อง">
-      <button class="fill-btn" onclick="checkFill('ff9c','in-order',['inorder','in order','อินออเดอร์'],[],'✅ in-order (ซ้าย→ราก→ขวา) — ประโยคทองที่ใช้ตรวจทุกคำตอบ BST','❌ in-order — ซ้าย→ราก→ขวา ให้ลำดับน้อยไปมากเสมอ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ ท่อง BST แบบใดได้ข้อมูลเรียงจากน้อยไปมาก</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="วิธีท่อง">
+        <button class="ex-btn" onclick="checkFill('in3','in-order',['inorder','in order','อินออเดอร์'],[],'in-order (ซ้าย→ราก→ขวา) — ประโยคทองที่ใช้ตรวจทุกคำตอบ BST','in-order — ซ้าย→ราก→ขวา ให้ลำดับน้อยไปมากเสมอ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="ff9c-msg" class="fill-msg"></div>
   </div>
 </div>
 

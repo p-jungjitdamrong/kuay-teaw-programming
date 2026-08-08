@@ -322,13 +322,13 @@ pane.add ทั้งสาม → f.add(pane) → setDefaultCloseOperation → 
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 11 · ลองข้อสอบ</div>
     <h2 class="slide-title">อยากให้ JTextArea เลื่อนดูข้อความยาวๆ ได้ ต้องทำอย่างไร?</h2>
-    <div id="mc-o11" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-o11','A','B','❌ setScrollable() ไม่มีใน JTextArea — Swing ใช้วิธีห่อด้วย JScrollPane')">A) area.setScrollable(true);</button>
-      <button class="mc-btn" onclick="pickMC('mc-o11','B','B','✅ ห่อด้วย JScrollPane โดยส่งเข้า constructor แล้ว add ตัวที่ห่อแล้วลง panel')">B) pane.add(new JScrollPane(area));</button>
-      <button class="mc-btn" onclick="pickMC('mc-o11','C','B','❌ สร้าง JScrollPane เปล่าแล้ว add เข้าไปทีหลัง — ไม่ทำงาน ต้องส่งเข้า constructor')">C) JScrollPane sp = new JScrollPane(); sp.add(area);</button>
-      <button class="mc-btn" onclick="pickMC('mc-o11','D','B','❌ JTextArea ไม่มี scroll bar ในตัว ต้องพึ่ง JScrollPane เสมอ')">D) JTextArea มี scroll bar ในตัวอยู่แล้ว</button>
+    <div class="mc-opts" id="mc-o11">
+      <div class="mc-opt" onclick="pickMC('mc-o11',0,1,'setScrollable() ไม่มีใน JTextArea — Swing ใช้วิธีห่อด้วย JScrollPane')"><span class="mc-ltr">A</span> area.setScrollable(true);</div>
+      <div class="mc-opt" onclick="pickMC('mc-o11',1,1,'ห่อด้วย JScrollPane โดยส่งเข้า constructor แล้ว add ตัวที่ห่อแล้วลง panel')"><span class="mc-ltr">B</span> pane.add(new JScrollPane(area));</div>
+      <div class="mc-opt" onclick="pickMC('mc-o11',2,1,'สร้าง JScrollPane เปล่าแล้ว add เข้าไปทีหลัง — ไม่ทำงาน ต้องส่งเข้า constructor')"><span class="mc-ltr">C</span> JScrollPane sp = new JScrollPane(); sp.add(area);</div>
+      <div class="mc-opt" onclick="pickMC('mc-o11',3,1,'JTextArea ไม่มี scroll bar ในตัว ต้องพึ่ง JScrollPane เสมอ')"><span class="mc-ltr">D</span> JTextArea มี scroll bar ในตัวอยู่แล้ว</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">JScrollPane เป็น "กรอบที่ครอบของ" — ต้องส่ง component เข้า constructor:
+    <div class="ex-feedback" id="mc-o11-fb"></div><pre class="code-block" style="margin-top:12px">JScrollPane เป็น "กรอบที่ครอบของ" — ต้องส่ง component เข้า constructor:
   new JScrollPane(component)     ✓
   scrollPane.add(component)      ✗ (ไม่ทำงาน)
 ใช้ได้กับทุกอย่างที่ล้นกรอบ: JTextArea, JTable, JList</pre>
@@ -342,26 +342,32 @@ pane.add ทั้งสาม → f.add(pane) → setDefaultCloseOperation → 
     <div class="slide-eyebrow">ติวบทที่ 11 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 12</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① บรรทัดสุดท้ายที่ต้องเรียกเพื่อให้หน้าต่างแสดงผลคือ f.___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo11a" placeholder="method">
-      <button class="fill-btn" onclick="checkFill('fo11a','setVisible(true)',['setvisible(true)','setVisible','setvisible'],[],'✅ setVisible(true) — ลืมแล้วรันไปก็ไม่เห็นอะไร','❌ setVisible(true) — ต้องเรียกหลัง add component ครบแล้ว')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① บรรทัดสุดท้ายที่ต้องเรียกเพื่อให้หน้าต่างแสดงผลคือ f.___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="method">
+        <button class="ex-btn" onclick="checkFill('in1','setVisible(true)',['setvisible(true)','setVisible','setvisible'],[],'setVisible(true) — ลืมแล้วรันไปก็ไม่เห็นอะไร','setVisible(true) — ต้องเรียกหลัง add component ครบแล้ว')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fo11a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② component ที่รับข้อความหลายบรรทัดคือ ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo11b" placeholder="ชื่อคลาส">
-      <button class="fill-btn" onclick="checkFill('fo11b','JTextArea',['jtextarea','textarea'],[],'✅ JTextArea(lines, columns) — JTextField ได้บรรทัดเดียว','❌ JTextArea — รับหลายบรรทัด · JTextField รับบรรทัดเดียว')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② component ที่รับข้อความหลายบรรทัดคือ ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ชื่อคลาส">
+        <button class="ex-btn" onclick="checkFill('in2','JTextArea',['jtextarea','textarea'],[],'JTextArea(lines, columns) — JTextField ได้บรรทัดเดียว','JTextArea — รับหลายบรรทัด · JTextField รับบรรทัดเดียว')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fo11b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Layout ที่แบ่งพื้นที่เป็น NORTH/SOUTH/EAST/WEST/CENTER คือ ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo11c" placeholder="ชื่อ layout">
-      <button class="fill-btn" onclick="checkFill('fo11c','BorderLayout',['borderlayout','border layout'],[],'✅ BorderLayout — เป็นค่าเริ่มต้นของ JFrame ด้วย','❌ BorderLayout — 5 ทิศ และเป็น default ของ JFrame')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ Layout ที่แบ่งพื้นที่เป็น NORTH/SOUTH/EAST/WEST/CENTER คือ ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ชื่อ layout">
+        <button class="ex-btn" onclick="checkFill('in3','BorderLayout',['borderlayout','border layout'],[],'BorderLayout — เป็นค่าเริ่มต้นของ JFrame ด้วย','BorderLayout — 5 ทิศ และเป็น default ของ JFrame')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fo11c-msg" class="fill-msg"></div>
   </div>
 </div>
 

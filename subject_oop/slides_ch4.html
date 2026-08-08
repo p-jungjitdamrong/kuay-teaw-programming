@@ -440,13 +440,13 @@ System.out.<span class="fn">println</span>(<span class="st">"You have to pay "</
   <div class="slide-body">
     <div class="slide-eyebrow">Lab 4 · MCQ</div>
     <h2 class="slide-title">Date d = new Date(15, 6, 2020); d.setDay(45); — getDay() ได้อะไร?</h2>
-    <div id="mc-l4" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-l4','A','B','❌ 45 เกินช่วง 1-31 — setter ต้องปฏิเสธตามโจทย์')">A) 45</button>
-      <button class="mc-btn" onclick="pickMC('mc-l4','B','B','✅ 15 — setDay(45) ไม่ผ่าน validation (1-31) จึง \"กำหนดค่าเป็นวันเดิม\" ตามโจทย์เป๊ะ')">B) 15</button>
-      <button class="mc-btn" onclick="pickMC('mc-l4','C','B','❌ ไม่ throw exception — โจทย์บอกให้เก็บค่าเดิมเฉยๆ (silent reject)')">C) โปรแกรม error</button>
-      <button class="mc-btn" onclick="pickMC('mc-l4','D','B','❌ ไม่ใช่ 0 — ค่าเดิม 15 จาก constructor ยังอยู่')">D) 0</button>
+    <div class="mc-opts" id="mc-l4">
+      <div class="mc-opt" onclick="pickMC('mc-l4',0,1,'45 เกินช่วง 1-31 — setter ต้องปฏิเสธตามโจทย์')"><span class="mc-ltr">A</span> 45</div>
+      <div class="mc-opt" onclick="pickMC('mc-l4',1,1,'15 — setDay(45) ไม่ผ่าน validation (1-31) จึง \"กำหนดค่าเป็นวันเดิม\" ตามโจทย์เป๊ะ')"><span class="mc-ltr">B</span> 15</div>
+      <div class="mc-opt" onclick="pickMC('mc-l4',2,1,'ไม่ throw exception — โจทย์บอกให้เก็บค่าเดิมเฉยๆ (silent reject)')"><span class="mc-ltr">C</span> โปรแกรม error</div>
+      <div class="mc-opt" onclick="pickMC('mc-l4',3,1,'ไม่ใช่ 0 — ค่าเดิม 15 จาก constructor ยังอยู่')"><span class="mc-ltr">D</span> 0</div>
     </div>
-    <pre class="code-block" style="margin-top:12px"><span class="kw">public void</span> <span class="fn">setDay</span>(<span class="kw">int</span> day) {
+    <div class="ex-feedback" id="mc-l4-fb"></div><pre class="code-block" style="margin-top:12px"><span class="kw">public void</span> <span class="fn">setDay</span>(<span class="kw">int</span> day) {
     <span class="kw">if</span> (day >= <span class="nm">1</span> && day &lt;= <span class="nm">31</span>)   <span class="cm">// 45 ไม่ผ่านเงื่อนไข</span>
         <span class="kw">this</span>.day = day;           <span class="cm">// → บรรทัดนี้ไม่ทำงาน</span>
 }                                 <span class="cm">// → day ยังเป็น 15 เดิม</span></pre>
@@ -460,26 +460,32 @@ System.out.<span class="fn">println</span>(<span class="st">"You have to pay "</
     <div class="slide-eyebrow">Lab 4 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① ซ่อน field ไม่ให้ภายนอกเข้าถึงตรงๆ ใช้ access modifier ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl4a" placeholder="keyword">
-      <button class="fill-btn" onclick="checkFill('fl4a','private',['private'],[],'✅ private — เข้าถึงได้เฉพาะในคลาสตัวเอง ภายนอกต้องผ่าน getter/setter','❌ คือ private — หัวใจของ encapsulation')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① ซ่อน field ไม่ให้ภายนอกเข้าถึงตรงๆ ใช้ access modifier ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in1','private',['private'],[],'private — เข้าถึงได้เฉพาะในคลาสตัวเอง ภายนอกต้องผ่าน getter/setter','คือ private — หัวใจของ encapsulation')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fl4a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② getYear() คืนเป็น พ.ศ. ทั้งที่เก็บ ค.ศ. — ต้อง return year + ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl4b" placeholder="ตัวเลข">
-      <button class="fill-btn" onclick="checkFill('fl4b','543',['543'],[],'✅ พ.ศ. = ค.ศ. + 543 — getter แปลงค่าก่อนคืนได้ คนใช้ไม่ต้องรู้ว่าข้างในเก็บอะไร','❌ + 543 (พ.ศ. = ค.ศ. + 543)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② getYear() คืนเป็น พ.ศ. ทั้งที่เก็บ ค.ศ. — ต้อง return year + ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ตัวเลข">
+        <button class="ex-btn" onclick="checkFill('in2','543',['543'],[],'พ.ศ. = ค.ศ. + 543 — getter แปลงค่าก่อนคืนได้ คนใช้ไม่ต้องรู้ว่าข้างในเก็บอะไร','+ 543 (พ.ศ. = ค.ศ. + 543)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fl4b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ transfer ควรเรียก method ___ ก่อน แล้วถ้าสำเร็จค่อย deposit ให้อีกบัญชี</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl4c" placeholder="method">
-      <button class="fill-btn" onclick="checkFill('fl4c','withdraw',['withdraw()','withdraw'],[],'✅ if (withdraw(amount)) other.deposit(amount); — reuse ไม่เขียน logic ซ้ำ','❌ คือ withdraw — โอน = ถอนตัวเอง (เช็คเงินพอในตัว) + ฝากให้เขา')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ transfer ควรเรียก method ___ ก่อน แล้วถ้าสำเร็จค่อย deposit ให้อีกบัญชี</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="method">
+        <button class="ex-btn" onclick="checkFill('in3','withdraw',['withdraw()','withdraw'],[],'if (withdraw(amount)) other.deposit(amount); — reuse ไม่เขียน logic ซ้ำ','คือ withdraw — โอน = ถอนตัวเอง (เช็คเงินพอในตัว) + ฝากให้เขา')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fl4c-msg" class="fill-msg"></div>
   </div>
 </div>
 

@@ -295,13 +295,13 @@ T001 สมชาย    500</pre>
 x = y;
 y = temp;
 <span class="fn">printf</span>(<span class="st">"%d %d"</span>, x, y);</pre>
-    <div id="mc-s0" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-s0','A','C','❌ 10 20 คือค่าเริ่มต้น — หลัง swap ค่าสลับแล้ว')">A) 10 20</button>
-      <button class="mc-btn" onclick="pickMC('mc-s0','B','C','❌ 10 10 ไม่ถูก — temp เก็บค่าเดิมของ x แล้ว y รับค่านั้น')">B) 10 10</button>
-      <button class="mc-btn" onclick="pickMC('mc-s0','C','C','✅ temp=10, x=20, y=10 → print "20 10"')">C) 20 10</button>
-      <button class="mc-btn" onclick="pickMC('mc-s0','D','C','❌ 20 20 ไม่ถูก — y=temp=10 ไม่ใช่ 20')">D) 20 20</button>
+    <div class="mc-opts" id="mc-s0">
+      <div class="mc-opt" onclick="pickMC('mc-s0',0,2,'10 20 คือค่าเริ่มต้น — หลัง swap ค่าสลับแล้ว')"><span class="mc-ltr">A</span> 10 20</div>
+      <div class="mc-opt" onclick="pickMC('mc-s0',1,2,'10 10 ไม่ถูก — temp เก็บค่าเดิมของ x แล้ว y รับค่านั้น')"><span class="mc-ltr">B</span> 10 10</div>
+      <div class="mc-opt" onclick="pickMC('mc-s0',2,2,'temp=10, x=20, y=10 → print "20 10"')"><span class="mc-ltr">C</span> 20 10</div>
+      <div class="mc-opt" onclick="pickMC('mc-s0',3,2,'20 20 ไม่ถูก — y=temp=10 ไม่ใช่ 20')"><span class="mc-ltr">D</span> 20 20</div>
     </div>
-  </div>
+    <div class="ex-feedback" id="mc-s0-fb"></div></div>
 </div>
 
 <!-- ════ SLIDE 10 — Fill-in ════ -->
@@ -311,26 +311,32 @@ y = temp;
     <div class="slide-eyebrow">บทที่ 0 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① swap function ต้องรับ parameter เป็น ___ ไม่ใช่ค่าธรรมดา</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f0a" placeholder="ประเภท parameter">
-      <button class="fill-btn" onclick="checkFill('f0a','pointer',['int*','int *','pointers'],[],'✅ pointer — ส่ง address เพื่อแก้ค่าจริงใน caller','❌ ต้องส่ง pointer (int*) เพื่อให้แก้ค่าได้')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① swap function ต้องรับ parameter เป็น ___ ไม่ใช่ค่าธรรมดา</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ประเภท parameter">
+        <button class="ex-btn" onclick="checkFill('in1','pointer',['int*','int *','pointers'],[],'pointer — ส่ง address เพื่อแก้ค่าจริงใน caller','ต้องส่ง pointer (int*) เพื่อให้แก้ค่าได้')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="f0a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② Sorting algorithm ที่ Stable และ O(n log n) guaranteed ทุก case คือ?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f0b" placeholder="ชื่อ algorithm">
-      <button class="fill-btn" onclick="checkFill('f0b','merge sort',['mergesort','merge'],[],'✅ Merge Sort — Stable + O(n log n) best/avg/worst','❌ Quick Sort ไม่ stable และ worst O(n²) / Merge Sort คือคำตอบ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② Sorting algorithm ที่ Stable และ O(n log n) guaranteed ทุก case คือ?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ชื่อ algorithm">
+        <button class="ex-btn" onclick="checkFill('in2','merge sort',['mergesort','merge'],[],'Merge Sort — Stable + O(n log n) best/avg/worst','Quick Sort ไม่ stable และ worst O(n²) / Merge Sort คือคำตอบ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="f0b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ Sorting ที่ใช้ index แทนการเปรียบเทียบ ทำให้เร็วกว่า O(n log n) ได้ เรียกว่า?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f0c" placeholder="ประเภท sort">
-      <button class="fill-btn" onclick="checkFill('f0c','non-comparison sort',['non comparison sort','counting sort','radix sort','noncomparison'],[],'✅ Non-Comparison Sort — เช่น Counting Sort, Radix Sort','❌ เรียกว่า Non-Comparison Sort (Counting/Radix)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ Sorting ที่ใช้ index แทนการเปรียบเทียบ ทำให้เร็วกว่า O(n log n) ได้ เรียกว่า?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ประเภท sort">
+        <button class="ex-btn" onclick="checkFill('in3','non-comparison sort',['non comparison sort','counting sort','radix sort','noncomparison'],[],'Non-Comparison Sort — เช่น Counting Sort, Radix Sort','เรียกว่า Non-Comparison Sort (Counting/Radix)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="f0c-msg" class="fill-msg"></div>
   </div>
 </div>
 

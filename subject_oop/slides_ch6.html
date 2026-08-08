@@ -440,13 +440,13 @@ Employee fixedSalary = new FixedSalary(...);
 <span class="kw">public class</span> <span class="fn">FixedSalary</span> <span class="kw">extends</span> Employee {
     <span class="kw">public double</span> <span class="fn">earnings</span>() { <span class="kw">return</span> <span class="nm">15000</span>; }
 }</pre>
-    <div id="mc-l6" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-l6','A','B','❌ ตัวแปรชนิดแม่ชี้ object ลูกได้เสมอ (upcasting) — บรรทัดนี้ถูกต้อง')">A) Employee e = new FixedSalary();</button>
-      <button class="mc-btn" onclick="pickMC('mc-l6','B','B','✅ new Employee() error! — abstract class สร้าง object ตรงๆ ไม่ได้ มีไว้เป็นแม่แบบเท่านั้น')">B) Employee e = new Employee();</button>
-      <button class="mc-btn" onclick="pickMC('mc-l6','C','B','❌ สร้างลูกแบบตรงไปตรงมา — ถูกต้องปกติ')">C) FixedSalary f = new FixedSalary();</button>
-      <button class="mc-btn" onclick="pickMC('mc-l6','D','B','❌ เรียก earnings ผ่านตัวแปรชนิดแม่ได้ — abstract method รับประกันว่าลูกทุกตัวมีแน่')">D) double x = e.earnings();</button>
+    <div class="mc-opts" id="mc-l6">
+      <div class="mc-opt" onclick="pickMC('mc-l6',0,1,'ตัวแปรชนิดแม่ชี้ object ลูกได้เสมอ (upcasting) — บรรทัดนี้ถูกต้อง')"><span class="mc-ltr">A</span> Employee e = new FixedSalary();</div>
+      <div class="mc-opt" onclick="pickMC('mc-l6',1,1,'new Employee() error! — abstract class สร้าง object ตรงๆ ไม่ได้ มีไว้เป็นแม่แบบเท่านั้น')"><span class="mc-ltr">B</span> Employee e = new Employee();</div>
+      <div class="mc-opt" onclick="pickMC('mc-l6',2,1,'สร้างลูกแบบตรงไปตรงมา — ถูกต้องปกติ')"><span class="mc-ltr">C</span> FixedSalary f = new FixedSalary();</div>
+      <div class="mc-opt" onclick="pickMC('mc-l6',3,1,'เรียก earnings ผ่านตัวแปรชนิดแม่ได้ — abstract method รับประกันว่าลูกทุกตัวมีแน่')"><span class="mc-ltr">D</span> double x = e.earnings();</div>
     </div>
-    <pre class="code-block" style="margin-top:12px"><span class="cm">// abstract class = พิมพ์เขียวที่ยังไม่สมบูรณ์ (มี method ไม่มี body)
+    <div class="ex-feedback" id="mc-l6-fb"></div><pre class="code-block" style="margin-top:12px"><span class="cm">// abstract class = พิมพ์เขียวที่ยังไม่สมบูรณ์ (มี method ไม่มี body)
 // → new ตรงๆ ไม่ได้ ต้อง new ผ่านลูกที่เติม body ครบแล้วเท่านั้น</span></pre>
   </div>
 </div>
@@ -458,26 +458,32 @@ Employee fixedSalary = new FixedSalary(...);
     <div class="slide-eyebrow">Lab 6 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① คลาสลูกสืบทอดคลาสแม่ใช้คีย์เวิร์ด ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl6a" placeholder="keyword">
-      <button class="fill-btn" onclick="checkFill('fl6a','extends',['extend'],[],'✅ class Undergrad extends Student — ได้ field + method แม่มาทั้งหมด','❌ คือ extends — class ลูก extends แม่')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① คลาสลูกสืบทอดคลาสแม่ใช้คีย์เวิร์ด ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in1','extends',['extend'],[],'class Undergrad extends Student — ได้ field + method แม่มาทั้งหมด','คือ extends — class ลูก extends แม่')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fl6a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② เรียก constructor ของแม่จากลูก ใช้ ___(...) และต้องเป็นบรรทัดแรก</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl6b" placeholder="keyword">
-      <button class="fill-btn" onclick="checkFill('fl6b','super',['super()'],[],'✅ super(id, name, gpa) — แม่สร้างเสร็จก่อน ลูกค่อยเติมของตัวเอง','❌ คือ super — super(...) เรียก constructor แม่ ต้องเป็นบรรทัดแรกเสมอ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② เรียก constructor ของแม่จากลูก ใช้ ___(...) และต้องเป็นบรรทัดแรก</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in2','super',['super()'],[],'super(id, name, gpa) — แม่สร้างเสร็จก่อน ลูกค่อยเติมของตัวเอง','คือ super — super(...) เรียก constructor แม่ ต้องเป็นบรรทัดแรกเสมอ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fl6b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ System.out.println(object) จะเรียก method ___ ของ object ให้อัตโนมัติ</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl6c" placeholder="method">
-      <button class="fill-btn" onclick="checkFill('fl6c','toString',['tostring','toString()'],[],'✅ toString() — Override แล้ว println จะพิมพ์สวยตามที่เราเขียน','❌ คือ toString() — ไม่ Override จะได้ Student@1b6d3586')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ System.out.println(object) จะเรียก method ___ ของ object ให้อัตโนมัติ</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="method">
+        <button class="ex-btn" onclick="checkFill('in3','toString',['tostring','toString()'],[],'toString() — Override แล้ว println จะพิมพ์สวยตามที่เราเขียน','คือ toString() — ไม่ Override จะได้ Student@1b6d3586')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fl6c-msg" class="fill-msg"></div>
   </div>
 </div>
 

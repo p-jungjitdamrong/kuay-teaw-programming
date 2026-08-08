@@ -413,13 +413,13 @@ free(p);
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 4 · ลองข้อสอบ</div>
     <h2 class="slide-title">insertFront เขียนถูกคือข้อใด?</h2>
-    <div id="mc-t4" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-t4','A','B','❌ head = n ก่อน → ลิสต์เดิมหลุดหมด n->next จะชี้ตัวเองแทน')">A) *head = n; n-&gt;next = *head;</button>
-      <button class="mc-btn" onclick="pickMC('mc-t4','B','B','✅ ต่อของใหม่เข้าลิสต์ก่อน (n->next = *head) แล้วค่อยย้าย head')">B) n-&gt;next = *head; *head = n;</button>
-      <button class="mc-btn" onclick="pickMC('mc-t4','C','B','❌ n->next = NULL ทำให้ลิสต์เดิมหลุด — ต้องชี้ตัวแรกเดิม')">C) n-&gt;next = NULL; *head = n;</button>
-      <button class="mc-btn" onclick="pickMC('mc-t4','D','B','❌ (*head)->next = n คือเอา n ไปต่อ \"หลังตัวแรก\" ไม่ใช่แทรกหน้า')">D) (*head)-&gt;next = n; *head = n;</button>
+    <div class="mc-opts" id="mc-t4">
+      <div class="mc-opt" onclick="pickMC('mc-t4',0,1,'head = n ก่อน → ลิสต์เดิมหลุดหมด n->next จะชี้ตัวเองแทน')"><span class="mc-ltr">A</span> *head = n; n-&gt;next = *head;</div>
+      <div class="mc-opt" onclick="pickMC('mc-t4',1,1,'ต่อของใหม่เข้าลิสต์ก่อน (n->next = *head) แล้วค่อยย้าย head')"><span class="mc-ltr">B</span> n-&gt;next = *head; *head = n;</div>
+      <div class="mc-opt" onclick="pickMC('mc-t4',2,1,'n->next = NULL ทำให้ลิสต์เดิมหลุด — ต้องชี้ตัวแรกเดิม')"><span class="mc-ltr">C</span> n-&gt;next = NULL; *head = n;</div>
+      <div class="mc-opt" onclick="pickMC('mc-t4',3,1,'(*head)->next = n คือเอา n ไปต่อ \"หลังตัวแรก\" ไม่ใช่แทรกหน้า')"><span class="mc-ltr">D</span> (*head)-&gt;next = n; *head = n;</div>
     </div>
-    <pre class="code-block" style="margin-top:12px"><span class="cm">/* หลักตัดสิน: "ต่อของใหม่ก่อน ค่อยปล่อยของเก่า"
+    <div class="ex-feedback" id="mc-t4-fb"></div><pre class="code-block" style="margin-top:12px"><span class="cm">/* หลักตัดสิน: "ต่อของใหม่ก่อน ค่อยปล่อยของเก่า"
    ข้อ A คือกับดักคลาสสิก — บรรทัดถูกทั้งคู่ แต่สลับลำดับ = ลิสต์หาย
    วาดรูปตาม 2 บรรทัดของแต่ละข้อ แล้วดูว่าเส้นไหนขาด */</span></pre>
   </div>
@@ -432,26 +432,32 @@ free(p);
     <div class="slide-eyebrow">ติวบทที่ 4 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 5</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① การลบโหนดใน Singly LL ต้องเดินไปหยุดที่ตัว ___ ของตัวที่จะลบ</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft4a" placeholder="ตำแหน่ง">
-      <button class="fill-btn" onclick="checkFill('ft4a','ก่อนหน้า',['ก่อน','previous','prev','ตัวก่อน'],[],'✅ ตัวก่อนหน้า — เพราะ Singly เดินย้อนไม่ได้ ต้องให้ตัวก่อนชี้ข้าม','❌ ตัวก่อนหน้า — p->next = p->next->next ต้องยืนที่ตัวก่อน')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① การลบโหนดใน Singly LL ต้องเดินไปหยุดที่ตัว ___ ของตัวที่จะลบ</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ตำแหน่ง">
+        <button class="ex-btn" onclick="checkFill('in1','ก่อนหน้า',['ก่อน','previous','prev','ตัวก่อน'],[],'ตัวก่อนหน้า — เพราะ Singly เดินย้อนไม่ได้ ต้องให้ตัวก่อนชี้ข้าม','ตัวก่อนหน้า — p->next = p->next->next ต้องยืนที่ตัวก่อน')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="ft4a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Circular LL นิยมเก็บ pointer ชี้โหนด ___ เพราะเข้าถึงได้ทั้งหัวและท้าย O(1)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft4b" placeholder="โหนดไหน">
-      <button class="fill-btn" onclick="checkFill('ft4b','สุดท้าย',['ท้าย','tail','last','ตัวสุดท้าย'],[],'✅ tail — tail คือท้าย และ tail->next คือหัว ได้สองอย่างในตัวเดียว','❌ โหนดสุดท้าย (tail) — tail->next ก็คือหัวลิสต์ทันที')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② Circular LL นิยมเก็บ pointer ชี้โหนด ___ เพราะเข้าถึงได้ทั้งหัวและท้าย O(1)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="โหนดไหน">
+        <button class="ex-btn" onclick="checkFill('in2','สุดท้าย',['ท้าย','tail','last','ตัวสุดท้าย'],[],'tail — tail คือท้าย และ tail->next คือหัว ได้สองอย่างในตัวเดียว','โหนดสุดท้าย (tail) — tail->next ก็คือหัวลิสต์ทันที')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="ft4b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ การเข้าถึงสมาชิกตัวที่ k ใน Linked List ใช้เวลา O(___)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft4c" placeholder="complexity">
-      <button class="fill-btn" onclick="checkFill('ft4c','n',['O(n)','o(n)'],[],'✅ O(n) — ต้องเดินจาก head ทีละตัว (จุดที่แพ้ array)','❌ O(n) — LL ระบุ index ตรงๆ ไม่ได้ ต้องเดินจากหัว')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ การเข้าถึงสมาชิกตัวที่ k ใน Linked List ใช้เวลา O(___)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="complexity">
+        <button class="ex-btn" onclick="checkFill('in3','n',['O(n)','o(n)'],[],'O(n) — ต้องเดินจาก head ทีละตัว (จุดที่แพ้ array)','O(n) — LL ระบุ index ตรงๆ ไม่ได้ ต้องเดินจากหัว')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="ft4c-msg" class="fill-msg"></div>
   </div>
 </div>
 

@@ -272,13 +272,13 @@ list.<span class="fn">add</span>(<span class="nm">20</span>);
 } <span class="kw">finally</span> {
     System.out.<span class="fn">println</span>(list.<span class="fn">size</span>());
 }</pre>
-    <div id="mc-of" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-of','A','B','❌ list.get(5) พังทันที ไม่มีการพิมพ์ค่าออกมา')">A) null / 2</button>
-      <button class="mc-btn" onclick="pickMC('mc-of','B','B','✅ get(5) เกินขนาด (มีแค่ 2 ตัว) → IndexOutOfBoundsException → catch พิมพ์ "error" → finally ทำเสมอ พิมพ์ 2')">B) error / 2</button>
-      <button class="mc-btn" onclick="pickMC('mc-of','C','B','❌ finally ทำงานเสมอ — ไม่ว่าจะเกิด exception หรือไม่')">C) error (finally ไม่ทำงาน)</button>
-      <button class="mc-btn" onclick="pickMC('mc-of','D','B','❌ มี catch ที่ตรงชนิดแล้ว โปรแกรมไม่หยุด ทำงานต่อได้')">D) โปรแกรมหยุดทำงาน</button>
+    <div class="mc-opts" id="mc-of">
+      <div class="mc-opt" onclick="pickMC('mc-of',0,1,'list.get(5) พังทันที ไม่มีการพิมพ์ค่าออกมา')"><span class="mc-ltr">A</span> null / 2</div>
+      <div class="mc-opt" onclick="pickMC('mc-of',1,1,'get(5) เกินขนาด (มีแค่ 2 ตัว) → IndexOutOfBoundsException → catch พิมพ์ "error" → finally ทำเสมอ พิมพ์ 2')"><span class="mc-ltr">B</span> error / 2</div>
+      <div class="mc-opt" onclick="pickMC('mc-of',2,1,'finally ทำงานเสมอ — ไม่ว่าจะเกิด exception หรือไม่')"><span class="mc-ltr">C</span> error (finally ไม่ทำงาน)</div>
+      <div class="mc-opt" onclick="pickMC('mc-of',3,1,'มี catch ที่ตรงชนิดแล้ว โปรแกรมไม่หยุด ทำงานต่อได้')"><span class="mc-ltr">D</span> โปรแกรมหยุดทำงาน</div>
     </div>
-    <pre class="code-block" style="margin-top:12px"><span class="cm">// รวม 3 บท: ArrayList+Generic (12) · Exception (9) · autoboxing (12)
+    <div class="ex-feedback" id="mc-of-fb"></div><pre class="code-block" style="margin-top:12px"><span class="cm">// รวม 3 บท: ArrayList+Generic (12) · Exception (9) · autoboxing (12)
 // ไล่: add 2 ตัว → get(5) เกิน → โยน IndexOutOfBounds (unchecked)
 //      → catch ตรงชนิด พิมพ์ "error" → finally ทำเสมอ พิมพ์ size = 2</span></pre>
   </div>

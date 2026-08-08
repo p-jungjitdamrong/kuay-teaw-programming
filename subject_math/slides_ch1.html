@@ -383,13 +383,13 @@ n ≈ √(2³²) = 2¹⁶ = 65,536 keys!
   <div class="slide-body">
     <div class="slide-eyebrow">บทที่ 1 · MCQ</div>
     <h2 class="slide-title">API สำเร็จ 80% ต่อครั้ง — retry 2 ครั้ง (รวมยิง 3 ครั้ง) P(สำเร็จ)?</h2>
-    <div id="mc-pb1" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-pb1','A','C','❌ 0.8×3 เกิน 1 ไปแล้ว — probability บวกตรงๆ แบบนี้ไม่ได้')">A) 0.8 × 3 = 2.4 → 100%</button>
-      <button class="mc-btn" onclick="pickMC('mc-pb1','B','C','❌ 0.8³ = 0.512 คือ P(สำเร็จทั้ง 3 ครั้ง) — แต่เราต้องการแค่สำเร็จอย่างน้อย 1')">B) 0.8³ = 51.2%</button>
-      <button class="mc-btn" onclick="pickMC('mc-pb1','C','C','✅ P(fail ทั้ง 3) = 0.2³ = 0.008 → P(สำเร็จอย่างน้อย 1) = 1−0.008 = 99.2%')">C) 1 − 0.2³ = 99.2%</button>
-      <button class="mc-btn" onclick="pickMC('mc-pb1','D','C','❌ 0.8+0.2×0.8 = สำเร็จภายใน 2 ครั้ง (=96%) — โจทย์ให้ยิงได้ 3 ครั้ง')">D) 96%</button>
+    <div class="mc-opts" id="mc-pb1">
+      <div class="mc-opt" onclick="pickMC('mc-pb1',0,2,'0.8×3 เกิน 1 ไปแล้ว — probability บวกตรงๆ แบบนี้ไม่ได้')"><span class="mc-ltr">A</span> 0.8 × 3 = 2.4 → 100%</div>
+      <div class="mc-opt" onclick="pickMC('mc-pb1',1,2,'0.8³ = 0.512 คือ P(สำเร็จทั้ง 3 ครั้ง) — แต่เราต้องการแค่สำเร็จอย่างน้อย 1')"><span class="mc-ltr">B</span> 0.8³ = 51.2%</div>
+      <div class="mc-opt" onclick="pickMC('mc-pb1',2,2,'P(fail ทั้ง 3) = 0.2³ = 0.008 → P(สำเร็จอย่างน้อย 1) = 1−0.008 = 99.2%')"><span class="mc-ltr">C</span> 1 − 0.2³ = 99.2%</div>
+      <div class="mc-opt" onclick="pickMC('mc-pb1',3,2,'0.8+0.2×0.8 = สำเร็จภายใน 2 ครั้ง (=96%) — โจทย์ให้ยิงได้ 3 ครั้ง')"><span class="mc-ltr">D</span> 96%</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">คิดจากฝั่งตรงข้าม:
+    <div class="ex-feedback" id="mc-pb1-fb"></div><pre class="code-block" style="margin-top:12px">คิดจากฝั่งตรงข้าม:
 P(fail 1 ครั้ง) = 0.2
 P(fail ติดกัน 3 ครั้ง) = 0.2 × 0.2 × 0.2 = 0.008
 P(สำเร็จอย่างน้อย 1 ครั้ง) = 1 − 0.008 = 0.992 = 99.2%
@@ -405,26 +405,32 @@ retry 2 ครั้ง เปลี่ยน 80% → 99.2%</pre>
     <div class="slide-eyebrow">บทที่ 1 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① ทอยเต๋า 2 ลูก P(ได้ 6 ทั้งคู่) = 1/___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fpb1a" placeholder="ตัวเลข">
-      <button class="fill-btn" onclick="checkFill('fpb1a','36',['36'],[],'✅ กฎคูณ: 1/6 × 1/6 = 1/36','❌ กฎคูณ (independent): 1/6 × 1/6 = 1/36')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① ทอยเต๋า 2 ลูก P(ได้ 6 ทั้งคู่) = 1/___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ตัวเลข">
+        <button class="ex-btn" onclick="checkFill('in1','36',['36'],[],'กฎคูณ: 1/6 × 1/6 = 1/36','กฎคูณ (independent): 1/6 × 1/6 = 1/36')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fpb1a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② P(อย่างน้อย 1 ครั้ง) = 1 − P(___)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fpb1b" placeholder="เหตุการณ์อะไร?">
-      <button class="fill-btn" onclick="checkFill('fpb1b','ไม่เกิดเลย',['ไม่เกิดเลยสักครั้ง','ไม่เกิดสักครั้ง','fail ทั้งหมด','none','ไม่เกิด'],[],'✅ complement trick: 1 − P(ไม่เกิดเลยสักครั้ง)','❌ คือ P(ไม่เกิดเลยสักครั้ง) — คิดฝั่งตรงข้ามง่ายกว่าเสมอ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② P(อย่างน้อย 1 ครั้ง) = 1 − P(___)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="เหตุการณ์อะไร?">
+        <button class="ex-btn" onclick="checkFill('in2','ไม่เกิดเลย',['ไม่เกิดเลยสักครั้ง','ไม่เกิดสักครั้ง','fail ทั้งหมด','none','ไม่เกิด'],[],'complement trick: 1 − P(ไม่เกิดเลยสักครั้ง)','คือ P(ไม่เกิดเลยสักครั้ง) — คิดฝั่งตรงข้ามง่ายกว่าเสมอ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fpb1b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Hash space ขนาด d จะเริ่มเกิด collision ที่ประมาณ ___ keys (ตอบเป็นสูตร)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fpb1c" placeholder="สูตร">
-      <button class="fill-btn" onclick="checkFill('fpb1c','√d',['sqrt(d)','sqrt d','รูท d','root d','√(d)'],[],'✅ √d — Birthday Paradox: 32-bit hash ชนที่ ~65K keys ไม่ใช่ 4B','❌ คือ √d (Birthday Paradox) — เช่น 2³² จะชนที่ √(2³²) = 2¹⁶ = 65,536')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ Hash space ขนาด d จะเริ่มเกิด collision ที่ประมาณ ___ keys (ตอบเป็นสูตร)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="สูตร">
+        <button class="ex-btn" onclick="checkFill('in3','√d',['sqrt(d)','sqrt d','รูท d','root d','√(d)'],[],'√d — Birthday Paradox: 32-bit hash ชนที่ ~65K keys ไม่ใช่ 4B','คือ √d (Birthday Paradox) — เช่น 2³² จะชนที่ √(2³²) = 2¹⁶ = 65,536')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fpb1c-msg" class="fill-msg"></div>
   </div>
 </div>
 

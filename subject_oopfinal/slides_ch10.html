@@ -355,13 +355,13 @@ ItemListener     → itemStateChanged()
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 10 · ลองข้อสอบ</div>
     <h2 class="slide-title">ข้อใดถูกต้องเกี่ยวกับ Swing และ AWT?</h2>
-    <div id="mc-o10" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-o10','A','C','❌ Swing ไม่ได้แทนที่ AWT — สไลด์ระบุชัดว่า "Swing ไม่ได้แทนที่ AWT"')">A) Swing มาแทนที่ AWT ทั้งหมด</button>
-      <button class="mc-btn" onclick="pickMC('mc-o10','B','C','❌ กลับกัน — AWT ต่างหากที่เรียก native toolkit ของแต่ละ platform')">B) AWT ไม่ขึ้นกับ platform เลย</button>
-      <button class="mc-btn" onclick="pickMC('mc-o10','C','C','✅ Swing ถูกพัฒนาบนสถาปัตยกรรมของ AWT และยังใช้ event handling ของ AWT อยู่ (ActionListener อยู่ใน java.awt.event)')">C) Swing สร้างบน AWT และใช้ event handling ของ AWT</button>
-      <button class="mc-btn" onclick="pickMC('mc-o10','D','C','❌ ตรงข้าม — Swing ขึ้นกับ platform "น้อยกว่า" จึง bug น้อยกว่า')">D) Swing ขึ้นกับ platform มากกว่า AWT</button>
+    <div class="mc-opts" id="mc-o10">
+      <div class="mc-opt" onclick="pickMC('mc-o10',0,2,'Swing ไม่ได้แทนที่ AWT — สไลด์ระบุชัดว่า "Swing ไม่ได้แทนที่ AWT"')"><span class="mc-ltr">A</span> Swing มาแทนที่ AWT ทั้งหมด</div>
+      <div class="mc-opt" onclick="pickMC('mc-o10',1,2,'กลับกัน — AWT ต่างหากที่เรียก native toolkit ของแต่ละ platform')"><span class="mc-ltr">B</span> AWT ไม่ขึ้นกับ platform เลย</div>
+      <div class="mc-opt" onclick="pickMC('mc-o10',2,2,'Swing ถูกพัฒนาบนสถาปัตยกรรมของ AWT และยังใช้ event handling ของ AWT อยู่ (ActionListener อยู่ใน java.awt.event)')"><span class="mc-ltr">C</span> Swing สร้างบน AWT และใช้ event handling ของ AWT</div>
+      <div class="mc-opt" onclick="pickMC('mc-o10',3,2,'ตรงข้าม — Swing ขึ้นกับ platform "น้อยกว่า" จึง bug น้อยกว่า')"><span class="mc-ltr">D</span> Swing ขึ้นกับ platform มากกว่า AWT</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">AWT: เรียก native toolkit ของแต่ละ OS → หน้าตาต่างกัน bug ต่างกัน ("write once, debug everywhere")
+    <div class="ex-feedback" id="mc-o10-fb"></div><pre class="code-block" style="margin-top:12px">AWT: เรียก native toolkit ของแต่ละ OS → หน้าตาต่างกัน bug ต่างกัน ("write once, debug everywhere")
 Swing: วาดเอง ขึ้นกับ platform น้อย → หน้าตาเหมือนกันทุกที่ + มี look-and-feel ให้เลือก
 แต่ Swing ยังยืมโครง event handling ของ AWT มาใช้ทั้งดุ้น</pre>
   </div>
@@ -374,26 +374,32 @@ Swing: วาดเอง ขึ้นกับ platform น้อย → หน
     <div class="slide-eyebrow">ติวบทที่ 10 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 11</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① คลาสที่ implements ActionListener ต้องเขียน method ชื่อ ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo10a" placeholder="ชื่อ method">
-      <button class="fill-btn" onclick="checkFill('fo10a','actionPerformed',['actionperformed','actionPerformed()'],[],'✅ actionPerformed(ActionEvent e) — method เดียวของ interface นี้','❌ actionPerformed — รับ ActionEvent เป็น parameter')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① คลาสที่ implements ActionListener ต้องเขียน method ชื่อ ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ชื่อ method">
+        <button class="ex-btn" onclick="checkFill('in1','actionPerformed',['actionperformed','actionPerformed()'],[],'actionPerformed(ActionEvent e) — method เดียวของ interface นี้','actionPerformed — รับ ActionEvent เป็น parameter')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fo10a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② ลงทะเบียนให้ปุ่มรู้จัก listener ใช้คำสั่ง btn.___(this)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo10b" placeholder="method">
-      <button class="fill-btn" onclick="checkFill('fo10b','addActionListener',['addactionlistener'],[],'✅ addActionListener(this) — ขาดบรรทัดนี้ compile ผ่านแต่กดปุ่มเงียบ','❌ addActionListener — จุดที่ลืมแล้วหา bug ไม่เจอ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② ลงทะเบียนให้ปุ่มรู้จัก listener ใช้คำสั่ง btn.___(this)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="method">
+        <button class="ex-btn" onclick="checkFill('in2','addActionListener',['addactionlistener'],[],'addActionListener(this) — ขาดบรรทัดนี้ compile ผ่านแต่กดปุ่มเงียบ','addActionListener — จุดที่ลืมแล้วหา bug ไม่เจอ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fo10b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ e.getActionCommand() คืนค่าเป็นชนิด ___ จึงต้องเทียบด้วย .equals()</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo10c" placeholder="ชนิดข้อมูล">
-      <button class="fill-btn" onclick="checkFill('fo10c','String',['string'],[],'✅ String → ใช้ .equals() ไม่ใช่ == (บทเรียนจาก midterm)','❌ String — เทียบด้วย equals() เสมอ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ e.getActionCommand() คืนค่าเป็นชนิด ___ จึงต้องเทียบด้วย .equals()</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ชนิดข้อมูล">
+        <button class="ex-btn" onclick="checkFill('in3','String',['string'],[],'String → ใช้ .equals() ไม่ใช่ == (บทเรียนจาก midterm)','String — เทียบด้วย equals() เสมอ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fo10c-msg" class="fill-msg"></div>
   </div>
 </div>
 

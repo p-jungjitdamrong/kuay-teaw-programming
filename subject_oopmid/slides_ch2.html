@@ -295,13 +295,13 @@ System.out.println(s.length);&nbsp;&nbsp;&nbsp;&nbsp;// ②
     <h2 class="slide-title">โค้ดนี้เกิดอะไรขึ้น?</h2>
     <pre class="code-block" style="margin-bottom:14px"><span class="kw">int</span>[] arr;
 arr[<span class="nm">0</span>] = <span class="nm">10</span>;</pre>
-    <div id="mc-j2" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-j2','A','B','❌ ไม่ได้ค่า 10 — arr ยังไม่ได้ new ไม่มีอาเรย์จริงให้ใส่ค่า')">A) arr[0] มีค่า 10 ตามปกติ</button>
-      <button class="mc-btn" onclick="pickMC('mc-j2','B','B','✅ ประกาศเฉยๆ ยังไม่มีอาเรย์เกิดขึ้นจริง — ต้อง arr = new int[ขนาด] ก่อน (compiler ฟ้อง variable might not have been initialized)')">B) error — ต้อง new ก่อนใช้</button>
-      <button class="mc-btn" onclick="pickMC('mc-j2','C','B','❌ Java ไม่สร้าง array ให้อัตโนมัติ — ต่างจากการประกาศใน C')">C) Java สร้าง array ขนาด 1 ให้อัตโนมัติ</button>
-      <button class="mc-btn" onclick="pickMC('mc-j2','D','B','❌ ไม่ใช่ 0 — ยังไม่มี array เลย ไม่มีช่องให้เก็บอะไรทั้งนั้น')">D) arr[0] เป็น 0 (ค่า default)</button>
+    <div class="mc-opts" id="mc-j2">
+      <div class="mc-opt" onclick="pickMC('mc-j2',0,1,'ไม่ได้ค่า 10 — arr ยังไม่ได้ new ไม่มีอาเรย์จริงให้ใส่ค่า')"><span class="mc-ltr">A</span> arr[0] มีค่า 10 ตามปกติ</div>
+      <div class="mc-opt" onclick="pickMC('mc-j2',1,1,'ประกาศเฉยๆ ยังไม่มีอาเรย์เกิดขึ้นจริง — ต้อง arr = new int[ขนาด] ก่อน (compiler ฟ้อง variable might not have been initialized)')"><span class="mc-ltr">B</span> error — ต้อง new ก่อนใช้</div>
+      <div class="mc-opt" onclick="pickMC('mc-j2',2,1,'Java ไม่สร้าง array ให้อัตโนมัติ — ต่างจากการประกาศใน C')"><span class="mc-ltr">C</span> Java สร้าง array ขนาด 1 ให้อัตโนมัติ</div>
+      <div class="mc-opt" onclick="pickMC('mc-j2',3,1,'ไม่ใช่ 0 — ยังไม่มี array เลย ไม่มีช่องให้เก็บอะไรทั้งนั้น')"><span class="mc-ltr">D</span> arr[0] เป็น 0 (ค่า default)</div>
     </div>
-    <pre class="code-block" style="margin-top:12px"><span class="cm">// จำจากสไลด์: "หลังจากการประกาศ ไม่มีการสร้างอาเรย์เกิดขึ้นจริง"
+    <div class="ex-feedback" id="mc-j2-fb"></div><pre class="code-block" style="margin-top:12px"><span class="cm">// จำจากสไลด์: "หลังจากการประกาศ ไม่มีการสร้างอาเรย์เกิดขึ้นจริง"
 // ลำดับถูก: ประกาศ → new → ใช้</span>
 <span class="kw">int</span>[] arr = <span class="kw">new int</span>[<span class="nm">5</span>];
 arr[<span class="nm">0</span>] = <span class="nm">10</span>;   <span class="cm">// ✓</span></pre>
@@ -315,26 +315,32 @@ arr[<span class="nm">0</span>] = <span class="nm">10</span>;   <span class="cm">
     <div class="slide-eyebrow">ติวบทที่ 2 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 3</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① หาความยาว array ใช้ arr.___ (มี/ไม่มีวงเล็บ เขียนให้ครบ)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj2a" placeholder="เขียนให้ครบ">
-      <button class="fill-btn" onclick="checkFill('fj2a','length',['.length','length ไม่มีวงเล็บ'],['length()'],'✅ arr.length ไม่มีวงเล็บ (field) — String ถึงจะใช้ length() มีวงเล็บ','❌ arr.length ไม่มีวงเล็บ! length() มีวงเล็บคือของ String')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① หาความยาว array ใช้ arr.___ (มี/ไม่มีวงเล็บ เขียนให้ครบ)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="เขียนให้ครบ">
+        <button class="ex-btn" onclick="checkFill('in1','length',['.length','length ไม่มีวงเล็บ'],['length()'],'arr.length ไม่มีวงเล็บ (field) — String ถึงจะใช้ length() มีวงเล็บ','arr.length ไม่มีวงเล็บ! length() มีวงเล็บคือของ String')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fj2a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② foreach อ่าน array 2 มิติ ชั้นนอกประกาศตัวแปรชนิด ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj2b" placeholder="ชนิดตัวแปร">
-      <button class="fill-btn" onclick="checkFill('fj2b','int[]',['int []','array','int array'],[],'✅ int[] — สมาชิกของ array 2 มิติคือ array 1 มิติทั้งแถว','❌ int[] — for (int[] row : arr2D)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② foreach อ่าน array 2 มิติ ชั้นนอกประกาศตัวแปรชนิด ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ชนิดตัวแปร">
+        <button class="ex-btn" onclick="checkFill('in2','int[]',['int []','array','int array'],[],'int[] — สมาชิกของ array 2 มิติคือ array 1 มิติทั้งแถว','int[] — for (int[] row : arr2D)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fj2b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ s.replace(...) แล้วค่าใน s ไม่เปลี่ยน เพราะ String เป็น ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj2c" placeholder="คำศัพท์">
-      <button class="fill-btn" onclick="checkFill('fj2c','immutable',['อิมมิวเทเบิล','เปลี่ยนค่าไม่ได้'],[],'✅ immutable — ทุก method คืน String ใหม่ ต้องรับค่ากลับ s = s.replace(...)','❌ immutable (เปลี่ยนค่าไม่ได้) — ต้องรับค่ากลับเสมอ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ s.replace(...) แล้วค่าใน s ไม่เปลี่ยน เพราะ String เป็น ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="คำศัพท์">
+        <button class="ex-btn" onclick="checkFill('in3','immutable',['อิมมิวเทเบิล','เปลี่ยนค่าไม่ได้'],[],'immutable — ทุก method คืน String ใหม่ ต้องรับค่ากลับ s = s.replace(...)','immutable (เปลี่ยนค่าไม่ได้) — ต้องรับค่ากลับเสมอ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fj2c-msg" class="fill-msg"></div>
   </div>
 </div>
 

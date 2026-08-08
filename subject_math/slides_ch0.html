@@ -466,13 +466,13 @@ Mean คือเท่าไหร่? Median คือเท่าไหร่
     <div class="slide-eyebrow">บทที่ 0 · MCQ</div>
     <h2 class="slide-title">Latency: {10, 12, 11, 13, 2000} ควรรายงานค่าไหน?</h2>
     <p class="slide-lead">ทีม ops ต้องการรู้ว่า "user ทั่วไปเจอความเร็วเท่าไหร่"</p>
-    <div id="mc-st0" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-st0','A','B','❌ Mean = 409.2 ms — โดน 2000 ลากจนไม่สะท้อนประสบการณ์จริงของ user ส่วนใหญ่')">A) Mean = 409.2 ms</button>
-      <button class="mc-btn" onclick="pickMC('mc-st0','B','B','✅ Median = 12 ms — sort ได้ {10,11,12,13,2000} ตัวกลางคือ 12 สะท้อน user ทั่วไปจริง (แล้วค่อยดู p99 จับ outlier แยก)')">B) Median = 12 ms</button>
-      <button class="mc-btn" onclick="pickMC('mc-st0','C','B','❌ Mode ใช้กับข้อมูลซ้ำๆ/category — latency แต่ละค่าไม่ซ้ำกัน หา mode ไม่มีความหมาย')">C) Mode</button>
-      <button class="mc-btn" onclick="pickMC('mc-st0','D','B','❌ Max = 2000 บอกแค่ตัวแย่สุด ไม่บอกว่า user ทั่วไปเจออะไร')">D) Max = 2000 ms</button>
+    <div class="mc-opts" id="mc-st0">
+      <div class="mc-opt" onclick="pickMC('mc-st0',0,1,'Mean = 409.2 ms — โดน 2000 ลากจนไม่สะท้อนประสบการณ์จริงของ user ส่วนใหญ่')"><span class="mc-ltr">A</span> Mean = 409.2 ms</div>
+      <div class="mc-opt" onclick="pickMC('mc-st0',1,1,'Median = 12 ms — sort ได้ {10,11,12,13,2000} ตัวกลางคือ 12 สะท้อน user ทั่วไปจริง (แล้วค่อยดู p99 จับ outlier แยก)')"><span class="mc-ltr">B</span> Median = 12 ms</div>
+      <div class="mc-opt" onclick="pickMC('mc-st0',2,1,'Mode ใช้กับข้อมูลซ้ำๆ/category — latency แต่ละค่าไม่ซ้ำกัน หา mode ไม่มีความหมาย')"><span class="mc-ltr">C</span> Mode</div>
+      <div class="mc-opt" onclick="pickMC('mc-st0',3,1,'Max = 2000 บอกแค่ตัวแย่สุด ไม่บอกว่า user ทั่วไปเจออะไร')"><span class="mc-ltr">D</span> Max = 2000 ms</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">sort → {10, 11, 12, 13, 2000}
+    <div class="ex-feedback" id="mc-st0-fb"></div><pre class="code-block" style="margin-top:12px">sort → {10, 11, 12, 13, 2000}
 Median = arr[2] = 12 ms  ← user ทั่วไป
 Mean = 2046/5 = 409.2    ← โกหกเพราะ outlier
 แนวปฏิบัติจริง: รายงาน p50 (=median) + p95 + p99 คู่กัน</pre>
@@ -486,26 +486,32 @@ Mean = 2046/5 = 409.2    ← โกหกเพราะ outlier
     <div class="slide-eyebrow">บทที่ 0 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① {3, 7, 5, 9, 6} — Median คือ?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fst0a" placeholder="ตัวเลข">
-      <button class="fill-btn" onclick="checkFill('fst0a','6',['6'],[],'✅ sort → {3,5,6,7,9} ตัวกลาง = 6','❌ ต้อง sort ก่อน: {3,5,6,7,9} → ตัวกลางคือ 6')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① {3, 7, 5, 9, 6} — Median คือ?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ตัวเลข">
+        <button class="ex-btn" onclick="checkFill('in1','6',['6'],[],'sort → {3,5,6,7,9} ตัวกลาง = 6','ต้อง sort ก่อน: {3,5,6,7,9} → ตัวกลางคือ 6')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fst0a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② การหา Median ต้องทำอะไรกับข้อมูลก่อน?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fst0b" placeholder="ทำอะไร?">
-      <button class="fill-btn" onclick="checkFill('fst0b','sort',['เรียง','เรียงลำดับ','sorting','จัดเรียง'],[],'✅ sort ก่อนเสมอ — แล้วเอาตัวกลาง → O(n log n)','❌ ต้อง sort (เรียงลำดับ) ก่อน แล้วจึงหยิบตัวกลางได้')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② การหา Median ต้องทำอะไรกับข้อมูลก่อน?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ทำอะไร?">
+        <button class="ex-btn" onclick="checkFill('in2','sort',['เรียง','เรียงลำดับ','sorting','จัดเรียง'],[],'sort ก่อนเสมอ — แล้วเอาตัวกลาง → O(n log n)','ต้อง sort (เรียงลำดับ) ก่อน แล้วจึงหยิบตัวกลางได้')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fst0b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ SD สูง แปลว่าข้อมูล ___ (เกาะกลุ่ม/กระจาย)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fst0c" placeholder="เกาะกลุ่มหรือกระจาย">
-      <button class="fill-btn" onclick="checkFill('fst0c','กระจาย',['กระจายกว้าง','แกว่ง','spread'],[],'✅ SD สูง = ข้อมูลกระจายห่างจาก mean มาก','❌ SD สูง = กระจาย (ห่างจาก mean มาก) · SD ต่ำ = เกาะกลุ่ม')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ SD สูง แปลว่าข้อมูล ___ (เกาะกลุ่ม/กระจาย)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="เกาะกลุ่มหรือกระจาย">
+        <button class="ex-btn" onclick="checkFill('in3','กระจาย',['กระจายกว้าง','แกว่ง','spread'],[],'SD สูง = ข้อมูลกระจายห่างจาก mean มาก','SD สูง = กระจาย (ห่างจาก mean มาก) · SD ต่ำ = เกาะกลุ่ม')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fst0c-msg" class="fill-msg"></div>
   </div>
 </div>
 

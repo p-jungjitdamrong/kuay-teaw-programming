@@ -375,13 +375,13 @@ List ซ้ำได้ → เก็บครบ → size 3<br><br>
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 12 · ลองข้อสอบ</div>
     <h2 class="slide-title">ข้อใดประกาศ ArrayList เก็บจำนวนเต็มได้ถูกต้อง?</h2>
-    <div id="mc-o12" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-o12','A','C','❌ ArrayList<int> ใช้ไม่ได้ — collection รับได้เฉพาะ object ต้องใช้ wrapper class')">A) ArrayList&lt;int&gt; list = new ArrayList&lt;int&gt;();</button>
-      <button class="mc-btn" onclick="pickMC('mc-o12','B','C','❌ Int ไม่ใช่ชื่อคลาสใน Java — wrapper ของ int คือ Integer')">B) ArrayList&lt;Int&gt; list = new ArrayList&lt;&gt;();</button>
-      <button class="mc-btn" onclick="pickMC('mc-o12','C','C','✅ ใช้ wrapper class Integer + diamond operator <> ฝั่งขวา — ถูกต้องทั้งคู่')">C) ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;();</button>
-      <button class="mc-btn" onclick="pickMC('mc-o12','D','C','❌ ประกาศแบบไม่มี generic ยังทำงานได้ แต่ต้อง cast เอง เสี่ยง ClassCastException — ไม่ใช่คำตอบที่ดีที่สุด')">D) ArrayList list = new ArrayList();</button>
+    <div class="mc-opts" id="mc-o12">
+      <div class="mc-opt" onclick="pickMC('mc-o12',0,2,'ArrayList<int> ใช้ไม่ได้ — collection รับได้เฉพาะ object ต้องใช้ wrapper class')"><span class="mc-ltr">A</span> ArrayList&lt;int&gt; list = new ArrayList&lt;int&gt;();</div>
+      <div class="mc-opt" onclick="pickMC('mc-o12',1,2,'Int ไม่ใช่ชื่อคลาสใน Java — wrapper ของ int คือ Integer')"><span class="mc-ltr">B</span> ArrayList&lt;Int&gt; list = new ArrayList&lt;&gt;();</div>
+      <div class="mc-opt" onclick="pickMC('mc-o12',2,2,'ใช้ wrapper class Integer + diamond operator <> ฝั่งขวา — ถูกต้องทั้งคู่')"><span class="mc-ltr">C</span> ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;();</div>
+      <div class="mc-opt" onclick="pickMC('mc-o12',3,2,'ประกาศแบบไม่มี generic ยังทำงานได้ แต่ต้อง cast เอง เสี่ยง ClassCastException — ไม่ใช่คำตอบที่ดีที่สุด')"><span class="mc-ltr">D</span> ArrayList list = new ArrayList();</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">กฎ 2 ข้อ: ① collection รับเฉพาะ object → primitive ต้องใช้ wrapper (int → Integer)
+    <div class="ex-feedback" id="mc-o12-fb"></div><pre class="code-block" style="margin-top:12px">กฎ 2 ข้อ: ① collection รับเฉพาะ object → primitive ต้องใช้ wrapper (int → Integer)
 ② ชื่อ wrapper ที่ไม่ตรงตัว: int → Integer, char → Character (ที่เหลือแค่พิมพ์ใหญ่ตัวแรก)</pre>
   </div>
 </div>
@@ -393,26 +393,32 @@ List ซ้ำได้ → เก็บครบ → size 3<br><br>
     <div class="slide-eyebrow">ติวบทที่ 12 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 13</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① wrapper class ของ char คือ ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo12a" placeholder="ชื่อคลาส">
-      <button class="fill-btn" onclick="checkFill('fo12a','Character',['character'],[],'✅ Character — หนึ่งใน 2 ตัวที่ชื่อไม่ตรงตัว (อีกตัวคือ int → Integer)','❌ Character (ไม่ใช่ Char!) — คู่กับ int → Integer')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① wrapper class ของ char คือ ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ชื่อคลาส">
+        <button class="ex-btn" onclick="checkFill('in1','Character',['character'],[],'Character — หนึ่งใน 2 ตัวที่ชื่อไม่ตรงตัว (อีกตัวคือ int → Integer)','Character (ไม่ใช่ Char!) — คู่กับ int → Integer')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fo12a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② collection ตระกูลใดที่สมาชิก "ห้ามซ้ำ"</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo12b" placeholder="ชื่อตระกูล">
-      <button class="fill-btn" onclick="checkFill('fo12b','Set',['set','hashset'],[],'✅ Set (HashSet/TreeSet) — เพิ่มค่าซ้ำจะถูกทิ้ง · List ซ้ำได้','❌ Set — ห้ามซ้ำ · List ซ้ำได้ · Map ห้าม key ซ้ำ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② collection ตระกูลใดที่สมาชิก "ห้ามซ้ำ"</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ชื่อตระกูล">
+        <button class="ex-btn" onclick="checkFill('in2','Set',['set','hashset'],[],'Set (HashSet/TreeSet) — เพิ่มค่าซ้ำจะถูกทิ้ง · List ซ้ำได้','Set — ห้ามซ้ำ · List ซ้ำได้ · Map ห้าม key ซ้ำ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fo12b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ การแปลง primitive เป็น object โดยอัตโนมัติเรียกว่า ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo12c" placeholder="คำศัพท์">
-      <button class="fill-btn" onclick="checkFill('fo12c','autoboxing',['auto boxing','ออโต้บ็อกซิ่ง'],[],'✅ Autoboxing — ทางกลับคือ Autounboxing (object → primitive)','❌ Autoboxing — primitive→object · Autounboxing คือ object→primitive')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ การแปลง primitive เป็น object โดยอัตโนมัติเรียกว่า ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="คำศัพท์">
+        <button class="ex-btn" onclick="checkFill('in3','autoboxing',['auto boxing','ออโต้บ็อกซิ่ง'],[],'Autoboxing — ทางกลับคือ Autounboxing (object → primitive)','Autoboxing — primitive→object · Autounboxing คือ object→primitive')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fo12c-msg" class="fill-msg"></div>
   </div>
 </div>
 

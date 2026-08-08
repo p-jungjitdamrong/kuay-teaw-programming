@@ -341,13 +341,13 @@ In-place: ✅ Yes</pre>
     <div class="slide-eyebrow">บทที่ 5 · Trace</div>
     <h2 class="slide-title">Partition {3,6,8,10,1,2,1} pivot=last (1)?</h2>
     <p class="slide-lead">Lomuto partition, pivot = arr[6] = 1</p>
-    <div id="mc-q5" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-q5','A','C','❌ pivot ตัวสุดท้ายคือ 1 ไม่ใช่ค่าอื่น')">A) {1,6,8,10,3,2,1} pivot ที่ index 0</button>
-      <button class="mc-btn" onclick="pickMC('mc-q5','B','C','❌ ลำดับ partition ผิด — j วนจาก lo ถึง hi-1')">B) {1,1,3,6,8,10,2} pivot ที่ index 1</button>
-      <button class="mc-btn" onclick="pickMC('mc-q5','C','C','✅ pivot=1, i=-1 → j=0:3>1 no; j=1:6>1 no; j=2:8>1 no; j=3:10>1 no; j=4:1≤1 i=0 swap(arr[0],arr[4]); j=5:2>1 no → swap(arr[1],arr[6])={1,1,8,10,3,2,6}? ตอบ {1,1,...} pivot idx=1')">C) {1,1,8,10,3,2,6} pivot ที่ index 1</button>
-      <button class="mc-btn" onclick="pickMC('mc-q5','D','C','❌ ลอง trace ใหม่ j วน 0 ถึง 5')">D) {1,2,8,10,6,3,1} pivot ที่ index 6</button>
+    <div class="mc-opts" id="mc-q5">
+      <div class="mc-opt" onclick="pickMC('mc-q5',0,2,'pivot ตัวสุดท้ายคือ 1 ไม่ใช่ค่าอื่น')"><span class="mc-ltr">A</span> {1,6,8,10,3,2,1} pivot ที่ index 0</div>
+      <div class="mc-opt" onclick="pickMC('mc-q5',1,2,'ลำดับ partition ผิด — j วนจาก lo ถึง hi-1')"><span class="mc-ltr">B</span> {1,1,3,6,8,10,2} pivot ที่ index 1</div>
+      <div class="mc-opt" onclick="pickMC('mc-q5',2,2,'pivot=1, i=-1 → j=0:3>1 no; j=1:6>1 no; j=2:8>1 no; j=3:10>1 no; j=4:1≤1 i=0 swap(arr[0],arr[4]); j=5:2>1 no → swap(arr[1],arr[6])={1,1,8,10,3,2,6}? ตอบ {1,1,...} pivot idx=1')"><span class="mc-ltr">C</span> {1,1,8,10,3,2,6} pivot ที่ index 1</div>
+      <div class="mc-opt" onclick="pickMC('mc-q5',3,2,'ลอง trace ใหม่ j วน 0 ถึง 5')"><span class="mc-ltr">D</span> {1,2,8,10,6,3,1} pivot ที่ index 6</div>
     </div>
-    <pre class="code-block" style="margin-top:10px;font-size:11px">pivot=1, i=-1
+    <div class="ex-feedback" id="mc-q5-fb"></div><pre class="code-block" style="margin-top:10px;font-size:11px">pivot=1, i=-1
 j=0: arr[0]=3>1 no  j=1: arr[1]=6>1 no  j=2: arr[2]=8>1 no
 j=3: arr[3]=10>1 no  j=4: arr[4]=1≤1 → i=0, swap(arr[0],arr[4])={1,6,8,10,3,2,1}
 j=5: arr[5]=2>1 no
@@ -361,24 +361,30 @@ swap(arr[i+1],arr[hi])=swap(arr[1],arr[6])={1,1,8,10,3,2,6}  pivot@idx1</pre>
   <div class="slide-body">
     <div class="slide-eyebrow">บทที่ 5 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Quick Sort (Lomuto) เลือก pivot เป็น arr[___]</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fq5a" placeholder="index">
-      <button class="fill-btn" onclick="checkFill('fq5a','hi',['hi','r','right'],[],'✅ arr[hi] — ตัวสุดท้ายของ subarray ปัจจุบัน','❌ Lomuto scheme เลือก pivot = arr[hi] (ตัวสุดท้าย)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① Quick Sort (Lomuto) เลือก pivot เป็น arr[___]</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="index">
+        <button class="ex-btn" onclick="checkFill('in1','hi',['hi','r','right'],[],'arr[hi] — ตัวสุดท้ายของ subarray ปัจจุบัน','Lomuto scheme เลือก pivot = arr[hi] (ตัวสุดท้าย)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fq5a-msg" class="fill-msg"></div>
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② Quick Sort ไม่ใช่ Stable เพราะ?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fq5b" placeholder="เหตุผล">
-      <button class="fill-btn" onclick="checkFill('fq5b','swap ข้ามระยะไกล',['swap ข้าม','long-distance swap','swap ไกล','partition swap'],[],'✅ partition swap ข้ามระยะไกล → ค่าเท่ากันอาจสลับลำดับ','❌ เพราะ partition swap ข้ามระยะไกล ทำให้ค่าเท่ากันสลับ relative order')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② Quick Sort ไม่ใช่ Stable เพราะ?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="เหตุผล">
+        <button class="ex-btn" onclick="checkFill('in2','swap ข้ามระยะไกล',['swap ข้าม','long-distance swap','swap ไกล','partition swap'],[],'partition swap ข้ามระยะไกล → ค่าเท่ากันอาจสลับลำดับ','เพราะ partition swap ข้ามระยะไกล ทำให้ค่าเท่ากันสลับ relative order')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fq5b-msg" class="fill-msg"></div>
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ วิธีแก้ Quick Sort worst case O(n²) คือ?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fq5c" placeholder="วิธีการ">
-      <button class="fill-btn" onclick="checkFill('fq5c','random pivot',['randomized pivot','random','สุ่ม pivot'],[],'✅ Random Pivot — สุ่ม pivot แทนการเลือกตำแหน่งตายตัว ลดโอกาส worst case','❌ ใช้ Random Pivot หรือ Median-of-3 เพื่อลดโอกาสเจอ worst case')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ วิธีแก้ Quick Sort worst case O(n²) คือ?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="วิธีการ">
+        <button class="ex-btn" onclick="checkFill('in3','random pivot',['randomized pivot','random','สุ่ม pivot'],[],'Random Pivot — สุ่ม pivot แทนการเลือกตำแหน่งตายตัว ลดโอกาส worst case','ใช้ Random Pivot หรือ Median-of-3 เพื่อลดโอกาสเจอ worst case')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fq5c-msg" class="fill-msg"></div>
   </div>
 </div>
 

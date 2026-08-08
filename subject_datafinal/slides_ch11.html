@@ -278,13 +278,13 @@ idx3(14): ลูก 20,10 → swap 14↔20
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 11 · ลองข้อสอบ</div>
     <h2 class="slide-title">deleteMax แล้ว ใครขึ้นไปแทนที่รากเป็นคนแรก?</h2>
-    <div id="mc-f11" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-f11','A','C','❌ ลูกที่ใหญ่กว่าคือคนที่ "swap ระหว่างจม" — แต่คนแรกที่ขึ้นรากคือตัวท้าย')">A) ลูกตัวที่ใหญ่กว่าของราก</button>
-      <button class="mc-btn" onclick="pickMC('mc-f11','B','C','❌ ตัวใหญ่อันดับสองจะขึ้นรากเอง "หลังจม" — ไม่ใช่ขั้นแรก')">B) ค่าที่ใหญ่เป็นอันดับสอง</button>
-      <button class="mc-btn" onclick="pickMC('mc-f11','C','C','✅ ตัวท้ายสุดของ array ขึ้นไปแทนก่อน (รักษา completeness) แล้วค่อยจมลงหาที่ที่ถูก')">C) ตัวท้ายสุดของ heap</button>
-      <button class="mc-btn" onclick="pickMC('mc-f11','D','C','❌ min ไม่เกี่ยว — MaxHeap ไม่รู้ด้วยซ้ำว่า min อยู่ไหน')">D) ค่าน้อยที่สุด</button>
+    <div class="mc-opts" id="mc-f11">
+      <div class="mc-opt" onclick="pickMC('mc-f11',0,2,'ลูกที่ใหญ่กว่าคือคนที่ "swap ระหว่างจม" — แต่คนแรกที่ขึ้นรากคือตัวท้าย')"><span class="mc-ltr">A</span> ลูกตัวที่ใหญ่กว่าของราก</div>
+      <div class="mc-opt" onclick="pickMC('mc-f11',1,2,'ตัวใหญ่อันดับสองจะขึ้นรากเอง "หลังจม" — ไม่ใช่ขั้นแรก')"><span class="mc-ltr">B</span> ค่าที่ใหญ่เป็นอันดับสอง</div>
+      <div class="mc-opt" onclick="pickMC('mc-f11',2,2,'ตัวท้ายสุดของ array ขึ้นไปแทนก่อน (รักษา completeness) แล้วค่อยจมลงหาที่ที่ถูก')"><span class="mc-ltr">C</span> ตัวท้ายสุดของ heap</div>
+      <div class="mc-opt" onclick="pickMC('mc-f11',3,2,'min ไม่เกี่ยว — MaxHeap ไม่รู้ด้วยซ้ำว่า min อยู่ไหน')"><span class="mc-ltr">D</span> ค่าน้อยที่สุด</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">ทำไมต้องตัวท้าย? — เพราะกฎ Completeness: ช่องที่หายไปต้องเป็น "ช่องท้ายสุด" เท่านั้น
+    <div class="ex-feedback" id="mc-f11-fb"></div><pre class="code-block" style="margin-top:12px">ทำไมต้องตัวท้าย? — เพราะกฎ Completeness: ช่องที่หายไปต้องเป็น "ช่องท้ายสุด" เท่านั้น
 เอาตัวท้ายขึ้นก่อน (ผิด order ชั่วคราว) แล้วจมลงแก้ order — สองกฎครบทั้งคู่</pre>
   </div>
 </div>
@@ -296,26 +296,32 @@ idx3(14): ลูก 20,10 → swap 14↔20
     <div class="slide-eyebrow">ติวบทที่ 11 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 12</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Heap ต้องมีคุณสมบัติ Completeness และ ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff11a" placeholder="คุณสมบัติ">
-      <button class="fill-btn" onclick="checkFill('ff11a','heapness',['order','order property','heapness (order)'],[],'✅ Heapness (Order property) — MaxHeap แม่ ≥ ลูก ทุกต้นย่อย','❌ Heapness / Order property — แม่ชนะลูกทุกต้นย่อย')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① Heap ต้องมีคุณสมบัติ Completeness และ ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="คุณสมบัติ">
+        <button class="ex-btn" onclick="checkFill('in1','heapness',['order','order property','heapness (order)'],[],'Heapness (Order property) — MaxHeap แม่ ≥ ลูก ทุกต้นย่อย','Heapness / Order property — แม่ชนะลูกทุกต้นย่อย')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="ff11a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Top-down insert วางตัวใหม่ที่ ___ ก่อน แล้วลอยขึ้น</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff11b" placeholder="ตำแหน่ง">
-      <button class="fill-btn" onclick="checkFill('ff11b','ท้ายสุด',['ท้าย','ตำแหน่งท้ายสุด','ช่องถัดไป','last'],[],'✅ ท้ายสุดเสมอ (รักษา complete) แล้ว swap ขึ้นจนแม่ใหญ่กว่า','❌ ท้ายสุดของ array — complete ห้ามมีรู')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② Top-down insert วางตัวใหม่ที่ ___ ก่อน แล้วลอยขึ้น</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ตำแหน่ง">
+        <button class="ex-btn" onclick="checkFill('in2','ท้ายสุด',['ท้าย','ตำแหน่งท้ายสุด','ช่องถัดไป','last'],[],'ท้ายสุดเสมอ (รักษา complete) แล้ว swap ขึ้นจนแม่ใหญ่กว่า','ท้ายสุดของ array — complete ห้ามมีรู')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="ff11b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Huffman coding ดึง 2 โหนดที่มีความถี่ ___ มารวมกันก่อนเสมอ</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff11c" placeholder="แบบไหน">
-      <button class="fill-btn" onclick="checkFill('ff11c','น้อยสุด',['น้อยที่สุด','ต่ำสุด','min'],[],'✅ น้อยสุด 2 ตัว (ใช้ MinHeap) — ตัวถี่น้อยจมลึก รหัสยาว ตัวถี่มากอยู่ตื้น รหัสสั้น','❌ น้อยที่สุด — ดึงจาก MinHeap รวมแล้วใส่กลับ ทำจนเหลือต้นเดียว')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ Huffman coding ดึง 2 โหนดที่มีความถี่ ___ มารวมกันก่อนเสมอ</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="แบบไหน">
+        <button class="ex-btn" onclick="checkFill('in3','น้อยสุด',['น้อยที่สุด','ต่ำสุด','min'],[],'น้อยสุด 2 ตัว (ใช้ MinHeap) — ตัวถี่น้อยจมลึก รหัสยาว ตัวถี่มากอยู่ตื้น รหัสสั้น','น้อยที่สุด — ดึงจาก MinHeap รวมแล้วใส่กลับ ทำจนเหลือต้นเดียว')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="ff11c-msg" class="fill-msg"></div>
   </div>
 </div>
 
