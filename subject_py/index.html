@@ -47,6 +47,12 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
 .chip{font-family:var(--mono);font-size:10px;color:var(--dim);background:var(--paper2);border:1px solid var(--line);border-radius:4px;padding:2px 6px}
 .card.soon{opacity:.42;border-style:dashed;cursor:default;pointer-events:none}
 .card.soon::after{display:none}
+.maptab{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.maptab th{background:var(--s-slid);color:#fff;padding:7px 12px;text-align:left;font-weight:600}
+.maptab td{padding:6px 12px;border-top:1px solid var(--line)}
+.maptab td:first-child{font-family:var(--mono);color:var(--s-slid);font-weight:600;white-space:nowrap}
+.maptab a{color:var(--s-slid);text-decoration:none;font-weight:600}
+.maptab a:hover{text-decoration:underline}
 .footer{text-align:center;padding:18px 20px 32px;font-family:var(--mono);font-size:11px;color:var(--dim)}
 </style>
 </head>
@@ -66,7 +72,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
       <div class="sec-icon">📽️</div>
       <div class="sec-info">
         <div class="sec-title">สไลด์บทเรียน</div>
-        <div class="sec-desc">อ่านเองได้ที่บ้าน — เนื้อหา ตัวอย่าง Use Case Think! และโจทย์ในสไลด์เดียว</div>
+        <div class="sec-desc">อ่านเองได้ที่บ้าน — 11 บท ครอบคลุมเนื้อหาในห้องครบทั้ง 14 บทเรียน (ดูตารางเทียบด้านล่าง)</div>
       </div>
       <div class="sec-line"></div>
     </div>
@@ -127,11 +133,76 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
         <div class="card-desc">Inheritance, Duck Typing, Dunder Methods, @dataclass — Python OOP ต่างจาก Java ยังไง</div>
         <div class="chips"><span class="chip">12 slides</span><span class="chip">Think! + โจทย์</span></div>
       </a>
+      <a class="card" href="slides_ch7.html">
+        <div class="card-top"><span class="em">📐</span><span class="arr">→</span></div>
+        <span class="badge">บทที่ 7</span>
+        <div class="card-title">Flowchart &amp; การออกแบบ</div>
+        <div class="card-desc">ภาษาคอมพิวเตอร์ 3 ระดับ, สัญลักษณ์ผังงาน 8 ตัว, แปลงผังงาน → โค้ด Python</div>
+        <div class="chips"><span class="chip">12 slides</span><span class="chip">Think! + โจทย์</span></div>
+      </a>
+
+      <a class="card" href="slides_ch8.html">
+        <div class="card-top"><span class="em">🔁</span><span class="arr">→</span></div>
+        <span class="badge">บทที่ 8</span>
+        <div class="card-title">Nested Loop &amp; break/continue</div>
+        <div class="card-desc">ลูปซ้อนลูป, ตารางสูตรคูณ, วาดรูปดาว 4 แบบ, ควบคุมการวนด้วย break/continue</div>
+        <div class="chips"><span class="chip">12 slides</span><span class="chip">Think! + โจทย์</span></div>
+      </a>
+
+      <a class="card" href="slides_ch9.html">
+        <div class="card-top"><span class="em">💾</span><span class="arr">→</span></div>
+        <span class="badge">บทที่ 9</span>
+        <div class="card-title">File I/O</div>
+        <div class="card-desc">open() 4 โหมด, อ่าน 4 วิธี, write, with ปิดอัตโนมัติ, เช็ค/ลบไฟล์ด้วย os</div>
+        <div class="chips"><span class="chip">12 slides</span><span class="chip">Think! + โจทย์</span></div>
+      </a>
+
+      <a class="card" href="slides_ch10.html">
+        <div class="card-top"><span class="em">🪟</span><span class="arr">→</span></div>
+        <span class="badge">บทที่ 10 · จบ Course</span>
+        <div class="card-title">GUI ด้วย Tkinter</div>
+        <div class="card-desc">โครงหน้าต่าง, Label/Entry/Button, Layout 3 แบบ, Event Handling ด้วย command</div>
+        <div class="chips"><span class="chip">12 slides</span><span class="chip">Think! + โจทย์</span></div>
+      </a>
 
     </div>
   </div>
 
 </div>
+
+  <div class="section">
+    <div class="sec-hd">
+      <div class="sec-icon">🎯</div>
+      <div class="sec-info">
+        <div class="sec-title">เทียบกับบทเรียนในห้อง</div>
+        <div class="sec-desc">อาจารย์สอนบทไหน อ่านสไลด์ไหน — เนื้อหาในห้องมี 14 บท เทียบได้ตามตารางนี้</div>
+      </div>
+      <div class="sec-line"></div>
+    </div>
+    <table class="maptab">
+      <thead><tr><th style="width:31%">บทเรียนในห้อง</th><th>อ่านสไลด์</th></tr></thead>
+      <tbody>
+        <tr><td>1. Introduction</td><td><a href="slides_ch7.html">บท 7</a> (ภาษาคอมพิวเตอร์ 3 ระดับ)</td></tr>
+        <tr><td>2. Basic Concept</td><td><a href="slides_ch0.html">บท 0</a> + <a href="slides_ch1.html">บท 1</a> (indentation, ตัวแปร, input/output)</td></tr>
+        <tr><td>3. Python Expression</td><td><a href="slides_ch1.html">บท 1</a> (operators, type conversion)</td></tr>
+        <tr><td>4. Flow Chart &amp; Selection</td><td><a href="slides_ch7.html">บท 7</a> (ผังงาน) + <a href="slides_ch2.html">บท 2</a> (if)</td></tr>
+        <tr><td>5. Nested IF</td><td><a href="slides_ch7.html">บท 7</a> (◇ ซ้อน ◇) + <a href="slides_ch2.html">บท 2</a> (elif)</td></tr>
+        <tr><td>6. Basic Loop</td><td><a href="slides_ch2.html">บท 2</a> (while, for, range)</td></tr>
+        <tr><td>7. Advance Control Flow</td><td><a href="slides_ch2.html">บท 2</a> + <a href="slides_ch8.html">บท 8</a> (ลูป + if)</td></tr>
+        <tr><td>8. List</td><td><a href="slides_ch4.html">บท 4</a> (list + methods)</td></tr>
+        <tr><td>9. Dictionary</td><td><a href="slides_ch4.html">บท 4</a> (dict, key-value)</td></tr>
+        <tr><td>10. String</td><td><a href="slides_ch1.html">บท 1</a> (index, slice, methods)</td></tr>
+        <tr><td>11. Nested Loop</td><td><a href="slides_ch8.html">บท 8</a> ⭐ (ลูปซ้อน, break/continue)</td></tr>
+        <tr><td>12. Function</td><td><a href="slides_ch3.html">บท 3</a> (def, parameter, return, scope)</td></tr>
+        <tr><td>13. Basic File I/O</td><td><a href="slides_ch9.html">บท 9</a> ⭐ (open, read, write, os)</td></tr>
+        <tr><td>14. GUI Programming</td><td><a href="slides_ch10.html">บท 10</a> ⭐ (Tkinter)</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:12px;color:var(--dim);margin-top:10px;line-height:1.7">
+      ⭐ = บทที่เพิ่มใหม่ให้ตรงกับที่เรียน &nbsp;·&nbsp;
+      <b>บท 5–6 (OOP)</b> เป็นเนื้อหาต่อยอด ไม่มีในวิชานี้ แต่อ่านไว้ได้เปรียบตอนขึ้นวิชา OOP
+    </div>
+  </div>
 
 <div class="footer">made with ♥ by ก๋วยเตี๋ยวเรือ Programming</div>
 </body>

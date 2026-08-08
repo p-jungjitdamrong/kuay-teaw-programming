@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บทที่ 10 — GUI ด้วย Tkinter | ก๋วยเตี๋ยวเรือ Programming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#b84c00;--cal:#fff3ec;--cam:#d98a5a;}
+.wt{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.wt th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;}
+.wt td{padding:6px 10px;border:1px solid var(--line);}
+.wt td:first-child{font-family:var(--mono);font-weight:700;color:var(--ca);}
+.win{font-family:var(--mono);font-size:12px;line-height:1.55;background:var(--cal);border:1px solid var(--cam);border-radius:8px;padding:12px 16px;margin:8px 0;white-space:pre;color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 COVER -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ก๋วยเตี๋ยวเรือ Programming · Python</div>
+        <div class="cover-title">บทที่ 10<br><em>GUI ด้วย Tkinter</em></div>
+        <div class="cover-subtitle">เปลี่ยนจากหน้าจอดำเป็นหน้าต่างมีปุ่มกด — บทปิดท้ายวิชา</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>GUI คืออะไร ทำไมต้อง Tkinter</div>
+          <div class="topic-row"><div class="topic-dot"></div>โครงหน้าต่าง 4 บรรทัดท่องจำ</div>
+          <div class="topic-row"><div class="topic-dot"></div>Widget หลัก: Label / Entry / Button</div>
+          <div class="topic-row"><div class="topic-dot"></div>Layout 3 แบบ: pack / grid / place</div>
+          <div class="topic-row"><div class="topic-dot"></div>Event Handling — กดปุ่มแล้วทำงาน</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">10</div>
+        <div class="cover-badge">TKINTER · GUI</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 GUI คือ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 10 · แนวคิด</div>
+    <h2 class="slide-title">GUI คืออะไร — ต่างจากที่เขียนมาทั้งเทอมยังไง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แบบเดิม: CLI (หน้าจอดำ)</div>
+        <pre class="code-block">name = <span class="fn">input</span>(<span class="st">"ชื่อ: "</span>)
+<span class="fn">print</span>(<span class="st">"สวัสดี"</span>, name)</pre>
+        <div class="win">ชื่อ: สมชาย
+สวัสดี สมชาย</div>
+        <pre class="code-block"><span class="cm"># • ผู้ใช้ต้องพิมพ์ตามลำดับที่เรากำหนด
+# • ทำงานเป็นเส้นตรง บนลงล่าง
+# • ย้อนกลับไปแก้ไม่ได้</span></pre>
+      </div>
+      <div>
+        <div class="code-label">แบบใหม่: GUI (หน้าต่าง)</div>
+        <div class="win">┌─────────────────────┐
+│  ชื่อ: [สมชาย     ] │
+│                     │
+│      [ ทักทาย ]     │
+│                     │
+│   สวัสดี สมชาย      │
+└─────────────────────┘</div>
+        <pre class="code-block"><span class="cm"># GUI ประกอบด้วย:
+#   หน้าต่าง (Window)
+#   ปุ่ม (Button)
+#   ช่องข้อความ (Text Box / Entry)
+#   ป้ายข้อความ (Label)
+#   เมนู (Menu)
+
+# ข้อดี: ใช้ง่าย เป็นมิตรกับผู้ใช้
+#   แสดงข้อมูลเป็นภาพได้
+#   โต้ตอบได้ทันที
+#   ทำงานแบบ Event-driven</span></pre>
+      </div>
+    </div>
+    <div class="callout">คำสำคัญ <strong>Event-driven</strong> — โปรแกรม GUI ไม่ได้ทำงานเป็นเส้นตรง แต่ "รอ" ให้ผู้ใช้ทำอะไรสักอย่าง (กดปุ่ม พิมพ์) แล้วค่อยตอบสนอง · ต่างจาก CLI ที่ไล่บรรทัดลงมา</div>
+  </div>
+</div>
+
+<!-- 2 tkinter -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 10 · Tkinter</div>
+    <h2 class="slide-title">ทำไมต้อง Tkinter</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คุณสมบัติ</div>
+        <pre class="code-block"><span class="cm">Tkinter (Tk Interface)
+= GUI toolkit "มาตรฐาน" ของ Python
+
+• มาพร้อมกับการติดตั้ง Python
+  (Built-in — ไม่ต้อง pip install!)
+• รองรับ Widget พื้นฐานครบ
+• ทำงานได้ทุก Platform
+  (Windows, Mac, Linux)
+• พัฒนาโดย John Ousterhout
+• เหมาะสำหรับผู้เริ่มต้น</span></pre>
+        <div class="code-label" style="margin-top:8px">วิธี import — 2 แบบ</div>
+        <pre class="code-block"><span class="cm"># แบบ 1 — ต้องเติม tk. ข้างหน้า</span>
+<span class="kw">import</span> tkinter <span class="kw">as</span> tk
+win = tk.<span class="fn">Tk</span>()
+lbl = tk.<span class="fn">Label</span>(win, text=<span class="st">"Hi"</span>)
+
+<span class="cm"># แบบ 2 — เรียกตรงๆ ได้เลย</span>
+<span class="kw">from</span> tkinter <span class="kw">import</span> *
+win = <span class="fn">Tk</span>()
+lbl = <span class="fn">Label</span>(win, text=<span class="st">"Hi"</span>)</pre>
+      </div>
+      <div>
+        <div class="code-label">โครงหน้าต่าง — 4 บรรทัดท่องจำ</div>
+        <pre class="code-block"><span class="kw">import</span> tkinter <span class="kw">as</span> tk
+
+win = tk.<span class="fn">Tk</span>()              <span class="cm"># ① สร้างหน้าต่าง</span>
+win.<span class="fn">title</span>(<span class="st">"โปรแกรมแรก"</span>)   <span class="cm"># ② ตั้งชื่อ (ไม่บังคับ)</span>
+win.<span class="fn">geometry</span>(<span class="st">"300x200"</span>)  <span class="cm"># ③ ขนาด กว้างxสูง</span>
+
+<span class="cm"># ... วาง widget ตรงนี้ ...</span>
+
+win.<span class="fn">mainloop</span>()           <span class="cm"># ④ เริ่มรอ event — ท้ายสุดเสมอ!</span></pre>
+        <div class="win">┌─ โปรแกรมแรก ──── ─ □ ✕ ┐
+│                        │
+│                        │
+│      (ว่างเปล่า)       │
+│                        │
+└────────────────────────┘</div>
+      </div>
+    </div>
+    <div class="callout">บรรทัดที่ลืมแล้วงงที่สุด: <code class="inline-code">mainloop()</code> — ถ้าไม่มี โปรแกรมจะสร้างหน้าต่างแล้วจบทันที <strong>หน้าต่างแวบเดียวหาย</strong> · ต้องอยู่บรรทัดสุดท้ายเสมอ</div>
+  </div>
+</div>
+
+<!-- 3 widgets -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 10 · Widget</div>
+    <h2 class="slide-title">Widget หลักที่ต้องรู้จัก</h2>
+    <table class="wt">
+      <thead><tr><th>Widget</th><th>ใช้ทำอะไร</th><th>ตัวอย่าง</th></tr></thead>
+      <tbody>
+        <tr><td>Label</td><td>แสดงข้อความ (ผู้ใช้แก้ไม่ได้)</td><td><code class="inline-code">Label(win, text="ชื่อ:")</code></td></tr>
+        <tr><td>Entry</td><td>ช่องกรอกข้อความ 1 บรรทัด</td><td><code class="inline-code">Entry(win, width=20)</code></td></tr>
+        <tr><td>Button</td><td>ปุ่มกด</td><td><code class="inline-code">Button(win, text="OK", command=fn)</code></td></tr>
+        <tr><td>Text</td><td>ช่องกรอกหลายบรรทัด</td><td><code class="inline-code">Text(win, height=5, width=30)</code></td></tr>
+        <tr><td>Checkbutton</td><td>ช่องติ๊กถูก</td><td><code class="inline-code">Checkbutton(win, text="ยอมรับ")</code></td></tr>
+        <tr><td>Radiobutton</td><td>เลือกได้ตัวเดียว</td><td><code class="inline-code">Radiobutton(win, text="ชาย")</code></td></tr>
+        <tr><td>Frame</td><td>กล่องจัดกลุ่ม widget</td><td><code class="inline-code">Frame(win)</code></td></tr>
+      </tbody>
+    </table>
+    <div class="two-col" style="margin-top:6px">
+      <div>
+        <pre class="code-block"><span class="cm"># ทุก widget รับ "หน้าต่างแม่" เป็นตัวแรก</span>
+lbl = tk.<span class="fn">Label</span>(win, text=<span class="st">"สวัสดี"</span>)
+<span class="cm">#                ↑ บอกว่าอยู่ในหน้าต่างไหน</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm"># แต่งหน้าตาได้ด้วย option</span>
+tk.<span class="fn">Label</span>(win, text=<span class="st">"สวัสดี"</span>,
+         font=(<span class="st">"Arial"</span>, <span class="nm">16</span>),
+         fg=<span class="st">"blue"</span>, bg=<span class="st">"yellow"</span>)
+<span class="cm"># fg = สีตัวอักษร · bg = สีพื้นหลัง</span></pre>
+      </div>
+    </div>
+    <div class="callout">สร้าง widget แล้ว <strong>ยังไม่แสดง</strong> จนกว่าจะสั่ง layout (pack/grid/place) — เป็นจุดที่คนพลาดบ่อยว่า "สร้างแล้วทำไมไม่เห็น"</div>
+  </div>
+</div>
+
+<!-- 4 layout -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 10 · Layout</div>
+    <h2 class="slide-title">Layout 3 แบบ — บอกว่าจะวาง widget ตรงไหน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① pack() — เรียงต่อกัน (ง่ายสุด)</div>
+        <pre class="code-block">tk.<span class="fn">Label</span>(win, text=<span class="st">"บนสุด"</span>).<span class="fn">pack</span>()
+tk.<span class="fn">Label</span>(win, text=<span class="st">"ถัดมา"</span>).<span class="fn">pack</span>()
+tk.<span class="fn">Button</span>(win, text=<span class="st">"ปุ่ม"</span>).<span class="fn">pack</span>()
+
+<span class="cm"># วางจากบนลงล่างอัตโนมัติ
+# เปลี่ยนทิศได้: pack(side="left")</span></pre>
+        <div class="win">┌──────────────┐
+│    บนสุด     │
+│    ถัดมา     │
+│   [ ปุ่ม ]   │
+└──────────────┘</div>
+        <div class="code-label" style="margin-top:6px">② grid() — ตาราง แถว/คอลัมน์</div>
+        <pre class="code-block">tk.<span class="fn">Label</span>(win, text=<span class="st">"ชื่อ:"</span>).<span class="fn">grid</span>(row=<span class="nm">0</span>, column=<span class="nm">0</span>)
+tk.<span class="fn">Entry</span>(win).<span class="fn">grid</span>(row=<span class="nm">0</span>, column=<span class="nm">1</span>)
+tk.<span class="fn">Label</span>(win, text=<span class="st">"อายุ:"</span>).<span class="fn">grid</span>(row=<span class="nm">1</span>, column=<span class="nm">0</span>)
+tk.<span class="fn">Entry</span>(win).<span class="fn">grid</span>(row=<span class="nm">1</span>, column=<span class="nm">1</span>)</pre>
+        <div class="win">┌────────────────────┐
+│ ชื่อ: [        ]   │
+│ อายุ: [        ]   │
+└────────────────────┘</div>
+      </div>
+      <div>
+        <div class="code-label">③ place() — ระบุพิกัดเป๊ะๆ</div>
+        <pre class="code-block">tk.<span class="fn">Label</span>(win, text=<span class="st">"ตรงนี้"</span>).<span class="fn">place</span>(x=<span class="nm">50</span>, y=<span class="nm">80</span>)
+
+<span class="cm"># คุมได้ละเอียดสุด แต่ปรับขนาด
+# หน้าต่างแล้วเพี้ยน — ใช้น้อย</span></pre>
+        <div class="code-label" style="margin-top:8px">⚠️ กฎเหล็ก</div>
+        <pre class="code-block"><span class="cm"># ❌ ห้ามผสม pack กับ grid
+#    ในหน้าต่างเดียวกัน!
+tk.Label(win, text="A").pack()
+tk.Label(win, text="B").grid(row=0)
+# → โปรแกรมค้าง ไม่ขึ้นหน้าต่าง
+
+# ✓ เลือกอย่างใดอย่างหนึ่ง
+#   หรือแยกกันคนละ Frame</span></pre>
+        <pre class="code-block"><span class="cm"># เขียนติดกันได้ (นิยม)</span>
+tk.<span class="fn">Label</span>(win, text=<span class="st">"Hi"</span>).<span class="fn">pack</span>()
+
+<span class="cm"># แต่ถ้าต้องอ้างถึงทีหลัง ต้องแยก!</span>
+lbl = tk.<span class="fn">Label</span>(win, text=<span class="st">"Hi"</span>)
+lbl.<span class="fn">pack</span>()
+<span class="cm"># lbl = tk.Label(...).pack() → ได้ None!</span></pre>
+      </div>
+    </div>
+    <div class="callout">กับดักที่เจ็บ: <code class="inline-code">lbl = tk.Label(...).pack()</code> ทำให้ <code class="inline-code">lbl</code> เป็น <strong>None</strong> เพราะ pack() ไม่คืนค่า widget — ถ้าต้องใช้ตัวแปรทีหลัง ต้องแยกเป็น 2 บรรทัด</div>
+  </div>
+</div>
+
+<!-- 5 event -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 10 · Event Handling</div>
+    <h2 class="slide-title">กดปุ่มแล้วทำงาน — command=</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โครง 3 ขั้น</div>
+        <pre class="code-block"><span class="kw">import</span> tkinter <span class="kw">as</span> tk
+
+win = tk.<span class="fn">Tk</span>()
+win.<span class="fn">geometry</span>(<span class="st">"250x120"</span>)
+
+<span class="cm"># ① เขียนฟังก์ชันที่จะทำงาน</span>
+<span class="kw">def</span> <span class="fn">say_hi</span>():
+    lbl.<span class="fn">config</span>(text=<span class="st">"สวัสดีครับ!"</span>)
+
+lbl = tk.<span class="fn">Label</span>(win, text=<span class="st">"ยังไม่ได้กด"</span>)
+lbl.<span class="fn">pack</span>()
+
+<span class="cm"># ② ผูกฟังก์ชันกับปุ่มด้วย command</span>
+btn = tk.<span class="fn">Button</span>(win, text=<span class="st">"กดสิ"</span>,
+                 command=say_hi)
+btn.<span class="fn">pack</span>()
+
+win.<span class="fn">mainloop</span>()    <span class="cm"># ③ รอ event</span></pre>
+      </div>
+      <div>
+        <div class="code-label">⚠️ จุดพลาดอันดับ 1</div>
+        <pre class="code-block"><span class="cm"># ❌ ใส่วงเล็บ = เรียกทันที!</span>
+tk.<span class="fn">Button</span>(win, command=<span class="fn">say_hi</span>())
+<span class="cm">#                        ↑↑
+# ฟังก์ชันทำงานตอนสร้างปุ่มเลย
+# แล้วปุ่มก็กดไม่ได้อะไร</span>
+
+<span class="cm"># ✓ ไม่ใส่วงเล็บ = ส่ง "ตัวฟังก์ชัน" ไป</span>
+tk.<span class="fn">Button</span>(win, command=say_hi)</pre>
+        <div class="code-label" style="margin-top:8px">ส่ง argument ด้วย lambda</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">greet</span>(name):
+    <span class="fn">print</span>(<span class="st">"สวัสดี"</span>, name)
+
+<span class="cm"># ❌ command=greet("สมชาย") → ทำงานทันที</span>
+<span class="cm"># ✓ ห่อด้วย lambda</span>
+tk.<span class="fn">Button</span>(win, text=<span class="st">"ทัก"</span>,
+    command=<span class="kw">lambda</span>: <span class="fn">greet</span>(<span class="st">"สมชาย"</span>))</pre>
+      </div>
+    </div>
+    <div class="callout">จำสั้นๆ: <strong><code class="inline-code">command=ชื่อฟังก์ชัน</code> (ไม่มีวงเล็บ)</strong> — ใส่วงเล็บเมื่อไหร่ = สั่งให้ทำงานทันที ไม่ใช่รอกด · ถ้าต้องส่ง argument ให้ห่อด้วย <code class="inline-code">lambda:</code></div>
+  </div>
+</div>
+
+<!-- 6 entry -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 10 · รับค่าจากผู้ใช้</div>
+    <h2 class="slide-title">Entry — get() อ่านค่า, delete() ล้างช่อง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โปรแกรมทักทาย (ครบวงจร)</div>
+        <pre class="code-block"><span class="kw">import</span> tkinter <span class="kw">as</span> tk
+
+win = tk.<span class="fn">Tk</span>()
+win.<span class="fn">title</span>(<span class="st">"ทักทาย"</span>)
+win.<span class="fn">geometry</span>(<span class="st">"280x150"</span>)
+
+<span class="kw">def</span> <span class="fn">greet</span>():
+    name = ent.<span class="fn">get</span>()          <span class="cm"># อ่านค่าจากช่อง</span>
+    <span class="kw">if</span> name == <span class="st">""</span>:
+        result.<span class="fn">config</span>(text=<span class="st">"กรุณากรอกชื่อ"</span>)
+    <span class="kw">else</span>:
+        result.<span class="fn">config</span>(text=<span class="st">f"สวัสดี </span>{name}<span class="st">!"</span>)
+
+tk.<span class="fn">Label</span>(win, text=<span class="st">"ชื่อ:"</span>).<span class="fn">pack</span>()
+ent = tk.<span class="fn">Entry</span>(win, width=<span class="nm">25</span>)
+ent.<span class="fn">pack</span>()
+
+tk.<span class="fn">Button</span>(win, text=<span class="st">"ทักทาย"</span>,
+          command=greet).<span class="fn">pack</span>(pady=<span class="nm">8</span>)
+
+result = tk.<span class="fn">Label</span>(win, text=<span class="st">""</span>,
+                  font=(<span class="st">"Arial"</span>, <span class="nm">14</span>))
+result.<span class="fn">pack</span>()
+
+win.<span class="fn">mainloop</span>()</pre>
+      </div>
+      <div>
+        <div class="win">┌─ ทักทาย ─────── ─ □ ✕ ┐
+│         ชื่อ:         │
+│  [ สมชาย           ]  │
+│                       │
+│      [ ทักทาย ]       │
+│                       │
+│     สวัสดี สมชาย!     │
+└───────────────────────┘</div>
+        <div class="code-label" style="margin-top:8px">method ของ Entry ที่ใช้บ่อย</div>
+        <pre class="code-block">ent.<span class="fn">get</span>()              <span class="cm"># อ่านค่า (ได้ string!)</span>
+ent.<span class="fn">delete</span>(<span class="nm">0</span>, tk.END)  <span class="cm"># ล้างช่อง</span>
+ent.<span class="fn">insert</span>(<span class="nm">0</span>, <span class="st">"ค่าเริ่มต้น"</span>)
+
+<span class="cm"># get() คืน string เสมอ!
+# ต้องแปลงก่อนคำนวณ</span>
+n = <span class="fn">int</span>(ent.<span class="fn">get</span>())      <span class="cm"># ← ต้องแปลง</span></pre>
+        <div class="code-label" style="margin-top:6px">Label เปลี่ยนข้อความด้วย config()</div>
+        <pre class="code-block">result.<span class="fn">config</span>(text=<span class="st">"ข้อความใหม่"</span>)
+<span class="cm"># หรือ result["text"] = "ข้อความใหม่"</span></pre>
+      </div>
+    </div>
+    <div class="callout"><code class="inline-code">ent.get()</code> คืน <strong>string เสมอ</strong> เหมือน <code class="inline-code">input()</code> — จะคำนวณต้อง <code class="inline-code">int()</code> หรือ <code class="inline-code">float()</code> ก่อน และควรดักด้วย try-except เผื่อผู้ใช้พิมพ์ตัวอักษร</div>
+  </div>
+</div>
+
+<!-- 7 use case -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 10 · Use Case</div>
+    <h2 class="slide-title">🏦 เครื่องคิดดอกเบี้ยเงินฝาก — รวมทุกอย่าง</h2>
+    <pre class="code-block"><span class="kw">import</span> tkinter <span class="kw">as</span> tk
+
+win = tk.<span class="fn">Tk</span>()
+win.<span class="fn">title</span>(<span class="st">"คำนวณดอกเบี้ย"</span>)
+win.<span class="fn">geometry</span>(<span class="st">"340x220"</span>)
+
+<span class="kw">def</span> <span class="fn">calculate</span>():
+    <span class="kw">try</span>:                                        <span class="cm"># ดัก error (บทที่แล้ว!)</span>
+        money = <span class="fn">float</span>(ent_money.<span class="fn">get</span>())          <span class="cm"># get() ได้ string → แปลง</span>
+        rate  = <span class="fn">float</span>(ent_rate.<span class="fn">get</span>())
+        years = <span class="fn">int</span>(ent_year.<span class="fn">get</span>())
+    <span class="kw">except</span> ValueError:
+        result.<span class="fn">config</span>(text=<span class="st">"⚠️ กรุณากรอกตัวเลข"</span>, fg=<span class="st">"red"</span>)
+        <span class="kw">return</span>
+
+    <span class="kw">if</span> money &lt;= <span class="nm">0</span> <span class="kw">or</span> years &lt;= <span class="nm">0</span>:            <span class="cm"># ตรวจความสมเหตุสมผล</span>
+        result.<span class="fn">config</span>(text=<span class="st">"⚠️ ค่าต้องมากกว่า 0"</span>, fg=<span class="st">"red"</span>)
+        <span class="kw">return</span>
+
+    total = money
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(years):                     <span class="cm"># ลูปทบต้นทีละปี</span>
+        total = total * (<span class="nm">1</span> + rate / <span class="nm">100</span>)
+
+    interest = total - money
+    result.<span class="fn">config</span>(
+        text=<span class="st">f"เงินรวม </span>{total:,.<span class="nm">2</span>f}<span class="st"> บาท\nดอกเบี้ย </span>{interest:,.<span class="nm">2</span>f}<span class="st"> บาท"</span>,
+        fg=<span class="st">"green"</span>)
+
+<span class="cm"># ── จัดหน้าด้วย grid (ตาราง 2 คอลัมน์) ──</span>
+tk.<span class="fn">Label</span>(win, text=<span class="st">"เงินต้น (บาท):"</span>).<span class="fn">grid</span>(row=<span class="nm">0</span>, column=<span class="nm">0</span>, padx=<span class="nm">8</span>, pady=<span class="nm">5</span>, sticky=<span class="st">"e"</span>)
+ent_money = tk.<span class="fn">Entry</span>(win, width=<span class="nm">15</span>)
+ent_money.<span class="fn">grid</span>(row=<span class="nm">0</span>, column=<span class="nm">1</span>)
+
+tk.<span class="fn">Label</span>(win, text=<span class="st">"ดอกเบี้ย (%/ปี):"</span>).<span class="fn">grid</span>(row=<span class="nm">1</span>, column=<span class="nm">0</span>, padx=<span class="nm">8</span>, pady=<span class="nm">5</span>, sticky=<span class="st">"e"</span>)
+ent_rate = tk.<span class="fn">Entry</span>(win, width=<span class="nm">15</span>)
+ent_rate.<span class="fn">grid</span>(row=<span class="nm">1</span>, column=<span class="nm">1</span>)
+
+tk.<span class="fn">Label</span>(win, text=<span class="st">"จำนวนปี:"</span>).<span class="fn">grid</span>(row=<span class="nm">2</span>, column=<span class="nm">0</span>, padx=<span class="nm">8</span>, pady=<span class="nm">5</span>, sticky=<span class="st">"e"</span>)
+ent_year = tk.<span class="fn">Entry</span>(win, width=<span class="nm">15</span>)
+ent_year.<span class="fn">grid</span>(row=<span class="nm">2</span>, column=<span class="nm">1</span>)
+
+tk.<span class="fn">Button</span>(win, text=<span class="st">"คำนวณ"</span>, command=calculate, width=<span class="nm">12</span>) \
+  .<span class="fn">grid</span>(row=<span class="nm">3</span>, column=<span class="nm">0</span>, columnspan=<span class="nm">2</span>, pady=<span class="nm">10</span>)   <span class="cm"># กินพื้นที่ 2 คอลัมน์</span>
+
+result = tk.<span class="fn">Label</span>(win, text=<span class="st">""</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>))
+result.<span class="fn">grid</span>(row=<span class="nm">4</span>, column=<span class="nm">0</span>, columnspan=<span class="nm">2</span>)
+
+win.<span class="fn">mainloop</span>()
+
+<span class="cm"># เงินต้น 10000 · ดอกเบี้ย 2.5% · 3 ปี
+# → เงินรวม 10,768.91 บาท / ดอกเบี้ย 768.91 บาท</span></pre>
+    <div class="callout">โปรแกรม GUI ที่ดีต้องมีครบ 3 อย่าง: <strong>รับค่า (Entry+get) · ตรวจสอบ (try-except + if) · แสดงผล (Label+config)</strong> — และใช้ grid จัดหน้าให้เป็นระเบียบ</div>
+  </div>
+</div>
+
+<!-- 8 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">โค้ดนี้รันแล้ว "ปุ่มทำงานเองทันที" โดยที่ยังไม่ได้กด<br>แล้วพอกดปุ่มจริงกลับไม่มีอะไรเกิดขึ้น<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:10px 16px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+def show():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print("ถูกกดแล้ว")<br>
+<br>
+btn = tk.Button(win, text="กด", command=show())<br>
+btn.pack()
+</code><br><br>
+<em>ใบ้: ดูตรง <code>command=show()</code> — วงเล็บทำให้เกิดอะไร?<br>
+Python จะ "เรียกฟังก์ชันก่อน" แล้วเอา <b>ค่าที่คืนมา</b> (None) ไปเป็น command<br><br>
+แก้ยังไง? และถ้าอยากส่ง argument เข้าไปด้วยต้องทำยังไง?</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- 9 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 10 · ทดสอบ</div>
+    <h2 class="slide-title">บรรทัดใดต้องอยู่ท้ายสุดของโปรแกรม Tkinter เสมอ?</h2>
+    <div class="mc-opts" id="mc-gui">
+      <div class="mc-opt" onclick="pickMC('mc-gui',0,3,'win = tk.Tk() ต้องอยู่บนสุด เพราะต้องสร้างหน้าต่างก่อนถึงจะวาง widget ได้')"><span class="mc-ltr">A</span> win = tk.Tk()</div>
+      <div class="mc-opt" onclick="pickMC('mc-gui',1,3,'geometry() ตั้งขนาดหน้าต่าง จะเรียกตอนไหนก็ได้ก่อน mainloop')"><span class="mc-ltr">B</span> win.geometry("300x200")</div>
+      <div class="mc-opt" onclick="pickMC('mc-gui',2,3,'pack() วาง widget — ต้องเรียกก่อน mainloop แต่ไม่ใช่บรรทัดสุดท้าย')"><span class="mc-ltr">C</span> btn.pack()</div>
+      <div class="mc-opt" onclick="pickMC('mc-gui',3,3,'mainloop() เริ่มวนรอรับ event จากผู้ใช้ — ถ้าไม่มี หน้าต่างจะแวบเดียวแล้วหาย และโค้ดหลังจากนี้จะไม่ทำงานจนกว่าจะปิดหน้าต่าง')"><span class="mc-ltr">D</span> win.mainloop()</div>
+    </div>
+    <div class="ex-feedback" id="mc-gui-fb"></div>
+    <pre class="code-block" style="margin-top:12px">mainloop() = "เริ่มวนรอ event" — โปรแกรมจะค้างอยู่ตรงนี้จนกว่าผู้ใช้จะปิดหน้าต่าง
+ไม่มี mainloop() → สร้างหน้าต่างเสร็จ โปรแกรมจบทันที → หน้าต่างแวบเดียวหาย</pre>
+  </div>
+</div>
+
+<!-- 10 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">บทที่ 10 · เติมคำ</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <div class="exercise">
+      <div class="ex-q">① ผูกฟังก์ชันเข้ากับปุ่มใช้ option ชื่อว่าอะไร (เช่น Button(win, text="OK", ___=fn))</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ชื่อ option">
+        <button class="ex-btn" onclick="checkFill('in1','command',['command='],[],'command=ชื่อฟังก์ชัน (ห้ามใส่วงเล็บ!)','command — และต้องไม่ใส่วงเล็บหลังชื่อฟังก์ชัน')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">② อ่านค่าที่ผู้ใช้พิมพ์ในช่อง Entry ใช้ method ชื่อ ___ และได้ค่ากลับมาเป็นชนิดอะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="method + ชนิดข้อมูล">
+        <button class="ex-btn" onclick="checkFill('in2','get() string',['get(), string','get string','get() str','get,string','get() คืน string'],['get()'],'get() คืนค่าเป็น string เสมอ — จะคำนวณต้อง int() หรือ float() ก่อน','get() และได้ string — เหมือน input() ต้องแปลงก่อนคำนวณ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">③ Layout ที่จัด widget แบบตาราง ระบุ row และ column คือ</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ชื่อ layout">
+        <button class="ex-btn" onclick="checkFill('in3','grid',['grid()'],['pack'],'grid(row=, column=) — เหมาะกับฟอร์มที่มีหลายช่องกรอก','grid — ส่วน pack เรียงต่อกัน และ place ระบุพิกัด x,y')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 11 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🪟</div>
+      <div class="summary-title">สรุปบทที่ 10 — GUI ด้วย Tkinter</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Tkinter</div><div class="sum-body">GUI toolkit มาตรฐาน มาพร้อม Python ไม่ต้องติดตั้งเพิ่ม · ทุก platform</div></div>
+        <div class="sum-card"><div class="sum-head">โครง 4 บรรทัด</div><div class="sum-body">Tk() → title/geometry → วาง widget → <b>mainloop() ท้ายสุด</b></div></div>
+        <div class="sum-card"><div class="sum-head">Widget</div><div class="sum-body">Label แสดงข้อความ · Entry ช่องกรอก · Button ปุ่ม · ทุกตัวรับ win เป็นตัวแรก</div></div>
+        <div class="sum-card"><div class="sum-head">Layout</div><div class="sum-body">pack เรียงต่อ · grid ตาราง · place พิกัด — <b>ห้ามผสม pack กับ grid</b></div></div>
+        <div class="sum-card"><div class="sum-head">Event</div><div class="sum-body">command=ฟังก์ชัน (ไม่มีวงเล็บ!) · ส่ง argument ห่อด้วย lambda:</div></div>
+        <div class="sum-card"><div class="sum-head">รับ/แสดงค่า</div><div class="sum-body">ent.get() ได้ string ต้องแปลง · lbl.config(text=...) เปลี่ยนข้อความ</div></div>
+      </div>
+      <a href="index.html" class="summary-next">🏠 กลับหน้าหลัก Python — จบครบทุกบทแล้ว 🎉</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 10 — GUI ด้วย Tkinter</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','GUI คืออะไร','Tkinter + โครง 4 บรรทัด','Widget หลัก','Layout 3 แบบ','Event Handling','Entry รับค่า','Banking Use Case','Think!','ทดสอบ','เติมคำ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
