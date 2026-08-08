@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 2 — Dictionary &amp; String | ติวสอบ Python Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#4d7c0f;--cal:#eef7dc;--cam:#84b83c;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);}
+.t td:first-child{font-weight:700;color:var(--ca);}
+.box{display:flex;gap:3px;margin:8px 0;flex-wrap:wrap}
+.cell{border:1.5px solid var(--cam);background:var(--cal);border-radius:6px;padding:6px 4px;text-align:center;font-family:var(--mono);min-width:46px}
+.cell .v{font-size:14px;font-weight:700;color:var(--ca)}
+.cell .i{font-size:10px;color:var(--dim)}
+.cell .n{font-size:10px;color:#c0392b}
+.out{font-family:var(--mono);font-size:13px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:6px 0;white-space:pre;color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ติวสอบ Final · Computers &amp; Programming</div>
+        <div class="cover-title">ติวบทที่ 2<br><em>Dictionary &amp; String</em></div>
+        <div class="cover-subtitle">lecture 9–10 · เก็บข้อมูลแบบ key:value และจัดการข้อความ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>Dictionary — คู่ key:value, key ห้ามซ้ำ</div>
+          <div class="topic-row"><div class="topic-dot"></div>เพิ่ม / แก้ / ลบ + วน keys-values-items</div>
+          <div class="topic-row"><div class="topic-dot"></div>String — index, slice (เหมือน list)</div>
+          <div class="topic-row"><div class="topic-dot"></div>String methods ที่ออกสอบ</div>
+          <div class="topic-row"><div class="topic-dot"></div>String immutable — แก้ตัวอักษรไม่ได้!</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">F2</div>
+        <div class="cover-badge">lecture 9–10</div>
+        <div class="cover-slides-count">14 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 dict overview -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · lecture 9</div>
+    <h2 class="slide-title">Dictionary — เก็บเป็นคู่ key : value</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">นิยามตามสไลด์</div>
+        <pre class="code-block"><span class="cm"># "ดิกท์ (Dictionary) ตัวแปรชุดที่เก็บข้อมูล
+#  ในรูปแบบคู่ของ key และ value โดยที่
+#  • key ใช้เป็นดัชนี (Index) ในการเข้าถึงข้อมูล
+#  • value คือค่าของข้อมูล"</span>
+
+score = {<span class="st">'A'</span>: <span class="nm">97</span>, <span class="st">'B'</span>: <span class="nm">86</span>, <span class="st">'C'</span>: <span class="nm">68</span>}
+<span class="cm">#        keys:  'A'  'B'  'C'
+#        values: 97   86   68</span></pre>
+        <div class="code-label" style="margin-top:8px">รูปแบบการสร้าง</div>
+        <pre class="code-block">ชื่อตัวแปร = { key1: value1, key2: value2 }
+
+score = {<span class="st">"Jim"</span>: <span class="st">'A'</span>, <span class="st">"Kim"</span>: <span class="st">'B'</span>}
+empty = {}                    <span class="cm"># dict ว่าง</span>
+
+<span class="cm"># key เป็นได้ทั้ง int, float, string, bool
+# value เป็นอะไรก็ได้</span>
+d = {<span class="nm">1</span>: <span class="st">"หนึ่ง"</span>, <span class="st">"a"</span>: [<span class="nm">1</span>,<span class="nm">2</span>], <span class="kw">True</span>: <span class="nm">3.5</span>}</pre>
+      </div>
+      <div>
+        <div class="code-label">เข้าถึงด้วย key ไม่ใช่ index!</div>
+        <pre class="code-block">score = {<span class="st">'A'</span>: <span class="nm">97</span>, <span class="st">'B'</span>: <span class="nm">86</span>, <span class="st">'C'</span>: <span class="nm">68</span>}
+
+score[<span class="st">'A'</span>]      <span class="cm"># 97 ✓</span>
+score[<span class="nm">0</span>]        <span class="cm"># ❌ KeyError! ไม่มี key 0</span>
+score[<span class="st">'Z'</span>]      <span class="cm"># ❌ KeyError!</span>
+
+<span class="cm"># ปลอดภัยกว่า — ใช้ get()</span>
+score.<span class="fn">get</span>(<span class="st">'Z'</span>)          <span class="cm"># None (ไม่ error)</span>
+score.<span class="fn">get</span>(<span class="st">'Z'</span>, <span class="nm">0</span>)       <span class="cm"># 0 (ค่า default)</span>
+
+<span class="cm"># เช็คก่อนใช้</span>
+<span class="kw">if</span> <span class="st">'A'</span> <span class="kw">in</span> score:
+    <span class="fn">print</span>(score[<span class="st">'A'</span>])</pre>
+        <pre class="code-block"><span class="cm"># ⚠️ กฎสำคัญ: key ต้องไม่ซ้ำกัน</span>
+d = {<span class="st">'a'</span>: <span class="nm">1</span>, <span class="st">'a'</span>: <span class="nm">2</span>}
+<span class="fn">print</span>(d)     <span class="cm"># {'a': 2} ← ตัวหลังทับตัวแรก</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ต่างจาก List ตรงไหน:</b> List เข้าถึงด้วย <b>index ตัวเลข 0,1,2</b> · Dict เข้าถึงด้วย <b>key ที่เรากำหนดเอง</b> · และ dict ไม่มีลำดับให้ slice — <code class="inline-code">d[0:2]</code> ใช้ไม่ได้</div>
+  </div>
+</div>
+
+<!-- 2 dict CRUD -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · เพิ่ม/แก้/ลบ</div>
+    <h2 class="slide-title">Updating &amp; Removing Dictionary Items</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เพิ่ม / แก้ — เขียนเหมือนกัน!</div>
+        <pre class="code-block">score = {<span class="st">'A'</span>: <span class="nm">97</span>, <span class="st">'B'</span>: <span class="nm">86</span>}
+
+<span class="cm"># เพิ่ม (key ยังไม่มี)</span>
+score[<span class="st">'C'</span>] = <span class="nm">68</span>
+<span class="cm"># {'A':97, 'B':86, 'C':68}</span>
+
+<span class="cm"># แก้ (key มีอยู่แล้ว)</span>
+score[<span class="st">'A'</span>] = <span class="nm">100</span>
+<span class="cm"># {'A':100, 'B':86, 'C':68}</span>
+
+<span class="cm"># ← syntax เดียวกัน! Python ดูให้เองว่า
+#   key มีอยู่แล้วหรือยัง</span>
+
+<span class="cm"># รวม dict</span>
+score.<span class="fn">update</span>({<span class="st">'D'</span>: <span class="nm">55</span>, <span class="st">'E'</span>: <span class="nm">70</span>})</pre>
+      </div>
+      <div>
+        <div class="code-label">ลบ 3 วิธี</div>
+        <pre class="code-block"><span class="kw">del</span> score[<span class="st">'B'</span>]        <span class="cm"># ลบ key 'B'</span>
+
+score.<span class="fn">pop</span>(<span class="st">'C'</span>)         <span class="cm"># ลบ + คืนค่า 68</span>
+
+score.<span class="fn">clear</span>()          <span class="cm"># ล้างทั้งหมด → {}</span>
+
+<span class="cm"># ลบ key ที่ไม่มี → KeyError</span>
+<span class="kw">del</span> score[<span class="st">'Z'</span>]        <span class="cm"># ❌</span>
+score.<span class="fn">pop</span>(<span class="st">'Z'</span>, <span class="kw">None</span>)   <span class="cm"># ✓ ไม่ error</span></pre>
+        <div class="code-label" style="margin-top:6px">method ที่ควรรู้</div>
+        <table class="t">
+          <tbody>
+            <tr><td>keys()</td><td>คืน key ทั้งหมด</td></tr>
+            <tr><td>values()</td><td>คืน value ทั้งหมด</td></tr>
+            <tr><td>items()</td><td>คืนคู่ (key, value)</td></tr>
+            <tr><td>get(k, d)</td><td>อ่านค่าแบบไม่ error</td></tr>
+            <tr><td>len(d)</td><td>จำนวนคู่ทั้งหมด</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="exam"><b>จุดที่ต่างจาก list ชัดๆ:</b> list ต้องใช้ <code class="inline-code">append()</code> เพิ่มสมาชิก แต่ dict แค่ <code class="inline-code">d['new'] = value</code> ก็เพิ่มได้เลย — และคำสั่งเดียวกันนี้ใช้แก้ค่าเดิมด้วย</div>
+  </div>
+</div>
+
+<!-- 3 dict loop -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · วน dict</div>
+    <h2 class="slide-title">Looping and Dictionaries — 3 แบบ</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block">score = {<span class="st">'A'</span>: <span class="nm">97</span>, <span class="st">'B'</span>: <span class="nm">86</span>, <span class="st">'C'</span>: <span class="nm">68</span>}
+
+<span class="cm"># ① วน key (ค่าเริ่มต้น)</span>
+<span class="kw">for</span> k <span class="kw">in</span> score:
+    <span class="fn">print</span>(k, score[k])</pre>
+        <div class="out">A 97
+B 86
+C 68</div>
+        <pre class="code-block"><span class="cm"># เท่ากับเขียน for k in score.keys():</span>
+
+<span class="cm"># ② วน value อย่างเดียว</span>
+<span class="kw">for</span> v <span class="kw">in</span> score.<span class="fn">values</span>():
+    <span class="fn">print</span>(v)      <span class="cm"># 97 / 86 / 68</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm"># ③ วนทั้งคู่ด้วย items() — นิยมสุด</span>
+<span class="kw">for</span> k, v <span class="kw">in</span> score.<span class="fn">items</span>():
+    <span class="fn">print</span>(<span class="st">f"</span>{k}<span class="st"> ได้ </span>{v}<span class="st"> คะแนน"</span>)</pre>
+        <div class="out">A ได้ 97 คะแนน
+B ได้ 86 คะแนน
+C ได้ 68 คะแนน</div>
+        <div class="code-label" style="margin-top:6px">โจทย์คลาสสิก — นับความถี่</div>
+        <pre class="code-block">text = <span class="st">"banana"</span>
+count = {}
+<span class="kw">for</span> ch <span class="kw">in</span> text:
+    <span class="kw">if</span> ch <span class="kw">in</span> count:
+        count[ch] += <span class="nm">1</span>
+    <span class="kw">else</span>:
+        count[ch] = <span class="nm">1</span>
+<span class="fn">print</span>(count)
+<span class="cm"># {'b':1, 'a':3, 'n':2}</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>โจทย์นับความถี่คือข้อสอบยอดฮิตของ dict</b> — โครงคือ "ถ้ามี key แล้ว +1 ถ้ายังไม่มีตั้งเป็น 1" · เขียนสั้นได้ด้วย <code class="inline-code">count[ch] = count.get(ch, 0) + 1</code></div>
+  </div>
+</div>
+
+<!-- 4 string basics -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · lecture 10</div>
+    <h2 class="slide-title">String — เหมือน list ของตัวอักษร</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">นิยามตามสไลด์</div>
+        <pre class="code-block"><span class="cm"># "String คือสายอักขระที่อยู่ภายใน
+#  เครื่องหมาย (" ") หรือ (' ') เรียงต่อกัน
+#  ซึ่งตัวแปรสตริงมีลักษณะคล้ายกับลิสต์
+#  ที่บรรจุตัวอักษรไว้ในแต่ละ element"</span>
+
+s = <span class="st">"Hello"</span>
+s2 = <span class="st">'Hello'</span>      <span class="cm"># เหมือนกัน</span></pre>
+        <div class="box">
+          <div class="cell"><div class="v">H</div><div class="i">0</div><div class="n">−5</div></div>
+          <div class="cell"><div class="v">e</div><div class="i">1</div><div class="n">−4</div></div>
+          <div class="cell"><div class="v">l</div><div class="i">2</div><div class="n">−3</div></div>
+          <div class="cell"><div class="v">l</div><div class="i">3</div><div class="n">−2</div></div>
+          <div class="cell"><div class="v">o</div><div class="i">4</div><div class="n">−1</div></div>
+        </div>
+        <pre class="code-block">s[<span class="nm">0</span>]     <span class="cm"># 'H'</span>
+s[<span class="nm">1</span>]     <span class="cm"># 'e'</span>
+s[-<span class="nm">1</span>]    <span class="cm"># 'o'</span>
+<span class="fn">len</span>(s)   <span class="cm"># 5</span></pre>
+      </div>
+      <div>
+        <div class="code-label">slice ก็เหมือน list</div>
+        <pre class="code-block">s = <span class="st">"Hello World"</span>
+
+s[<span class="nm">0</span>:<span class="nm">5</span>]    <span class="cm"># 'Hello'</span>
+s[<span class="nm">6</span>:]     <span class="cm"># 'World'</span>
+s[:<span class="nm">5</span>]     <span class="cm"># 'Hello'</span>
+s[::-<span class="nm">1</span>]   <span class="cm"># 'dlroW olleH' กลับด้าน</span></pre>
+        <div class="code-label" style="margin-top:6px">⚠️ String แก้ตัวอักษรไม่ได้ (immutable)</div>
+        <pre class="code-block">s = <span class="st">"Hello"</span>
+s[<span class="nm">0</span>] = <span class="st">'J'</span>     <span class="cm"># ❌ TypeError!</span>
+
+<span class="cm"># ต้องสร้างใหม่แทน</span>
+s = <span class="st">'J'</span> + s[<span class="nm">1</span>:]   <span class="cm"># 'Jello' ✓</span>
+
+<span class="cm"># method ทุกตัวคืน string ใหม่</span>
+s.<span class="fn">upper</span>()          <span class="cm"># 'HELLO'</span>
+<span class="fn">print</span>(s)           <span class="cm"># 'Jello' ← เดิมไม่เปลี่ยน!</span>
+s = s.<span class="fn">upper</span>()      <span class="cm"># ต้องรับค่ากลับ ✓</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ความต่างที่ออกสอบ:</b> <b>list แก้สมาชิกได้</b> (<code class="inline-code">a[0]=5</code> ✓) แต่ <b>string แก้ไม่ได้</b> (<code class="inline-code">s[0]='J'</code> ❌ TypeError) — และ method ของ string คืนค่าใหม่เสมอ ต้องรับกลับ</div>
+  </div>
+</div>
+
+<!-- 5 string methods -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · String Methods</div>
+    <h2 class="slide-title">String Methods ที่ต้องรู้จัก</h2>
+    <table class="t">
+      <thead><tr><th style="width:22%">Method</th><th>ทำอะไร</th><th>ตัวอย่าง (s = " Hello World ")</th></tr></thead>
+      <tbody>
+        <tr><td>upper()</td><td>เป็นตัวใหญ่หมด</td><td>"abc".upper() → "ABC"</td></tr>
+        <tr><td>lower()</td><td>เป็นตัวเล็กหมด</td><td>"ABC".lower() → "abc"</td></tr>
+        <tr><td>strip()</td><td>ตัดช่องว่างหัว-ท้าย</td><td>s.strip() → "Hello World"</td></tr>
+        <tr><td>split(x)</td><td>แยกเป็น list</td><td>"a,b,c".split(",") → ['a','b','c']</td></tr>
+        <tr><td>replace(a,b)</td><td>แทนที่ข้อความ</td><td>"aaa".replace("a","b") → "bbb"</td></tr>
+        <tr><td>find(x)</td><td>หาตำแหน่ง (ไม่เจอ = −1)</td><td>"Hello".find("l") → 2</td></tr>
+        <tr><td>count(x)</td><td>นับจำนวนครั้ง</td><td>"Hello".count("l") → 2</td></tr>
+        <tr><td>join(list)</td><td>รวม list เป็น string</td><td>",".join(['a','b']) → "a,b"</td></tr>
+        <tr><td>isdigit()</td><td>เป็นตัวเลขล้วนไหม</td><td>"123".isdigit() → True</td></tr>
+        <tr><td>isalpha()</td><td>เป็นตัวอักษรล้วนไหม</td><td>"abc".isalpha() → True</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>คู่หูที่ใช้บ่อยที่สุด:</b> <code class="inline-code">split()</code> แยก string → list · <code class="inline-code">join()</code> รวม list → string · <code class="inline-code">strip()</code> ตัด <code class="inline-code">\n</code> ตอนอ่านไฟล์ (บท 5!)</div>
+  </div>
+</div>
+
+<!-- 6 string compare + loop -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · เปรียบเทียบ + วน</div>
+    <h2 class="slide-title">String Compare และการวนอ่านทีละตัว</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เปรียบเทียบตามลำดับ ASCII</div>
+        <pre class="code-block"><span class="st">"abc"</span> == <span class="st">"abc"</span>     <span class="cm"># True</span>
+<span class="st">"abc"</span> == <span class="st">"ABC"</span>     <span class="cm"># False ← case-sensitive!</span>
+<span class="st">"a"</span> &lt; <span class="st">"b"</span>          <span class="cm"># True  (a=97 &lt; b=98)</span>
+<span class="st">"A"</span> &lt; <span class="st">"a"</span>          <span class="cm"># True  (A=65 &lt; a=97)</span>
+<span class="st">"apple"</span> &lt; <span class="st">"banana"</span> <span class="cm"># True  เทียบทีละตัว</span>
+
+<span class="cm"># เทียบแบบไม่สนตัวพิมพ์</span>
+s1.<span class="fn">lower</span>() == s2.<span class="fn">lower</span>()</pre>
+        <div class="code-label" style="margin-top:6px">เช็คว่ามีข้อความย่อยไหม</div>
+        <pre class="code-block"><span class="st">"ell"</span> <span class="kw">in</span> <span class="st">"Hello"</span>     <span class="cm"># True</span>
+<span class="st">"xyz"</span> <span class="kw">in</span> <span class="st">"Hello"</span>     <span class="cm"># False</span></pre>
+      </div>
+      <div>
+        <div class="code-label">วนอ่านทีละตัวอักษร</div>
+        <pre class="code-block">s = <span class="st">"Hello"</span>
+
+<span class="cm"># ① วนตัวอักษรตรงๆ</span>
+<span class="kw">for</span> ch <span class="kw">in</span> s:
+    <span class="fn">print</span>(ch, end=<span class="st">' '</span>)   <span class="cm"># H e l l o</span>
+
+<span class="cm"># ② วนด้วย index</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(s)):
+    <span class="fn">print</span>(i, s[i])</pre>
+        <div class="code-label" style="margin-top:6px">โจทย์คลาสสิก</div>
+        <pre class="code-block"><span class="cm"># นับสระ</span>
+s = <span class="fn">input</span>(<span class="st">"ข้อความ: "</span>)
+count = <span class="nm">0</span>
+<span class="kw">for</span> ch <span class="kw">in</span> s.<span class="fn">lower</span>():
+    <span class="kw">if</span> ch <span class="kw">in</span> <span class="st">"aeiou"</span>:
+        count += <span class="nm">1</span>
+<span class="fn">print</span>(<span class="st">"มีสระ"</span>, count, <span class="st">"ตัว"</span>)
+
+<span class="cm"># เช็ค palindrome (อ่านหน้าหลังเหมือนกัน)</span>
+<span class="kw">if</span> s == s[::-<span class="nm">1</span>]:
+    <span class="fn">print</span>(<span class="st">"เป็น palindrome"</span>)</pre>
+      </div>
+    </div>
+    <div class="exam"><b>การรับ string จาก input:</b> สไลด์ระบุว่า <code class="inline-code">s = input()</code> รับข้อความได้ทั้งบรรทัด (รวมช่องว่าง) — ต่างจากบางภาษาที่หยุดที่ช่องว่าง</div>
+  </div>
+</div>
+
+<!-- 7 เทียบ 3 ชนิด -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · ตารางเทียบ</div>
+    <h2 class="slide-title">List vs Dictionary vs String — ตารางบังคับจำ</h2>
+    <table class="t">
+      <thead><tr><th></th><th>List</th><th>Dictionary</th><th>String</th></tr></thead>
+      <tbody>
+        <tr><td>เขียนยังไง</td><td>[1, 2, 3]</td><td>{'a': 1, 'b': 2}</td><td>"Hello"</td></tr>
+        <tr><td>เข้าถึงด้วย</td><td>index 0,1,2</td><td>key ที่กำหนดเอง</td><td>index 0,1,2</td></tr>
+        <tr><td>slice ได้ไหม</td><td>ได้ a[1:3]</td><td><b>ไม่ได้</b></td><td>ได้ s[1:3]</td></tr>
+        <tr><td>แก้สมาชิกได้ไหม</td><td><b>ได้</b> a[0]=9</td><td><b>ได้</b> d['a']=9</td><td><b>ไม่ได้</b> ❌</td></tr>
+        <tr><td>เพิ่มสมาชิก</td><td>append(x)</td><td>d[k] = v</td><td>ต่อด้วย + (ได้ตัวใหม่)</td></tr>
+        <tr><td>ลบสมาชิก</td><td>remove/pop</td><td>del d[k] / pop(k)</td><td>ลบไม่ได้ (สร้างใหม่)</td></tr>
+        <tr><td>ค่าซ้ำได้ไหม</td><td>ได้</td><td>value ซ้ำได้ · <b>key ห้ามซ้ำ</b></td><td>ได้</td></tr>
+        <tr><td>วนด้วย for</td><td>ได้ค่าสมาชิก</td><td>ได้ key</td><td>ได้ตัวอักษร</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>3 ข้อที่ออกสอบมากที่สุดจากตารางนี้:</b> ① dict <b>slice ไม่ได้</b> ② string <b>แก้ตัวอักษรไม่ได้</b> (immutable) ③ dict <b>key ห้ามซ้ำ</b> (ใส่ซ้ำ = ทับตัวเดิม)</div>
+  </div>
+</div>
+
+<!-- 8 use case -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · โจทย์แนวสอบ</div>
+    <h2 class="slide-title">โจทย์รวม dict + string</h2>
+    <pre class="code-block"><span class="cm"># โจทย์: รับชื่อ-คะแนนนักเรียน แล้วสรุปผล</span>
+
+students = {}                                <span class="cm"># dict ว่าง</span>
+
+n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"จำนวนนักเรียน: "</span>))
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+    line = <span class="fn">input</span>(<span class="st">"ชื่อ,คะแนน: "</span>)          <span class="cm"># เช่น "สมชาย,85"</span>
+    name, score = line.<span class="fn">split</span>(<span class="st">","</span>)          <span class="cm"># แยกด้วย , → list 2 ตัว</span>
+    students[name.<span class="fn">strip</span>()] = <span class="fn">int</span>(score)    <span class="cm"># key=ชื่อ value=คะแนน</span>
+
+<span class="cm"># แสดงทั้งหมด</span>
+<span class="fn">print</span>(<span class="st">"\n── รายชื่อ ──"</span>)
+<span class="kw">for</span> name, sc <span class="kw">in</span> students.<span class="fn">items</span>():        <span class="cm">// วนทั้งคู่</span>
+    status = <span class="st">"ผ่าน"</span> <span class="kw">if</span> sc &gt;= <span class="nm">50</span> <span class="kw">else</span> <span class="st">"ตก"</span>
+    <span class="fn">print</span>(<span class="st">f"</span>{name:&lt;<span class="nm">12</span>}{sc:&gt;<span class="nm">4</span>}<span class="st">  </span>{status}<span class="st">"</span>)
+
+<span class="cm"># สรุป — ใช้ values() กับ built-in</span>
+scores = <span class="fn">list</span>(students.<span class="fn">values</span>())
+<span class="fn">print</span>(<span class="st">f"\nเฉลี่ย </span>{<span class="fn">sum</span>(scores)/<span class="fn">len</span>(scores):.<span class="nm">2</span>f}<span class="st">"</span>)
+<span class="fn">print</span>(<span class="st">f"สูงสุด </span>{<span class="fn">max</span>(scores)}<span class="st">  ต่ำสุด </span>{<span class="fn">min</span>(scores)}<span class="st">"</span>)
+
+<span class="cm"># หาว่าใครได้คะแนนสูงสุด</span>
+<span class="kw">for</span> name, sc <span class="kw">in</span> students.<span class="fn">items</span>():
+    <span class="kw">if</span> sc == <span class="fn">max</span>(scores):
+        <span class="fn">print</span>(<span class="st">"คะแนนสูงสุด:"</span>, name)
+
+<span class="cm">"""
+จำนวนนักเรียน: 3
+ชื่อ,คะแนน: สมชาย,85
+ชื่อ,คะแนน: สมศรี,92
+ชื่อ,คะแนน: สมหญิง,45
+
+── รายชื่อ ──
+สมชาย          85  ผ่าน
+สมศรี          92  ผ่าน
+สมหญิง         45  ตก
+
+เฉลี่ย 74.00
+สูงสุด 92  ต่ำสุด 45
+คะแนนสูงสุด: สมศรี
+"""</span></pre>
+    <div class="exam"><b>3 เทคนิคในโจทย์นี้:</b> ① <code class="inline-code">split(",")</code> แยกข้อความเป็นหลายค่า ② <code class="inline-code">list(d.values())</code> แปลง values เป็น list เพื่อใช้ sum/max/min ③ <code class="inline-code">items()</code> วนทั้ง key และ value พร้อมกัน</div>
+  </div>
+</div>
+
+<!-- 9 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โค้ดนี้พิมพ์อะไร?<br><br>
+<code style="font-family:monospace;font-size:14px;background:var(--cal);padding:12px 20px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+s = "Python"<br>
+s.upper()<br>
+print(s)<br>
+<br>
+d = {'a':1, 'b':2, 'a':3}<br>
+print(d)
+</code><br><br>
+<em>ใบ้ข้อแรก: string เป็น immutable · method คืนค่าใหม่ แต่มีใครรับไหม?<br>
+ใบ้ข้อสอง: key ห้ามซ้ำ — ถ้าใส่ซ้ำจะเกิดอะไรขึ้น?</em><br><br>
+<span style="font-size:12px;color:var(--dim)">เฉลย: "Python" (ไม่เปลี่ยน) · {'a': 3, 'b': 2}</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 10 MCQ1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · ลองข้อสอบ</div>
+    <h2 class="slide-title">โค้ดนี้เกิดอะไรขึ้น?</h2>
+    <pre class="code-block" style="margin-bottom:14px">s = <span class="st">"Hello"</span>
+s[<span class="nm">0</span>] = <span class="st">"J"</span>
+<span class="fn">print</span>(s)</pre>
+    <div class="mc-opts" id="mc-s1">
+      <div class="mc-opt" onclick="pickMC('mc-s1',0,2,'ถ้า string แก้ได้จะได้ Jello — แต่ Python ไม่อนุญาต')"><span class="mc-ltr">A</span> พิมพ์ Jello</div>
+      <div class="mc-opt" onclick="pickMC('mc-s1',1,2,'ไม่ได้เงียบ — Python แจ้ง error ชัดเจน')"><span class="mc-ltr">B</span> พิมพ์ Hello (คำสั่งไม่มีผล)</div>
+      <div class="mc-opt" onclick="pickMC('mc-s1',2,2,'String เป็น immutable แก้ตัวอักษรไม่ได้ → TypeError · ต้องสร้างใหม่ เช่น s = "J" + s[1:]')"><span class="mc-ltr">C</span> TypeError</div>
+      <div class="mc-opt" onclick="pickMC('mc-s1',3,2,'index 0 อยู่ในขอบเขต ไม่ใช่ IndexError — ปัญหาคือการ "แก้ค่า" ไม่ใช่การเข้าถึง')"><span class="mc-ltr">D</span> IndexError</div>
+    </div>
+    <div class="ex-feedback" id="mc-s1-fb"></div>
+    <pre class="code-block" style="margin-top:12px">String เป็น <b>immutable</b> — อ่าน s[0] ได้ แต่<b>เขียนทับไม่ได้</b>
+  s[0]        ✓ อ่านได้ → 'H'
+  s[0] = "J"  ❌ TypeError: 'str' object does not support item assignment
+
+แก้ถูกต้อง:  s = "J" + s[1:]   → "Jello"
+เทียบกับ list: a[0] = 9 ✓ ทำได้ (list เปลี่ยนแปลงได้)</pre>
+  </div>
+</div>
+
+<!-- 11 MCQ2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · ลองข้อสอบ</div>
+    <h2 class="slide-title">d = {'x':1, 'y':2} แล้ว d['z'] ได้อะไร?</h2>
+    <div class="mc-opts" id="mc-s2">
+      <div class="mc-opt" onclick="pickMC('mc-s2',0,2,'d.get(\'z\') ถึงจะคืน None — แต่ d[\'z\'] ตรงๆ จะ error')"><span class="mc-ltr">A</span> None</div>
+      <div class="mc-opt" onclick="pickMC('mc-s2',1,2,'ไม่คืน 0 — Python ไม่ตั้งค่าเริ่มต้นให้ key ที่ไม่มี')"><span class="mc-ltr">B</span> 0</div>
+      <div class="mc-opt" onclick="pickMC('mc-s2',2,2,'เข้าถึง key ที่ไม่มีด้วย d[k] → KeyError · ถ้าอยากไม่ error ใช้ d.get(k) หรือเช็ค if k in d ก่อน')"><span class="mc-ltr">C</span> KeyError</div>
+      <div class="mc-opt" onclick="pickMC('mc-s2',3,2,'IndexError ใช้กับ list/string ที่ index เกิน — dict ใช้ KeyError')"><span class="mc-ltr">D</span> IndexError</div>
+    </div>
+    <div class="ex-feedback" id="mc-s2-fb"></div>
+    <pre class="code-block" style="margin-top:12px">d['z']            ❌ KeyError: 'z'
+d.get('z')        ✓ None
+d.get('z', 0)     ✓ 0        ← กำหนดค่า default ได้
+if 'z' in d: ...  ✓ เช็คก่อนใช้
+
+จำ: list/string เกินขอบเขต → <b>IndexError</b> · dict ไม่มี key → <b>KeyError</b></pre>
+  </div>
+</div>
+
+<!-- 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · เติมคำ</div>
+    <h2 class="slide-title">เติมให้ถูก</h2>
+
+    <div class="exercise">
+      <div class="ex-q">① วน dict ให้ได้ทั้ง key และ value พร้อมกัน ใช้ method อะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ชื่อ method">
+        <button class="ex-btn" onclick="checkFill('in1','items',['items()','.items()'],['keys'],'items() — เขียน for k, v in d.items():','items() — keys() ได้แค่ key, values() ได้แค่ value')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">② แยกข้อความ "a,b,c" ให้เป็น list ใช้ method อะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ชื่อ method">
+        <button class="ex-btn" onclick="checkFill('in2','split',['split()','split(\',\')'],['join'],'split(\',\') → [\'a\',\'b\',\'c\'] · ทางกลับคือ join()','split() — ส่วน join() ใช้รวม list กลับเป็น string')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">③ ชนิดข้อมูลใดที่ "แก้สมาชิกไม่ได้" (immutable) ระหว่าง list กับ string</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ชนิดข้อมูล">
+        <button class="ex-btn" onclick="checkFill('in3','string',['str','สตริง'],['list'],'string — s[0]=\'J\' ❌ TypeError · แต่ list แก้ได้ a[0]=9 ✓','string (immutable) — list แก้สมาชิกได้ปกติ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔑</div>
+      <div class="summary-title">จบติวบทที่ 2 — Dictionary &amp; String</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Dictionary</div><div class="sum-body">คู่ key:value · เข้าถึงด้วย key · <b>key ห้ามซ้ำ</b> · slice ไม่ได้</div></div>
+        <div class="sum-card"><div class="sum-head">เพิ่ม/แก้ dict</div><div class="sum-body">d[k] = v ใช้ได้ทั้งเพิ่มและแก้ · ลบด้วย del หรือ pop()</div></div>
+        <div class="sum-card"><div class="sum-head">วน dict</div><div class="sum-body">for k in d · for v in d.values() · <b>for k,v in d.items()</b></div></div>
+        <div class="sum-card"><div class="sum-head">String</div><div class="sum-body">index/slice เหมือน list · แต่ <b>แก้ตัวอักษรไม่ได้</b> (immutable)</div></div>
+        <div class="sum-card"><div class="sum-head">Methods</div><div class="sum-body">upper lower strip split join replace find count — ทุกตัว<b>คืนค่าใหม่</b></div></div>
+        <div class="sum-card"><div class="sum-head">Error ที่ต่างกัน</div><div class="sum-body">list/string เกินขอบ = IndexError · dict ไม่มี key = KeyError</div></div>
+      </div>
+      <a href="slides_ch3.html" class="summary-next">→ ติวบทที่ 3: Nested Loop</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 2 — Dictionary &amp; String</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Dictionary คืออะไร','เพิ่ม/แก้/ลบ','วน dict','String พื้นฐาน','String Methods','เปรียบเทียบ + วน','ตารางเทียบ 3 ชนิด','โจทย์รวม','เช็คตัวเอง','ข้อสอบ: string immutable','ข้อสอบ: KeyError','เติมคำ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

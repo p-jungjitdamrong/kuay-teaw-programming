@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheat Sheet ก่อนเข้าห้องสอบ | ติวสอบ Python Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#4d7c0f;--cal:#eef7dc;--cam:#84b83c;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.cs{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.cs th{background:var(--ca);color:#fff;padding:5px 9px;text-align:left;font-weight:600;}
+.cs td{padding:5px 9px;border:1px solid var(--line);font-family:var(--mono);}
+.cs td:first-child{font-family:var(--sans);font-weight:600;}
+.cs td.a{color:var(--ca);font-weight:700;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ติวสอบ Final · Computers &amp; Programming</div>
+        <div class="cover-title">ด่านสุดท้าย<br><em>Cheat Sheet</em></div>
+        <div class="cover-subtitle">ทวนรอบสุดท้าย — ทุก method ทุกตาราง ทุกจุดหลอกของ lecture 8–14</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ตาราง methods ครบทุกชนิดข้อมูล</div>
+          <div class="topic-row"><div class="topic-dot"></div>เทียบ List / Dict / String</div>
+          <div class="topic-row"><div class="topic-dot"></div>10 จุดหลอกที่เสียคะแนนฟรี</div>
+          <div class="topic-row"><div class="topic-dot"></div>โค้ด 5 ท่าท่องจำ + แผนคืนก่อนสอบ</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">✓</div>
+        <div class="cover-badge">ทวน 30 นาทีจบ</div>
+        <div class="cover-slides-count">9 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 methods -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · Methods</div>
+    <h2 class="slide-title">Methods ครบทุกชนิดในหน้าเดียว</h2>
+    <div class="two-col">
+      <div>
+        <table class="cs">
+          <thead><tr><th>List</th><th>ทำอะไร</th></tr></thead>
+          <tbody>
+            <tr><td>append(x)</td><td>เพิ่มท้าย</td></tr>
+            <tr><td>insert(i,x)</td><td>แทรกตำแหน่ง i</td></tr>
+            <tr><td>remove(x)</td><td>ลบตาม<b>ค่า</b></td></tr>
+            <tr><td>pop(i)</td><td>ลบตาม<b>ตำแหน่ง</b> + คืนค่า</td></tr>
+            <tr><td>sort()</td><td>เรียง (คืน None!)</td></tr>
+            <tr><td>reverse()</td><td>กลับลำดับ</td></tr>
+            <tr><td>index(x)</td><td>หาตำแหน่ง</td></tr>
+            <tr><td>count(x)</td><td>นับจำนวน</td></tr>
+          </tbody>
+        </table>
+        <table class="cs">
+          <thead><tr><th>Dict</th><th>ทำอะไร</th></tr></thead>
+          <tbody>
+            <tr><td>keys()</td><td>คืน key ทั้งหมด</td></tr>
+            <tr><td>values()</td><td>คืน value ทั้งหมด</td></tr>
+            <tr><td>items()</td><td>คืนคู่ (k, v)</td></tr>
+            <tr><td>get(k, d)</td><td>อ่านแบบไม่ error</td></tr>
+            <tr><td>pop(k)</td><td>ลบ key + คืนค่า</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <table class="cs">
+          <thead><tr><th>String</th><th>ทำอะไร</th></tr></thead>
+          <tbody>
+            <tr><td>upper() lower()</td><td>ใหญ่/เล็กหมด</td></tr>
+            <tr><td>strip()</td><td>ตัดช่องว่าง/\n หัวท้าย</td></tr>
+            <tr><td>split(x)</td><td>แยกเป็น list</td></tr>
+            <tr><td>join(list)</td><td>รวม list เป็น string</td></tr>
+            <tr><td>replace(a,b)</td><td>แทนที่</td></tr>
+            <tr><td>find(x)</td><td>หาตำแหน่ง (ไม่เจอ = −1)</td></tr>
+            <tr><td>count(x)</td><td>นับจำนวนครั้ง</td></tr>
+            <tr><td>isdigit()</td><td>เป็นตัวเลขล้วนไหม</td></tr>
+          </tbody>
+        </table>
+        <table class="cs">
+          <thead><tr><th>File</th><th>ทำอะไร</th></tr></thead>
+          <tbody>
+            <tr><td>read()</td><td>ทั้งไฟล์เป็น string</td></tr>
+            <tr><td>readline()</td><td>ทีละบรรทัด</td></tr>
+            <tr><td>readlines()</td><td>เป็น list</td></tr>
+            <tr><td>write(s)</td><td>เขียน (ไม่เติม \n!)</td></tr>
+            <tr><td>close()</td><td>ปิด (หรือใช้ with)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="exam"><b>built-in ที่ใช้ได้กับ list/string:</b> <code class="inline-code">len() sum() max() min() sorted()</code> · และ <code class="inline-code">x in a</code> เช็คว่ามีไหม (ใช้ได้ทั้ง list, dict, string)</div>
+  </div>
+</div>
+
+<!-- 2 ตารางเทียบ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ตารางทอง</div>
+    <h2 class="slide-title">List / Dict / String + สรุปแต่ละบท</h2>
+    <table class="cs">
+      <thead><tr><th></th><th>List</th><th>Dictionary</th><th>String</th></tr></thead>
+      <tbody>
+        <tr><td>เข้าถึงด้วย</td><td>index 0,1,2</td><td>key</td><td>index 0,1,2</td></tr>
+        <tr><td>slice</td><td>ได้</td><td><b>ไม่ได้</b></td><td>ได้</td></tr>
+        <tr><td>แก้สมาชิก</td><td>ได้</td><td>ได้</td><td><b>ไม่ได้</b> (immutable)</td></tr>
+        <tr><td>เพิ่ม</td><td>append(x)</td><td>d[k] = v</td><td>ต่อด้วย + (ได้ตัวใหม่)</td></tr>
+        <tr><td>error เมื่อไม่มี</td><td>IndexError</td><td>KeyError</td><td>IndexError</td></tr>
+      </tbody>
+    </table>
+    <div class="two-col" style="margin-top:8px">
+      <div>
+        <pre class="code-block"><span class="cm"># โหมดไฟล์ (บท 5)
+r  อ่านอย่างเดียว (ไฟล์ต้องมี)
+w  เขียน — <b>ลบของเดิมทิ้ง!</b>
+a  เขียนต่อท้าย (เก็บของเดิม)
+x  สร้างใหม่เท่านั้น</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm"># Scope (บท 4)
+local  = ในฟังก์ชัน ใช้ข้างนอกไม่ได้
+global = นอกฟังก์ชัน อ่านได้ทุกที่
+แก้ global ในฟังก์ชัน → ต้องประกาศ global</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3 จุดหลอก 1-5 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ห้ามพลาด</div>
+    <h2 class="slide-title">10 จุดหลอกเสียคะแนนฟรี (1–5)</h2>
+    <pre class="code-block"><span class="cm">① index เริ่มที่ 0</span>
+   a = [1,2,3,4,5] → index 0–4 · a[5] = <b>IndexError</b>
+   ตัวสุดท้าย = a[-1] หรือ a[len(a)-1]
+
+<span class="cm">② slice ไม่รวมตัวสุดท้าย</span>
+   a[1:4] → index 1,2,3 (ไม่รวม 4) · เหมือนกฎของ range()
+
+<span class="cm">③ sort() คืน None</span>
+   b = a.sort()  → b เป็น None!  (sort แก้ a เอง)
+   อยากได้ list ใหม่ → b = sorted(a)
+
+<span class="cm">④ String แก้ตัวอักษรไม่ได้</span>
+   s[0] = "J"  ❌ TypeError  (immutable)
+   ต้องสร้างใหม่: s = "J" + s[1:]
+   และ s.upper() ต้องรับค่ากลับ: s = s.upper()
+
+<span class="cm">⑤ dict ไม่มี key → KeyError</span>
+   d['z']       ❌ KeyError
+   d.get('z')   ✓ None    ·    d.get('z', 0) ✓ 0</pre>
+  </div>
+</div>
+
+<!-- 4 จุดหลอก 6-10 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ห้ามพลาด</div>
+    <h2 class="slide-title">10 จุดหลอกเสียคะแนนฟรี (6–10)</h2>
+    <pre class="code-block"><span class="cm">⑥ ฟังก์ชันไม่มี return → คืน None</span>
+   def f(x): print(x*2)
+   y = f(5)   → พิมพ์ 10 แต่ y = <b>None</b>
+
+<span class="cm">⑦ แก้ global ในฟังก์ชันต้องประกาศ global</span>
+   count = 0
+   def add(): count = count + 1   ❌ UnboundLocalError
+   def add(): <b>global count</b>; count = count + 1   ✓
+
+<span class="cm">⑧ ส่ง list เข้าฟังก์ชัน → แก้แล้วกระทบตัวจริง</span>
+   ตัวเลข/string → แก้ไม่กระทบ
+   list/dict + append()/แก้สมาชิก → <b>กระทบข้างนอกด้วย</b>
+
+<span class="cm">⑨ โหมด "w" ลบข้อมูลเดิมทันทีที่ open</span>
+   open("data.txt", "w")  ← ไฟล์ถูกล้างตั้งแต่บรรทัดนี้
+   อยากเขียนเพิ่ม → ใช้ "a"  ·  write() ไม่เติม \n ให้
+
+<span class="cm">⑩ Tkinter: ลืม mainloop() / ใส่วงเล็บใน command</span>
+   ไม่มี win.mainloop() → หน้าต่างแวบเดียวหาย
+   command=fn()  ❌ ทำงานทันที   ·   command=fn  ✓</pre>
+    <div class="exam"><b>คืนก่อนสอบอ่านสองหน้านี้รอบเดียวพอ</b> — สิบข้อนี้คือจุดที่เสียคะแนนโดยไม่จำเป็น ทั้งที่เข้าใจเนื้อหาแล้ว</div>
+  </div>
+</div>
+
+<!-- 5 โค้ด 5 ท่า -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · โค้ดท่องจำ</div>
+    <h2 class="slide-title">โค้ด 5 ท่า — เขียนได้ = ข้อเขียนโปรแกรมผ่าน</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm"># ① รับค่าลง list + สรุป</span>
+scores = []
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+    scores.<span class="fn">append</span>(<span class="fn">int</span>(<span class="fn">input</span>()))
+<span class="fn">print</span>(<span class="fn">sum</span>(scores), <span class="fn">max</span>(scores),
+      <span class="fn">sum</span>(scores)/<span class="fn">len</span>(scores))
+
+<span class="cm"># ② นับความถี่ด้วย dict</span>
+count = {}
+<span class="kw">for</span> ch <span class="kw">in</span> text:
+    count[ch] = count.<span class="fn">get</span>(ch, <span class="nm">0</span>) + <span class="nm">1</span>
+<span class="kw">for</span> k, v <span class="kw">in</span> count.<span class="fn">items</span>():
+    <span class="fn">print</span>(k, v)
+
+<span class="cm"># ③ ฟังก์ชัน + return หลายค่า</span>
+<span class="kw">def</span> <span class="fn">stat</span>(a):
+    <span class="kw">return</span> <span class="fn">sum</span>(a)/<span class="fn">len</span>(a), <span class="fn">max</span>(a), <span class="fn">min</span>(a)
+avg, mx, mn = <span class="fn">stat</span>([<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>])</pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm"># ④ อ่าน/เขียนไฟล์</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"out.txt"</span>, <span class="st">"w"</span>) <span class="kw">as</span> f:
+    f.<span class="fn">write</span>(<span class="st">f"</span>{name}<span class="st">,</span>{score}<span class="st">\n"</span>)
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"out.txt"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    <span class="kw">for</span> line <span class="kw">in</span> f:
+        a, b = line.<span class="fn">strip</span>().<span class="fn">split</span>(<span class="st">","</span>)
+        <span class="fn">print</span>(a, <span class="fn">int</span>(b))
+
+<span class="cm"># ⑤ GUI พื้นฐาน</span>
+<span class="kw">import</span> tkinter <span class="kw">as</span> tk
+win = tk.<span class="fn">Tk</span>()
+<span class="kw">def</span> <span class="fn">click</span>():
+    lbl.<span class="fn">config</span>(text=ent.<span class="fn">get</span>())
+ent = tk.<span class="fn">Entry</span>(win); ent.<span class="fn">pack</span>()
+tk.<span class="fn">Button</span>(win, text=<span class="st">"OK"</span>,
+          command=click).<span class="fn">pack</span>()
+lbl = tk.<span class="fn">Label</span>(win, text=<span class="st">""</span>); lbl.<span class="fn">pack</span>()
+win.<span class="fn">mainloop</span>()</pre>
+      </div>
+    </div>
+    <div class="exam"><b>ทดสอบตัวเอง:</b> ปิดจอ เขียนทั้ง 5 ท่าลงกระดาษใน 20 นาที — ผ่าน = ข้อเขียนโปรแกรมของ final พร้อมแล้ว</div>
+  </div>
+</div>
+
+<!-- 6 แผน -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · แผน</div>
+    <h2 class="slide-title">แผนคืนก่อนสอบ + ในห้องสอบ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คืนก่อนสอบ (2.5 ชั่วโมง)</div>
+        <pre class="code-block">□ 20 นาที: ตาราง methods (หน้าแรก)
+  ปิดเฉลยแล้วเขียนเอง
+□ 20 นาที: ตารางเทียบ List/Dict/String
+□ 40 นาที: เขียนโค้ด 5 ท่า
+  ลงกระดาษ ไม่เปิดดู
+□ 20 นาที: อ่าน 10 จุดหลอก
+□ 30 นาที: ฝึกข้อ "โปรแกรมพิมพ์อะไร"
+  จาก MCQ ท้ายบท 1–4
+□ 20 นาที: ทวน scope (local/global)
+  และโหมดไฟล์ 4 ตัว
+□ นอน!</pre>
+      </div>
+      <div>
+        <div class="code-label">ในห้องสอบ</div>
+        <pre class="code-block">① กวาดทั้งฉบับ 2 นาที
+   ข้อปรนัย/ทฤษฎี ทำก่อน
+
+② ข้อ "โปรแกรมพิมพ์อะไร"
+   → เขียนค่าตัวแปรกำกับทุกบรรทัด
+   → ระวัง index เริ่ม 0
+   → ระวัง method ที่คืน None
+
+③ ข้อเขียนโปรแกรม ทำท้ายสุด
+   → เขียนโครงก่อน แล้วเติมเนื้อใน
+
+④ เหลือเวลา เช็ค:
+   - โคลอน : ครบไหม (def/if/for)
+   - เยื้องตรงกันไหม
+   - int(input()) แปลงชนิดแล้วยัง
+   - ฟังก์ชันมี return ไหม
+   - เปิดไฟล์ใช้โหมดถูกไหม (w ลบของเดิม!)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 7 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ข้อรวบยอด</div>
+    <h2 class="slide-title">ข้อสุดท้าย — ผสมทุกบท</h2>
+    <pre class="code-block" style="margin-bottom:14px">d = {}
+<span class="kw">for</span> ch <span class="kw">in</span> <span class="st">"apple"</span>:
+    d[ch] = d.<span class="fn">get</span>(ch, <span class="nm">0</span>) + <span class="nm">1</span>
+<span class="fn">print</span>(<span class="fn">len</span>(d), d[<span class="st">'p'</span>])</pre>
+    <div class="mc-opts" id="mc-pf">
+      <div class="mc-opt" onclick="pickMC('mc-pf',0,1,'5 คือจำนวนตัวอักษรทั้งหมด — แต่ len(d) นับ "key ที่ไม่ซ้ำ" ซึ่ง p ซ้ำกัน')"><span class="mc-ltr">A</span> 5 2</div>
+      <div class="mc-opt" onclick="pickMC('mc-pf',1,1,'"apple" มีตัวอักษรไม่ซ้ำ 4 ตัว (a,p,l,e) → len(d)=4 · p ปรากฏ 2 ครั้ง → d[\'p\']=2')"><span class="mc-ltr">B</span> 4 2</div>
+      <div class="mc-opt" onclick="pickMC('mc-pf',2,1,'d[\'p\'] ต้องเป็น 2 เพราะ p ปรากฏ 2 ครั้งใน "apple"')"><span class="mc-ltr">C</span> 4 1</div>
+      <div class="mc-opt" onclick="pickMC('mc-pf',3,1,'ไม่ error — get(ch, 0) กันปัญหา KeyError ไว้แล้ว')"><span class="mc-ltr">D</span> KeyError</div>
+    </div>
+    <div class="ex-feedback" id="mc-pf-fb"></div>
+    <pre class="code-block" style="margin-top:12px">"apple" → a p p l e
+d = {'a':1, 'p':2, 'l':1, 'e':1}
+
+len(d) = <b>4</b>  (key ไม่ซ้ำ 4 ตัว — dict key ห้ามซ้ำ)
+d['p'] = <b>2</b>  (p ปรากฏ 2 ครั้ง)
+
+get(ch, 0) = ถ้ายังไม่มี key ให้ใช้ 0 แล้ว +1 → กัน KeyError</pre>
+  </div>
+</div>
+
+<!-- 8 Final -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🏆</div>
+      <div class="summary-title">พร้อมสอบ Final แล้ว — ปิดวิชานี้กัน</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">บท 1 List</div><div class="sum-body">index เริ่ม 0 · slice ไม่รวม stop · sort() คืน None</div></div>
+        <div class="sum-card"><div class="sum-head">บท 2 Dict/String</div><div class="sum-body">key ห้ามซ้ำ · items() วนคู่ · string immutable แก้ไม่ได้</div></div>
+        <div class="sum-card"><div class="sum-head">บท 3 Nested Loop</div><div class="sum-body">นอก 1 รอบ ในหมุนครบ · print() ต้องอยู่ลูปนอก · break ออกแค่ชั้นใน</div></div>
+        <div class="sum-card"><div class="sum-head">บท 4 Function</div><div class="sum-body">ไม่มี return = None · local/global · list ส่งเข้าไปแก้แล้วกระทบ</div></div>
+        <div class="sum-card"><div class="sum-head">บท 5 File/GUI</div><div class="sum-body">w ลบของเดิม · with ปิดให้ · mainloop ท้ายสุด · command ไม่ใส่วงเล็บ</div></div>
+        <div class="sum-card"><div class="sum-head">ก่อนส่งกระดาษ</div><div class="sum-body">เช็ค : ครบ · เยื้องตรง · แปลงชนิด · return ครบ · โหมดไฟล์ถูก</div></div>
+      </div>
+      <a href="index.html" class="summary-next">🏠 กลับหน้าหลัก — ทวนบทไหนอีกรอบก็ได้ สู้ๆ 💪</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 9</span>
+      <span class="nav-chapter" id="chapterLabel">Cheat Sheet ก่อนเข้าห้องสอบ</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Methods ทุกชนิด','ตารางเทียบ','จุดหลอก 1-5','จุดหลอก 6-10','โค้ด 5 ท่า','แผนก่อนสอบ','ข้อรวบยอด','พร้อมสอบแล้ว'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

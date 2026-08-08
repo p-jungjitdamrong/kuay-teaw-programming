@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 5 — File I/O &amp; GUI | ติวสอบ Python Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#4d7c0f;--cal:#eef7dc;--cam:#84b83c;}
+.md{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.md th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;}
+.md td{padding:6px 10px;border:1px solid var(--line);}
+.md td:first-child{font-family:var(--mono);font-weight:700;color:var(--ca);text-align:center;}
+.out{font-family:var(--mono);font-size:13px;line-height:1.5;background:var(--cal);border-radius:8px;padding:12px 16px;margin:8px 0;white-space:pre;color:var(--ca);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--cal);border-radius:10px;padding:14px 18px;margin:10px 0;white-space:pre;}
+.wt{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.wt th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;}
+.wt td{padding:6px 10px;border:1px solid var(--line);}
+.wt td:first-child{font-family:var(--mono);font-weight:700;color:var(--ca);}
+.win{font-family:var(--mono);font-size:12px;line-height:1.55;background:var(--cal);border:1px solid var(--cam);border-radius:8px;padding:12px 16px;margin:8px 0;white-space:pre;color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ติวสอบ Final · Computers &amp; Programming</div>
+        <div class="cover-title">ติวบทที่ 5<br><em>File I/O &amp; GUI</em></div>
+        <div class="cover-subtitle">lecture 13–14 · บทปิดท้าย — เก็บข้อมูลลงไฟล์ และทำหน้าต่างด้วย Tkinter</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>open() 4 โหมด — w ลบของเดิม!</div>
+          <div class="topic-row"><div class="topic-dot"></div>อ่านไฟล์ 4 วิธี + with ปิดอัตโนมัติ</div>
+          <div class="topic-row"><div class="topic-dot"></div>os.path.exists / os.remove</div>
+          <div class="topic-row"><div class="topic-dot"></div>Tkinter: โครง 4 บรรทัด + mainloop ท้ายสุด</div>
+          <div class="topic-row"><div class="topic-dot"></div>Label/Entry/Button · layout · command=</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">F5</div>
+        <div class="cover-badge">lecture 13–14</div>
+        <div class="cover-slides-count">22 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · ทำไมต้องมี</div>
+    <h2 class="slide-title">ข้อมูลในตัวแปรหายเมื่อปิดโปรแกรม</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ปัญหา</div>
+        <pre class="code-block"><span class="cm"># โปรแกรมบันทึกคะแนน</span>
+scores = []
+<span class="kw">while</span> <span class="kw">True</span>:
+    s = <span class="fn">input</span>(<span class="st">"คะแนน (0=จบ): "</span>)
+    <span class="kw">if</span> s == <span class="st">"0"</span>: <span class="kw">break</span>
+    scores.<span class="fn">append</span>(<span class="fn">int</span>(s))
+
+<span class="fn">print</span>(scores)   <span class="cm"># [85, 90, 78]</span>
+
+<span class="cm"># ปิดโปรแกรม → ข้อมูลหายหมด!
+# เปิดใหม่ต้องพิมพ์ใหม่ทั้งหมด 😱</span></pre>
+        <div class="code-label" style="margin-top:8px">ทางแก้: เก็บลงไฟล์</div>
+        <pre class="code-block"><span class="cm"># ข้อมูลอยู่ในดิสก์ → เปิดใหม่ก็ยังอยู่</span>
+f = <span class="fn">open</span>(<span class="st">"scores.txt"</span>, <span class="st">"w"</span>)
+f.<span class="fn">write</span>(<span class="st">"85\n90\n78\n"</span>)
+f.<span class="fn">close</span>()</pre>
+      </div>
+      <div>
+        <div class="code-label">3 ขั้นตอนของงานไฟล์ — ท่องไว้</div>
+        <div class="diagram">   ① เปิดไฟล์
+        open()
+          │
+          ▼
+   ② อ่าน / เขียน
+    read() / write()
+          │
+          ▼
+   ③ ปิดไฟล์
+       close()</div>
+        <pre class="code-block"><span class="cm">/* งานที่ทำกับไฟล์ได้ (4 อย่าง):
+   • สร้าง  (creating)
+   • อ่าน   (reading)
+   • เขียน  (writing)
+   • ลบ     (deleting)
+
+   ⚠️ ลืม close() = ข้อมูลอาจ
+   เขียนไม่ครบ หรือไฟล์ถูกล็อกค้าง
+   → มีวิธีที่ปิดให้อัตโนมัติ (with)
+     ดูสไลด์ท้ายบท */</span></pre>
+      </div>
+    </div>
+    <div class="callout">คำศัพท์: ข้อมูลในตัวแปรอยู่ใน <strong>RAM (หายเมื่อปิด)</strong> · ข้อมูลในไฟล์อยู่ใน <strong>ดิสก์ (อยู่ถาวร)</strong> — เรียกว่า persistent data</div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · open()</div>
+    <h2 class="slide-title">open() รับ 2 อย่าง — ชื่อไฟล์ + โหมด</h2>
+    <pre class="code-block">ชื่อตัวแปร = <span class="fn">open</span>( <span class="st">"ชื่อไฟล์"</span> , <span class="st">"โหมด"</span> )
+
+f = <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>)     <span class="cm"># เปิดอ่าน</span></pre>
+    <table class="md">
+      <thead><tr><th style="text-align:center">โหมด</th><th>ชื่อเต็ม</th><th>ทำอะไร</th><th>ถ้าไฟล์ยังไม่มี</th><th>ของเดิม</th></tr></thead>
+      <tbody>
+        <tr><td>"r"</td><td>Read</td><td>อ่านอย่างเดียว (ค่าเริ่มต้น)</td><td><b>Error!</b></td><td>—</td></tr>
+        <tr><td>"w"</td><td>Write</td><td>เขียน</td><td>สร้างให้ใหม่</td><td><b>ลบทิ้งหมด!</b></td></tr>
+        <tr><td>"a"</td><td>Append</td><td>เขียนต่อท้าย</td><td>สร้างให้ใหม่</td><td>เก็บไว้</td></tr>
+        <tr><td>"x"</td><td>Create</td><td>สร้างไฟล์ใหม่</td><td>สร้างให้</td><td><b>Error ถ้ามีแล้ว</b></td></tr>
+      </tbody>
+    </table>
+    <div class="two-col" style="margin-top:6px">
+      <div>
+        <pre class="code-block"><span class="cm"># โหมดเสริม (ต่อท้ายได้)
+# "t" = text (ค่าเริ่มต้น)
+# "b" = binary (รูป เสียง)</span>
+<span class="fn">open</span>(<span class="st">"a.txt"</span>, <span class="st">"rt"</span>)   <span class="cm"># = "r"</span>
+<span class="fn">open</span>(<span class="st">"pic.jpg"</span>, <span class="st">"rb"</span>)  <span class="cm"># อ่านไฟล์รูป</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm"># ⚠️ กับดักที่เจ็บที่สุด:
+f = open("สำคัญมาก.txt", "w")
+# ← ไฟล์ที่มีข้อมูลอยู่ ถูกล้างทันที
+#   ตั้งแต่บรรทัด open เลย!
+#   ยังไม่ทันเขียนอะไรก็หายแล้ว
+
+# อยากเขียนเพิ่มโดยไม่ลบ → ใช้ "a"</span></pre>
+      </div>
+    </div>
+    <div class="callout">วิธีจำ: <strong>r</strong>ead อ่าน · <strong>w</strong>rite เขียนทับ · <strong>a</strong>ppend เขียนต่อ · e<strong>x</strong>clusive สร้างใหม่เท่านั้น — ข้อสอบชอบถาม "โหมดใดลบข้อมูลเดิม" คำตอบคือ <strong>w</strong></div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · อ่านไฟล์</div>
+    <h2 class="slide-title">อ่านได้ 4 วิธี — เลือกให้ถูกงาน</h2>
+    <p class="slide-lead">สมมติไฟล์ <code class="inline-code">data.txt</code> มี 3 บรรทัด: <code class="inline-code">Somchai / Somsri / Somying</code></p>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① read() — ทั้งไฟล์เป็น string เดียว</div>
+        <pre class="code-block">f = <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>)
+<span class="fn">print</span>(f.<span class="fn">read</span>())
+f.<span class="fn">close</span>()</pre>
+        <div class="out">Somchai
+Somsri
+Somying</div>
+        <div class="code-label" style="margin-top:6px">② readline() — ทีละบรรทัด</div>
+        <pre class="code-block">f = <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>)
+<span class="fn">print</span>(f.<span class="fn">readline</span>())   <span class="cm"># Somchai</span>
+<span class="fn">print</span>(f.<span class="fn">readline</span>())   <span class="cm"># Somsri</span>
+f.<span class="fn">close</span>()
+<span class="cm"># เรียกครั้งถัดไปได้บรรทัดถัดไป
+# (ตัวชี้ตำแหน่งเลื่อนไปเอง)</span></pre>
+      </div>
+      <div>
+        <div class="code-label">③ readlines() — ได้ list</div>
+        <pre class="code-block">f = <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>)
+lines = f.<span class="fn">readlines</span>()
+f.<span class="fn">close</span>()
+<span class="fn">print</span>(lines)</pre>
+        <div class="out">['Somchai\n', 'Somsri\n', 'Somying']</div>
+        <pre class="code-block"><span class="cm"># มี \n ติดมาด้วย! ลบด้วย strip()</span>
+<span class="kw">for</span> line <span class="kw">in</span> lines:
+    <span class="fn">print</span>(line.<span class="fn">strip</span>())</pre>
+        <div class="code-label" style="margin-top:6px">④ วนด้วย for — นิยมที่สุด</div>
+        <pre class="code-block">f = <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>)
+<span class="kw">for</span> line <span class="kw">in</span> f:          <span class="cm"># วนได้เลย!</span>
+    <span class="fn">print</span>(line.<span class="fn">strip</span>())
+f.<span class="fn">close</span>()
+<span class="cm"># ประหยัดหน่วยความจำสุด
+# (ไม่โหลดทั้งไฟล์เข้า RAM)</span></pre>
+      </div>
+    </div>
+    <div class="callout">อย่าลืม <code class="inline-code">.strip()</code> — ทุกบรรทัดในไฟล์มี <code class="inline-code">\n</code> ติดท้าย ถ้าไม่ลบจะได้บรรทัดว่างแทรก หรือเทียบ string ไม่ตรง</div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · เขียนไฟล์</div>
+    <h2 class="slide-title">write() — เขียนได้เฉพาะ string</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เขียนทับ (w) vs เขียนต่อ (a)</div>
+        <pre class="code-block"><span class="cm"># "w" — ล้างของเดิมแล้วเขียนใหม่</span>
+f = <span class="fn">open</span>(<span class="st">"log.txt"</span>, <span class="st">"w"</span>)
+f.<span class="fn">write</span>(<span class="st">"บรรทัดที่ 1\n"</span>)
+f.<span class="fn">write</span>(<span class="st">"บรรทัดที่ 2\n"</span>)
+f.<span class="fn">close</span>()</pre>
+        <div class="out">บรรทัดที่ 1
+บรรทัดที่ 2</div>
+        <pre class="code-block"><span class="cm"># "a" — ต่อท้ายของเดิม</span>
+f = <span class="fn">open</span>(<span class="st">"log.txt"</span>, <span class="st">"a"</span>)
+f.<span class="fn">write</span>(<span class="st">"บรรทัดที่ 3\n"</span>)
+f.<span class="fn">close</span>()</pre>
+        <div class="out">บรรทัดที่ 1
+บรรทัดที่ 2
+บรรทัดที่ 3</div>
+      </div>
+      <div>
+        <div class="code-label">2 จุดพลาดที่เจอบ่อย</div>
+        <pre class="code-block"><span class="cm"># ❌ ลืม \n — ทุกอย่างติดกันหมด</span>
+f.<span class="fn">write</span>(<span class="st">"A"</span>)
+f.<span class="fn">write</span>(<span class="st">"B"</span>)
+f.<span class="fn">write</span>(<span class="st">"C"</span>)
+<span class="cm"># ไฟล์ได้: ABC   (บรรทัดเดียว)
+# write ไม่ขึ้นบรรทัดให้เอง! ต่างจาก print</span>
+
+<span class="cm"># ❌ เขียนตัวเลขตรงๆ → TypeError</span>
+f.<span class="fn">write</span>(<span class="nm">100</span>)          <span class="cm"># Error!</span>
+f.<span class="fn">write</span>(<span class="fn">str</span>(<span class="nm">100</span>))     <span class="cm"># ✓ แปลงก่อน</span>
+f.<span class="fn">write</span>(<span class="st">f"</span>{score}<span class="st">\n"</span>)  <span class="cm"># ✓ f-string</span></pre>
+        <div class="code-label" style="margin-top:6px">writelines() — เขียน list ทีเดียว</div>
+        <pre class="code-block">names = [<span class="st">"Somchai\n"</span>, <span class="st">"Somsri\n"</span>]
+f = <span class="fn">open</span>(<span class="st">"out.txt"</span>, <span class="st">"w"</span>)
+f.<span class="fn">writelines</span>(names)
+f.<span class="fn">close</span>()
+<span class="cm"># ก็ไม่เติม \n ให้เหมือนกัน
+# ต้องใส่มาในแต่ละตัวเอง</span></pre>
+      </div>
+    </div>
+    <div class="callout">เทียบให้จำ: <code class="inline-code">print()</code> ขึ้นบรรทัดใหม่ให้อัตโนมัติ · <code class="inline-code">write()</code> <strong>ไม่ขึ้นให้</strong> ต้องใส่ <code class="inline-code">\n</code> เอง — และ write รับ string เท่านั้น ตัวเลขต้อง <code class="inline-code">str()</code> ก่อน</div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · with</div>
+    <h2 class="slide-title">with — เปิดแล้วปิดให้เอง (วิธีที่ควรใช้)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แบบธรรมดา — ต้องปิดเอง</div>
+        <pre class="code-block">f = <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>)
+data = f.<span class="fn">read</span>()
+f.<span class="fn">close</span>()          <span class="cm"># ← ลืมบ่อย!</span>
+
+<span class="cm"># ถ้าโค้ดตรงกลางพัง (error)
+# → close() ไม่ถูกเรียก
+# → ไฟล์ค้างเปิด</span></pre>
+        <div class="code-label" style="margin-top:8px">แบบ with — ปิดอัตโนมัติ</div>
+        <pre class="code-block"><span class="kw">with</span> <span class="fn">open</span>(<span class="st">"data.txt"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    data = f.<span class="fn">read</span>()
+    <span class="fn">print</span>(data)
+<span class="cm"># ออกจากบล็อก → ปิดให้เอง
+# แม้เกิด error ก็ยังปิด ✓</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ใช้จริง — อ่านและเขียน</div>
+        <pre class="code-block"><span class="cm"># อ่านทีละบรรทัด</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"scores.txt"</span>, <span class="st">"r"</span>) <span class="kw">as</span> f:
+    <span class="kw">for</span> line <span class="kw">in</span> f:
+        <span class="fn">print</span>(line.<span class="fn">strip</span>())
+
+<span class="cm"># เขียน</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"out.txt"</span>, <span class="st">"w"</span>) <span class="kw">as</span> f:
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">6</span>):
+        f.<span class="fn">write</span>(<span class="st">f"บรรทัดที่ </span>{i}<span class="st">\n"</span>)
+
+<span class="cm"># เปิด 2 ไฟล์พร้อมกัน (copy)</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"in.txt"</span>) <span class="kw">as</span> src, \
+     <span class="fn">open</span>(<span class="st">"out.txt"</span>, <span class="st">"w"</span>) <span class="kw">as</span> dst:
+    dst.<span class="fn">write</span>(src.<span class="fn">read</span>())</pre>
+      </div>
+    </div>
+    <div class="callout">โครงที่ควรใช้ตลอด: <code class="inline-code">with open(ชื่อไฟล์, โหมด) as f:</code> แล้วเขียนงานไว้ในบล็อก — ไม่ต้องเขียน <code class="inline-code">close()</code> เลย และปลอดภัยกว่า</div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · ตรวจสอบ &amp; ลบ</div>
+    <h2 class="slide-title">เช็คว่ามีไฟล์ไหม + ลบไฟล์ (ใช้ os)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ปัญหา: เปิดไฟล์ที่ไม่มี → พัง</div>
+        <pre class="code-block">f = <span class="fn">open</span>(<span class="st">"ไม่มีจริง.txt"</span>, <span class="st">"r"</span>)
+<span class="cm"># FileNotFoundError: [Errno 2]
+# No such file or directory</span></pre>
+        <div class="code-label" style="margin-top:8px">ทางแก้ 1: เช็คก่อนเปิด</div>
+        <pre class="code-block"><span class="kw">import</span> os
+
+<span class="kw">if</span> os.path.<span class="fn">exists</span>(<span class="st">"data.txt"</span>):
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="st">"data.txt"</span>) <span class="kw">as</span> f:
+        <span class="fn">print</span>(f.<span class="fn">read</span>())
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"ไม่พบไฟล์"</span>)</pre>
+        <div class="code-label" style="margin-top:8px">ทางแก้ 2: ดักด้วย try</div>
+        <pre class="code-block"><span class="kw">try</span>:
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="st">"data.txt"</span>) <span class="kw">as</span> f:
+        <span class="fn">print</span>(f.<span class="fn">read</span>())
+<span class="kw">except</span> FileNotFoundError:
+    <span class="fn">print</span>(<span class="st">"ไม่พบไฟล์"</span>)</pre>
+      </div>
+      <div>
+        <div class="code-label">ลบไฟล์</div>
+        <pre class="code-block"><span class="kw">import</span> os
+
+<span class="cm"># ลบตรงๆ (พังถ้าไม่มีไฟล์)</span>
+os.<span class="fn">remove</span>(<span class="st">"old.txt"</span>)
+
+<span class="cm"># ลบแบบปลอดภัย</span>
+<span class="kw">if</span> os.path.<span class="fn">exists</span>(<span class="st">"old.txt"</span>):
+    os.<span class="fn">remove</span>(<span class="st">"old.txt"</span>)
+    <span class="fn">print</span>(<span class="st">"ลบแล้ว"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"ไม่มีไฟล์นี้"</span>)</pre>
+        <pre class="code-block"><span class="cm"># คำสั่ง os อื่นที่ควรรู้จัก</span>
+os.path.<span class="fn">exists</span>(<span class="st">"f.txt"</span>)   <span class="cm"># มีไหม</span>
+os.<span class="fn">rename</span>(<span class="st">"a.txt"</span>,<span class="st">"b.txt"</span>) <span class="cm"># เปลี่ยนชื่อ</span>
+os.<span class="fn">mkdir</span>(<span class="st">"folder"</span>)        <span class="cm"># สร้างโฟลเดอร์</span>
+os.<span class="fn">rmdir</span>(<span class="st">"folder"</span>)        <span class="cm"># ลบโฟลเดอร์</span>
+os.<span class="fn">listdir</span>(<span class="st">"."</span>)           <span class="cm"># ดูไฟล์ในโฟลเดอร์</span></pre>
+      </div>
+    </div>
+    <div class="callout">ต้อง <code class="inline-code">import os</code> ก่อนเสมอ — คำสั่งจัดการไฟล์/โฟลเดอร์อยู่ในโมดูล os ไม่ใช่คำสั่งพื้นฐานของ Python</div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · Use Case</div>
+    <h2 class="slide-title">🏦 โปรแกรมบันทึกธุรกรรม — เขียนแล้วอ่านกลับ</h2>
+    <pre class="code-block"><span class="kw">import</span> os
+
+FILE = <span class="st">"transactions.txt"</span>
+
+<span class="cm"># ── ① บันทึกธุรกรรมใหม่ (ต่อท้าย ไม่ลบของเดิม) ──</span>
+<span class="kw">def</span> <span class="fn">add_txn</span>(name, amount):
+    <span class="kw">with</span> <span class="fn">open</span>(FILE, <span class="st">"a"</span>) <span class="kw">as</span> f:          <span class="cm"># "a" = append!</span>
+        f.<span class="fn">write</span>(<span class="st">f"</span>{name}<span class="st">,</span>{amount}<span class="st">\n"</span>)   <span class="cm"># คั่นด้วย , (รูปแบบ CSV)</span>
+
+<span class="cm"># ── ② อ่านทั้งหมดมาสรุป ──</span>
+<span class="kw">def</span> <span class="fn">summary</span>():
+    <span class="kw">if</span> <span class="kw">not</span> os.path.<span class="fn">exists</span>(FILE):            <span class="cm"># เช็คก่อนเสมอ</span>
+        <span class="fn">print</span>(<span class="st">"ยังไม่มีข้อมูล"</span>)
+        <span class="kw">return</span>
+
+    total = <span class="nm">0</span>
+    count = <span class="nm">0</span>
+    <span class="kw">with</span> <span class="fn">open</span>(FILE, <span class="st">"r"</span>) <span class="kw">as</span> f:
+        <span class="kw">for</span> line <span class="kw">in</span> f:                      <span class="cm"># วนทีละบรรทัด</span>
+            line = line.<span class="fn">strip</span>()               <span class="cm"># ตัด \n ทิ้ง</span>
+            <span class="kw">if</span> line == <span class="st">""</span>:                    <span class="cm"># ข้ามบรรทัดว่าง</span>
+                <span class="kw">continue</span>
+            name, amount = line.<span class="fn">split</span>(<span class="st">","</span>)    <span class="cm"># แยกด้วย ,</span>
+            amount = <span class="fn">float</span>(amount)             <span class="cm"># แปลงกลับเป็นตัวเลข</span>
+            <span class="fn">print</span>(<span class="st">f"  </span>{name:&lt;<span class="nm">10</span>}{amount:&gt;<span class="nm">10</span>,.<span class="nm">2</span>f}<span class="st">"</span>)
+            total += amount
+            count += <span class="nm">1</span>
+
+    <span class="fn">print</span>(<span class="st">f"  รวม </span>{count}<span class="st"> รายการ = </span>{total:,.<span class="nm">2</span>f}<span class="st"> บาท"</span>)
+
+<span class="cm"># ── ใช้งาน ──</span>
+<span class="fn">add_txn</span>(<span class="st">"สมชาย"</span>, <span class="nm">1200</span>)
+<span class="fn">add_txn</span>(<span class="st">"สมศรี"</span>, <span class="nm">850.50</span>)
+<span class="fn">add_txn</span>(<span class="st">"สมหญิง"</span>, <span class="nm">3000</span>)
+<span class="fn">summary</span>()
+
+<span class="cm">"""
+ไฟล์ transactions.txt ที่ได้:
+สมชาย,1200
+สมศรี,850.5
+สมหญิง,3000
+
+ผลลัพธ์:
+  สมชาย        1,200.00
+  สมศรี          850.50
+  สมหญิง       3,000.00
+  รวม 3 รายการ = 5,050.50 บาท
+"""</span></pre>
+    <div class="callout">รูปแบบ <strong>CSV</strong> (คั่นด้วยจุลภาค) เป็นวิธีเก็บข้อมูลหลายฟิลด์ที่ง่ายที่สุด — เขียนด้วย <code class="inline-code">f"{a},{b}\n"</code> อ่านกลับด้วย <code class="inline-code">line.strip().split(",")</code> · เปิดด้วย Excel ได้ด้วย</div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">ไฟล์ <code style="font-family:monospace">note.txt</code> มีข้อมูลสำคัญอยู่แล้ว 100 บรรทัด<br><br>
+เพื่อนรันโค้ดนี้เพื่อ "เพิ่มบรรทัดใหม่":<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:10px 16px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+f = open("note.txt", "w")<br>
+f.write("บรรทัดใหม่\n")<br>
+f.close()
+</code><br><br>
+<em>เปิดไฟล์มาดู เหลือกี่บรรทัด?<br><br>
+ใบ้: โหมด "w" ทำอะไรกับข้อมูลเดิม — และมันเกิดขึ้นตั้งแต่บรรทัดไหน?<br>
+ควรใช้โหมดอะไรแทน?</em></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · ทดสอบ</div>
+    <h2 class="slide-title">ต้องการเขียนข้อมูลต่อท้ายไฟล์เดิมโดยไม่ลบของเก่า ใช้โหมดใด?</h2>
+    <div class="mc-opts" id="mc-file">
+      <div class="mc-opt" onclick="pickMC('mc-file',0,2,'โหมด r เปิดอ่านอย่างเดียว เขียนไม่ได้')"><span class="mc-ltr">A</span> open(f, "r")</div>
+      <div class="mc-opt" onclick="pickMC('mc-file',1,2,'โหมด w ลบข้อมูลเดิมทิ้งทั้งหมดทันทีที่เปิด — ตรงข้ามกับที่โจทย์ต้องการ')"><span class="mc-ltr">B</span> open(f, "w")</div>
+      <div class="mc-opt" onclick="pickMC('mc-file',2,2,'โหมด a (append) เขียนต่อท้ายของเดิม และสร้างไฟล์ให้ถ้ายังไม่มี')"><span class="mc-ltr">C</span> open(f, "a")</div>
+      <div class="mc-opt" onclick="pickMC('mc-file',3,2,'โหมด x สร้างไฟล์ใหม่เท่านั้น ถ้าไฟล์มีอยู่แล้วจะ error')"><span class="mc-ltr">D</span> open(f, "x")</div>
+    </div>
+    <div class="ex-feedback" id="mc-file-fb"></div>
+    <pre class="code-block" style="margin-top:12px">r = อ่านอย่างเดียว (ไฟล์ต้องมีอยู่)
+w = เขียน — <b>ล้างของเดิมทิ้งหมด</b>
+a = เขียนต่อท้าย — เก็บของเดิมไว้ ✓
+x = สร้างใหม่เท่านั้น (error ถ้ามีแล้ว)</pre>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · เติมคำ</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <div class="exercise">
+      <div class="ex-q">① คำสั่งที่เปิดไฟล์แล้วปิดให้อัตโนมัติ เขียนขึ้นต้นด้วยคีย์เวิร์ดอะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in1','with',['with open'],[],'with open(...) as f: — ออกจากบล็อกแล้วปิดให้เอง แม้เกิด error','with — เขียน with open(ชื่อไฟล์, โหมด) as f:')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">② อ่านไฟล์ด้วย readlines() แล้วแต่ละบรรทัดมี ___ ติดท้ายมาด้วย ต้องลบด้วย strip()</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="อักขระอะไร">
+        <button class="ex-btn" onclick="checkFill('in2','\\n',['newline','ขึ้นบรรทัดใหม่','n'],[],'\\n (newline) — ทุกบรรทัดในไฟล์ข้อความจบด้วย \\n','\\n — อักขระขึ้นบรรทัดใหม่ ลบด้วย .strip()')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">③ ต้องการลบไฟล์ ต้อง import โมดูลชื่ออะไรก่อน</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ชื่อโมดูล">
+        <button class="ex-btn" onclick="checkFill('in3','os',['import os'],[],'import os แล้วใช้ os.remove(ชื่อไฟล์) · เช็คก่อนด้วย os.path.exists()','os — ใช้ os.remove() ลบไฟล์ และ os.path.exists() เช็คว่ามีไหม')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · แนวคิด</div>
+    <h2 class="slide-title">GUI คืออะไร — ต่างจากที่เขียนมาทั้งเทอมยังไง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แบบเดิม: CLI (หน้าจอดำ)</div>
+        <pre class="code-block">name = <span class="fn">input</span>(<span class="st">"ชื่อ: "</span>)
+<span class="fn">print</span>(<span class="st">"สวัสดี"</span>, name)</pre>
+        <div class="win">ชื่อ: สมชาย
+สวัสดี สมชาย</div>
+        <pre class="code-block"><span class="cm"># • ผู้ใช้ต้องพิมพ์ตามลำดับที่เรากำหนด
+# • ทำงานเป็นเส้นตรง บนลงล่าง
+# • ย้อนกลับไปแก้ไม่ได้</span></pre>
+      </div>
+      <div>
+        <div class="code-label">แบบใหม่: GUI (หน้าต่าง)</div>
+        <div class="win">┌─────────────────────┐
+│  ชื่อ: [สมชาย     ] │
+│                     │
+│      [ ทักทาย ]     │
+│                     │
+│   สวัสดี สมชาย      │
+└─────────────────────┘</div>
+        <pre class="code-block"><span class="cm"># GUI ประกอบด้วย:
+#   หน้าต่าง (Window)
+#   ปุ่ม (Button)
+#   ช่องข้อความ (Text Box / Entry)
+#   ป้ายข้อความ (Label)
+#   เมนู (Menu)
+
+# ข้อดี: ใช้ง่าย เป็นมิตรกับผู้ใช้
+#   แสดงข้อมูลเป็นภาพได้
+#   โต้ตอบได้ทันที
+#   ทำงานแบบ Event-driven</span></pre>
+      </div>
+    </div>
+    <div class="callout">คำสำคัญ <strong>Event-driven</strong> — โปรแกรม GUI ไม่ได้ทำงานเป็นเส้นตรง แต่ "รอ" ให้ผู้ใช้ทำอะไรสักอย่าง (กดปุ่ม พิมพ์) แล้วค่อยตอบสนอง · ต่างจาก CLI ที่ไล่บรรทัดลงมา</div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · Tkinter</div>
+    <h2 class="slide-title">ทำไมต้อง Tkinter</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คุณสมบัติ</div>
+        <pre class="code-block"><span class="cm">Tkinter (Tk Interface)
+= GUI toolkit "มาตรฐาน" ของ Python
+
+• มาพร้อมกับการติดตั้ง Python
+  (Built-in — ไม่ต้อง pip install!)
+• รองรับ Widget พื้นฐานครบ
+• ทำงานได้ทุก Platform
+  (Windows, Mac, Linux)
+• พัฒนาโดย John Ousterhout
+• เหมาะสำหรับผู้เริ่มต้น</span></pre>
+        <div class="code-label" style="margin-top:8px">วิธี import — 2 แบบ</div>
+        <pre class="code-block"><span class="cm"># แบบ 1 — ต้องเติม tk. ข้างหน้า</span>
+<span class="kw">import</span> tkinter <span class="kw">as</span> tk
+win = tk.<span class="fn">Tk</span>()
+lbl = tk.<span class="fn">Label</span>(win, text=<span class="st">"Hi"</span>)
+
+<span class="cm"># แบบ 2 — เรียกตรงๆ ได้เลย</span>
+<span class="kw">from</span> tkinter <span class="kw">import</span> *
+win = <span class="fn">Tk</span>()
+lbl = <span class="fn">Label</span>(win, text=<span class="st">"Hi"</span>)</pre>
+      </div>
+      <div>
+        <div class="code-label">โครงหน้าต่าง — 4 บรรทัดท่องจำ</div>
+        <pre class="code-block"><span class="kw">import</span> tkinter <span class="kw">as</span> tk
+
+win = tk.<span class="fn">Tk</span>()              <span class="cm"># ① สร้างหน้าต่าง</span>
+win.<span class="fn">title</span>(<span class="st">"โปรแกรมแรก"</span>)   <span class="cm"># ② ตั้งชื่อ (ไม่บังคับ)</span>
+win.<span class="fn">geometry</span>(<span class="st">"300x200"</span>)  <span class="cm"># ③ ขนาด กว้างxสูง</span>
+
+<span class="cm"># ... วาง widget ตรงนี้ ...</span>
+
+win.<span class="fn">mainloop</span>()           <span class="cm"># ④ เริ่มรอ event — ท้ายสุดเสมอ!</span></pre>
+        <div class="win">┌─ โปรแกรมแรก ──── ─ □ ✕ ┐
+│                        │
+│                        │
+│      (ว่างเปล่า)       │
+│                        │
+└────────────────────────┘</div>
+      </div>
+    </div>
+    <div class="callout">บรรทัดที่ลืมแล้วงงที่สุด: <code class="inline-code">mainloop()</code> — ถ้าไม่มี โปรแกรมจะสร้างหน้าต่างแล้วจบทันที <strong>หน้าต่างแวบเดียวหาย</strong> · ต้องอยู่บรรทัดสุดท้ายเสมอ</div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · Widget</div>
+    <h2 class="slide-title">Widget หลักที่ต้องรู้จัก</h2>
+    <table class="wt">
+      <thead><tr><th>Widget</th><th>ใช้ทำอะไร</th><th>ตัวอย่าง</th></tr></thead>
+      <tbody>
+        <tr><td>Label</td><td>แสดงข้อความ (ผู้ใช้แก้ไม่ได้)</td><td><code class="inline-code">Label(win, text="ชื่อ:")</code></td></tr>
+        <tr><td>Entry</td><td>ช่องกรอกข้อความ 1 บรรทัด</td><td><code class="inline-code">Entry(win, width=20)</code></td></tr>
+        <tr><td>Button</td><td>ปุ่มกด</td><td><code class="inline-code">Button(win, text="OK", command=fn)</code></td></tr>
+        <tr><td>Text</td><td>ช่องกรอกหลายบรรทัด</td><td><code class="inline-code">Text(win, height=5, width=30)</code></td></tr>
+        <tr><td>Checkbutton</td><td>ช่องติ๊กถูก</td><td><code class="inline-code">Checkbutton(win, text="ยอมรับ")</code></td></tr>
+        <tr><td>Radiobutton</td><td>เลือกได้ตัวเดียว</td><td><code class="inline-code">Radiobutton(win, text="ชาย")</code></td></tr>
+        <tr><td>Frame</td><td>กล่องจัดกลุ่ม widget</td><td><code class="inline-code">Frame(win)</code></td></tr>
+      </tbody>
+    </table>
+    <div class="two-col" style="margin-top:6px">
+      <div>
+        <pre class="code-block"><span class="cm"># ทุก widget รับ "หน้าต่างแม่" เป็นตัวแรก</span>
+lbl = tk.<span class="fn">Label</span>(win, text=<span class="st">"สวัสดี"</span>)
+<span class="cm">#                ↑ บอกว่าอยู่ในหน้าต่างไหน</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm"># แต่งหน้าตาได้ด้วย option</span>
+tk.<span class="fn">Label</span>(win, text=<span class="st">"สวัสดี"</span>,
+         font=(<span class="st">"Arial"</span>, <span class="nm">16</span>),
+         fg=<span class="st">"blue"</span>, bg=<span class="st">"yellow"</span>)
+<span class="cm"># fg = สีตัวอักษร · bg = สีพื้นหลัง</span></pre>
+      </div>
+    </div>
+    <div class="callout">สร้าง widget แล้ว <strong>ยังไม่แสดง</strong> จนกว่าจะสั่ง layout (pack/grid/place) — เป็นจุดที่คนพลาดบ่อยว่า "สร้างแล้วทำไมไม่เห็น"</div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · Layout</div>
+    <h2 class="slide-title">Layout 3 แบบ — บอกว่าจะวาง widget ตรงไหน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① pack() — เรียงต่อกัน (ง่ายสุด)</div>
+        <pre class="code-block">tk.<span class="fn">Label</span>(win, text=<span class="st">"บนสุด"</span>).<span class="fn">pack</span>()
+tk.<span class="fn">Label</span>(win, text=<span class="st">"ถัดมา"</span>).<span class="fn">pack</span>()
+tk.<span class="fn">Button</span>(win, text=<span class="st">"ปุ่ม"</span>).<span class="fn">pack</span>()
+
+<span class="cm"># วางจากบนลงล่างอัตโนมัติ
+# เปลี่ยนทิศได้: pack(side="left")</span></pre>
+        <div class="win">┌──────────────┐
+│    บนสุด     │
+│    ถัดมา     │
+│   [ ปุ่ม ]   │
+└──────────────┘</div>
+        <div class="code-label" style="margin-top:6px">② grid() — ตาราง แถว/คอลัมน์</div>
+        <pre class="code-block">tk.<span class="fn">Label</span>(win, text=<span class="st">"ชื่อ:"</span>).<span class="fn">grid</span>(row=<span class="nm">0</span>, column=<span class="nm">0</span>)
+tk.<span class="fn">Entry</span>(win).<span class="fn">grid</span>(row=<span class="nm">0</span>, column=<span class="nm">1</span>)
+tk.<span class="fn">Label</span>(win, text=<span class="st">"อายุ:"</span>).<span class="fn">grid</span>(row=<span class="nm">1</span>, column=<span class="nm">0</span>)
+tk.<span class="fn">Entry</span>(win).<span class="fn">grid</span>(row=<span class="nm">1</span>, column=<span class="nm">1</span>)</pre>
+        <div class="win">┌────────────────────┐
+│ ชื่อ: [        ]   │
+│ อายุ: [        ]   │
+└────────────────────┘</div>
+      </div>
+      <div>
+        <div class="code-label">③ place() — ระบุพิกัดเป๊ะๆ</div>
+        <pre class="code-block">tk.<span class="fn">Label</span>(win, text=<span class="st">"ตรงนี้"</span>).<span class="fn">place</span>(x=<span class="nm">50</span>, y=<span class="nm">80</span>)
+
+<span class="cm"># คุมได้ละเอียดสุด แต่ปรับขนาด
+# หน้าต่างแล้วเพี้ยน — ใช้น้อย</span></pre>
+        <div class="code-label" style="margin-top:8px">⚠️ กฎเหล็ก</div>
+        <pre class="code-block"><span class="cm"># ❌ ห้ามผสม pack กับ grid
+#    ในหน้าต่างเดียวกัน!
+tk.Label(win, text="A").pack()
+tk.Label(win, text="B").grid(row=0)
+# → โปรแกรมค้าง ไม่ขึ้นหน้าต่าง
+
+# ✓ เลือกอย่างใดอย่างหนึ่ง
+#   หรือแยกกันคนละ Frame</span></pre>
+        <pre class="code-block"><span class="cm"># เขียนติดกันได้ (นิยม)</span>
+tk.<span class="fn">Label</span>(win, text=<span class="st">"Hi"</span>).<span class="fn">pack</span>()
+
+<span class="cm"># แต่ถ้าต้องอ้างถึงทีหลัง ต้องแยก!</span>
+lbl = tk.<span class="fn">Label</span>(win, text=<span class="st">"Hi"</span>)
+lbl.<span class="fn">pack</span>()
+<span class="cm"># lbl = tk.Label(...).pack() → ได้ None!</span></pre>
+      </div>
+    </div>
+    <div class="callout">กับดักที่เจ็บ: <code class="inline-code">lbl = tk.Label(...).pack()</code> ทำให้ <code class="inline-code">lbl</code> เป็น <strong>None</strong> เพราะ pack() ไม่คืนค่า widget — ถ้าต้องใช้ตัวแปรทีหลัง ต้องแยกเป็น 2 บรรทัด</div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · Event Handling</div>
+    <h2 class="slide-title">กดปุ่มแล้วทำงาน — command=</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โครง 3 ขั้น</div>
+        <pre class="code-block"><span class="kw">import</span> tkinter <span class="kw">as</span> tk
+
+win = tk.<span class="fn">Tk</span>()
+win.<span class="fn">geometry</span>(<span class="st">"250x120"</span>)
+
+<span class="cm"># ① เขียนฟังก์ชันที่จะทำงาน</span>
+<span class="kw">def</span> <span class="fn">say_hi</span>():
+    lbl.<span class="fn">config</span>(text=<span class="st">"สวัสดีครับ!"</span>)
+
+lbl = tk.<span class="fn">Label</span>(win, text=<span class="st">"ยังไม่ได้กด"</span>)
+lbl.<span class="fn">pack</span>()
+
+<span class="cm"># ② ผูกฟังก์ชันกับปุ่มด้วย command</span>
+btn = tk.<span class="fn">Button</span>(win, text=<span class="st">"กดสิ"</span>,
+                 command=say_hi)
+btn.<span class="fn">pack</span>()
+
+win.<span class="fn">mainloop</span>()    <span class="cm"># ③ รอ event</span></pre>
+      </div>
+      <div>
+        <div class="code-label">⚠️ จุดพลาดอันดับ 1</div>
+        <pre class="code-block"><span class="cm"># ❌ ใส่วงเล็บ = เรียกทันที!</span>
+tk.<span class="fn">Button</span>(win, command=<span class="fn">say_hi</span>())
+<span class="cm">#                        ↑↑
+# ฟังก์ชันทำงานตอนสร้างปุ่มเลย
+# แล้วปุ่มก็กดไม่ได้อะไร</span>
+
+<span class="cm"># ✓ ไม่ใส่วงเล็บ = ส่ง "ตัวฟังก์ชัน" ไป</span>
+tk.<span class="fn">Button</span>(win, command=say_hi)</pre>
+        <div class="code-label" style="margin-top:8px">ส่ง argument ด้วย lambda</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">greet</span>(name):
+    <span class="fn">print</span>(<span class="st">"สวัสดี"</span>, name)
+
+<span class="cm"># ❌ command=greet("สมชาย") → ทำงานทันที</span>
+<span class="cm"># ✓ ห่อด้วย lambda</span>
+tk.<span class="fn">Button</span>(win, text=<span class="st">"ทัก"</span>,
+    command=<span class="kw">lambda</span>: <span class="fn">greet</span>(<span class="st">"สมชาย"</span>))</pre>
+      </div>
+    </div>
+    <div class="callout">จำสั้นๆ: <strong><code class="inline-code">command=ชื่อฟังก์ชัน</code> (ไม่มีวงเล็บ)</strong> — ใส่วงเล็บเมื่อไหร่ = สั่งให้ทำงานทันที ไม่ใช่รอกด · ถ้าต้องส่ง argument ให้ห่อด้วย <code class="inline-code">lambda:</code></div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · รับค่าจากผู้ใช้</div>
+    <h2 class="slide-title">Entry — get() อ่านค่า, delete() ล้างช่อง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โปรแกรมทักทาย (ครบวงจร)</div>
+        <pre class="code-block"><span class="kw">import</span> tkinter <span class="kw">as</span> tk
+
+win = tk.<span class="fn">Tk</span>()
+win.<span class="fn">title</span>(<span class="st">"ทักทาย"</span>)
+win.<span class="fn">geometry</span>(<span class="st">"280x150"</span>)
+
+<span class="kw">def</span> <span class="fn">greet</span>():
+    name = ent.<span class="fn">get</span>()          <span class="cm"># อ่านค่าจากช่อง</span>
+    <span class="kw">if</span> name == <span class="st">""</span>:
+        result.<span class="fn">config</span>(text=<span class="st">"กรุณากรอกชื่อ"</span>)
+    <span class="kw">else</span>:
+        result.<span class="fn">config</span>(text=<span class="st">f"สวัสดี </span>{name}<span class="st">!"</span>)
+
+tk.<span class="fn">Label</span>(win, text=<span class="st">"ชื่อ:"</span>).<span class="fn">pack</span>()
+ent = tk.<span class="fn">Entry</span>(win, width=<span class="nm">25</span>)
+ent.<span class="fn">pack</span>()
+
+tk.<span class="fn">Button</span>(win, text=<span class="st">"ทักทาย"</span>,
+          command=greet).<span class="fn">pack</span>(pady=<span class="nm">8</span>)
+
+result = tk.<span class="fn">Label</span>(win, text=<span class="st">""</span>,
+                  font=(<span class="st">"Arial"</span>, <span class="nm">14</span>))
+result.<span class="fn">pack</span>()
+
+win.<span class="fn">mainloop</span>()</pre>
+      </div>
+      <div>
+        <div class="win">┌─ ทักทาย ─────── ─ □ ✕ ┐
+│         ชื่อ:         │
+│  [ สมชาย           ]  │
+│                       │
+│      [ ทักทาย ]       │
+│                       │
+│     สวัสดี สมชาย!     │
+└───────────────────────┘</div>
+        <div class="code-label" style="margin-top:8px">method ของ Entry ที่ใช้บ่อย</div>
+        <pre class="code-block">ent.<span class="fn">get</span>()              <span class="cm"># อ่านค่า (ได้ string!)</span>
+ent.<span class="fn">delete</span>(<span class="nm">0</span>, tk.END)  <span class="cm"># ล้างช่อง</span>
+ent.<span class="fn">insert</span>(<span class="nm">0</span>, <span class="st">"ค่าเริ่มต้น"</span>)
+
+<span class="cm"># get() คืน string เสมอ!
+# ต้องแปลงก่อนคำนวณ</span>
+n = <span class="fn">int</span>(ent.<span class="fn">get</span>())      <span class="cm"># ← ต้องแปลง</span></pre>
+        <div class="code-label" style="margin-top:6px">Label เปลี่ยนข้อความด้วย config()</div>
+        <pre class="code-block">result.<span class="fn">config</span>(text=<span class="st">"ข้อความใหม่"</span>)
+<span class="cm"># หรือ result["text"] = "ข้อความใหม่"</span></pre>
+      </div>
+    </div>
+    <div class="callout"><code class="inline-code">ent.get()</code> คืน <strong>string เสมอ</strong> เหมือน <code class="inline-code">input()</code> — จะคำนวณต้อง <code class="inline-code">int()</code> หรือ <code class="inline-code">float()</code> ก่อน และควรดักด้วย try-except เผื่อผู้ใช้พิมพ์ตัวอักษร</div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · Use Case</div>
+    <h2 class="slide-title">🏦 เครื่องคิดดอกเบี้ยเงินฝาก — รวมทุกอย่าง</h2>
+    <pre class="code-block"><span class="kw">import</span> tkinter <span class="kw">as</span> tk
+
+win = tk.<span class="fn">Tk</span>()
+win.<span class="fn">title</span>(<span class="st">"คำนวณดอกเบี้ย"</span>)
+win.<span class="fn">geometry</span>(<span class="st">"340x220"</span>)
+
+<span class="kw">def</span> <span class="fn">calculate</span>():
+    <span class="kw">try</span>:                                        <span class="cm"># ดัก error (บทที่แล้ว!)</span>
+        money = <span class="fn">float</span>(ent_money.<span class="fn">get</span>())          <span class="cm"># get() ได้ string → แปลง</span>
+        rate  = <span class="fn">float</span>(ent_rate.<span class="fn">get</span>())
+        years = <span class="fn">int</span>(ent_year.<span class="fn">get</span>())
+    <span class="kw">except</span> ValueError:
+        result.<span class="fn">config</span>(text=<span class="st">"⚠️ กรุณากรอกตัวเลข"</span>, fg=<span class="st">"red"</span>)
+        <span class="kw">return</span>
+
+    <span class="kw">if</span> money &lt;= <span class="nm">0</span> <span class="kw">or</span> years &lt;= <span class="nm">0</span>:            <span class="cm"># ตรวจความสมเหตุสมผล</span>
+        result.<span class="fn">config</span>(text=<span class="st">"⚠️ ค่าต้องมากกว่า 0"</span>, fg=<span class="st">"red"</span>)
+        <span class="kw">return</span>
+
+    total = money
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(years):                     <span class="cm"># ลูปทบต้นทีละปี</span>
+        total = total * (<span class="nm">1</span> + rate / <span class="nm">100</span>)
+
+    interest = total - money
+    result.<span class="fn">config</span>(
+        text=<span class="st">f"เงินรวม </span>{total:,.<span class="nm">2</span>f}<span class="st"> บาท\nดอกเบี้ย </span>{interest:,.<span class="nm">2</span>f}<span class="st"> บาท"</span>,
+        fg=<span class="st">"green"</span>)
+
+<span class="cm"># ── จัดหน้าด้วย grid (ตาราง 2 คอลัมน์) ──</span>
+tk.<span class="fn">Label</span>(win, text=<span class="st">"เงินต้น (บาท):"</span>).<span class="fn">grid</span>(row=<span class="nm">0</span>, column=<span class="nm">0</span>, padx=<span class="nm">8</span>, pady=<span class="nm">5</span>, sticky=<span class="st">"e"</span>)
+ent_money = tk.<span class="fn">Entry</span>(win, width=<span class="nm">15</span>)
+ent_money.<span class="fn">grid</span>(row=<span class="nm">0</span>, column=<span class="nm">1</span>)
+
+tk.<span class="fn">Label</span>(win, text=<span class="st">"ดอกเบี้ย (%/ปี):"</span>).<span class="fn">grid</span>(row=<span class="nm">1</span>, column=<span class="nm">0</span>, padx=<span class="nm">8</span>, pady=<span class="nm">5</span>, sticky=<span class="st">"e"</span>)
+ent_rate = tk.<span class="fn">Entry</span>(win, width=<span class="nm">15</span>)
+ent_rate.<span class="fn">grid</span>(row=<span class="nm">1</span>, column=<span class="nm">1</span>)
+
+tk.<span class="fn">Label</span>(win, text=<span class="st">"จำนวนปี:"</span>).<span class="fn">grid</span>(row=<span class="nm">2</span>, column=<span class="nm">0</span>, padx=<span class="nm">8</span>, pady=<span class="nm">5</span>, sticky=<span class="st">"e"</span>)
+ent_year = tk.<span class="fn">Entry</span>(win, width=<span class="nm">15</span>)
+ent_year.<span class="fn">grid</span>(row=<span class="nm">2</span>, column=<span class="nm">1</span>)
+
+tk.<span class="fn">Button</span>(win, text=<span class="st">"คำนวณ"</span>, command=calculate, width=<span class="nm">12</span>) \
+  .<span class="fn">grid</span>(row=<span class="nm">3</span>, column=<span class="nm">0</span>, columnspan=<span class="nm">2</span>, pady=<span class="nm">10</span>)   <span class="cm"># กินพื้นที่ 2 คอลัมน์</span>
+
+result = tk.<span class="fn">Label</span>(win, text=<span class="st">""</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>))
+result.<span class="fn">grid</span>(row=<span class="nm">4</span>, column=<span class="nm">0</span>, columnspan=<span class="nm">2</span>)
+
+win.<span class="fn">mainloop</span>()
+
+<span class="cm"># เงินต้น 10000 · ดอกเบี้ย 2.5% · 3 ปี
+# → เงินรวม 10,768.91 บาท / ดอกเบี้ย 768.91 บาท</span></pre>
+    <div class="callout">โปรแกรม GUI ที่ดีต้องมีครบ 3 อย่าง: <strong>รับค่า (Entry+get) · ตรวจสอบ (try-except + if) · แสดงผล (Label+config)</strong> — และใช้ grid จัดหน้าให้เป็นระเบียบ</div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">Think!</div>
+      <div class="think-q">โค้ดนี้รันแล้ว "ปุ่มทำงานเองทันที" โดยที่ยังไม่ได้กด<br>แล้วพอกดปุ่มจริงกลับไม่มีอะไรเกิดขึ้น<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:10px 16px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+def show():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print("ถูกกดแล้ว")<br>
+<br>
+btn = tk.Button(win, text="กด", command=show())<br>
+btn.pack()
+</code><br><br>
+<em>ใบ้: ดูตรง <code>command=show()</code> — วงเล็บทำให้เกิดอะไร?<br>
+Python จะ "เรียกฟังก์ชันก่อน" แล้วเอา <b>ค่าที่คืนมา</b> (None) ไปเป็น command<br><br>
+แก้ยังไง? และถ้าอยากส่ง argument เข้าไปด้วยต้องทำยังไง?</em></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · ทดสอบ</div>
+    <h2 class="slide-title">บรรทัดใดต้องอยู่ท้ายสุดของโปรแกรม Tkinter เสมอ?</h2>
+    <div class="mc-opts" id="mc-gui">
+      <div class="mc-opt" onclick="pickMC('mc-gui',0,3,'win = tk.Tk() ต้องอยู่บนสุด เพราะต้องสร้างหน้าต่างก่อนถึงจะวาง widget ได้')"><span class="mc-ltr">A</span> win = tk.Tk()</div>
+      <div class="mc-opt" onclick="pickMC('mc-gui',1,3,'geometry() ตั้งขนาดหน้าต่าง จะเรียกตอนไหนก็ได้ก่อน mainloop')"><span class="mc-ltr">B</span> win.geometry("300x200")</div>
+      <div class="mc-opt" onclick="pickMC('mc-gui',2,3,'pack() วาง widget — ต้องเรียกก่อน mainloop แต่ไม่ใช่บรรทัดสุดท้าย')"><span class="mc-ltr">C</span> btn.pack()</div>
+      <div class="mc-opt" onclick="pickMC('mc-gui',3,3,'mainloop() เริ่มวนรอรับ event จากผู้ใช้ — ถ้าไม่มี หน้าต่างจะแวบเดียวแล้วหาย และโค้ดหลังจากนี้จะไม่ทำงานจนกว่าจะปิดหน้าต่าง')"><span class="mc-ltr">D</span> win.mainloop()</div>
+    </div>
+    <div class="ex-feedback" id="mc-gui-fb"></div>
+    <pre class="code-block" style="margin-top:12px">mainloop() = "เริ่มวนรอ event" — โปรแกรมจะค้างอยู่ตรงนี้จนกว่าผู้ใช้จะปิดหน้าต่าง
+ไม่มี mainloop() → สร้างหน้าต่างเสร็จ โปรแกรมจบทันที → หน้าต่างแวบเดียวหาย</pre>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 5 · เติมคำ</div>
+    <h2 class="slide-title">เติมให้ถูกต้อง</h2>
+
+    <div class="exercise">
+      <div class="ex-q">① ผูกฟังก์ชันเข้ากับปุ่มใช้ option ชื่อว่าอะไร (เช่น Button(win, text="OK", ___=fn))</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ชื่อ option">
+        <button class="ex-btn" onclick="checkFill('in1','command',['command='],[],'command=ชื่อฟังก์ชัน (ห้ามใส่วงเล็บ!)','command — และต้องไม่ใส่วงเล็บหลังชื่อฟังก์ชัน')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">② อ่านค่าที่ผู้ใช้พิมพ์ในช่อง Entry ใช้ method ชื่อ ___ และได้ค่ากลับมาเป็นชนิดอะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="method + ชนิดข้อมูล">
+        <button class="ex-btn" onclick="checkFill('in2','get() string',['get(), string','get string','get() str','get,string','get() คืน string'],['get()'],'get() คืนค่าเป็น string เสมอ — จะคำนวณต้อง int() หรือ float() ก่อน','get() และได้ string — เหมือน input() ต้องแปลงก่อนคำนวณ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">③ Layout ที่จัด widget แบบตาราง ระบุ row และ column คือ</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ชื่อ layout">
+        <button class="ex-btn" onclick="checkFill('in3','grid',['grid()'],['pack'],'grid(row=, column=) — เหมาะกับฟอร์มที่มีหลายช่องกรอก','grid — ส่วน pack เรียงต่อกัน และ place ระบุพิกัด x,y')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🪟</div>
+      <div class="summary-title">จบติวบทที่ 5 — File I/O &amp; GUI</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">Tkinter</div><div class="sum-body">GUI toolkit มาตรฐาน มาพร้อม Python ไม่ต้องติดตั้งเพิ่ม · ทุก platform</div></div>
+        <div class="sum-card"><div class="sum-head">โครง 4 บรรทัด</div><div class="sum-body">Tk() → title/geometry → วาง widget → <b>mainloop() ท้ายสุด</b></div></div>
+        <div class="sum-card"><div class="sum-head">Widget</div><div class="sum-body">Label แสดงข้อความ · Entry ช่องกรอก · Button ปุ่ม · ทุกตัวรับ win เป็นตัวแรก</div></div>
+        <div class="sum-card"><div class="sum-head">Layout</div><div class="sum-body">pack เรียงต่อ · grid ตาราง · place พิกัด — <b>ห้ามผสม pack กับ grid</b></div></div>
+        <div class="sum-card"><div class="sum-head">Event</div><div class="sum-body">command=ฟังก์ชัน (ไม่มีวงเล็บ!) · ส่ง argument ห่อด้วย lambda:</div></div>
+        <div class="sum-card"><div class="sum-head">รับ/แสดงค่า</div><div class="sum-body">ent.get() ได้ string ต้องแปลง · lbl.config(text=...) เปลี่ยนข้อความ</div></div>
+      </div>
+      <a href="slides_final.html" class="summary-next">→ ด่านสุดท้าย: Cheat Sheet ก่อนเข้าห้องสอบ</a>
+    </div>
+  </div>
+</div>
+
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 22</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 5 — File I/O &amp; GUI</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover', 'ทำไมต้องใช้ไฟล์ (ไฟล์)', 'open() + 4 โหมด (ไฟล์)', 'อ่าน 4 วิธี (ไฟล์)', 'เขียนไฟล์ (ไฟล์)', 'with (ไฟล์)', 'เช็ค + ลบไฟล์ (ไฟล์)', 'Banking Use Case (ไฟล์)', 'Think! (ไฟล์)', 'ทดสอบ (ไฟล์)', 'เติมคำ (ไฟล์)', 'GUI คืออะไร (GUI)', 'Tkinter + โครง 4 บรรทัด (GUI)', 'Widget หลัก (GUI)', 'Layout 3 แบบ (GUI)', 'Event Handling (GUI)', 'Entry รับค่า (GUI)', 'Banking Use Case (GUI)', 'Think! (GUI)', 'ทดสอบ (GUI)', 'เติมคำ (GUI)', 'สรุป (GUI)'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

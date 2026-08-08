@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 4 — Loop &amp; Advance Control Flow | ติวสอบ Python Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#b45309;--cal:#fdf0dc;--cam:#e0a458;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.t{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:5px 10px;font-weight:600;font-family:var(--sans);}
+.t td{padding:4px 10px;border:1px solid var(--line);text-align:center;}
+.t td.hl{background:var(--cal);color:var(--ca);font-weight:700;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;}
+.out{font-family:var(--mono);font-size:13px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:6px 0;white-space:pre;color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ติวสอบ Midterm · Computers &amp; Programming</div>
+        <div class="cover-title">ติวบทที่ 4<br><em>Loop &amp;<br>Advance Control Flow</em></div>
+        <div class="cover-subtitle">lecture 6–7 · บทปิดท้าย midterm — trace ตัวแปรให้เป็นคือผ่าน</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>while — ทำซ้ำตราบที่เงื่อนไขจริง</div>
+          <div class="topic-row"><div class="topic-dot"></div>for + range() 3 รูปแบบ</div>
+          <div class="topic-row"><div class="topic-dot"></div>Counting Loop vs Sentinel Loop</div>
+          <div class="topic-row"><div class="topic-dot"></div>ลูปคู่กับ if — โจทย์นับ/รวม/หาค่าสุด</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตาราง trace — เทคนิคทำข้อสอบ</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">M4</div>
+        <div class="cover-badge">trace ให้เป็น</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 ทำไมต้องลูป -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · lecture 6</div>
+    <h2 class="slide-title">ตัวอย่างเปิดบทของอาจารย์ — Hello Kitty 2000 ครั้ง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ปัญหา</div>
+        <pre class="code-block"><span class="fn">print</span>(<span class="st">"Hello, Kitty"</span>)
+<span class="fn">print</span>(<span class="st">"Hello, Kitty"</span>)
+<span class="fn">print</span>(<span class="st">"Hello, Kitty"</span>)
+<span class="cm"># ... อีก 1997 บรรทัด
+
+# "เราจะทราบได้อย่างไรว่า
+#  แสดงถึง 2000 ครั้งแล้ว?"</span></pre>
+        <div class="code-label" style="margin-top:8px">นิยามจากสไลด์</div>
+        <pre class="code-block"><span class="cm"># "การทำซ้ำ (Looping/iteration)
+#  คือการเขียนโปรแกรมที่ขั้นตอน
+#  การทำงานบางขั้นตอนได้รับ
+#  การประมวลผลมากกว่า 1 ครั้ง
+#  ทั้งนี้ขึ้นอยู่กับเงื่อนไขบางประการ"</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ผังงานของลูป</div>
+        <div class="diagram">   ▭ i = 0, n = 2000
+        │
+        ▼
+   ┌─▶ ◇ i &lt; n ── เท็จ ──▶ จบ
+   │      │ จริง
+   │  ▽ Hello, Kitty
+   │      │
+   │  ▭ i = i + 1
+   │      │
+   └──────┘  ← เส้นย้อนกลับ</div>
+        <pre class="code-block"><span class="cm"># 2 ประเภทของลูปตามสไลด์:
+# ① Sentinel Loop  — ใช้ตัวหยุด
+# ② Counting Loop  — ใช้ตัวนับ</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>วิธีดูว่าเป็นลูปในผังงาน:</b> มี <b>เส้นย้อนกลับ</b> ขึ้นไปหา ◇ เดิม — และต้องมีกล่อง <code class="inline-code">i = i + 1</code> ไม่งั้นวนไม่รู้จบ (ข้อสอบชอบเว้นกล่องนี้ให้เติม)</div>
+  </div>
+</div>
+
+<!-- 2 while -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · while</div>
+    <h2 class="slide-title">while — "ทำงานคำสั่งตราบเท่าที่เงื่อนไขเป็นจริง"</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ไวยากรณ์ตามสไลด์</div>
+        <pre class="code-block"><span class="kw">while</span> (เงื่อนไข):
+    คำสั่ง
+
+<span class="cm"># ตัวอย่าง</span>
+i = <span class="nm">0</span>
+<span class="kw">while</span> i &lt; <span class="nm">2000</span>:
+    <span class="fn">print</span>(<span class="st">"Hello, Kitty"</span>)
+    i += <span class="nm">1</span>          <span class="cm"># ← ห้ามลืม!</span></pre>
+        <div class="code-label" style="margin-top:8px">องค์ประกอบ 3 อย่างที่ต้องครบ</div>
+        <pre class="code-block">i = <span class="nm">0</span>              <span class="cm"># ① ค่าเริ่มต้น</span>
+<span class="kw">while</span> i &lt; <span class="nm">5</span>:       <span class="cm"># ② เงื่อนไขหยุด</span>
+    <span class="fn">print</span>(i)
+    i += <span class="nm">1</span>          <span class="cm"># ③ เปลี่ยนค่า</span>
+
+<span class="cm"># ขาดข้อ ③ → infinite loop!
+# โปรแกรมค้าง ต้องกด Ctrl+C</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่างในสไลด์ (ระวังกับดัก!)</div>
+        <pre class="code-block"><span class="kw">while</span> (x &gt;= <span class="nm">10</span>):
+    x += <span class="nm">1</span>
+
+<span class="cm"># ⚠️ ถ้า x เริ่มที่ 10 ขึ้นไป
+# x จะเพิ่มขึ้นเรื่อยๆ
+# เงื่อนไขเป็นจริงตลอด → วนไม่รู้จบ!
+# ต้องเป็น x -= 1 ถึงจะหยุดได้</span></pre>
+        <div class="code-label" style="margin-top:6px">ไล่ trace</div>
+        <table class="t">
+          <thead><tr><th>รอบ</th><th>i</th><th>i &lt; 3?</th><th>พิมพ์</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td class="hl">0</td><td>จริง</td><td>0</td></tr>
+            <tr><td>2</td><td class="hl">1</td><td>จริง</td><td>1</td></tr>
+            <tr><td>3</td><td class="hl">2</td><td>จริง</td><td>2</td></tr>
+            <tr><td>—</td><td>3</td><td>เท็จ</td><td>ออก</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อสอบเก็งได้:</b> ให้ while มาแล้วถามว่า "วนกี่รอบ" หรือ "เป็น infinite loop ไหม" — เช็คว่า<b>ตัวแปรในเงื่อนไขถูกเปลี่ยนค่าในลูปไหม</b> และเปลี่ยนไป<b>ทางที่ทำให้เงื่อนไขเป็นเท็จ</b>หรือเปล่า</div>
+  </div>
+</div>
+
+<!-- 3 for range -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · for</div>
+    <h2 class="slide-title">for + range() — 3 รูปแบบตามสไลด์</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ไวยากรณ์</div>
+        <pre class="code-block"><span class="kw">for</span> ตัวแปรนับรอบ <span class="kw">in</span> <span class="fn">range</span>(เริ่ม, สิ้นสุด, ก้าว):
+    คำสั่ง</pre>
+        <pre class="code-block"><span class="cm"># ① range(สิ้นสุด) — เริ่มที่ 0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">5</span>):
+    <span class="fn">print</span>(i, end=<span class="st">' '</span>)</pre>
+        <div class="out">0 1 2 3 4</div>
+        <pre class="code-block"><span class="cm"># ② range(เริ่ม, สิ้นสุด)</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">6</span>):
+    <span class="fn">print</span>(i, end=<span class="st">' '</span>)</pre>
+        <div class="out">1 2 3 4 5</div>
+        <pre class="code-block"><span class="cm"># ③ range(เริ่ม, สิ้นสุด, ก้าว)</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">0</span>, <span class="nm">10</span>, <span class="nm">2</span>):
+    <span class="fn">print</span>(i, end=<span class="st">' '</span>)</pre>
+        <div class="out">0 2 4 6 8</div>
+      </div>
+      <div>
+        <div class="code-label">⚠️ กฎเหล็ก: ไม่รวมตัวสุดท้าย!</div>
+        <pre class="code-block"><span class="fn">range</span>(<span class="nm">5</span>)        <span class="cm"># 0,1,2,3,4    (ไม่มี 5)</span>
+<span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">5</span>)     <span class="cm"># 1,2,3,4      (ไม่มี 5)</span>
+<span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">5</span>+<span class="nm">1</span>)   <span class="cm"># 1,2,3,4,5    ✓ ถึง 5</span>
+
+<span class="cm"># อยากวน 1 ถึง n → range(1, n+1)</span></pre>
+        <div class="code-label" style="margin-top:6px">นับถอยหลัง — ก้าวติดลบ</div>
+        <pre class="code-block"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">5</span>, <span class="nm">0</span>, -<span class="nm">1</span>):
+    <span class="fn">print</span>(i, end=<span class="st">' '</span>)</pre>
+        <div class="out">5 4 3 2 1</div>
+        <pre class="code-block"><span class="cm"># จำนวนรอบคำนวณยังไง
+range(5)        → 5 รอบ
+range(1, 6)     → 6-1 = 5 รอบ
+range(0, 10, 2) → (10-0)/2 = 5 รอบ
+range(5, 0, -1) → 5 รอบ</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดหลอกอันดับ 1 ของ for:</b> <code class="inline-code">range(1, 5)</code> ได้ <b>1,2,3,4 ไม่มี 5</b> — ข้อสอบชอบถาม "โปรแกรมพิมพ์เลขอะไรบ้าง" แล้วดักตรงนี้ · อยากได้ถึง n ต้องเขียน <code class="inline-code">range(1, n+1)</code></div>
+  </div>
+</div>
+
+<!-- 4 counting vs sentinel -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · 2 ประเภทลูป</div>
+    <h2 class="slide-title">Counting Loop vs Sentinel Loop</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① Counting Loop — ใช้ตัวนับ</div>
+        <pre class="code-block"><span class="cm"># "คำสั่งวนซ้ำแบบใช้ตัวนับ"
+# รู้จำนวนรอบล่วงหน้า → ใช้ for</span>
+
+<span class="cm"># พิมพ์ 1-10</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">11</span>):
+    <span class="fn">print</span>(i)
+
+<span class="cm"># รับคะแนน 5 คน</span>
+total = <span class="nm">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">5</span>):
+    s = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"คะแนน: "</span>))
+    total += s
+<span class="fn">print</span>(<span class="st">"รวม"</span>, total)</pre>
+      </div>
+      <div>
+        <div class="code-label">② Sentinel Loop — ใช้ตัวหยุด</div>
+        <pre class="code-block"><span class="cm"># "คำสั่งวนซ้ำแบบใช้ตัวหยุด"
+# ไม่รู้จำนวนรอบ วนจนเจอค่าพิเศษ → while</span>
+
+<span class="cm"># รับเลขจนกว่าจะใส่ 0</span>
+total = <span class="nm">0</span>
+n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"เลข (0=จบ): "</span>))
+<span class="kw">while</span> n != <span class="nm">0</span>:          <span class="cm"># 0 = sentinel</span>
+    total += n
+    n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"เลข (0=จบ): "</span>))
+<span class="fn">print</span>(<span class="st">"รวม"</span>, total)
+
+<span class="cm"># ⚠️ ต้องรับค่า 2 ที่!
+#   ก่อนเข้าลูป (priming read)
+#   และท้ายลูป (ไม่งั้นวนไม่รู้จบ)</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เลือกใช้ยังไง:</b> โจทย์บอก "ทำ n ครั้ง / 1 ถึง 100" → <b>for</b> (counting) · โจทย์บอก "จนกว่าผู้ใช้จะใส่ −1 / จนกว่าจะถูก" → <b>while</b> (sentinel) — และ sentinel ต้องรับค่า 2 ที่เสมอ</div>
+  </div>
+</div>
+
+<!-- 5 loop + if -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · lecture 7</div>
+    <h2 class="slide-title">ลูปคู่กับ if — โจทย์มาตรฐาน 4 แบบ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① นับจำนวนที่เข้าเงื่อนไข</div>
+        <pre class="code-block">count = <span class="nm">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">21</span>):
+    <span class="kw">if</span> i % <span class="nm">3</span> == <span class="nm">0</span>:
+        count += <span class="nm">1</span>
+<span class="fn">print</span>(<span class="st">"หาร 3 ลงตัว"</span>, count, <span class="st">"ตัว"</span>)
+<span class="cm"># 6 ตัว (3,6,9,12,15,18)</span></pre>
+        <div class="code-label" style="margin-top:6px">② หาผลรวมเฉพาะบางตัว</div>
+        <pre class="code-block">total = <span class="nm">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">11</span>):
+    <span class="kw">if</span> i % <span class="nm">2</span> == <span class="nm">0</span>:      <span class="cm"># เฉพาะเลขคู่</span>
+        total += i
+<span class="fn">print</span>(total)          <span class="cm"># 2+4+6+8+10 = 30</span></pre>
+      </div>
+      <div>
+        <div class="code-label">③ หาค่ามากสุด/น้อยสุด</div>
+        <pre class="code-block">max_score = -<span class="nm">1</span>          <span class="cm"># เริ่มด้วยค่าต่ำมาก</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">5</span>):
+    s = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"คะแนน: "</span>))
+    <span class="kw">if</span> s &gt; max_score:
+        max_score = s      <span class="cm"># เจอตัวใหญ่กว่า → เก็บ</span>
+<span class="fn">print</span>(<span class="st">"สูงสุด"</span>, max_score)</pre>
+        <div class="code-label" style="margin-top:6px">④ ตรวจสอบทุกตัว (flag)</div>
+        <pre class="code-block">n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"เลข: "</span>))
+is_prime = <span class="kw">True</span>          <span class="cm"># สมมติว่าเป็นก่อน</span>
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">2</span>, n):
+    <span class="kw">if</span> n % i == <span class="nm">0</span>:
+        is_prime = <span class="kw">False</span>   <span class="cm"># เจอตัวหาร → ไม่ใช่</span>
+
+<span class="kw">if</span> is_prime <span class="kw">and</span> n &gt; <span class="nm">1</span>:
+    <span class="fn">print</span>(<span class="st">"เป็นจำนวนเฉพาะ"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"ไม่เป็นจำนวนเฉพาะ"</span>)</pre>
+      </div>
+    </div>
+    <div class="exam"><b>4 pattern นี้ครอบคลุมโจทย์ลูปเกือบทั้งหมด</b> — สังเกตว่าทุกแบบมี "ตัวแปรสะสม" (count/total/max/flag) ที่<b>ประกาศไว้นอกลูป</b> แล้วอัปเดตในลูป · ประกาศในลูป = รีเซ็ตทุกรอบ ผลผิด!</div>
+  </div>
+</div>
+
+<!-- 6 trace -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · เทคนิคทำข้อสอบ</div>
+    <h2 class="slide-title">ตาราง Trace — วิธีตอบข้อ "พิมพ์อะไร" ไม่ให้พลาด</h2>
+    <pre class="code-block" style="margin-bottom:8px">i = <span class="nm">1</span>
+total = <span class="nm">0</span>
+<span class="kw">while</span> i &lt;= <span class="nm">4</span>:
+    total += i
+    <span class="fn">print</span>(i, total)
+    i += <span class="nm">1</span></pre>
+    <table class="t">
+      <thead><tr><th>รอบ</th><th>i (ก่อน)</th><th>i &lt;= 4?</th><th>total</th><th>พิมพ์</th><th>i (หลัง)</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="hl">1</td><td>จริง</td><td>0+1 = 1</td><td>1 1</td><td>2</td></tr>
+        <tr><td>2</td><td class="hl">2</td><td>จริง</td><td>1+2 = 3</td><td>2 3</td><td>3</td></tr>
+        <tr><td>3</td><td class="hl">3</td><td>จริง</td><td>3+3 = 6</td><td>3 6</td><td>4</td></tr>
+        <tr><td>4</td><td class="hl">4</td><td>จริง</td><td>6+4 = 10</td><td>4 10</td><td>5</td></tr>
+        <tr><td>—</td><td>5</td><td>เท็จ</td><td>—</td><td>ออกจากลูป</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <div class="two-col" style="margin-top:6px">
+      <div>
+        <pre class="code-block"><span class="cm"># วิธีทำในห้องสอบ:
+# ① วาดตาราง: คอลัมน์ = ตัวแปรทุกตัว
+# ② เขียนค่าเริ่มต้นแถวแรก
+# ③ ไล่ทีละรอบ เขียนค่าใหม่ทุกครั้ง
+# ④ หยุดเมื่อเงื่อนไขเป็นเท็จ</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm"># ⚠️ จุดที่คนพลาด:
+# • ลืมว่า i เพิ่ม "หลัง" print
+# • คิดในหัวรวดเดียวแล้วสับสน
+# → เขียนตารางเสมอ ช้ากว่าแต่ถูก</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เทคนิคนี้ใช้ได้ทุกข้อ "โปรแกรมพิมพ์อะไร"</b> — เสียเวลา 1 นาทีวาดตาราง ดีกว่าเดาแล้วผิด · โดยเฉพาะข้อที่มีตัวแปร 2-3 ตัวเปลี่ยนพร้อมกัน</div>
+  </div>
+</div>
+
+<!-- 7 โจทย์รวม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · โจทย์แนวสอบ</div>
+    <h2 class="slide-title">โจทย์ที่ออกบ่อย — เขียนให้ได้ทั้ง 3 ข้อ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① ตารางสูตรคูณแม่ n</div>
+        <pre class="code-block">n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"แม่: "</span>))
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">13</span>):
+    <span class="fn">print</span>(<span class="st">f"</span>{n}<span class="st"> x </span>{i}<span class="st"> = </span>{n*i}<span class="st">"</span>)</pre>
+        <div class="code-label" style="margin-top:6px">② หาผลรวม 1 ถึง n</div>
+        <pre class="code-block">n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"n: "</span>))
+total = <span class="nm">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, n+<span class="nm">1</span>):   <span class="cm"># +1 สำคัญ!</span>
+    total += i
+<span class="fn">print</span>(<span class="st">"ผลรวม ="</span>, total)
+<span class="cm"># n=5 → 15</span></pre>
+      </div>
+      <div>
+        <div class="code-label">③ หาแฟกทอเรียล n!</div>
+        <pre class="code-block">n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"n: "</span>))
+fact = <span class="nm">1</span>              <span class="cm"># ⚠️ เริ่มที่ 1 ไม่ใช่ 0!</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, n+<span class="nm">1</span>):
+    fact *= i
+<span class="fn">print</span>(<span class="st">f"</span>{n}<span class="st">! = </span>{fact}<span class="st">"</span>)
+<span class="cm"># 5! = 120</span></pre>
+        <pre class="code-block"><span class="cm"># ⚠️ ค่าเริ่มต้นของตัวสะสม
+# บวก → เริ่มที่ 0
+# คูณ → เริ่มที่ 1  (ถ้าเริ่ม 0 ได้ 0 ตลอด!)
+# หา max → เริ่มที่ค่าต่ำมาก
+# หา min → เริ่มที่ค่าสูงมาก</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>กับดักค่าเริ่มต้น:</b> ตัวสะสมแบบ<b>คูณต้องเริ่มที่ 1</b> — เริ่มที่ 0 จะได้ 0 ตลอด (0×อะไรก็ 0) · เป็นข้อผิดพลาดที่เจอบ่อยในโจทย์แฟกทอเรียล</div>
+  </div>
+</div>
+
+<!-- 8 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โค้ดนี้พิมพ์เลขอะไรบ้าง? และวนกี่รอบ?<br><br>
+<code style="font-family:monospace;font-size:14px;background:var(--cal);padding:12px 20px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+for i in range(2, 10, 3):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print(i, end=' ')
+</code><br><br>
+<em>ใบ้: range(เริ่ม, สิ้นสุด, ก้าว)<br>
+เริ่มที่ 2 · เพิ่มทีละ 3 · <b>ไม่รวม 10</b><br>
+2 → 5 → 8 → (11 เกิน 10 แล้ว หยุด)</em><br><br>
+<span style="font-size:12px;color:var(--dim)">แล้วลองคิดต่อ: range(10, 2, -3) ได้อะไร?</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 9 MCQ1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · ลองข้อสอบ</div>
+    <h2 class="slide-title"><code class="inline-code">for i in range(1, 5)</code> วนกี่รอบ และ i มีค่าอะไรบ้าง?</h2>
+    <div class="mc-opts" id="mc-l1">
+      <div class="mc-opt" onclick="pickMC('mc-l1',0,1,'range ไม่รวมตัวสุดท้าย จึงไม่มี 5 — วน 4 รอบไม่ใช่ 5 รอบ')"><span class="mc-ltr">A</span> 5 รอบ · 1 2 3 4 5</div>
+      <div class="mc-opt" onclick="pickMC('mc-l1',1,1,'range(1,5) = 1,2,3,4 → 4 รอบ · ไม่รวมตัวสุดท้าย (5) ตามกฎของ range')"><span class="mc-ltr">B</span> 4 รอบ · 1 2 3 4</div>
+      <div class="mc-opt" onclick="pickMC('mc-l1',2,1,'range(1,5) เริ่มที่ 1 ไม่ใช่ 0 — ที่เริ่มที่ 0 คือ range(5)')"><span class="mc-ltr">C</span> 5 รอบ · 0 1 2 3 4</div>
+      <div class="mc-opt" onclick="pickMC('mc-l1',3,1,'range(1,5) ไม่รวม 5 และไม่ใช่ 3 รอบ — ลองนับ 1,2,3,4')"><span class="mc-ltr">D</span> 3 รอบ · 1 2 3</div>
+    </div>
+    <div class="ex-feedback" id="mc-l1-fb"></div>
+    <pre class="code-block" style="margin-top:12px">range(a, b) → เริ่มที่ a ถึง b−1 (<b>ไม่รวม b</b>) → จำนวนรอบ = b − a
+
+range(5)     → 0,1,2,3,4   (5 รอบ)
+range(1, 5)  → 1,2,3,4     (4 รอบ)  ← ข้อนี้
+range(1, 5+1)→ 1,2,3,4,5   (5 รอบ)  ← อยากได้ถึง 5 ต้องเขียนแบบนี้</pre>
+  </div>
+</div>
+
+<!-- 10 MCQ2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · ลองข้อสอบ</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์ค่า total เท่าไหร่?</h2>
+    <pre class="code-block" style="margin-bottom:14px">total = <span class="nm">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">6</span>):
+    <span class="kw">if</span> i % <span class="nm">2</span> == <span class="nm">1</span>:
+        total += i
+<span class="fn">print</span>(total)</pre>
+    <div class="mc-opts" id="mc-l2">
+      <div class="mc-opt" onclick="pickMC('mc-l2',0,1,'15 คือผลรวม 1+2+3+4+5 ทั้งหมด — แต่โค้ดนี้มี if กรองเฉพาะเลขคี่')"><span class="mc-ltr">A</span> 15</div>
+      <div class="mc-opt" onclick="pickMC('mc-l2',1,1,'i % 2 == 1 คือเลขคี่ → 1+3+5 = 9 ✓')"><span class="mc-ltr">B</span> 9</div>
+      <div class="mc-opt" onclick="pickMC('mc-l2',2,1,'6 คือผลรวมเลขคู่ (2+4) — แต่เงื่อนไข i % 2 == 1 คือเลขคี่ ไม่ใช่คู่')"><span class="mc-ltr">C</span> 6</div>
+      <div class="mc-opt" onclick="pickMC('mc-l2',3,1,'range(1,6) ให้ 1,2,3,4,5 — มีเลขคี่แน่นอน total ไม่เป็น 0')"><span class="mc-ltr">D</span> 0</div>
+    </div>
+    <div class="ex-feedback" id="mc-l2-fb"></div>
+    <pre class="code-block" style="margin-top:12px">range(1, 6) → i = 1, 2, 3, 4, 5
+เงื่อนไข i % 2 == 1 → <b>เลขคี่</b> (เศษ 1)
+
+i=1 → คี่ → total = 1
+i=2 → คู่ → ข้าม
+i=3 → คี่ → total = 4
+i=4 → คู่ → ข้าม
+i=5 → คี่ → total = <b>9</b></pre>
+  </div>
+</div>
+
+<!-- 11 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · เติมคำ</div>
+    <h2 class="slide-title">เติมให้ถูก</h2>
+
+    <div class="exercise">
+      <div class="ex-q">① อยากวนตั้งแต่ 1 ถึง n (รวม n ด้วย) ต้องเขียน range อย่างไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="range(...)">
+        <button class="ex-btn" onclick="checkFill('in1','range(1, n+1)',['range(1,n+1)','range(1, n + 1)'],['range(1,n)'],'range(1, n+1) — เพราะ range ไม่รวมตัวสุดท้าย','range(1, n+1) — ถ้าเขียน range(1, n) จะได้แค่ถึง n−1')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">② ลูปที่ "ไม่รู้จำนวนรอบ วนจนกว่าจะเจอค่าหยุด" เรียกว่า ___ Loop</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ชื่อประเภท">
+        <button class="ex-btn" onclick="checkFill('in2','sentinel',['sentinel loop','เซนติเนล'],['counting'],'Sentinel Loop — ใช้ while · คู่กับ Counting Loop ที่ใช้ for','Sentinel Loop (ใช้ตัวหยุด) — ส่วน Counting Loop ใช้ตัวนับ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">③ ตัวแปรสะสมสำหรับ "คูณ" (เช่นแฟกทอเรียล) ต้องกำหนดค่าเริ่มต้นเป็นเท่าไหร่</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ตัวเลข">
+        <button class="ex-btn" onclick="checkFill('in3','1',['1'],['0'],'1 — ถ้าเริ่มที่ 0 ผลคูณจะเป็น 0 ตลอด','1 (ไม่ใช่ 0!) — 0 คูณอะไรก็ได้ 0 · ตัวสะสมแบบบวกถึงเริ่มที่ 0')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 12 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔁</div>
+      <div class="summary-title">จบติวบทที่ 4 — Loop &amp; Control Flow</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">while</div><div class="sum-body">ต้องครบ 3 อย่าง: ค่าเริ่มต้น · เงื่อนไข · <b>เปลี่ยนค่า</b> — ขาดข้อ 3 = วนไม่รู้จบ</div></div>
+        <div class="sum-card"><div class="sum-head">range()</div><div class="sum-body">range(n) · range(a,b) · range(a,b,step) — <b>ไม่รวมตัวสุดท้าย</b></div></div>
+        <div class="sum-card"><div class="sum-head">2 ประเภทลูป</div><div class="sum-body">Counting (รู้จำนวนรอบ → for) · Sentinel (วนจนเจอค่าหยุด → while)</div></div>
+        <div class="sum-card"><div class="sum-head">4 pattern</div><div class="sum-body">นับ (count) · รวม (total) · หาสุด (max/min) · ตรวจสอบ (flag)</div></div>
+        <div class="sum-card"><div class="sum-head">ค่าเริ่มต้น</div><div class="sum-body">บวก→0 · <b>คูณ→1</b> · max→ต่ำมาก · min→สูงมาก · ประกาศนอกลูป!</div></div>
+        <div class="sum-card"><div class="sum-head">ตาราง trace</div><div class="sum-body">คอลัมน์ = ตัวแปรทุกตัว ไล่ทีละรอบ — ใช้กับข้อ "พิมพ์อะไร" ทุกข้อ</div></div>
+      </div>
+      <a href="slides_final.html" class="summary-next">→ ด่านสุดท้าย: Cheat Sheet ก่อนเข้าห้องสอบ</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 4 — Loop &amp; Control Flow</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ทำไมต้องลูป','while','for + range()','Counting vs Sentinel','ลูป + if 4 แบบ','ตาราง Trace','โจทย์แนวสอบ','เช็คตัวเอง','ข้อสอบ: range','ข้อสอบ: ลูป+if','เติมคำ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

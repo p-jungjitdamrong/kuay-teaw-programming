@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 4 — Function | ติวสอบ Python Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#4d7c0f;--cal:#eef7dc;--cam:#84b83c;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);}
+.t td:first-child{font-weight:700;color:var(--ca);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;}
+.out{font-family:var(--mono);font-size:13px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:6px 0;white-space:pre;color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ติวสอบ Final · Computers &amp; Programming</div>
+        <div class="cover-title">ติวบทที่ 4<br><em>Function</em></div>
+        <div class="cover-subtitle">lecture 12 · แยกโปรแกรมเป็นส่วนย่อย — Variable Lifetime คือจุดสอบ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ฟังก์ชัน 2 ประเภท: มาตรฐาน vs ผู้ใช้กำหนดเอง</div>
+          <div class="topic-row"><div class="topic-dot"></div>องค์ประกอบ 3 อย่าง: ชื่อ · parameter · return</div>
+          <div class="topic-row"><div class="topic-dot"></div>parameter vs argument ต่างกันยังไง</div>
+          <div class="topic-row"><div class="topic-dot"></div>return คืนหลายค่าได้ + default argument</div>
+          <div class="topic-row"><div class="topic-dot"></div>Variable Lifetime — local vs global</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">F4</div>
+        <div class="cover-badge">scope คือจุดสอบ</div>
+        <div class="cover-slides-count">14 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 overview -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · lecture 12</div>
+    <h2 class="slide-title">ฟังก์ชันคืออะไร + 2 ประเภทตามสไลด์</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">นิยาม</div>
+        <pre class="code-block"><span class="cm"># "ฟังก์ชัน คือ ส่วนย่อยของโปรแกรม
+#  ที่เขียนขึ้นมาใช้งานอย่างใดอย่างหนึ่ง
+#  โดยการอ้างถึงด้วยชื่อที่กำหนดขึ้น"
+
+# "ฟังก์ชันสามารถถูกเรียกใช้จากส่วนหลัก
+#  ของโปรแกรมหรือภายในฟังก์ชันอื่นก็ได้"
+
+# ⚠️ "ฟังก์ชันจะทำงานได้ก็ต่อเมื่อ
+#     ถูกเรียกใช้เท่านั้น"</span></pre>
+        <div class="code-label" style="margin-top:8px">ทำไมต้องมี</div>
+        <pre class="code-block"><span class="cm"># • ไม่ต้องเขียนโค้ดซ้ำ
+# • แก้ที่เดียว มีผลทุกที่
+# • แบ่งปัญหาใหญ่เป็นส่วนย่อย
+# • อ่านง่าย ทดสอบง่าย</span></pre>
+      </div>
+      <div>
+        <div class="code-label">2 ประเภท</div>
+        <pre class="code-block"><span class="cm"># ① ฟังก์ชันมาตรฐาน
+#    (Pre-defined function in Python)</span>
+math.<span class="fn">pow</span>(x, y)
+math.<span class="fn">sqrt</span>(<span class="nm">25</span>)
+<span class="fn">len</span>()
+<span class="fn">print</span>()  <span class="fn">input</span>()  <span class="fn">int</span>()  <span class="fn">sum</span>()
+
+<span class="cm"># ② ฟังก์ชันที่ผู้ใช้กำหนดเอง
+#    (User-defined function)</span>
+<span class="fn">sayhi</span>(<span class="nm">5</span>)
+<span class="fn">add</span>(x, y)</pre>
+        <div class="code-label" style="margin-top:6px">องค์ประกอบ 3 อย่าง</div>
+        <div class="diagram">Z = math.pow(2, 3)
+        └─┬─┘  └┬┘
+          │     └─ Parameter
+          └─────── Function Name
+    └─ Return Value</div>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อทฤษฎีที่ออกได้:</b> "ฟังก์ชันมี 2 ประเภทอะไรบ้าง" → <b>Pre-defined (มาตรฐาน)</b> กับ <b>User-defined (ผู้ใช้กำหนดเอง)</b> · "องค์ประกอบของฟังก์ชัน" → <b>ชื่อฟังก์ชัน · พารามิเตอร์ · การส่งค่ากลับ</b></div>
+  </div>
+</div>
+
+<!-- 2 def -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · def</div>
+    <h2 class="slide-title">สร้างฟังก์ชันเอง — def</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">รูปแบบ</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">ชื่อฟังก์ชัน</span>(parameter):
+    คำสั่ง
+    <span class="kw">return</span> ค่าที่ส่งกลับ
+
+<span class="cm"># ตัวอย่าง</span>
+<span class="kw">def</span> <span class="fn">add</span>(a, b):
+    result = a + b
+    <span class="kw">return</span> result
+
+<span class="cm"># เรียกใช้</span>
+x = <span class="fn">add</span>(<span class="nm">3</span>, <span class="nm">5</span>)
+<span class="fn">print</span>(x)          <span class="cm"># 8</span></pre>
+        <div class="code-label" style="margin-top:8px">ไม่มี return ก็ได้</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">sayhi</span>(name):
+    <span class="fn">print</span>(<span class="st">"สวัสดี"</span>, name)
+
+<span class="fn">sayhi</span>(<span class="st">"สมชาย"</span>)     <span class="cm"># สวัสดี สมชาย</span>
+
+x = <span class="fn">sayhi</span>(<span class="st">"สมศรี"</span>)
+<span class="fn">print</span>(x)          <span class="cm"># None ← ไม่มี return = คืน None</span></pre>
+      </div>
+      <div>
+        <div class="code-label">⚠️ ต้องนิยามก่อนเรียก!</div>
+        <pre class="code-block"><span class="cm"># ❌ ผิด — เรียกก่อนนิยาม</span>
+<span class="fn">add</span>(<span class="nm">1</span>, <span class="nm">2</span>)         <span class="cm"># NameError!</span>
+<span class="kw">def</span> <span class="fn">add</span>(a, b):
+    <span class="kw">return</span> a + b
+
+<span class="cm"># ✓ ถูก — นิยามก่อน แล้วค่อยเรียก</span>
+<span class="kw">def</span> <span class="fn">add</span>(a, b):
+    <span class="kw">return</span> a + b
+<span class="fn">add</span>(<span class="nm">1</span>, <span class="nm">2</span>)         <span class="cm"># 3 ✓</span></pre>
+        <div class="code-label" style="margin-top:6px">return หยุดฟังก์ชันทันที</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">check</span>(x):
+    <span class="kw">if</span> x &gt; <span class="nm">0</span>:
+        <span class="kw">return</span> <span class="st">"บวก"</span>
+    <span class="fn">print</span>(<span class="st">"บรรทัดนี้..."</span>)   <span class="cm"># ไม่ทำงานถ้า x&gt;0</span>
+    <span class="kw">return</span> <span class="st">"ไม่บวก"</span>
+
+<span class="fn">print</span>(<span class="fn">check</span>(<span class="nm">5</span>))    <span class="cm"># บวก (ไม่พิมพ์บรรทัดกลาง)</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>2 จุดหลอก:</b> ① ฟังก์ชันไม่มี <code class="inline-code">return</code> จะคืน <b>None</b> — เอาไปคำนวณต่อไม่ได้ ② ต้อง <b>นิยามก่อนเรียก</b> เสมอ (Python อ่านจากบนลงล่าง)</div>
+  </div>
+</div>
+
+<!-- 3 parameter vs argument -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · ศัพท์</div>
+    <h2 class="slide-title">Parameter vs Argument — ต่างกันตรงไหน</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">add</span>(a, b):      <span class="cm"># a, b = Parameter</span>
+    <span class="kw">return</span> a + b       <span class="cm">#      (ตัวรับ ตอนนิยาม)</span>
+
+<span class="fn">add</span>(<span class="nm">3</span>, <span class="nm">5</span>)               <span class="cm"># 3, 5 = Argument</span>
+                        <span class="cm">#        (ค่าจริง ตอนเรียก)</span></pre>
+        <div class="diagram">      นิยาม              เรียกใช้
+  def add(a, b)   ←→   add(3, 5)
+       └─┬─┘              └─┬─┘
+    Parameter          Argument
+    (ตัวแปรรับค่า)      (ค่าที่ส่งไป)</div>
+        <pre class="code-block"><span class="cm"># จำนวนต้องตรงกัน!</span>
+<span class="fn">add</span>(<span class="nm">3</span>)          <span class="cm"># ❌ TypeError: missing 1 argument</span>
+<span class="fn">add</span>(<span class="nm">3</span>,<span class="nm">5</span>,<span class="nm">7</span>)      <span class="cm"># ❌ TypeError: too many arguments</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ส่งค่าได้ 2 แบบ</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">info</span>(name, age):
+    <span class="fn">print</span>(name, age)
+
+<span class="cm"># ① Positional — เรียงตามลำดับ</span>
+<span class="fn">info</span>(<span class="st">"สมชาย"</span>, <span class="nm">20</span>)      <span class="cm"># สมชาย 20</span>
+<span class="fn">info</span>(<span class="nm">20</span>, <span class="st">"สมชาย"</span>)      <span class="cm"># 20 สมชาย ← สลับผิด!</span>
+
+<span class="cm"># ② Keyword — ระบุชื่อ (ลำดับไม่สำคัญ)</span>
+<span class="fn">info</span>(name=<span class="st">"สมชาย"</span>, age=<span class="nm">20</span>)
+<span class="fn">info</span>(age=<span class="nm">20</span>, name=<span class="st">"สมชาย"</span>)  <span class="cm"># ✓ เหมือนกัน</span></pre>
+        <div class="code-label" style="margin-top:6px">Default argument</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">greet</span>(name, msg=<span class="st">"สวัสดี"</span>):
+    <span class="fn">print</span>(msg, name)
+
+<span class="fn">greet</span>(<span class="st">"สมชาย"</span>)              <span class="cm"># สวัสดี สมชาย</span>
+<span class="fn">greet</span>(<span class="st">"สมศรี"</span>, <span class="st">"หวัดดี"</span>)     <span class="cm"># หวัดดี สมศรี</span>
+
+<span class="cm"># ⚠️ ตัวมี default ต้องอยู่หลังสุด</span>
+<span class="kw">def</span> <span class="fn">f</span>(a=<span class="nm">1</span>, b):   <span class="cm"># ❌ SyntaxError</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ศัพท์ที่ออกสอบ:</b> <b>Parameter</b> = ตัวแปรใน <code class="inline-code">def</code> (ตัวรับ) · <b>Argument</b> = ค่าจริงตอนเรียก · และตัวที่มี default value <b>ต้องอยู่หลังสุด</b>เสมอ</div>
+  </div>
+</div>
+
+<!-- 4 return -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · return</div>
+    <h2 class="slide-title">return — คืนค่าได้หลายตัว</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คืนค่าเดียว</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">square</span>(x):
+    <span class="kw">return</span> x ** <span class="nm">2</span>
+
+<span class="fn">print</span>(<span class="fn">square</span>(<span class="nm">4</span>))      <span class="cm"># 16</span></pre>
+        <div class="code-label" style="margin-top:8px">คืนหลายค่า — Python ทำได้!</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">calc</span>(a, b):
+    <span class="kw">return</span> a+b, a-b, a*b   <span class="cm"># คั่นด้วย ,</span>
+
+s, d, m = <span class="fn">calc</span>(<span class="nm">10</span>, <span class="nm">3</span>)
+<span class="fn">print</span>(s, d, m)         <span class="cm"># 13 7 30</span>
+
+<span class="cm"># หรือรับเป็นก้อนเดียว (tuple)</span>
+r = <span class="fn">calc</span>(<span class="nm">10</span>, <span class="nm">3</span>)
+<span class="fn">print</span>(r)              <span class="cm"># (13, 7, 30)</span>
+<span class="fn">print</span>(r[<span class="nm">0</span>])           <span class="cm"># 13</span></pre>
+      </div>
+      <div>
+        <div class="code-label">โจทย์ที่ใช้บ่อย</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">min_max</span>(nums):
+    mn = nums[<span class="nm">0</span>]
+    mx = nums[<span class="nm">0</span>]
+    <span class="kw">for</span> x <span class="kw">in</span> nums:
+        <span class="kw">if</span> x &lt; mn: mn = x
+        <span class="kw">if</span> x &gt; mx: mx = x
+    <span class="kw">return</span> mn, mx        <span class="cm"># คืน 2 ค่า</span>
+
+lo, hi = <span class="fn">min_max</span>([<span class="nm">5</span>,<span class="nm">2</span>,<span class="nm">9</span>,<span class="nm">1</span>])
+<span class="fn">print</span>(lo, hi)          <span class="cm"># 1 9</span></pre>
+        <div class="code-label" style="margin-top:6px">ฟังก์ชันเรียกฟังก์ชันได้</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">area</span>(r):
+    <span class="kw">return</span> <span class="nm">3.14159</span> * r ** <span class="nm">2</span>
+
+<span class="kw">def</span> <span class="fn">total_area</span>(r1, r2):
+    <span class="kw">return</span> <span class="fn">area</span>(r1) + <span class="fn">area</span>(r2)   <span class="cm"># เรียกตัวอื่น</span>
+
+<span class="fn">print</span>(<span class="fn">total_area</span>(<span class="nm">1</span>, <span class="nm">2</span>))       <span class="cm"># 15.7…</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดเด่นของ Python:</b> คืนหลายค่าได้ด้วย <code class="inline-code">return a, b, c</code> แล้วรับด้วย <code class="inline-code">x, y, z = f()</code> — ภาษา C ทำแบบนี้ไม่ได้ (ต้องใช้ pointer หรือ struct)</div>
+  </div>
+</div>
+
+<!-- 5 scope -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · Variable Lifetime</div>
+    <h2 class="slide-title">local vs global — หัวข้อที่สไลด์ตั้งชื่อไว้เลย</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Local — เกิดและตายในฟังก์ชัน</div>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">f</span>():
+    x = <span class="nm">10</span>          <span class="cm"># local variable</span>
+    <span class="fn">print</span>(x)        <span class="cm"># 10 ✓</span>
+
+<span class="fn">f</span>()
+<span class="fn">print</span>(x)            <span class="cm"># ❌ NameError!</span>
+<span class="cm">#                  x ตายไปแล้วเมื่อจบฟังก์ชัน</span></pre>
+        <div class="code-label" style="margin-top:8px">Global — ใช้ได้ทั้งโปรแกรม</div>
+        <pre class="code-block">y = <span class="nm">100</span>               <span class="cm"># global variable</span>
+
+<span class="kw">def</span> <span class="fn">g</span>():
+    <span class="fn">print</span>(y)        <span class="cm"># 100 ✓ อ่านได้</span>
+
+<span class="fn">g</span>()
+<span class="fn">print</span>(y)            <span class="cm"># 100 ✓</span></pre>
+      </div>
+      <div>
+        <div class="code-label">⚠️ อ่านได้ แต่แก้ไม่ได้!</div>
+        <pre class="code-block">y = <span class="nm">100</span>
+
+<span class="kw">def</span> <span class="fn">g</span>():
+    y = <span class="nm">50</span>          <span class="cm"># สร้าง local ใหม่! ไม่ได้แก้ global</span>
+    <span class="fn">print</span>(y)        <span class="cm"># 50</span>
+
+<span class="fn">g</span>()
+<span class="fn">print</span>(y)            <span class="cm"># 100 ← ไม่เปลี่ยน!</span></pre>
+        <div class="code-label" style="margin-top:6px">อยากแก้ global จริงๆ → ใช้ global</div>
+        <pre class="code-block">y = <span class="nm">100</span>
+
+<span class="kw">def</span> <span class="fn">g</span>():
+    <span class="kw">global</span> y        <span class="cm"># ประกาศว่าจะใช้ตัวข้างนอก</span>
+    y = <span class="nm">50</span>
+    <span class="fn">print</span>(y)        <span class="cm"># 50</span>
+
+<span class="fn">g</span>()
+<span class="fn">print</span>(y)            <span class="cm"># 50 ← เปลี่ยนแล้ว ✓</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>กฎ 3 ข้อของ scope:</b> ① ตัวแปรในฟังก์ชันเป็น <b>local</b> ใช้นอกฟังก์ชันไม่ได้ ② ตัวแปรนอกฟังก์ชันเป็น <b>global</b> ฟังก์ชัน<b>อ่านได้</b> ③ แต่ถ้า<b>กำหนดค่า</b>ในฟังก์ชัน จะสร้าง local ใหม่ ไม่กระทบ global — เว้นแต่ประกาศ <code class="inline-code">global</code></div>
+  </div>
+</div>
+
+<!-- 6 scope trace -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · ไล่ scope</div>
+    <h2 class="slide-title">ข้อสอบสาย scope — ไล่ให้เป็น</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างที่ 1</div>
+        <pre class="code-block">x = <span class="nm">10</span>
+
+<span class="kw">def</span> <span class="fn">f</span>(x):
+    x = x + <span class="nm">5</span>
+    <span class="fn">print</span>(<span class="st">"ใน f:"</span>, x)
+
+<span class="fn">f</span>(x)
+<span class="fn">print</span>(<span class="st">"นอก f:"</span>, x)</pre>
+        <div class="out">ใน f: 15
+นอก f: 10</div>
+        <pre class="code-block"><span class="cm"># x ใน f เป็น parameter (local)
+# แก้แล้วไม่กระทบ x ข้างนอก</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่างที่ 2 — list ต่างออกไป!</div>
+        <pre class="code-block">a = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]
+
+<span class="kw">def</span> <span class="fn">f</span>(lst):
+    lst.<span class="fn">append</span>(<span class="nm">4</span>)      <span class="cm"># แก้ตัวเดิม!</span>
+
+<span class="fn">f</span>(a)
+<span class="fn">print</span>(a)             <span class="cm"># [1,2,3,4] ← เปลี่ยน!</span></pre>
+        <pre class="code-block"><span class="cm"># แต่ถ้ากำหนดค่าใหม่ทั้งก้อน</span>
+<span class="kw">def</span> <span class="fn">g</span>(lst):
+    lst = [<span class="nm">9</span>, <span class="nm">9</span>]      <span class="cm"># ชี้ไป list ใหม่</span>
+
+<span class="fn">g</span>(a)
+<span class="fn">print</span>(a)             <span class="cm"># [1,2,3,4] ← ไม่เปลี่ยน</span></pre>
+        <pre class="code-block"><span class="cm"># สรุป:
+# ตัวเลข/string → ส่งค่า แก้ไม่กระทบ
+# list/dict     → ส่ง reference
+#                 แก้สมาชิก = กระทบตัวจริง
+#                 แต่กำหนดใหม่ทั้งก้อน = ไม่กระทบ</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดที่แยกคนได้คนตก:</b> ส่ง <b>ตัวเลข/string</b> เข้าฟังก์ชัน แก้แล้วข้างนอกไม่เปลี่ยน · แต่ส่ง <b>list/dict</b> แล้วใช้ <code class="inline-code">append()/แก้สมาชิก</code> <b>ข้างนอกเปลี่ยนด้วย!</b></div>
+  </div>
+</div>
+
+<!-- 7 use case -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · โจทย์แนวสอบ</div>
+    <h2 class="slide-title">เขียนโปรแกรมด้วยฟังก์ชัน — โครงที่ควรใช้</h2>
+    <pre class="code-block"><span class="cm"># โจทย์: โปรแกรมคำนวณเกรดนักเรียน แยกเป็นฟังก์ชัน</span>
+
+<span class="kw">def</span> <span class="fn">get_grade</span>(score):              <span class="cm"># ① ฟังก์ชันคำนวณเกรด</span>
+    <span class="kw">if</span> score &gt;= <span class="nm">80</span>:   <span class="kw">return</span> <span class="st">"A"</span>
+    <span class="kw">elif</span> score &gt;= <span class="nm">70</span>: <span class="kw">return</span> <span class="st">"B"</span>
+    <span class="kw">elif</span> score &gt;= <span class="nm">60</span>: <span class="kw">return</span> <span class="st">"C"</span>
+    <span class="kw">else</span>:              <span class="kw">return</span> <span class="st">"F"</span>
+
+<span class="kw">def</span> <span class="fn">average</span>(scores):              <span class="cm">// ② ฟังก์ชันหาค่าเฉลี่ย</span>
+    <span class="kw">if</span> <span class="fn">len</span>(scores) == <span class="nm">0</span>:
+        <span class="kw">return</span> <span class="nm">0</span>                    <span class="cm"># กันหารศูนย์</span>
+    <span class="kw">return</span> <span class="fn">sum</span>(scores) / <span class="fn">len</span>(scores)
+
+<span class="kw">def</span> <span class="fn">summary</span>(scores):              <span class="cm"># ③ ฟังก์ชันสรุป (คืน 3 ค่า)</span>
+    <span class="kw">return</span> <span class="fn">average</span>(scores), <span class="fn">max</span>(scores), <span class="fn">min</span>(scores)
+
+<span class="cm"># ── โปรแกรมหลัก ──</span>
+scores = []
+n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"จำนวนนักเรียน: "</span>))
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+    s = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">f"คะแนนคนที่ </span>{i+<span class="nm">1</span>}<span class="st">: "</span>))
+    scores.<span class="fn">append</span>(s)
+    <span class="fn">print</span>(<span class="st">f"  → เกรด </span>{<span class="fn">get_grade</span>(s)}<span class="st">"</span>)      <span class="cm"># เรียกใช้ฟังก์ชัน</span>
+
+avg, mx, mn = <span class="fn">summary</span>(scores)                <span class="cm"># รับ 3 ค่าพร้อมกัน</span>
+<span class="fn">print</span>(<span class="st">f"\nเฉลี่ย </span>{avg:.<span class="nm">2</span>f}<span class="st">  สูงสุด </span>{mx}<span class="st">  ต่ำสุด </span>{mn}<span class="st">"</span>)
+<span class="fn">print</span>(<span class="st">f"เกรดเฉลี่ย: </span>{<span class="fn">get_grade</span>(avg)}<span class="st">"</span>)
+
+<span class="cm">"""
+จำนวนนักเรียน: 3
+คะแนนคนที่ 1: 85  → เกรด A
+คะแนนคนที่ 2: 72  → เกรด B
+คะแนนคนที่ 3: 55  → เกรด F
+
+เฉลี่ย 70.67  สูงสุด 85  ต่ำสุด 55
+เกรดเฉลี่ย: B
+"""</span></pre>
+    <div class="exam"><b>หลักออกแบบฟังก์ชัน:</b> <b>1 ฟังก์ชัน = 1 หน้าที่</b> · ฟังก์ชันควร <code class="inline-code">return</code> ค่ากลับมาให้ผู้เรียกตัดสินใจ ดีกว่า <code class="inline-code">print</code> ในตัวมันเอง (นำไปใช้ต่อได้)</div>
+  </div>
+</div>
+
+<!-- 8 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โค้ดนี้พิมพ์อะไร?<br><br>
+<code style="font-family:monospace;font-size:13.5px;background:var(--cal);padding:12px 20px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+x = 5<br>
+nums = [1, 2]<br>
+<br>
+def f(a, b):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a = a + 10<br>
+&nbsp;&nbsp;&nbsp;&nbsp;b.append(3)<br>
+<br>
+f(x, nums)<br>
+print(x, nums)
+</code><br><br>
+<em>ใบ้: a เป็นตัวเลข → แก้แล้วกระทบข้างนอกไหม?<br>
+b เป็น list และใช้ append() → กระทบไหม?</em><br><br>
+<span style="font-size:12px;color:var(--dim)">เฉลย: 5 [1, 2, 3]</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 9 MCQ1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · ลองข้อสอบ</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
+    <pre class="code-block" style="margin-bottom:14px"><span class="kw">def</span> <span class="fn">f</span>(x):
+    <span class="fn">print</span>(x * <span class="nm">2</span>)
+
+y = <span class="fn">f</span>(<span class="nm">5</span>)
+<span class="fn">print</span>(y)</pre>
+    <div class="mc-opts" id="mc-fn1">
+      <div class="mc-opt" onclick="pickMC('mc-fn1',0,2,'10 ถูกพิมพ์จริง แต่บรรทัด print(y) จะพิมพ์อะไรต่อ?')"><span class="mc-ltr">A</span> 10</div>
+      <div class="mc-opt" onclick="pickMC('mc-fn1',1,2,'10 พิมพ์แค่ครั้งเดียว — y ไม่ได้เก็บค่า 10 เพราะฟังก์ชันไม่ได้ return')"><span class="mc-ltr">B</span> 10 แล้ว 10</div>
+      <div class="mc-opt" onclick="pickMC('mc-fn1',2,2,'f() พิมพ์ 10 แต่ไม่มี return → คืน None → y = None → พิมพ์ None')"><span class="mc-ltr">C</span> 10 แล้ว None</div>
+      <div class="mc-opt" onclick="pickMC('mc-fn1',3,2,'ไม่ error — โค้ดรันได้ปกติ')"><span class="mc-ltr">D</span> Error</div>
+    </div>
+    <div class="ex-feedback" id="mc-fn1-fb"></div>
+    <pre class="code-block" style="margin-top:12px">f(5) → print(5*2) พิมพ์ <b>10</b> · ฟังก์ชัน<b>ไม่มี return</b> → คืน None
+y = None → print(y) พิมพ์ <b>None</b>
+
+⚠️ print() ในฟังก์ชัน ≠ return — ถ้าอยากเอาค่าไปใช้ต่อ ต้อง return</pre>
+  </div>
+</div>
+
+<!-- 10 MCQ2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · ลองข้อสอบ</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
+    <pre class="code-block" style="margin-bottom:14px">count = <span class="nm">0</span>
+
+<span class="kw">def</span> <span class="fn">add</span>():
+    count = count + <span class="nm">1</span>
+
+<span class="fn">add</span>()
+<span class="fn">print</span>(count)</pre>
+    <div class="mc-opts" id="mc-fn2">
+      <div class="mc-opt" onclick="pickMC('mc-fn2',0,2,'ถ้ามี global count จะได้ 1 — แต่โค้ดนี้ไม่มี')"><span class="mc-ltr">A</span> 1</div>
+      <div class="mc-opt" onclick="pickMC('mc-fn2',1,2,'ถ้าฟังก์ชันแค่อ่าน count จะได้ 0 — แต่นี่พยายาม "กำหนดค่า" ซึ่งต่างกัน')"><span class="mc-ltr">B</span> 0</div>
+      <div class="mc-opt" onclick="pickMC('mc-fn2',2,2,'UnboundLocalError — พอมี count = ... ในฟังก์ชัน Python ถือว่า count เป็น local ทั้งฟังก์ชัน แต่ยังไม่มีค่าตอนอ่าน → error · แก้ด้วย global count')"><span class="mc-ltr">C</span> UnboundLocalError</div>
+      <div class="mc-opt" onclick="pickMC('mc-fn2',3,2,'ไม่ใช่ None — ปัญหาเกิดตอนเรียก add() ไม่ใช่ตอน print')"><span class="mc-ltr">D</span> None</div>
+    </div>
+    <div class="ex-feedback" id="mc-fn2-fb"></div>
+    <pre class="code-block" style="margin-top:12px">พอ Python เห็น <code>count = ...</code> ในฟังก์ชัน → ถือว่า count เป็น <b>local ทั้งฟังก์ชัน</b>
+แต่ฝั่งขวา <code>count + 1</code> ต้องอ่าน count ซึ่ง local ยังไม่มีค่า → <b>UnboundLocalError</b>
+
+แก้:  def add():
+          <b>global count</b>
+          count = count + 1</pre>
+  </div>
+</div>
+
+<!-- 11 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 4 · เติมคำ</div>
+    <h2 class="slide-title">เติมให้ถูก</h2>
+
+    <div class="exercise">
+      <div class="ex-q">① สร้างฟังก์ชันใน Python ใช้คีย์เวิร์ดอะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in1','def',['def'],['function'],'def ชื่อฟังก์ชัน(parameter): — อย่าลืมโคลอนและเยื้อง','def (ไม่ใช่ function หรือ func)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">② ฟังก์ชันที่ไม่มีคำสั่ง return จะคืนค่าอะไรกลับมา</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ค่าอะไร">
+        <button class="ex-btn" onclick="checkFill('in2','None',['none','ไม่คืนค่า'],['0'],'None — เอาไปคำนวณต่อไม่ได้ ต้องเขียน return เอง','None (ไม่ใช่ 0 หรือค่าว่าง)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">③ อยากแก้ค่าตัวแปร global จากในฟังก์ชัน ต้องประกาศคีย์เวิร์ดอะไรก่อน</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in3','global',['global x','โกลบอล'],[],'global ชื่อตัวแปร — ถ้าไม่ประกาศ Python จะสร้าง local ใหม่แทน','global — เขียน global count ก่อนแก้ค่า')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 12 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">⚙️</div>
+      <div class="summary-title">จบติวบทที่ 4 — Function</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">2 ประเภท</div><div class="sum-body">Pre-defined (print, len, math.sqrt) · User-defined (เขียนเอง ด้วย def)</div></div>
+        <div class="sum-card"><div class="sum-head">องค์ประกอบ</div><div class="sum-body">ชื่อฟังก์ชัน · parameter · return value</div></div>
+        <div class="sum-card"><div class="sum-head">Parameter vs Argument</div><div class="sum-body">Parameter = ตัวรับใน def · Argument = ค่าจริงตอนเรียก</div></div>
+        <div class="sum-card"><div class="sum-head">return</div><div class="sum-body">ไม่มี return = คืน <b>None</b> · คืนหลายค่าได้ <code class="inline-code">return a, b</code></div></div>
+        <div class="sum-card"><div class="sum-head">Scope</div><div class="sum-body">local ใช้นอกไม่ได้ · global อ่านได้แต่แก้ต้องประกาศ <code class="inline-code">global</code></div></div>
+        <div class="sum-card"><div class="sum-head">ส่งค่าเข้าฟังก์ชัน</div><div class="sum-body">ตัวเลข/str แก้ไม่กระทบ · <b>list/dict แก้สมาชิกกระทบตัวจริง</b></div></div>
+      </div>
+      <a href="slides_ch5.html" class="summary-next">→ ติวบทที่ 5: File I/O &amp; GUI</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 4 — Function</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ฟังก์ชันคืออะไร','def','Parameter vs Argument','return','Scope: local/global','ไล่ scope','โจทย์แนวสอบ','เช็คตัวเอง','ข้อสอบ: return None','ข้อสอบ: global','เติมคำ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

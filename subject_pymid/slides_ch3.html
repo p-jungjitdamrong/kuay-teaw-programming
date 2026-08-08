@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 3 — Flowchart &amp; Selection | ติวสอบ Python Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#b45309;--cal:#fdf0dc;--cam:#e0a458;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;}
+.t td{padding:6px 10px;border:1px solid var(--line);}
+.t td:first-child{text-align:center;font-family:var(--mono);font-weight:700;color:var(--ca);}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ติวสอบ Midterm · Computers &amp; Programming</div>
+        <div class="cover-title">ติวบทที่ 3<br><em>Flowchart &amp; Selection</em></div>
+        <div class="cover-subtitle">lecture 4–5 · อ่านผังงานให้เป็น เขียน if ให้ถูกลำดับ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>สัญลักษณ์ผังงาน 8 ตัว + ตรงกับโค้ดอะไร</div>
+          <div class="topic-row"><div class="topic-dot"></div>Boolean data type + relational expression</div>
+          <div class="topic-row"><div class="topic-dot"></div>if / if-else — รูปแบบและ block</div>
+          <div class="topic-row"><div class="topic-dot"></div>Nested if กับ elif — เมื่อไหร่ใช้อะไร</div>
+          <div class="topic-row"><div class="topic-dot"></div>กับดัก: เรียงเงื่อนไขผิดลำดับ</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">M3</div>
+        <div class="cover-badge">ผังงาน + เงื่อนไข</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 สัญลักษณ์ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · lecture 4</div>
+    <h2 class="slide-title">สัญลักษณ์ผังงาน 8 ตัว — ท่องให้ครบ</h2>
+    <p class="slide-lead">นิยามจากสไลด์: <strong>"ผังงาน (Flow Chart) คือวิธีการออกแบบโปรแกรมอย่างเป็นขั้นตอน โดยใช้สัญลักษณ์และตัวอักษรประกอบการอธิบาย"</strong></p>
+    <table class="t">
+      <thead><tr><th style="width:8%">รูป</th><th style="width:24%">ชื่อ</th><th>ความหมาย</th><th>ตรงกับโค้ด</th></tr></thead>
+      <tbody>
+        <tr><td>⬭</td><td>Terminal</td><td>จุดเริ่มต้นหรือจุดจบของโปรแกรม</td><td>เริ่ม / จบ</td></tr>
+        <tr><td>▱</td><td>Input / Output</td><td>การรับและแสดงผลของข้อมูล</td><td><code class="inline-code">input()</code></td></tr>
+        <tr><td>▭</td><td>Process</td><td>การประมวลผล</td><td><code class="inline-code">x = a + b</code></td></tr>
+        <tr><td>◇</td><td>Decision / Selection</td><td>การตัดสินใจ</td><td><code class="inline-code">if</code> / <code class="inline-code">while</code></td></tr>
+        <tr><td>▽</td><td>Display</td><td>ข้อมูลออกทางจอภาพ</td><td><code class="inline-code">print()</code></td></tr>
+        <tr><td>→</td><td>Flow Line</td><td>ทิศทางของขั้นตอนการดำเนินงาน</td><td>ลำดับบรรทัด</td></tr>
+        <tr><td>◯</td><td>Connector</td><td>จุดเชื่อมการทำงานที่อยู่หน้าเดียวกัน</td><td>—</td></tr>
+        <tr><td>⬠</td><td>Off Page Connector</td><td>จุดเชื่อมการทำงานที่อยู่คนละหน้า</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>ข้อสอบมาแน่ 2 แบบ:</b> ① ให้รูปมาแล้วถามชื่อ/ความหมาย ② ให้ผังงานมาแล้วให้เขียนโค้ด — ท่อง 5 ตัวหลักให้ได้ก่อน (⬭ ▱ ▭ ◇ ▽) ส่วน connector 2 ตัวท้ายเจอน้อย</div>
+  </div>
+</div>
+
+<!-- 2 boolean -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · Boolean</div>
+    <h2 class="slide-title">Boolean — ผลของ ◇ มีแค่ 2 ทาง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ชนิดข้อมูล bool</div>
+        <pre class="code-block">flag = <span class="kw">True</span>
+done = <span class="kw">False</span>
+<span class="cm"># ⚠️ ต้องขึ้นต้นด้วยตัวใหญ่!
+# true / TRUE → NameError</span>
+
+<span class="cm"># นิพจน์เปรียบเทียบให้ผลเป็น bool</span>
+<span class="fn">print</span>(<span class="nm">5</span> &gt; <span class="nm">3</span>)          <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="nm">5</span> &gt; <span class="nm">3</span>))    <span class="cm"># &lt;class 'bool'&gt;</span></pre>
+        <div class="code-label" style="margin-top:8px">bool แปลงเป็นตัวเลขได้</div>
+        <pre class="code-block"><span class="fn">int</span>(<span class="kw">True</span>)    <span class="cm"># 1</span>
+<span class="fn">int</span>(<span class="kw">False</span>)   <span class="cm"># 0</span>
+<span class="kw">True</span> + <span class="kw">True</span>  <span class="cm"># 2</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ค่าที่ถือว่าเป็น False (สอบถามได้)</div>
+        <pre class="code-block"><span class="fn">bool</span>(<span class="nm">0</span>)        <span class="cm"># False</span>
+<span class="fn">bool</span>(<span class="nm">0.0</span>)      <span class="cm"># False</span>
+<span class="fn">bool</span>(<span class="st">""</span>)       <span class="cm"># False (string ว่าง)</span>
+<span class="fn">bool</span>([])       <span class="cm"># False (list ว่าง)</span>
+<span class="fn">bool</span>(<span class="kw">None</span>)     <span class="cm"># False</span>
+
+<span class="cm"># นอกนั้นเป็น True หมด</span>
+<span class="fn">bool</span>(<span class="nm">1</span>)        <span class="cm"># True</span>
+<span class="fn">bool</span>(-<span class="nm">5</span>)       <span class="cm"># True (ไม่ใช่ 0 ก็ True!)</span>
+<span class="fn">bool</span>(<span class="st">"0"</span>)      <span class="cm"># True (string ไม่ว่าง!)</span></pre>
+        <pre class="code-block"><span class="cm"># ใช้ในเงื่อนไขได้เลย</span>
+name = <span class="fn">input</span>(<span class="st">"ชื่อ: "</span>)
+<span class="kw">if</span> name:              <span class="cm"># = if name != ""</span>
+    <span class="fn">print</span>(<span class="st">"สวัสดี"</span>, name)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"ไม่ได้กรอกชื่อ"</span>)</pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดหลอก:</b> <code class="inline-code">bool("0")</code> เป็น <b>True</b> เพราะเป็น string ที่ไม่ว่าง (ไม่ใช่เลข 0) · และ <code class="inline-code">True</code>/<code class="inline-code">False</code> ต้องขึ้นต้นตัวใหญ่เสมอ</div>
+  </div>
+</div>
+
+<!-- 3 if -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · if</div>
+    <h2 class="slide-title">if — รูปแบบตามสไลด์อาจารย์</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">รูปแบบ</div>
+        <pre class="code-block"><span class="kw">if</span> (นิพจน์หรือเงื่อนไข):
+    คำสั่ง
+
+<span class="cm"># ตัวอย่างในสไลด์</span>
+<span class="kw">if</span> (x &lt; <span class="nm">0</span>):
+    <span class="fn">print</span>(<span class="st">"x is negative number."</span>)</pre>
+        <div class="code-label" style="margin-top:8px">หลายคำสั่ง = Block</div>
+        <pre class="code-block"><span class="cm"># "ให้ใช้การเยื้องบรรทัดในคำสั่งทั้งหมดนั้น
+#  ซึ่งเรียกว่า Block"</span>
+
+<span class="kw">if</span> (radius &gt; <span class="nm">0</span>):
+    area = pi * radius * radius
+    <span class="fn">print</span>(<span class="st">"Area ="</span>, area)
+<span class="cm">#   ↑ ทั้งสองบรรทัดเยื้องเท่ากัน
+#     = อยู่ใน block เดียวกัน</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ผังงานของ if</div>
+        <div class="diagram">      │
+   ◇ x &lt; 0 ── เท็จ ──┐
+      │ จริง          │
+   ▽ "negative"       │
+      │               │
+      └───────────────┘
+      │
+   (ทำงานต่อ)</div>
+        <pre class="code-block"><span class="cm"># วงเล็บใส่หรือไม่ใส่ก็ได้ใน Python</span>
+<span class="kw">if</span> (x &lt; <span class="nm">0</span>):     <span class="cm"># ✓ (สไลด์ใช้แบบนี้)</span>
+<span class="kw">if</span> x &lt; <span class="nm">0</span>:       <span class="cm"># ✓ (Python นิยมกว่า)</span>
+
+<span class="cm"># ⚠️ แต่ ":" ลืมไม่ได้!</span>
+<span class="kw">if</span> x &lt; <span class="nm">0</span>        <span class="cm"># ❌ SyntaxError</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>3 สิ่งที่ต้องมีครบทุกครั้ง:</b> ① เงื่อนไข ② <b>โคลอน <code class="inline-code">:</code></b> ท้ายบรรทัด ③ <b>เยื้อง</b>บรรทัดถัดไป — ขาดข้อไหนก็ error</div>
+  </div>
+</div>
+
+<!-- 4 if-else -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · if-else</div>
+    <h2 class="slide-title">if-else — เลือก 2 ทาง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">รูปแบบ</div>
+        <pre class="code-block"><span class="kw">if</span> (เงื่อนไข):
+    คำสั่ง <span class="cm"># เมื่อจริง</span>
+<span class="kw">else</span>:
+    คำสั่ง <span class="cm"># เมื่อเท็จ</span></pre>
+        <div class="code-label" style="margin-top:8px">ตัวอย่าง: ตรวจผ่าน/ตก</div>
+        <pre class="code-block">score = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"คะแนน: "</span>))
+
+<span class="kw">if</span> score &gt;= <span class="nm">50</span>:
+    <span class="fn">print</span>(<span class="st">"ผ่าน"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"ตก"</span>)</pre>
+        <div class="diagram">      ◇ score &gt;= 50
+     จริง │   │ เท็จ
+   ▽"ผ่าน" │   ▽"ตก"
+         │   │
+         └─┬─┘
+           │</div>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่าง: เลขคู่/คี่</div>
+        <pre class="code-block">n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"เลข: "</span>))
+
+<span class="kw">if</span> n % <span class="nm">2</span> == <span class="nm">0</span>:
+    <span class="fn">print</span>(n, <span class="st">"เป็นเลขคู่"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(n, <span class="st">"เป็นเลขคี่"</span>)</pre>
+        <div class="code-label" style="margin-top:6px">ตัวอย่าง: หาค่ามากสุด</div>
+        <pre class="code-block">a = <span class="fn">int</span>(<span class="fn">input</span>())
+b = <span class="fn">int</span>(<span class="fn">input</span>())
+
+<span class="kw">if</span> a &gt; b:
+    <span class="fn">print</span>(<span class="st">"มากสุดคือ"</span>, a)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"มากสุดคือ"</span>, b)
+
+<span class="cm"># หรือใช้ built-in
+print("มากสุดคือ", max(a, b))</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ระวัง:</b> <code class="inline-code">else</code> <b>ไม่มีเงื่อนไข</b> — เขียน <code class="inline-code">else score &lt; 50:</code> เป็น SyntaxError · และ <code class="inline-code">else</code> ต้องเยื้องเท่ากับ <code class="inline-code">if</code> ที่คู่กัน</div>
+  </div>
+</div>
+
+<!-- 5 nested if -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · lecture 5</div>
+    <h2 class="slide-title">Nested if — if ซ้อน if</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">แบบซ้อนจริง (ตามผังงาน)</div>
+        <pre class="code-block">s = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"คะแนน: "</span>))
+
+<span class="kw">if</span> s &gt;= <span class="nm">80</span>:
+    <span class="fn">print</span>(<span class="st">"A"</span>)
+<span class="kw">else</span>:
+    <span class="kw">if</span> s &gt;= <span class="nm">70</span>:
+        <span class="fn">print</span>(<span class="st">"B"</span>)
+    <span class="kw">else</span>:
+        <span class="kw">if</span> s &gt;= <span class="nm">60</span>:
+            <span class="fn">print</span>(<span class="st">"C"</span>)
+        <span class="kw">else</span>:
+            <span class="fn">print</span>(<span class="st">"F"</span>)
+
+<span class="cm"># เยื้องลึกขึ้นเรื่อยๆ อ่านยาก</span></pre>
+      </div>
+      <div>
+        <div class="code-label">แบบ elif — ผลเหมือนกัน อ่านง่ายกว่า</div>
+        <pre class="code-block">s = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"คะแนน: "</span>))
+
+<span class="kw">if</span> s &gt;= <span class="nm">80</span>:
+    <span class="fn">print</span>(<span class="st">"A"</span>)
+<span class="kw">elif</span> s &gt;= <span class="nm">70</span>:
+    <span class="fn">print</span>(<span class="st">"B"</span>)
+<span class="kw">elif</span> s &gt;= <span class="nm">60</span>:
+    <span class="fn">print</span>(<span class="st">"C"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"F"</span>)
+
+<span class="cm"># elif = else if ย่อ
+# เยื้องระดับเดียวหมด</span></pre>
+        <pre class="code-block"><span class="cm"># หลักการทำงาน:
+# เช็คจากบนลงล่าง
+# เจอเงื่อนไขจริงตัวแรก → ทำแล้วออกเลย
+# ไม่เช็คตัวที่เหลือ!</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ต่างกันตรงไหน:</b> ผลลัพธ์เหมือนกัน แต่ <code class="inline-code">elif</code> อ่านง่ายกว่าและไม่เยื้องลึก — <b>ข้อสอบอาจให้แปลงจากแบบหนึ่งเป็นอีกแบบ</b> ต้องเขียนได้ทั้งคู่</div>
+  </div>
+</div>
+
+<!-- 6 กับดักลำดับ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · กับดักใหญ่</div>
+    <h2 class="slide-title">เรียงเงื่อนไขผิดลำดับ — ผิดโดยไม่ error!</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">❌ เรียงจากกว้างไปแคบ</div>
+        <pre class="code-block">s = <span class="nm">90</span>
+
+<span class="kw">if</span> s &gt;= <span class="nm">60</span>:
+    <span class="fn">print</span>(<span class="st">"C"</span>)     <span class="cm"># ← เข้าตัวนี้!</span>
+<span class="kw">elif</span> s &gt;= <span class="nm">70</span>:
+    <span class="fn">print</span>(<span class="st">"B"</span>)
+<span class="kw">elif</span> s &gt;= <span class="nm">80</span>:
+    <span class="fn">print</span>(<span class="st">"A"</span>)</pre>
+        <div class="code-block" style="color:#c0392b;font-weight:700">ได้ "C" ทั้งที่คะแนน 90!</div>
+        <pre class="code-block"><span class="cm"># เพราะ 90 >= 60 เป็นจริง
+# → ทำแล้วออกเลย ไม่เช็คตัวอื่น
+# compile ผ่าน รันได้ แต่ผลผิด
+# ← bug เงียบ หายากที่สุด</span></pre>
+      </div>
+      <div>
+        <div class="code-label">✓ เรียงจากแคบไปกว้าง</div>
+        <pre class="code-block">s = <span class="nm">90</span>
+
+<span class="kw">if</span> s &gt;= <span class="nm">80</span>:
+    <span class="fn">print</span>(<span class="st">"A"</span>)     <span class="cm"># ✓ ถูกต้อง</span>
+<span class="kw">elif</span> s &gt;= <span class="nm">70</span>:
+    <span class="fn">print</span>(<span class="st">"B"</span>)
+<span class="kw">elif</span> s &gt;= <span class="nm">60</span>:
+    <span class="fn">print</span>(<span class="st">"C"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"F"</span>)</pre>
+        <pre class="code-block"><span class="cm"># กฎ: ใช้ &gt;= เรียงจากมากไปน้อย
+#     ใช้ &lt;= เรียงจากน้อยไปมาก</span>
+
+<span class="cm"># หรือระบุช่วงให้ชัดเจน (ไม่ต้องกังวลลำดับ)</span>
+<span class="kw">if</span> <span class="nm">80</span> &lt;= s &lt;= <span class="nm">100</span>: <span class="fn">print</span>(<span class="st">"A"</span>)
+<span class="kw">elif</span> <span class="nm">70</span> &lt;= s &lt; <span class="nm">80</span>: <span class="fn">print</span>(<span class="st">"B"</span>)
+<span class="kw">elif</span> <span class="nm">60</span> &lt;= s &lt; <span class="nm">70</span>: <span class="fn">print</span>(<span class="st">"C"</span>)
+<span class="kw">else</span>: <span class="fn">print</span>(<span class="st">"F"</span>)</pre>
+      </div>
+    </div>
+    <div class="exam"><b>นี่คือข้อสอบยอดฮิต:</b> ให้โค้ดตัดเกรดที่เรียงผิดมา แล้วถามว่า "คะแนน 90 ได้เกรดอะไร" — คำตอบคือเกรดของ<b>เงื่อนไขแรกที่เป็นจริง</b> ไม่ใช่เกรดที่ควรได้</div>
+  </div>
+</div>
+
+<!-- 7 แปลงผังงาน -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · ฝึกแปลง</div>
+    <h2 class="slide-title">อ่านผังงาน → เขียนโค้ด</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์: ตรวจสอบส่วนลด</div>
+        <div class="diagram">   ⬭ เริ่ม
+      │
+   ▱ รับ total
+      │
+   ◇ total &gt;= 1000
+   จริง│      │เท็จ
+▭ dis=total*0.1  ▭ dis=0
+      │      │
+      └───┬──┘
+          │
+  ▭ pay = total - dis
+          │
+     ▽ แสดง pay
+          │
+       ⬭ จบ</div>
+      </div>
+      <div>
+        <div class="code-label">เฉลย</div>
+        <pre class="code-block">total = <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"ยอดซื้อ: "</span>))   <span class="cm"># ▱</span>
+
+<span class="kw">if</span> total &gt;= <span class="nm">1000</span>:                    <span class="cm"># ◇</span>
+    dis = total * <span class="nm">0.1</span>                 <span class="cm"># ▭ ทางจริง</span>
+<span class="kw">else</span>:
+    dis = <span class="nm">0</span>                            <span class="cm"># ▭ ทางเท็จ</span>
+
+pay = total - dis                     <span class="cm"># ▭ หลังบรรจบ</span>
+<span class="fn">print</span>(<span class="st">f"ต้องจ่าย </span>{pay:,.<span class="nm">2</span>f}<span class="st"> บาท"</span>)      <span class="cm"># ▽</span>
+
+<span class="cm"># total = 1200
+# → dis = 120 → pay = 1080.00</span></pre>
+        <pre class="code-block"><span class="cm"># สังเกต: กล่องหลังจุดบรรจบ (pay)
+# ต้องอยู่ "นอก" if-else
+# = ไม่เยื้อง
+# ถ้าเยื้องเข้าไป จะทำงานแค่ทางเดียว!</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เทคนิคแปลงผังงาน:</b> ① กล่องก่อน ◇ = โค้ดก่อน if ② สองแขนงของ ◇ = if / else ③ <b>กล่องหลังจุดบรรจบ = โค้ดนอก if</b> (ไม่เยื้อง) — ข้อ ③ คือจุดที่คนพลาด</div>
+  </div>
+</div>
+
+<!-- 8 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โค้ดนี้ คะแนน 85 จะพิมพ์อะไร?<br><br>
+<code style="font-family:monospace;font-size:13px;background:var(--cal);padding:10px 18px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+s = 85<br>
+if s &gt;= 50:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print("ผ่าน")<br>
+elif s &gt;= 80:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print("ดีมาก")<br>
+else:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print("ตก")
+</code><br><br>
+<em>ใบ้: elif เช็คจากบนลงล่าง เจอจริงตัวแรกแล้วออกเลย<br>
+85 &gt;= 50 จริงไหม? ถ้าจริงแล้วมันจะไปเช็ค 85 &gt;= 80 ต่อไหม?</em><br><br>
+แล้วถ้าอยากให้พิมพ์ "ดีมาก" ต้องแก้ยังไง?</div>
+    </div>
+  </div>
+</div>
+
+<!-- 9 MCQ1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · ลองข้อสอบ</div>
+    <h2 class="slide-title">สัญลักษณ์ ◇ (สี่เหลี่ยมข้าวหลามตัด) หมายถึงอะไร?</h2>
+    <div class="mc-opts" id="mc-f1">
+      <div class="mc-opt" onclick="pickMC('mc-f1',0,2,'Process (การประมวลผล) ใช้สัญลักษณ์ ▭ สี่เหลี่ยมผืนผ้า')"><span class="mc-ltr">A</span> การประมวลผล (Process)</div>
+      <div class="mc-opt" onclick="pickMC('mc-f1',1,2,'Input/Output ใช้ ▱ สี่เหลี่ยมด้านขนาน')"><span class="mc-ltr">B</span> การรับข้อมูล (Input)</div>
+      <div class="mc-opt" onclick="pickMC('mc-f1',2,2,'◇ Decision/Selection = การตัดสินใจ มีทางออก 2 ทาง (จริง/เท็จ) ตรงกับ if และ while')"><span class="mc-ltr">C</span> การตัดสินใจ (Decision)</div>
+      <div class="mc-opt" onclick="pickMC('mc-f1',3,2,'Terminal (จุดเริ่ม/จบ) ใช้ ⬭ วงรี')"><span class="mc-ltr">D</span> จุดเริ่มต้น (Terminal)</div>
+    </div>
+    <div class="ex-feedback" id="mc-f1-fb"></div>
+    <pre class="code-block" style="margin-top:12px">⬭ Terminal เริ่ม/จบ · ▱ Input/Output รับข้อมูล · ▭ Process ประมวลผล
+◇ Decision ตัดสินใจ (2 ทางออก) · ▽ Display แสดงจอภาพ</pre>
+  </div>
+</div>
+
+<!-- 10 MCQ2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · ลองข้อสอบ</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร เมื่อ x = 5?</h2>
+    <pre class="code-block" style="margin-bottom:14px">x = <span class="nm">5</span>
+<span class="kw">if</span> x &gt; <span class="nm">0</span>:
+    <span class="fn">print</span>(<span class="st">"บวก"</span>)
+<span class="fn">print</span>(<span class="st">"จบ"</span>)</pre>
+    <div class="mc-opts" id="mc-f2">
+      <div class="mc-opt" onclick="pickMC('mc-f2',0,2,'print(\"จบ\") ไม่ได้เยื้อง จึงอยู่นอก if — ทำงานเสมอไม่ว่าเงื่อนไขจะจริงหรือไม่')"><span class="mc-ltr">A</span> บวก</div>
+      <div class="mc-opt" onclick="pickMC('mc-f2',1,2,'x = 5 มากกว่า 0 เงื่อนไขเป็นจริง จึงพิมพ์ "บวก" ด้วย')"><span class="mc-ltr">B</span> จบ</div>
+      <div class="mc-opt" onclick="pickMC('mc-f2',2,2,'x=5 &gt; 0 จริง → พิมพ์ "บวก" · แล้ว print("จบ") อยู่นอก if (ไม่เยื้อง) → พิมพ์เสมอ')"><span class="mc-ltr">C</span> บวก แล้วตามด้วย จบ</div>
+      <div class="mc-opt" onclick="pickMC('mc-f2',3,2,'ไม่มี error — โค้ดถูกต้องตามหลัก indentation')"><span class="mc-ltr">D</span> IndentationError</div>
+    </div>
+    <div class="ex-feedback" id="mc-f2-fb"></div>
+    <pre class="code-block" style="margin-top:12px">if x &gt; 0:
+    print("บวก")   ← <b>เยื้อง</b> = อยู่ใน if (ทำเมื่อเงื่อนไขจริง)
+print("จบ")        ← <b>ไม่เยื้อง</b> = อยู่นอก if (ทำเสมอ)
+
+x=5 → เงื่อนไขจริง → พิมพ์ทั้งสองบรรทัด</pre>
+  </div>
+</div>
+
+<!-- 11 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 3 · เติมคำ</div>
+    <h2 class="slide-title">เติมให้ถูก</h2>
+
+    <div class="exercise">
+      <div class="ex-q">① ท้ายบรรทัด if ต้องมีเครื่องหมายอะไรเสมอ</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="เครื่องหมาย">
+        <button class="ex-btn" onclick="checkFill('in1',':',['โคลอน','colon',': (โคลอน)'],[],': (โคลอน) — ลืมแล้ว SyntaxError ทันที','โคลอน : — ต้องมีท้าย if, elif, else, for, while, def ทุกตัว')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">② เขียน "else if" แบบย่อใน Python ใช้คำว่าอะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in2','elif',['elif'],['else if'],'elif — Python ใช้ elif ไม่ใช่ else if แบบภาษาอื่น','elif (ไม่ใช่ else if หรือ elseif)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">③ ตัดเกรดด้วย elif ควรเรียงเงื่อนไขจาก___ไป___ (แคบ/กว้าง)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="เรียงยังไง">
+        <button class="ex-btn" onclick="checkFill('in3','แคบไปกว้าง',['แคบ ไป กว้าง','จากแคบไปกว้าง','มากไปน้อย','จากมากไปน้อย'],['กว้างไปแคบ'],'แคบไปกว้าง (เช่น &gt;=80, &gt;=70, &gt;=60) — เพราะ elif หยุดที่เงื่อนไขจริงตัวแรก','แคบไปกว้าง — ถ้าเรียงกลับกัน คะแนน 90 จะได้เกรด C')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 12 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">📐</div>
+      <div class="summary-title">จบติวบทที่ 3 — Flowchart &amp; Selection</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">5 สัญลักษณ์หลัก</div><div class="sum-body">⬭ เริ่ม/จบ · ▱ รับข้อมูล · ▭ ประมวลผล · ◇ ตัดสินใจ · ▽ แสดงจอ</div></div>
+        <div class="sum-card"><div class="sum-head">Boolean</div><div class="sum-body">True/False ตัวใหญ่ · 0, "", [], None = False · "0" = True!</div></div>
+        <div class="sum-card"><div class="sum-head">โครง if</div><div class="sum-body">เงื่อนไข + <b>โคลอน :</b> + <b>เยื้อง</b> — ขาดข้อไหนก็ error</div></div>
+        <div class="sum-card"><div class="sum-head">Block</div><div class="sum-body">บรรทัดที่เยื้องเท่ากัน = block เดียวกัน · ไม่เยื้อง = นอก if</div></div>
+        <div class="sum-card"><div class="sum-head">elif</div><div class="sum-body">= else if ย่อ · เช็คบนลงล่าง เจอจริงตัวแรกแล้วออกเลย</div></div>
+        <div class="sum-card"><div class="sum-head">กับดักใหญ่</div><div class="sum-body">เรียงเงื่อนไขกว้างไปแคบ = ผลผิดโดยไม่ error (bug เงียบ)</div></div>
+      </div>
+      <a href="slides_ch4.html" class="summary-next">→ ติวบทที่ 4: Loop &amp; Advance Control Flow</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 3 — Flowchart &amp; Selection</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','สัญลักษณ์ 8 ตัว','Boolean','if','if-else','Nested if / elif','กับดักลำดับเงื่อนไข','แปลงผังงาน','เช็คตัวเอง','ข้อสอบ: สัญลักษณ์','ข้อสอบ: indentation','เติมคำ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

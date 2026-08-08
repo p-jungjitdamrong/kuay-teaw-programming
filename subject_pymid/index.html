@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวสอบ Midterm Python — ก๋วยเตี๋ยวเรือ Programming</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f14;--paper:#f5f2eb;--paper2:#ede9df;--paper3:#e4dfd3;
+  --line:#ccc6b8;--dim:#8a8276;--body:#2e2b25;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans Thai',sans-serif;
+  --s-o:#b45309;--s-ol:#fdf0dc;--s-om:#e0a458;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--body);min-height:100vh}
+.hero{background:var(--ink);padding:44px 24px 36px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 100%,rgba(224,164,88,.22),transparent);pointer-events:none}
+.hero-bowl{font-size:52px;line-height:1;display:block;margin-bottom:12px;animation:float 3s ease-in-out infinite;position:relative}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.hero-brand{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.3px;margin-bottom:4px;position:relative}
+.hero-tagline{font-family:var(--mono);font-size:11px;color:#546e7a;letter-spacing:1px;margin-bottom:18px;position:relative}
+.main{max-width:960px;margin:0 auto;padding:0 20px 60px}
+.section{padding-top:32px}
+.pep{background:#fff;border:1px solid var(--line);border-left:4px solid var(--s-o);border-radius:10px;padding:16px 20px;margin-top:28px;font-size:13.5px;line-height:1.8}
+.pep b{color:var(--s-o)}
+.pep a{color:var(--s-o)}
+.sec-hd{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sec-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;background:var(--s-ol)}
+.sec-info{flex:1}
+.sec-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:1px}
+.sec-desc{font-size:12px;color:var(--dim)}
+.sec-line{flex:1;height:1px;background:var(--line)}
+.grid{display:grid;gap:11px;grid-template-columns:1fr}
+@media(min-width:520px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:820px){.grid.three{grid-template-columns:repeat(3,1fr)}}
+.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px 18px;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s;position:relative;overflow:hidden}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:13px 13px 0 0;opacity:.5;transition:opacity .18s;background:linear-gradient(90deg,var(--s-o),var(--s-om))}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.08)}
+.card:hover::after{opacity:1}
+.card:hover .arr{transform:translateX(3px);color:var(--body)}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.em{font-size:24px;line-height:1}
+.arr{font-size:13px;color:var(--dim);transition:transform .18s,color .18s;margin-top:2px}
+.badge{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;margin-bottom:5px;display:inline-block;background:var(--s-ol);color:var(--s-o)}
+.card-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.3}
+.card-desc{font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:10px;flex:1}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+.chip{font-family:var(--mono);font-size:10px;color:var(--dim);background:var(--paper2);border:1px solid var(--line);border-radius:4px;padding:2px 6px}
+.footer{text-align:center;padding:18px 20px 32px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<div class="hero" style="position:relative">
+  <a href="../index.html" style="position:absolute;top:14px;left:16px;font-family:var(--mono);font-size:11px;color:#9ba3ad;text-decoration:none">← วิชาทั้งหมด</a>
+  <span class="hero-bowl">🐍</span>
+  <div class="hero-brand">ติวสอบ Midterm — Python</div>
+  <div class="hero-tagline">// Computers &amp; Programming · lecture บท 1–7 · เร่งรัดก่อนสอบ</div>
+</div>
+
+<div class="main">
+
+  <div class="pep">
+    <b>อ่านก่อนเริ่มติว (พูดตรงๆ):</b> เราไม่มีข้อสอบเก่า — คอร์สนี้อิงจาก <b>สไลด์ lecture บท 1–7 ที่อาจารย์สอน</b> ล้วนๆ
+    เนื้อหาครึ่งแรกของวิชานี้เป็น <b>"พื้นฐานที่ต้องแม่น"</b> ข้อสอบจึงมักเป็น
+    "คำนวณค่าของนิพจน์" · "ไล่โค้ดแล้วบอกผลลัพธ์" · "อ่านผังงานแล้วเขียนโค้ด" มากกว่าท่องนิยาม
+    · ทุกบทมี <b>ตัวอย่างค่าที่อาจารย์ให้ในสไลด์</b> (เช่น −5 % 2 = 1) ซึ่งเป็นจุดที่ออกสอบได้ตรงๆ
+    · <b>บท 1 คือรากของทุกบท</b> — indentation ผิดข้อเดียว โค้ดพังทั้งโปรแกรม อย่าข้าม
+  </div>
+
+  <div class="section">
+    <div class="sec-hd">
+      <div class="sec-icon">🎯</div>
+      <div class="sec-info">
+        <div class="sec-title">ติว 4 บท ครอบคลุม lecture 1–7 + Cheat Sheet</div>
+        <div class="sec-desc">รวบบทที่เนื้อหาต่อเนื่องกันเข้าด้วยกัน อ่านเรียงลงมาได้เลย</div>
+      </div>
+      <div class="sec-line"></div>
+    </div>
+    <div class="grid three">
+
+      <a class="card" href="slides_ch1.html">
+        <div class="card-top"><span class="em">📘</span><span class="arr">→</span></div>
+        <span class="badge">lecture 1–2</span>
+        <div class="card-title">พื้นฐาน Python — กฎ 3 ข้อ</div>
+        <div class="card-desc">ภาษาคอมพิวเตอร์ 3 ระดับ, case-sensitive / comment / indentation, ตัวแปร &amp; ชนิดข้อมูล, input-output, reserved words, math</div>
+        <div class="chips"><span class="chip">13 slides</span><span class="chip">รากของทุกบท</span></div>
+      </a>
+
+      <a class="card" href="slides_ch2.html">
+        <div class="card-top"><span class="em">🧮</span><span class="arr">→</span></div>
+        <span class="badge">lecture 3 · ออกแน่</span>
+        <div class="card-title">Expression — คำนวณให้ถูกทุกข้อ</div>
+        <div class="card-desc">ตารางค่าจากสไลด์อาจารย์ (−5%2, 5/2, 5%0), ลำดับตัวดำเนินการ, += −= *=, type conversion, relational, logical</div>
+        <div class="chips"><span class="chip">14 slides</span><span class="chip">คำนวณเยอะสุด</span></div>
+      </a>
+
+      <a class="card" href="slides_ch3.html">
+        <div class="card-top"><span class="em">📐</span><span class="arr">→</span></div>
+        <span class="badge">lecture 4–5</span>
+        <div class="card-title">Flowchart &amp; Selection</div>
+        <div class="card-desc">สัญลักษณ์ผังงาน 8 ตัว, boolean, if / if-else / nested if / elif, แปลงผังงาน ↔ โค้ด, กับดักเรียงเงื่อนไขผิด</div>
+        <div class="chips"><span class="chip">13 slides</span><span class="chip">อ่านผังงานให้เป็น</span></div>
+      </a>
+
+      <a class="card" href="slides_ch4.html">
+        <div class="card-top"><span class="em">🔁</span><span class="arr">→</span></div>
+        <span class="badge">lecture 6–7</span>
+        <div class="card-title">Loop &amp; Advance Control Flow</div>
+        <div class="card-desc">while / for / range() 3 แบบ, Counting vs Sentinel Loop, ลูปคู่กับ if, ไล่ trace ตัวแปรทีละรอบ</div>
+        <div class="chips"><span class="chip">13 slides</span><span class="chip">trace ให้เป็น</span></div>
+      </a>
+
+      <a class="card" href="slides_final.html">
+        <div class="card-top"><span class="em">✅</span><span class="arr">→</span></div>
+        <span class="badge">ก่อนเข้าห้องสอบ</span>
+        <div class="card-title">Cheat Sheet + จุดหลอกยอดฮิต</div>
+        <div class="card-desc">ตารางค่าที่ต้องจำ, ลำดับตัวดำเนินการ, 10 จุดหลอกที่เสียคะแนนฟรี, โค้ด 5 ท่าท่องจำ, แผนคืนก่อนสอบ</div>
+        <div class="chips"><span class="chip">9 slides</span><span class="chip">ทวน 30 นาทีจบ</span></div>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<div class="footer">made with ♥ by ก๋วยเตี๋ยวเรือ Programming · สอบ Final แล้วอ่าน <a href="../subject_pyfinal/index.html" style="color:var(--s-o)">ติว Final (บท 8–14)</a> ต่อ</div>
+</body>
+</html>
