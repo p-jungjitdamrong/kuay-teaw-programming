@@ -278,13 +278,13 @@ print(a, b)</code><br><br><em>a และ b มีค่าเท่าไหร
 
 <span class="nm">s</span>, <span class="nm">m</span> = <span class="fn">calc</span>(<span class="nm">3</span>, <span class="nm">1</span>, <span class="nm">4</span>, <span class="nm">1</span>, <span class="nm">5</span>)
 <span class="fn">print</span>(<span class="st">f"{<span class="nm">s</span>} {<span class="nm">m</span>}"</span>)</pre>
-    <div id="mc-t3" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-t3','A','C','❌ 3+1+4+1+5 = 14 ไม่ใช่ 15')">A) 15 5</button>
-      <button class="mc-btn" onclick="pickMC('mc-t3','B','C','❌ max คือ 5 ไม่ใช่ 4')">B) 14 4</button>
-      <button class="mc-btn" onclick="pickMC('mc-t3','C','C','✅ sum([3,1,4,1,5])=14, max([3,1,4,1,5])=5')">C) 14 5</button>
-      <button class="mc-btn" onclick="pickMC('mc-t3','D','C','❌ *nums รับหลายค่าเป็น tuple — ไม่ error')">D) TypeError</button>
+    <div class="mc-opts" id="mc-t3">
+      <div class="mc-opt" onclick="pickMC('mc-t3',0,2,'3+1+4+1+5 = 14 ไม่ใช่ 15')"><span class="mc-ltr">A</span> 15 5</div>
+      <div class="mc-opt" onclick="pickMC('mc-t3',1,2,'max คือ 5 ไม่ใช่ 4')"><span class="mc-ltr">B</span> 14 4</div>
+      <div class="mc-opt" onclick="pickMC('mc-t3',2,2,'sum([3,1,4,1,5])=14, max([3,1,4,1,5])=5')"><span class="mc-ltr">C</span> 14 5</div>
+      <div class="mc-opt" onclick="pickMC('mc-t3',3,2,'*nums รับหลายค่าเป็น tuple — ไม่ error')"><span class="mc-ltr">D</span> TypeError</div>
     </div>
-  </div>
+    <div class="ex-feedback" id="mc-t3-fb"></div></div>
 </div>
 
 <!-- ════ SLIDE 10 — Fill-in ════ -->
@@ -294,26 +294,32 @@ print(a, b)</code><br><br><em>a และ b มีค่าเท่าไหร
     <div class="slide-eyebrow">บทที่ 3 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① เขียน lambda function ที่รับ x แล้วคืน x*x</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f3a" placeholder="lambda ...">
-      <button class="fill-btn" onclick="checkFill('f3a','lambda x: x*x',['lambda x: x**2','lambda x : x*x','lambda x: x * x'],[],'✅ ถูกต้อง!','❌ Hint: lambda x: x*x')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① เขียน lambda function ที่รับ x แล้วคืน x*x</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="lambda ...">
+        <button class="ex-btn" onclick="checkFill('in1','lambda x: x*x',['lambda x: x**2','lambda x : x*x','lambda x: x * x'],[],'ถูกต้อง!','Hint: lambda x: x*x')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="f3a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② parameter ชนิดไหนที่รับ keyword arguments ไม่จำกัดเป็น dict?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f3b" placeholder="**...">
-      <button class="fill-btn" onclick="checkFill('f3b','**kwargs',['kwargs'],[],'✅ **kwargs รับ keyword args เป็น dict','❌ ใช้ ** นำหน้าชื่อ: **kwargs')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② parameter ชนิดไหนที่รับ keyword arguments ไม่จำกัดเป็น dict?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="**...">
+        <button class="ex-btn" onclick="checkFill('in2','**kwargs',['kwargs'],[],'**kwargs รับ keyword args เป็น dict','ใช้ ** นำหน้าชื่อ: **kwargs')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="f3b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ function ที่ไม่มี return statement จะคืนค่าอะไร?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f3c" placeholder="ค่าที่คืน">
-      <button class="fill-btn" onclick="checkFill('f3c','none',['null'],[],'✅ None — เทียบเท่า NULL ใน C','❌ Python ใช้ None (N ตัวใหญ่) แต่พิมพ์เล็กก็รับ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ function ที่ไม่มี return statement จะคืนค่าอะไร?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ค่าที่คืน">
+        <button class="ex-btn" onclick="checkFill('in3','none',['null'],[],'None — เทียบเท่า NULL ใน C','Python ใช้ None (N ตัวใหญ่) แต่พิมพ์เล็กก็รับ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="f3c-msg" class="fill-msg"></div>
   </div>
 </div>
 

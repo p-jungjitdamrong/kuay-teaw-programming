@@ -375,13 +375,13 @@ p->next          <span class="cm">/* = (*p).next
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 1 · ลองข้อสอบ</div>
     <h2 class="slide-title">ข้อใดใช้งาน array ใน C ได้ถูกต้อง?</h2>
-    <div id="mc-t1" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-t1','A','C','❌ x = y ทั้งก้อนไม่ได้ — assignment ต้องทีละ index (หรือใช้ loop)')">A) int x[5], y[5]; x = y;</button>
-      <button class="mc-btn" onclick="pickMC('mc-t1','B','C','❌ เปรียบเทียบทั้งก้อนไม่ได้ — ต้องวนเทียบทีละตัว')">B) if (x == y) printf("same");</button>
-      <button class="mc-btn" onclick="pickMC('mc-t1','C','C','✅ ประกาศพร้อมค่าเริ่มต้นทำได้ — เป็นข้อยกเว้นเดียวของ assignment ทั้งก้อน')">C) int x[5] = {1,2,3,4,5};</button>
-      <button class="mc-btn" onclick="pickMC('mc-t1','D','C','❌ พิมพ์ array int ทั้งก้อนไม่ได้ — ยกเว้นเฉพาะ C string (%s)')">D) int x[5]; printf("%d", x);</button>
+    <div class="mc-opts" id="mc-t1">
+      <div class="mc-opt" onclick="pickMC('mc-t1',0,2,'x = y ทั้งก้อนไม่ได้ — assignment ต้องทีละ index (หรือใช้ loop)')"><span class="mc-ltr">A</span> int x[5], y[5]; x = y;</div>
+      <div class="mc-opt" onclick="pickMC('mc-t1',1,2,'เปรียบเทียบทั้งก้อนไม่ได้ — ต้องวนเทียบทีละตัว')"><span class="mc-ltr">B</span> if (x == y) printf("same");</div>
+      <div class="mc-opt" onclick="pickMC('mc-t1',2,2,'ประกาศพร้อมค่าเริ่มต้นทำได้ — เป็นข้อยกเว้นเดียวของ assignment ทั้งก้อน')"><span class="mc-ltr">C</span> int x[5] = {1,2,3,4,5};</div>
+      <div class="mc-opt" onclick="pickMC('mc-t1',3,2,'พิมพ์ array int ทั้งก้อนไม่ได้ — ยกเว้นเฉพาะ C string (%s)')"><span class="mc-ltr">D</span> int x[5]; printf("%d", x);</div>
     </div>
-    <pre class="code-block" style="margin-top:12px"><span class="cm">/* หลักตัดตัวเลือก: เห็น array ถูกใช้ "ทั้งก้อน" โดยไม่มี index → ผิด
+    <div class="ex-feedback" id="mc-t1-fb"></div><pre class="code-block" style="margin-top:12px"><span class="cm">/* หลักตัดตัวเลือก: เห็น array ถูกใช้ "ทั้งก้อน" โดยไม่มี index → ผิด
    ยกเว้น ① ประกาศพร้อมค่า {1,2,3}  ② C string กับ %s
    ข้อนี้ C คือประกาศพร้อมค่า → ถูก */</span></pre>
   </div>
@@ -394,26 +394,32 @@ p->next          <span class="cm">/* = (*p).next
     <div class="slide-eyebrow">ติวบทที่ 1 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — แบบที่ข้อสอบเว้นช่องให้เขียน</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① InsertItem ต้องวนเลื่อนข้อมูลจากตำแหน่ง ___ มาหา k (ท้าย/หน้า)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft1a" placeholder="ท้ายหรือหน้า">
-      <button class="fill-btn" onclick="checkFill('ft1a','ท้าย',['ท้ายสุด','last','จากท้าย','ตัวสุดท้าย'],[],'✅ วนจากท้าย (Last) ลงมาหา k — วนจากหน้าไปค่าจะถูกทับ','❌ ต้องวนจาก \"ท้าย\" มา — ไม่งั้นค่าถูกทับก่อนถูกเลื่อน')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① InsertItem ต้องวนเลื่อนข้อมูลจากตำแหน่ง ___ มาหา k (ท้าย/หน้า)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ท้ายหรือหน้า">
+        <button class="ex-btn" onclick="checkFill('in1','ท้าย',['ท้ายสุด','last','จากท้าย','ตัวสุดท้าย'],[],'วนจากท้าย (Last) ลงมาหา k — วนจากหน้าไปค่าจะถูกทับ','ต้องวนจาก \"ท้าย\" มา — ไม่งั้นค่าถูกทับก่อนถูกเลื่อน')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="ft1a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② การ insert/remove ข้อมูลกลาง array ใช้เวลา O(___) เพราะต้องเลื่อนข้อมูล</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft1b" placeholder="complexity">
-      <button class="fill-btn" onclick="checkFill('ft1b','n',['O(n)','o(n)'],[],'✅ O(n) — worst case เลื่อนเกือบทุกตัว · ประโยคนี้คือเหตุผลที่มี Linked List','❌ O(n) — ต้องเลื่อนข้อมูลสูงสุด n ตัว')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② การ insert/remove ข้อมูลกลาง array ใช้เวลา O(___) เพราะต้องเลื่อนข้อมูล</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="complexity">
+        <button class="ex-btn" onclick="checkFill('in2','n',['O(n)','o(n)'],[],'O(n) — worst case เลื่อนเกือบทุกตัว · ประโยคนี้คือเหตุผลที่มี Linked List','O(n) — ต้องเลื่อนข้อมูลสูงสุด n ตัว')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="ft1b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ การเข้าถึงสมาชิก array ด้วย index เช่น A[5] ใช้เวลา O(___)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft1c" placeholder="complexity">
-      <button class="fill-btn" onclick="checkFill('ft1c','1',['O(1)','o(1)'],[],'✅ O(1) — คำนวณ address ได้ทันที นี่คือจุดแข็งเดียวที่ array ชนะ Linked List','❌ O(1) — เข้าถึงตรงด้วย index ได้ทันที (จุดแข็งของ array)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ การเข้าถึงสมาชิก array ด้วย index เช่น A[5] ใช้เวลา O(___)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="complexity">
+        <button class="ex-btn" onclick="checkFill('in3','1',['O(1)','o(1)'],[],'O(1) — คำนวณ address ได้ทันที นี่คือจุดแข็งเดียวที่ array ชนะ Linked List','O(1) — เข้าถึงตรงด้วย index ได้ทันที (จุดแข็งของ array)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="ft1c-msg" class="fill-msg"></div>
   </div>
 </div>
 

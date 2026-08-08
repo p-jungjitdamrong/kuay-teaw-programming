@@ -359,13 +359,13 @@ public static void main(String[] args) {<br>
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 13 · ลองข้อสอบ</div>
     <h2 class="slide-title">ต้องการอ่านไฟล์ข้อความทีละบรรทัด ควรใช้คลาสใด?</h2>
-    <div id="mc-o13" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-o13','A','C','❌ FileInputStream เป็น byte stream — เหมาะกับไฟล์ binary ไม่ใช่ข้อความ และอ่านทีละบรรทัดไม่ได้')">A) FileInputStream</button>
-      <button class="mc-btn" onclick="pickMC('mc-o13','B','C','❌ FileWriter ใช้ "เขียน" ไม่ใช่อ่าน')">B) FileWriter</button>
-      <button class="mc-btn" onclick="pickMC('mc-o13','C','C','✅ BufferedReader ห่อ FileReader → มี readLine() อ่านทีละบรรทัดได้ และเป็น character stream เหมาะกับไฟล์ข้อความ')">C) BufferedReader ห่อ FileReader</button>
-      <button class="mc-btn" onclick="pickMC('mc-o13','D','C','❌ PrintWriter ใช้ "เขียน" (println/printf ลงไฟล์)')">D) PrintWriter</button>
+    <div class="mc-opts" id="mc-o13">
+      <div class="mc-opt" onclick="pickMC('mc-o13',0,2,'FileInputStream เป็น byte stream — เหมาะกับไฟล์ binary ไม่ใช่ข้อความ และอ่านทีละบรรทัดไม่ได้')"><span class="mc-ltr">A</span> FileInputStream</div>
+      <div class="mc-opt" onclick="pickMC('mc-o13',1,2,'FileWriter ใช้ "เขียน" ไม่ใช่อ่าน')"><span class="mc-ltr">B</span> FileWriter</div>
+      <div class="mc-opt" onclick="pickMC('mc-o13',2,2,'BufferedReader ห่อ FileReader → มี readLine() อ่านทีละบรรทัดได้ และเป็น character stream เหมาะกับไฟล์ข้อความ')"><span class="mc-ltr">C</span> BufferedReader ห่อ FileReader</div>
+      <div class="mc-opt" onclick="pickMC('mc-o13',3,2,'PrintWriter ใช้ "เขียน" (println/printf ลงไฟล์)')"><span class="mc-ltr">D</span> PrintWriter</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">2 กฎเดาชื่อคลาส: ลงท้าย Stream = byte / ลงท้าย Reader-Writer = character
+    <div class="ex-feedback" id="mc-o13-fb"></div><pre class="code-block" style="margin-top:12px">2 กฎเดาชื่อคลาส: ลงท้าย Stream = byte / ลงท้าย Reader-Writer = character
                   ขึ้นต้น Input-Reader = อ่าน / ขึ้นต้น Output-Writer = เขียน
 ไฟล์ข้อความ + ทีละบรรทัด → new BufferedReader(new FileReader("f.txt")).readLine()</pre>
   </div>
@@ -378,26 +378,32 @@ public static void main(String[] args) {<br>
     <div class="slide-eyebrow">ติวบทที่ 13 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — บทสุดท้ายแล้ว!</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① คลาสฐาน 4 ตัวใน java.io ที่รับข้อมูลแบบ char คือ Reader กับ ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo13a" placeholder="ชื่อคลาส">
-      <button class="fill-btn" onclick="checkFill('fo13a','Writer',['writer'],[],'✅ Writer — คู่ char คือ Reader/Writer · คู่ byte คือ InputStream/OutputStream','❌ Writer — Reader อ่าน / Writer เขียน (ทั้งคู่เป็น character stream)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① คลาสฐาน 4 ตัวใน java.io ที่รับข้อมูลแบบ char คือ Reader กับ ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ชื่อคลาส">
+        <button class="ex-btn" onclick="checkFill('in1','Writer',['writer'],[],'Writer — คู่ char คือ Reader/Writer · คู่ byte คือ InputStream/OutputStream','Writer — Reader อ่าน / Writer เขียน (ทั้งคู่เป็น character stream)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fo13a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② br.readLine() คืนค่า ___ เมื่ออ่านจนจบไฟล์</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo13b" placeholder="ค่าอะไร">
-      <button class="fill-btn" onclick="checkFill('fo13b','null',['null','ค่า null'],[],'✅ null — จึงเขียน while ((line = br.readLine()) != null)','❌ null — เป็นเงื่อนไขจบ loop มาตรฐานของการอ่านไฟล์')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② br.readLine() คืนค่า ___ เมื่ออ่านจนจบไฟล์</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ค่าอะไร">
+        <button class="ex-btn" onclick="checkFill('in2','null',['null','ค่า null'],[],'null — จึงเขียน while ((line = br.readLine()) != null)','null — เป็นเงื่อนไขจบ loop มาตรฐานของการอ่านไฟล์')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fo13b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ new File("x.txt") สร้างไฟล์จริงบนดิสก์เลยหรือไม่</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo13c" placeholder="ใช่/ไม่ใช่">
-      <button class="fill-btn" onclick="checkFill('fo13c','ไม่ใช่',['ไม่','no','ไม่สร้าง'],[],'✅ ไม่ใช่ — แค่สร้าง object ที่อ้างถึง path · ไฟล์เกิดตอน createNewFile() หรือเขียนด้วย Writer','❌ ไม่ใช่ — File object เป็นแค่ "ที่อยู่" ยังไม่ใช่ไฟล์จริง')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ new File("x.txt") สร้างไฟล์จริงบนดิสก์เลยหรือไม่</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ใช่/ไม่ใช่">
+        <button class="ex-btn" onclick="checkFill('in3','ไม่ใช่',['ไม่','no','ไม่สร้าง'],[],'ไม่ใช่ — แค่สร้าง object ที่อ้างถึง path · ไฟล์เกิดตอน createNewFile() หรือเขียนด้วย Writer','ไม่ใช่ — File object เป็นแค่ "ที่อยู่" ยังไม่ใช่ไฟล์จริง')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fo13c-msg" class="fill-msg"></div>
   </div>
 </div>
 

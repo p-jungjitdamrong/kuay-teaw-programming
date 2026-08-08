@@ -424,13 +424,13 @@ s.<span class="fn">toUpperCase</span>();
     <pre class="code-block" style="margin-bottom:14px">String s = <span class="st">"sad sad happy"</span>;
 s.<span class="fn">replace</span>(<span class="st">"sad"</span>, <span class="st">"ok"</span>);
 System.out.<span class="fn">println</span>(s);</pre>
-    <div id="mc-l2" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-l2','A','C','❌ replace ทำทุกคำก็จริง แต่ดูดีๆ ว่ารับค่ากลับหรือเปล่า')">A) ok ok happy</button>
-      <button class="mc-btn" onclick="pickMC('mc-l2','B','C','❌ replace ไม่ได้แทนแค่ตัวแรก — แต่นั่นไม่ใช่ประเด็นของข้อนี้')">B) ok sad happy</button>
-      <button class="mc-btn" onclick="pickMC('mc-l2','C','C','✅ String เป็น immutable — replace คืน String ใหม่แต่ไม่มีใครรับ ค่า s เดิมไม่เปลี่ยน')">C) sad sad happy</button>
-      <button class="mc-btn" onclick="pickMC('mc-l2','D','C','❌ ไม่ error — โค้ด valid แค่ผลของ replace ถูกทิ้งไปเฉยๆ')">D) compile error</button>
+    <div class="mc-opts" id="mc-l2">
+      <div class="mc-opt" onclick="pickMC('mc-l2',0,2,'replace ทำทุกคำก็จริง แต่ดูดีๆ ว่ารับค่ากลับหรือเปล่า')"><span class="mc-ltr">A</span> ok ok happy</div>
+      <div class="mc-opt" onclick="pickMC('mc-l2',1,2,'replace ไม่ได้แทนแค่ตัวแรก — แต่นั่นไม่ใช่ประเด็นของข้อนี้')"><span class="mc-ltr">B</span> ok sad happy</div>
+      <div class="mc-opt" onclick="pickMC('mc-l2',2,2,'String เป็น immutable — replace คืน String ใหม่แต่ไม่มีใครรับ ค่า s เดิมไม่เปลี่ยน')"><span class="mc-ltr">C</span> sad sad happy</div>
+      <div class="mc-opt" onclick="pickMC('mc-l2',3,2,'ไม่ error — โค้ด valid แค่ผลของ replace ถูกทิ้งไปเฉยๆ')"><span class="mc-ltr">D</span> compile error</div>
     </div>
-    <pre class="code-block" style="margin-top:12px"><span class="cm">// s.replace(...) คืน String ใหม่ แต่ไม่มีตัวแปรรับ → ถูกทิ้ง
+    <div class="ex-feedback" id="mc-l2-fb"></div><pre class="code-block" style="margin-top:12px"><span class="cm">// s.replace(...) คืน String ใหม่ แต่ไม่มีตัวแปรรับ → ถูกทิ้ง
 // s ตัวเดิมไม่เปลี่ยน (immutable) → พิมพ์ "sad sad happy"
 
 // แก้ให้ถูก:</span>
@@ -445,26 +445,32 @@ s = s.<span class="fn">replace</span>(<span class="st">"sad"</span>, <span class
     <div class="slide-eyebrow">Lab 2 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① รับประโยคที่มีช่องว่างจากคีย์บอร์ด ต้องใช้ scanner.___()</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl2a" placeholder="method">
-      <button class="fill-btn" onclick="checkFill('fl2a','nextLine',['nextline','nextLine()'],[],'✅ nextLine() อ่านทั้งบรรทัดรวมช่องว่าง — nextInt/next หยุดที่ช่องว่าง','❌ ต้องใช้ nextLine() — nextInt() กับ next() หยุดที่ช่องว่าง')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① รับประโยคที่มีช่องว่างจากคีย์บอร์ด ต้องใช้ scanner.___()</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="method">
+        <button class="ex-btn" onclick="checkFill('in1','nextLine',['nextline','nextLine()'],[],'nextLine() อ่านทั้งบรรทัดรวมช่องว่าง — nextInt/next หยุดที่ช่องว่าง','ต้องใช้ nextLine() — nextInt() กับ next() หยุดที่ช่องว่าง')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fl2a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② แปลง char '7' เป็น int 7 เขียนว่า charAt(i) - ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl2b" placeholder="อะไร?">
-      <button class="fill-btn" onclick="checkFill('fl2b',&quot;'0'&quot;,['0','\'0\''],[],'✅ ลบด้วย char \'0\' — ASCII \'7\'(55) − \'0\'(48) = 7','❌ ลบด้วย \'0\' (char ศูนย์) — ใช้หลัก ASCII: \'7\' − \'0\' = 55 − 48 = 7')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② แปลง char '7' เป็น int 7 เขียนว่า charAt(i) - ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="อะไร?">
+        <button class="ex-btn" onclick="checkFill('in2',&quot;'0'&quot;,['0','\'0\''],[],'ลบด้วย char \'0\' — ASCII \'7\'(55) − \'0\'(48) = 7','ลบด้วย \'0\' (char ศูนย์) — ใช้หลัก ASCII: \'7\' − \'0\' = 55 − 48 = 7')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fl2b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ ปฏิทิน: วัน d ตรงกับวันเสาร์เมื่อ (start − 1 + d) % ___ == 0</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl2c" placeholder="ตัวเลข">
-      <button class="fill-btn" onclick="checkFill('fl2c','7',['7'],[],'✅ % 7 เพราะสัปดาห์มี 7 วัน — pattern ซ้ำทุก 7','❌ % 7 — pattern วนซ้ำทุก 7 วัน (1 สัปดาห์)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ ปฏิทิน: วัน d ตรงกับวันเสาร์เมื่อ (start − 1 + d) % ___ == 0</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ตัวเลข">
+        <button class="ex-btn" onclick="checkFill('in3','7',['7'],[],'% 7 เพราะสัปดาห์มี 7 วัน — pattern ซ้ำทุก 7','% 7 — pattern วนซ้ำทุก 7 วัน (1 สัปดาห์)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fl2c-msg" class="fill-msg"></div>
   </div>
 </div>
 

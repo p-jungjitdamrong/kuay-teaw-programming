@@ -404,13 +404,13 @@ printf("%d", x);
   <div class="slide-body">
     <div class="slide-eyebrow">บทที่ 3 · MCQ</div>
     <h2 class="slide-title">ค่าของ <code class="inline-code">(5 &lt;&lt; 2) | 3</code> คือ?</h2>
-    <div id="mc-bw3" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-bw3','A','B','❌ 5<<2 คือเลื่อนซ้าย 2 = ×4 ไม่ใช่ ×2')">A) 13</button>
-      <button class="mc-btn" onclick="pickMC('mc-bw3','B','B','✅ 5<<2 = 20 (10100₂) แล้ว | 3 (00011₂) = 10111₂ = 23')">B) 23</button>
-      <button class="mc-btn" onclick="pickMC('mc-bw3','C','B','❌ 20+3=23 บังเอิญเท่า OR ในเคสนี้ แต่ 24 ไม่ใช่ทั้งคู่ — ลองกางเป็น bits')">C) 24</button>
-      <button class="mc-btn" onclick="pickMC('mc-bw3','D','B','❌ | คือ OR ไม่ใช่ AND — 20 & 3 = 0 ต่างหาก')">D) 0</button>
+    <div class="mc-opts" id="mc-bw3">
+      <div class="mc-opt" onclick="pickMC('mc-bw3',0,1,'5<<2 คือเลื่อนซ้าย 2 = ×4 ไม่ใช่ ×2')"><span class="mc-ltr">A</span> 13</div>
+      <div class="mc-opt" onclick="pickMC('mc-bw3',1,1,'5<<2 = 20 (10100₂) แล้ว | 3 (00011₂) = 10111₂ = 23')"><span class="mc-ltr">B</span> 23</div>
+      <div class="mc-opt" onclick="pickMC('mc-bw3',2,1,'20+3=23 บังเอิญเท่า OR ในเคสนี้ แต่ 24 ไม่ใช่ทั้งคู่ — ลองกางเป็น bits')"><span class="mc-ltr">C</span> 24</div>
+      <div class="mc-opt" onclick="pickMC('mc-bw3',3,1,'| คือ OR ไม่ใช่ AND — 20 & 3 = 0 ต่างหาก')"><span class="mc-ltr">D</span> 0</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">ขั้น 1: 5 &lt;&lt; 2
+    <div class="ex-feedback" id="mc-bw3-fb"></div><pre class="code-block" style="margin-top:12px">ขั้น 1: 5 &lt;&lt; 2
   00101 (5) เลื่อนซ้าย 2 → 10100 (20)   /* 5 × 4 */
 
 ขั้น 2: 20 | 3
@@ -430,26 +430,32 @@ printf("%d", x);
     <div class="slide-eyebrow">บทที่ 3 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① 1011₂ + 0011₂ = ___₂</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fbw3a" placeholder="เลขฐาน 2">
-      <button class="fill-btn" onclick="checkFill('fbw3a','1110',['01110'],[],'✅ 11 + 3 = 14 = 1110₂','❌ 1011(11) + 0011(3): หลัก1: 1+1=0ทด1, หลัก2: 1+1+1=1ทด1, หลัก3: 0+0+1=1, หลัก4: 1 → 1110₂ = 14')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① 1011₂ + 0011₂ = ___₂</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="เลขฐาน 2">
+        <button class="ex-btn" onclick="checkFill('in1','1110',['01110'],[],'11 + 3 = 14 = 1110₂','1011(11) + 0011(3): หลัก1: 1+1=0ทด1, หลัก2: 1+1+1=1ทด1, หลัก3: 0+0+1=1, หลัก4: 1 → 1110₂ = 14')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fbw3a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② x &lt;&lt; 3 เท่ากับ x คูณด้วย ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fbw3b" placeholder="ตัวเลข">
-      <button class="fill-btn" onclick="checkFill('fbw3b','8',['8'],[],'✅ << 3 = ×2³ = ×8','❌ เลื่อนซ้าย n ครั้ง = คูณ 2ⁿ → <<3 = ×8')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② x &lt;&lt; 3 เท่ากับ x คูณด้วย ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ตัวเลข">
+        <button class="ex-btn" onclick="checkFill('in2','8',['8'],[],'<< 3 = ×2³ = ×8','เลื่อนซ้าย n ครั้ง = คูณ 2ⁿ → <<3 = ×8')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fbw3b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ เช็คว่า flag เปิดอยู่ไหม ใช้ operator ตัวไหน? (& | ^ ~)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fbw3c" placeholder="operator">
-      <button class="fill-btn" onclick="checkFill('fbw3c','&',['and','&amp;'],[],'✅ เช็คใช้ & — if (perm & PERM_WRITE) · เปิดใช้ |= · ปิดใช้ &= ~ · สลับใช้ ^=','❌ เช็คใช้ & (AND) — ถ้า bit นั้นเปิด ผลจะไม่เป็น 0')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ เช็คว่า flag เปิดอยู่ไหม ใช้ operator ตัวไหน? (& | ^ ~)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="operator">
+        <button class="ex-btn" onclick="checkFill('in3','&',['and','&amp;'],[],'เช็คใช้ & — if (perm & PERM_WRITE) · เปิดใช้ |= · ปิดใช้ &= ~ · สลับใช้ ^=','เช็คใช้ & (AND) — ถ้า bit นั้นเปิด ผลจะไม่เป็น 0')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fbw3c-msg" class="fill-msg"></div>
   </div>
 </div>
 

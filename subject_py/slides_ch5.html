@@ -344,13 +344,13 @@ print(Counter.count)</code><br><br><em>count มีค่าเท่าไห�
 
 <span class="nm">a</span> = <span class="fn">Acc</span>(<span class="nm">100</span>)
 <span class="fn">print</span>(a.b)</pre>
-    <div id="mc-t5" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-t5','A','C','❌ 100 คือ self.__b แต่ @property คืน self.__b * 2')">A) 100</button>
-      <button class="mc-btn" onclick="pickMC('mc-t5','B','C','❌ AttributeError จะเกิดถ้าเรียก a.__b จากนอก class แต่ a.b เป็น @property ที่ถูกต้อง')">B) AttributeError</button>
-      <button class="mc-btn" onclick="pickMC('mc-t5','C','C','✅ @property b คืน self.__b*2 = 100*2 = 200')">C) 200</button>
-      <button class="mc-btn" onclick="pickMC('mc-t5','D','C','❌ ไม่มี TypeError — a.b เรียก @property getter ได้ตามปกติ')">D) TypeError</button>
+    <div class="mc-opts" id="mc-t5">
+      <div class="mc-opt" onclick="pickMC('mc-t5',0,2,'100 คือ self.__b แต่ @property คืน self.__b * 2')"><span class="mc-ltr">A</span> 100</div>
+      <div class="mc-opt" onclick="pickMC('mc-t5',1,2,'AttributeError จะเกิดถ้าเรียก a.__b จากนอก class แต่ a.b เป็น @property ที่ถูกต้อง')"><span class="mc-ltr">B</span> AttributeError</div>
+      <div class="mc-opt" onclick="pickMC('mc-t5',2,2,'@property b คืน self.__b*2 = 100*2 = 200')"><span class="mc-ltr">C</span> 200</div>
+      <div class="mc-opt" onclick="pickMC('mc-t5',3,2,'ไม่มี TypeError — a.b เรียก @property getter ได้ตามปกติ')"><span class="mc-ltr">D</span> TypeError</div>
     </div>
-  </div>
+    <div class="ex-feedback" id="mc-t5-fb"></div></div>
 </div>
 
 <!-- ════ SLIDE 10 — Fill-in ════ -->
@@ -360,26 +360,32 @@ print(Counter.count)</code><br><br><em>count มีค่าเท่าไห�
     <div class="slide-eyebrow">บทที่ 5 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① method พิเศษที่ถูกเรียกเมื่อสร้าง object ด้วย ClassName() คือ?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f5a" placeholder="__...">
-      <button class="fill-btn" onclick="checkFill('f5a','__init__',['init','__init__()'],[],'✅ __init__ — constructor ของ Python','❌ ชื่อ method คือ __init__ (double underscore ทั้งสองด้าน)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① method พิเศษที่ถูกเรียกเมื่อสร้าง object ด้วย ClassName() คือ?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="__...">
+        <button class="ex-btn" onclick="checkFill('in1','__init__',['init','__init__()'],[],'__init__ — constructor ของ Python','ชื่อ method คือ __init__ (double underscore ทั้งสองด้าน)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="f5a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② ใน Python การซ่อน attribute โดยใช้ __ นำหน้าเรียกว่า?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f5b" placeholder="...">
-      <button class="fill-btn" onclick="checkFill('f5b','name mangling',['name-mangling','namemangling'],[],'✅ Name Mangling — Python เปลี่ยนชื่อเป็น _ClassName__attr','❌ เรียกว่า Name Mangling')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② ใน Python การซ่อน attribute โดยใช้ __ นำหน้าเรียกว่า?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="...">
+        <button class="ex-btn" onclick="checkFill('in2','name mangling',['name-mangling','namemangling'],[],'Name Mangling — Python เปลี่ยนชื่อเป็น _ClassName__attr','เรียกว่า Name Mangling')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="f5b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ decorator ที่ทำให้ method เรียกได้เหมือน attribute (read-only)?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f5c" placeholder="@...">
-      <button class="fill-btn" onclick="checkFill('f5c','@property',['property'],[],'✅ @property — getter แบบ Pythonic','❌ ใช้ @property decorator')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ decorator ที่ทำให้ method เรียกได้เหมือน attribute (read-only)?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="@...">
+        <button class="ex-btn" onclick="checkFill('in3','@property',['property'],[],'@property — getter แบบ Pythonic','ใช้ @property decorator')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="f5c-msg" class="fill-msg"></div>
   </div>
 </div>
 

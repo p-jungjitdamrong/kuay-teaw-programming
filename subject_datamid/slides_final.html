@@ -261,13 +261,13 @@ p->next = tmp->next;  <span class="cm">/* ข้าม */</span>
     <div class="slide-eyebrow">Cheat Sheet · ข้อสุดท้าย</div>
     <h2 class="slide-title">ข้อสอบรวบยอด — ผสม 3 บทในข้อเดียว</h2>
     <p class="slide-lead">ต้องการเก็บข้อมูลที่ "แทรก/ลบบ่อยมาก ไม่รู้จำนวนล่วงหน้า และไม่ต้องเข้าถึงด้วย index" ควรใช้อะไร?</p>
-    <div id="mc-tf" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-tf','A','B','❌ Array แทรก/ลบ O(n) ต้องเลื่อนข้อมูล + ขนาดคงที่ — ตรงข้ามโจทย์ทุกข้อ')">A) Array</button>
-      <button class="mc-btn" onclick="pickMC('mc-tf','B','B','✅ Linked List — แทรก/ลบ O(1), ขนาด dynamic, และโจทย์บอกชัดว่าไม่ต้องใช้ index (จุดอ่อนเดียวของ LL ถูกตัดทิ้ง)')">B) Linked List</button>
-      <button class="mc-btn" onclick="pickMC('mc-tf','C','B','❌ Hash Table เด่นเรื่อง \"ค้นหาเร็ว\" — โจทย์ไม่ได้เน้นค้นหา และ hash จัดเรียง/ไล่ลำดับไม่ได้')">C) Hash Table</button>
-      <button class="mc-btn" onclick="pickMC('mc-tf','D','B','❌ Sorted Array ยิ่งแย่ — ทุกการแทรกต้องหาที่ + เลื่อน O(n)')">D) Sorted Array</button>
+    <div class="mc-opts" id="mc-tf">
+      <div class="mc-opt" onclick="pickMC('mc-tf',0,1,'Array แทรก/ลบ O(n) ต้องเลื่อนข้อมูล + ขนาดคงที่ — ตรงข้ามโจทย์ทุกข้อ')"><span class="mc-ltr">A</span> Array</div>
+      <div class="mc-opt" onclick="pickMC('mc-tf',1,1,'Linked List — แทรก/ลบ O(1), ขนาด dynamic, และโจทย์บอกชัดว่าไม่ต้องใช้ index (จุดอ่อนเดียวของ LL ถูกตัดทิ้ง)')"><span class="mc-ltr">B</span> Linked List</div>
+      <div class="mc-opt" onclick="pickMC('mc-tf',2,1,'Hash Table เด่นเรื่อง \"ค้นหาเร็ว\" — โจทย์ไม่ได้เน้นค้นหา และ hash จัดเรียง/ไล่ลำดับไม่ได้')"><span class="mc-ltr">C</span> Hash Table</div>
+      <div class="mc-opt" onclick="pickMC('mc-tf',3,1,'Sorted Array ยิ่งแย่ — ทุกการแทรกต้องหาที่ + เลื่อน O(n)')"><span class="mc-ltr">D</span> Sorted Array</div>
     </div>
-    <pre class="code-block" style="margin-top:12px"><span class="cm">/* วิธีคิดข้อเลือกโครงสร้าง: ดู operation ที่โจทย์เน้น
+    <div class="ex-feedback" id="mc-tf-fb"></div><pre class="code-block" style="margin-top:12px"><span class="cm">/* วิธีคิดข้อเลือกโครงสร้าง: ดู operation ที่โจทย์เน้น
    แทรก/ลบบ่อย   → LL ชนะ (O(1))
    เข้าถึง index   → Array ชนะ (O(1))
    ค้นหาเร็วสุด    → Hash ชนะ (O(1))

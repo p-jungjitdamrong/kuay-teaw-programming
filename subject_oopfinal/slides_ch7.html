@@ -391,13 +391,13 @@ P x = new R();&nbsp;&nbsp;x.go();
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 7 · ลองข้อสอบ</div>
     <h2 class="slide-title">ข้อใดคือ Overloading (ไม่ใช่ Overriding)?</h2>
-    <div id="mc-o7" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-o7','A','C','❌ นี่คือ Override — คลาสลูกเขียนทับ method แม่ที่ signature เหมือนกัน')">A) คลาสลูกเขียน toString() ทับของแม่</button>
-      <button class="mc-btn" onclick="pickMC('mc-o7','B','C','❌ implements คือทำตามสัญญา interface — นับเป็นการ override abstract method')">B) คลาสเขียน roll() ตามที่ interface กำหนด</button>
-      <button class="mc-btn" onclick="pickMC('mc-o7','C','C','✅ คลาสเดียวกัน ชื่อเดียวกัน parameter ต่างกัน = Overloading (constructor ก็ overload ได้)')">C) คลาสเดียวมี show() และ show(String msg)</button>
-      <button class="mc-btn" onclick="pickMC('mc-o7','D','C','❌ super.method() คือการเรียกใช้ของแม่ ไม่ใช่การสร้าง method ใหม่')">D) คลาสลูกเรียก super.printInfo()</button>
+    <div class="mc-opts" id="mc-o7">
+      <div class="mc-opt" onclick="pickMC('mc-o7',0,2,'นี่คือ Override — คลาสลูกเขียนทับ method แม่ที่ signature เหมือนกัน')"><span class="mc-ltr">A</span> คลาสลูกเขียน toString() ทับของแม่</div>
+      <div class="mc-opt" onclick="pickMC('mc-o7',1,2,'implements คือทำตามสัญญา interface — นับเป็นการ override abstract method')"><span class="mc-ltr">B</span> คลาสเขียน roll() ตามที่ interface กำหนด</div>
+      <div class="mc-opt" onclick="pickMC('mc-o7',2,2,'คลาสเดียวกัน ชื่อเดียวกัน parameter ต่างกัน = Overloading (constructor ก็ overload ได้)')"><span class="mc-ltr">C</span> คลาสเดียวมี show() และ show(String msg)</div>
+      <div class="mc-opt" onclick="pickMC('mc-o7',3,2,'super.method() คือการเรียกใช้ของแม่ ไม่ใช่การสร้าง method ใหม่')"><span class="mc-ltr">D</span> คลาสลูกเรียก super.printInfo()</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">Overload = "คลาสเดียวกัน ชื่อซ้ำ parameter ต่าง" ตัดสินตอน compile จาก parameter list
+    <div class="ex-feedback" id="mc-o7-fb"></div><pre class="code-block" style="margin-top:12px">Overload = "คลาสเดียวกัน ชื่อซ้ำ parameter ต่าง" ตัดสินตอน compile จาก parameter list
 Override = "แม่-ลูก signature เหมือนเป๊ะ" ตัดสินตอน run-time จากชนิดวัตถุจริง</pre>
   </div>
 </div>
@@ -409,26 +409,32 @@ Override = "แม่-ลูก signature เหมือนเป๊ะ" ตั
     <div class="slide-eyebrow">ติวบทที่ 7 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 8</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① attribute ใน interface จะเป็น public, static และ ___ โดยอัตโนมัติ</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo7a" placeholder="keyword">
-      <button class="fill-btn" onclick="checkFill('fo7a','final',['final'],[],'✅ final — จึงต้องกำหนดค่าตอนประกาศเสมอ (เป็นค่าคงที่)','❌ final — public static final ทั้งสามตัวเติมให้อัตโนมัติ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① attribute ใน interface จะเป็น public, static และ ___ โดยอัตโนมัติ</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in1','final',['final'],[],'final — จึงต้องกำหนดค่าตอนประกาศเสมอ (เป็นค่าคงที่)','final — public static final ทั้งสามตัวเติมให้อัตโนมัติ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fo7a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② JVM ตัดสิน Overriding ตอน ___ time (compile/run)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo7b" placeholder="ตอนไหน">
-      <button class="fill-btn" onclick="checkFill('fo7b','run',['runtime','run-time','run time'],[],'✅ run-time — ดูชนิดวัตถุจริง (Dynamic Binding) · Overloading ตัดสินตอน compile','❌ run-time — Override ดูวัตถุจริงตอนรัน, Overload ดู parameter ตอน compile')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② JVM ตัดสิน Overriding ตอน ___ time (compile/run)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ตอนไหน">
+        <button class="ex-btn" onclick="checkFill('in2','run',['runtime','run-time','run time'],[],'run-time — ดูชนิดวัตถุจริง (Dynamic Binding) · Overloading ตัดสินตอน compile','run-time — Override ดูวัตถุจริงตอนรัน, Overload ดู parameter ตอน compile')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fo7b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ คลาสหนึ่ง implements interface ได้ ___ ตัว (จำนวน)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo7c" placeholder="จำนวน">
-      <button class="fill-btn" onclick="checkFill('fo7c','หลาย',['many','ได้หลายตัว','ไม่จำกัด','หลายตัว'],[],'✅ หลายตัว (คั่นด้วย ,) — ต่างจาก extends ที่ได้แม่เดียว','❌ หลายตัว — implements A, B, C ได้ แต่ extends ได้แม่เดียว')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ คลาสหนึ่ง implements interface ได้ ___ ตัว (จำนวน)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="จำนวน">
+        <button class="ex-btn" onclick="checkFill('in3','หลาย',['many','ได้หลายตัว','ไม่จำกัด','หลายตัว'],[],'หลายตัว (คั่นด้วย ,) — ต่างจาก extends ที่ได้แม่เดียว','หลายตัว — implements A, B, C ได้ แต่ extends ได้แม่เดียว')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fo7c-msg" class="fill-msg"></div>
   </div>
 </div>
 

@@ -292,13 +292,13 @@ private → แม้แต่ B ก็ใช้ไม่ได้<br>
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 4 · ลองข้อสอบ</div>
     <h2 class="slide-title">field ที่ไม่เขียน modifier เลย ใครเข้าถึงได้บ้าง?</h2>
-    <div id="mc-j4" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-j4','A','B','❌ นั่นคือ public — default แคบกว่านั้น')">A) ทุกคลาสเข้าถึงได้</button>
-      <button class="mc-btn" onclick="pickMC('mc-j4','B','B','✅ default (ไม่ระบุ) = เข้าถึงได้จากคลาสใน package เดียวกัน — ตามนิยามในสไลด์เป๊ะ')">B) คลาสใน package เดียวกัน</button>
-      <button class="mc-btn" onclick="pickMC('mc-j4','C','B','❌ นั่นคือ private — default กว้างกว่า (ทั้ง package)')">C) เฉพาะคลาสตัวเอง</button>
-      <button class="mc-btn" onclick="pickMC('mc-j4','D','B','❌ นั่นคือ protected — default ไม่รวมคลาสลูกที่อยู่ต่าง package')">D) คลาสตัวเอง + คลาสลูกทุกที่</button>
+    <div class="mc-opts" id="mc-j4">
+      <div class="mc-opt" onclick="pickMC('mc-j4',0,1,'นั่นคือ public — default แคบกว่านั้น')"><span class="mc-ltr">A</span> ทุกคลาสเข้าถึงได้</div>
+      <div class="mc-opt" onclick="pickMC('mc-j4',1,1,'default (ไม่ระบุ) = เข้าถึงได้จากคลาสใน package เดียวกัน — ตามนิยามในสไลด์เป๊ะ')"><span class="mc-ltr">B</span> คลาสใน package เดียวกัน</div>
+      <div class="mc-opt" onclick="pickMC('mc-j4',2,1,'นั่นคือ private — default กว้างกว่า (ทั้ง package)')"><span class="mc-ltr">C</span> เฉพาะคลาสตัวเอง</div>
+      <div class="mc-opt" onclick="pickMC('mc-j4',3,1,'นั่นคือ protected — default ไม่รวมคลาสลูกที่อยู่ต่าง package')"><span class="mc-ltr">D</span> คลาสตัวเอง + คลาสลูกทุกที่</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">public > protected > default > private   (กว้าง → แคบ)
+    <div class="ex-feedback" id="mc-j4-fb"></div><pre class="code-block" style="margin-top:12px">public > protected > default > private   (กว้าง → แคบ)
 default ≠ public!  ไม่เขียน modifier = จำกัดอยู่ใน package (folder) เดียวกัน</pre>
   </div>
 </div>
@@ -310,26 +310,32 @@ default ≠ public!  ไม่เขียน modifier = จำกัดอย�
     <div class="slide-eyebrow">ติวบทที่ 4 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 5</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① class ที่ห้ามมี subclass ใช้ modifier ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj4a" placeholder="modifier">
-      <button class="fill-btn" onclick="checkFill('fj4a','final',['final'],[],'✅ final = ห้าม extends ต่อ (ตรงข้ามกับ abstract ที่ต้องมีลูกมาสานต่อ)','❌ final — "มี subclass ไม่ได้" ตามตารางสไลด์')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① class ที่ห้ามมี subclass ใช้ modifier ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="modifier">
+        <button class="ex-btn" onclick="checkFill('in1','final',['final'],[],'final = ห้าม extends ต่อ (ตรงข้ามกับ abstract ที่ต้องมีลูกมาสานต่อ)','final — "มี subclass ไม่ได้" ตามตารางสไลด์')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fj4a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② ลำดับที่ถูกต้อง: class A ___ B ___ C, D (เติมสองคีย์เวิร์ด)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj4b" placeholder="คีย์เวิร์ดสองคำ">
-      <button class="fill-btn" onclick="checkFill('fj4b','extends implements',['extends, implements','extends แล้ว implements'],[],'✅ extends B implements C, D — extends มาก่อนเสมอ และได้แม่เดียว','❌ extends ก่อน implements — extends แม่เดียว, implements หลายตัวได้')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② ลำดับที่ถูกต้อง: class A ___ B ___ C, D (เติมสองคีย์เวิร์ด)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="คีย์เวิร์ดสองคำ">
+        <button class="ex-btn" onclick="checkFill('in2','extends implements',['extends, implements','extends แล้ว implements'],[],'extends B implements C, D — extends มาก่อนเสมอ และได้แม่เดียว','extends ก่อน implements — extends แม่เดียว, implements หลายตัวได้')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fj4b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ modifier ที่คลาสลูก "ต่าง package" ยังเข้าถึงได้ แต่คนทั่วไปเข้าไม่ได้ คือ ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj4c" placeholder="modifier">
-      <button class="fill-btn" onclick="checkFill('fj4c','protected',['protected'],[],'✅ protected — ช่องที่ต่างจาก default คือ "คลาสลูกต่าง package"','❌ protected — จุดแตกต่างเดียวกับ default คือคลาสลูกต่าง package')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ modifier ที่คลาสลูก "ต่าง package" ยังเข้าถึงได้ แต่คนทั่วไปเข้าไม่ได้ คือ ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="modifier">
+        <button class="ex-btn" onclick="checkFill('in3','protected',['protected'],[],'protected — ช่องที่ต่างจาก default คือ "คลาสลูกต่าง package"','protected — จุดแตกต่างเดียวกับ default คือคลาสลูกต่าง package')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fj4c-msg" class="fill-msg"></div>
   </div>
 </div>
 

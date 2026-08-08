@@ -277,13 +277,13 @@ return 1 + max(xxx(r-&gt;leftChild), xxx(r-&gt;rightChild));</em><br><br>
    3     10
   ╱ ╲      ╲
  1   6      14</div>
-    <div id="mc-f8" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-f8','A','A','✅ ซ้าย→ราก→ขวา: (1 3 6) 8 (10 14) = 1 3 6 8 10 14 — เรียงจากน้อยไปมาก! (เพราะต้นนี้เป็น BST — ปูทางบท 9)')">A) 1 3 6 8 10 14</button>
-      <button class="mc-btn" onclick="pickMC('mc-f8','B','A','❌ 8 3 1 6 10 14 คือ Pre-order (รากก่อน)')">B) 8 3 1 6 10 14</button>
-      <button class="mc-btn" onclick="pickMC('mc-f8','C','A','❌ 1 6 3 14 10 8 คือ Post-order (รากทีหลัง)')">C) 1 6 3 14 10 8</button>
-      <button class="mc-btn" onclick="pickMC('mc-f8','D','A','❌ นั่นคืออ่านทีละชั้น (level-order) — ไม่ใช่ in-order')">D) 8 3 10 1 6 14</button>
+    <div class="mc-opts" id="mc-f8">
+      <div class="mc-opt" onclick="pickMC('mc-f8',0,0,'ซ้าย→ราก→ขวา: (1 3 6) 8 (10 14) = 1 3 6 8 10 14 — เรียงจากน้อยไปมาก! (เพราะต้นนี้เป็น BST — ปูทางบท 9)')"><span class="mc-ltr">A</span> 1 3 6 8 10 14</div>
+      <div class="mc-opt" onclick="pickMC('mc-f8',1,0,'8 3 1 6 10 14 คือ Pre-order (รากก่อน)')"><span class="mc-ltr">B</span> 8 3 1 6 10 14</div>
+      <div class="mc-opt" onclick="pickMC('mc-f8',2,0,'1 6 3 14 10 8 คือ Post-order (รากทีหลัง)')"><span class="mc-ltr">C</span> 1 6 3 14 10 8</div>
+      <div class="mc-opt" onclick="pickMC('mc-f8',3,0,'นั่นคืออ่านทีละชั้น (level-order) — ไม่ใช่ in-order')"><span class="mc-ltr">D</span> 8 3 10 1 6 14</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">In-order = ซ้าย → ราก → ขวา: in(3) + 8 + in(10) = (1 3 6) 8 (10 14)
+    <div class="ex-feedback" id="mc-f8-fb"></div><pre class="code-block" style="margin-top:12px">In-order = ซ้าย → ราก → ขวา: in(3) + 8 + in(10) = (1 3 6) 8 (10 14)
 
 สังเกต: ผลเรียงจากน้อยไปมาก! เพราะต้นไม้นี้เป็น Binary Search Tree
 "in-order ของ BST = ข้อมูลเรียงลำดับ" ← ประโยคทองของบท 9</pre>
@@ -297,26 +297,32 @@ return 1 + max(xxx(r-&gt;leftChild), xxx(r-&gt;rightChild));</em><br><br>
     <div class="slide-eyebrow">ติวบทที่ 8 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 9</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① โหนดที่ไม่มีลูกเลย เรียกว่าโหนด ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff8a" placeholder="ชื่อ">
-      <button class="fill-btn" onclick="checkFill('ff8a','ใบ',['leaf','leaf node','โหนดใบ'],[],'✅ Leaf node — ปลายสุด ไม่มีลูก · Root ไม่มีแม่ · Branch มีทั้งคู่','❌ โหนดใบ (Leaf) — ไม่มีโหนดลูก')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① โหนดที่ไม่มีลูกเลย เรียกว่าโหนด ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ชื่อ">
+        <button class="ex-btn" onclick="checkFill('in1','ใบ',['leaf','leaf node','โหนดใบ'],[],'Leaf node — ปลายสุด ไม่มีลูก · Root ไม่มีแม่ · Branch มีทั้งคู่','โหนดใบ (Leaf) — ไม่มีโหนดลูก')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="ff8a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② ท่อง Expression Tree แบบ ___ จะได้ Postfix</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff8b" placeholder="วิธีท่อง">
-      <button class="fill-btn" onclick="checkFill('ff8b','post-order',['postorder','post order','โพสต์ออเดอร์'],[],'✅ Post-order → Postfix · Pre-order → Prefix · In-order → Infix','❌ Post-order (ซ้าย→ขวา→ราก) — ชื่อคู่กันเป๊ะ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② ท่อง Expression Tree แบบ ___ จะได้ Postfix</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="วิธีท่อง">
+        <button class="ex-btn" onclick="checkFill('in2','post-order',['postorder','post order','โพสต์ออเดอร์'],[],'Post-order → Postfix · Pre-order → Prefix · In-order → Infix','Post-order (ซ้าย→ขวา→ราก) — ชื่อคู่กันเป๊ะ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="ff8b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ เก็บ tree ใน array (เริ่ม index 1) ลูกซ้ายของ index i อยู่ที่ ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff8c" placeholder="สูตร">
-      <button class="fill-btn" onclick="checkFill('ff8c','2i',['2*i','2i','สองไอ'],[],'✅ 2i (ลูกขวา 2i+1, แม่ i/2) — สูตรนี้ใช้อีกทีตอน Heap บท 11','❌ 2i — ลูกขวา 2i+1 · แม่ i/2')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ เก็บ tree ใน array (เริ่ม index 1) ลูกซ้ายของ index i อยู่ที่ ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="สูตร">
+        <button class="ex-btn" onclick="checkFill('in3','2i',['2*i','2i','สองไอ'],[],'2i (ลูกขวา 2i+1, แม่ i/2) — สูตรนี้ใช้อีกทีตอน Heap บท 11','2i — ลูกขวา 2i+1 · แม่ i/2')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="ff8c-msg" class="fill-msg"></div>
   </div>
 </div>
 

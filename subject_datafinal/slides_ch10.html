@@ -283,13 +283,13 @@ in-order: 3 5 10 12 15 18 19 20 ✓
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 10 · ลองข้อสอบ</div>
     <h2 class="slide-title">โหนด X มี BF = −2 และลูกขวาของ X มี BF = +1 — หมุนแบบใด?</h2>
-    <div id="mc-f10" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-f10','A','C','❌ LL คือซ้ายหนักสองก้าว — BF ของ X เป็นลบ แปลว่าขวาหนัก')">A) LL (หมุนขวาครั้งเดียว)</button>
-      <button class="mc-btn" onclick="pickMC('mc-f10','B','C','❌ RR ต้องเป็นขวา-ขวา (ลูกขวา BF ≤ 0) — แต่ลูกขวา BF=+1 คือหนักไปทางซ้าย')">B) RR (หมุนซ้ายครั้งเดียว)</button>
-      <button class="mc-btn" onclick="pickMC('mc-f10','C','C','✅ X ขวาหนัก (−2) → ก้าวแรกขวา · ลูกขวาซ้ายหนัก (+1) → ก้าวสองซ้าย = RL → หมุนคู่')">C) RL (หมุนสองครั้ง)</button>
-      <button class="mc-btn" onclick="pickMC('mc-f10','D','C','❌ LR คือ ซ้ายแล้วขวา — กลับทิศกับข้อนี้พอดี')">D) LR (หมุนสองครั้ง)</button>
+    <div class="mc-opts" id="mc-f10">
+      <div class="mc-opt" onclick="pickMC('mc-f10',0,2,'LL คือซ้ายหนักสองก้าว — BF ของ X เป็นลบ แปลว่าขวาหนัก')"><span class="mc-ltr">A</span> LL (หมุนขวาครั้งเดียว)</div>
+      <div class="mc-opt" onclick="pickMC('mc-f10',1,2,'RR ต้องเป็นขวา-ขวา (ลูกขวา BF ≤ 0) — แต่ลูกขวา BF=+1 คือหนักไปทางซ้าย')"><span class="mc-ltr">B</span> RR (หมุนซ้ายครั้งเดียว)</div>
+      <div class="mc-opt" onclick="pickMC('mc-f10',2,2,'X ขวาหนัก (−2) → ก้าวแรกขวา · ลูกขวาซ้ายหนัก (+1) → ก้าวสองซ้าย = RL → หมุนคู่')"><span class="mc-ltr">C</span> RL (หมุนสองครั้ง)</div>
+      <div class="mc-opt" onclick="pickMC('mc-f10',3,2,'LR คือ ซ้ายแล้วขวา — กลับทิศกับข้อนี้พอดี')"><span class="mc-ltr">D</span> LR (หมุนสองครั้ง)</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">อ่านจาก BF ได้เลย: BF(X) = −2 → ก้าวแรก "ขวา" · BF(ลูกขวา) = +1 → ก้าวสอง "ซ้าย" → RL
+    <div class="ex-feedback" id="mc-f10-fb"></div><pre class="code-block" style="margin-top:12px">อ่านจาก BF ได้เลย: BF(X) = −2 → ก้าวแรก "ขวา" · BF(ลูกขวา) = +1 → ก้าวสอง "ซ้าย" → RL
 สรุปวิธีอ่าน: เครื่องหมาย BF บอกทิศ (+ = ซ้ายหนัก, − = ขวาหนัก) สองชั้นต่อกันคือชื่อเคส</pre>
   </div>
 </div>
@@ -301,26 +301,32 @@ in-order: 3 5 10 12 15 18 19 20 ✓
     <div class="slide-eyebrow">ติวบทที่ 10 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 11</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① BF(X) = ความสูงซ้าย − ความสูงขวา ต้องอยู่ในช่วง ___ (ตอบเป็นเซต)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff10a" placeholder="เซตค่า">
-      <button class="fill-btn" onclick="checkFill('ff10a','-1 0 1',['{-1,0,1}','-1,0,1','−1 0 1','-1 ถึง 1'],[],'✅ {−1, 0, +1} — เกินนี้ (±2) ต้องหมุนทันที','❌ {−1, 0, +1} — BF = ±2 คือสัญญาณต้องหมุน')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① BF(X) = ความสูงซ้าย − ความสูงขวา ต้องอยู่ในช่วง ___ (ตอบเป็นเซต)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="เซตค่า">
+        <button class="ex-btn" onclick="checkFill('in1','-1 0 1',['{-1,0,1}','-1,0,1','−1 0 1','-1 ถึง 1'],[],'{−1, 0, +1} — เกินนี้ (±2) ต้องหมุนทันที','{−1, 0, +1} — BF = ±2 คือสัญญาณต้องหมุน')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="ff10a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② เคส LR และ RL ต้องหมุนกี่ครั้ง</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff10b" placeholder="จำนวน">
-      <button class="fill-btn" onclick="checkFill('ff10b','2',['สอง','2 ครั้ง','สองครั้ง'],[],'✅ 2 ครั้ง (double rotation) — เคสหักศอก · LL/RR หมุนครั้งเดียว','❌ 2 ครั้ง — เคสตรง (LL/RR) 1 ครั้ง เคสหักศอก (LR/RL) 2 ครั้ง')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② เคส LR และ RL ต้องหมุนกี่ครั้ง</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="จำนวน">
+        <button class="ex-btn" onclick="checkFill('in2','2',['สอง','2 ครั้ง','สองครั้ง'],[],'2 ครั้ง (double rotation) — เคสหักศอก · LL/RR หมุนครั้งเดียว','2 ครั้ง — เคสตรง (LL/RR) 1 ครั้ง เคสหักศอก (LR/RL) 2 ครั้ง')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="ff10b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ หลังหมุน โหนดที่ขึ้นเป็นรากของกลุ่มคือตัว ___ ของสามโหนด</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ff10c" placeholder="ตัวไหน">
-      <button class="fill-btn" onclick="checkFill('ff10c','กลาง',['ตัวกลาง','middle','ค่ากลาง'],[],'✅ ตัวกลางเสมอ — เพราะกฎ BST บังคับ ซ้าย<กลาง<ขวา','❌ ตัวกลาง — ใช้เช็คคำตอบหลังหมุนได้ทุกครั้ง')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ หลังหมุน โหนดที่ขึ้นเป็นรากของกลุ่มคือตัว ___ ของสามโหนด</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ตัวไหน">
+        <button class="ex-btn" onclick="checkFill('in3','กลาง',['ตัวกลาง','middle','ค่ากลาง'],[],'ตัวกลางเสมอ — เพราะกฎ BST บังคับ ซ้าย<กลาง<ขวา','ตัวกลาง — ใช้เช็คคำตอบหลังหมุนได้ทุกครั้ง')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="ff10c-msg" class="fill-msg"></div>
   </div>
 </div>
 

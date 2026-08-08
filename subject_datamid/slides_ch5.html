@@ -483,13 +483,13 @@ h(22)=2, h(42)=2           ← ชนสองตัว
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 5 · ลองข้อสอบ</div>
     <h2 class="slide-title">m=10, Linear probing, ตารางมี: 0:49, 8:18, 9:89 — แทรก 79 ลงช่องไหน?</h2>
-    <div id="mc-t5" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-t5','A','B','❌ ช่อง 9 มี 89 อยู่แล้ว — ต้อง probe ต่อ')">A) ช่อง 9</button>
-      <button class="mc-btn" onclick="pickMC('mc-t5','B','B','✅ h(79)=9 ชน(89) → (9+1)%10=0 ชน(49) → (9+2)%10=1 ว่าง → ลงช่อง 1')">B) ช่อง 1</button>
-      <button class="mc-btn" onclick="pickMC('mc-t5','C','B','❌ ช่อง 0 มี 49 อยู่ — probe ข้ามไปอีก')">C) ช่อง 0</button>
-      <button class="mc-btn" onclick="pickMC('mc-t5','D','B','❌ ตารางยังมีช่องว่างเพียบ — linear probing หาเจอแน่นอนถ้าไม่เต็ม')">D) แทรกไม่ได้</button>
+    <div class="mc-opts" id="mc-t5">
+      <div class="mc-opt" onclick="pickMC('mc-t5',0,1,'ช่อง 9 มี 89 อยู่แล้ว — ต้อง probe ต่อ')"><span class="mc-ltr">A</span> ช่อง 9</div>
+      <div class="mc-opt" onclick="pickMC('mc-t5',1,1,'h(79)=9 ชน(89) → (9+1)%10=0 ชน(49) → (9+2)%10=1 ว่าง → ลงช่อง 1')"><span class="mc-ltr">B</span> ช่อง 1</div>
+      <div class="mc-opt" onclick="pickMC('mc-t5',2,1,'ช่อง 0 มี 49 อยู่ — probe ข้ามไปอีก')"><span class="mc-ltr">C</span> ช่อง 0</div>
+      <div class="mc-opt" onclick="pickMC('mc-t5',3,1,'ตารางยังมีช่องว่างเพียบ — linear probing หาเจอแน่นอนถ้าไม่เต็ม')"><span class="mc-ltr">D</span> แทรกไม่ได้</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">h(79) = 79 % 10 = 9  → ชน (89)
+    <div class="ex-feedback" id="mc-t5-fb"></div><pre class="code-block" style="margin-top:12px">h(79) = 79 % 10 = 9  → ชน (89)
 (9+1) % 10 = 0       → ชน (49)   ← mod ทำให้วนกลับหัวตาราง!
 (9+2) % 10 = 1       → ว่าง ✓ ลงช่อง 1
 
@@ -504,26 +504,32 @@ h(22)=2, h(42)=2           ← ชนสองตัว
     <div class="slide-eyebrow">ติวบทที่ 5 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ด่านสุดท้ายก่อน Cheat Sheet</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① การแก้การชนด้วยการต่อ Linked List ในช่องเดียวกัน เรียกว่า Separate ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft5a" placeholder="คำศัพท์">
-      <button class="fill-btn" onclick="checkFill('ft5a','chaining',['เชนนิ่ง','separate chaining'],[],'✅ Separate Chaining = Open Hashing — ใช้ LL จากบท 4','❌ Chaining — Open Hashing ต่อลิสต์นอกตาราง')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① การแก้การชนด้วยการต่อ Linked List ในช่องเดียวกัน เรียกว่า Separate ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="คำศัพท์">
+        <button class="ex-btn" onclick="checkFill('in1','chaining',['เชนนิ่ง','separate chaining'],[],'Separate Chaining = Open Hashing — ใช้ LL จากบท 4','Chaining — Open Hashing ต่อลิสต์นอกตาราง')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="ft5a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Quadratic probing ใช้ f(i) = ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft5b" placeholder="สูตร">
-      <button class="fill-btn" onclick="checkFill('ft5b','i^2',['i²','i2','i*i'],[],'✅ f(i) = i² → hᵢ = (h(k)+i²) mod m','❌ f(i) = i² — linear คือ i, double คือ i·h₂(k)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② Quadratic probing ใช้ f(i) = ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="สูตร">
+        <button class="ex-btn" onclick="checkFill('in2','i^2',['i²','i2','i*i'],[],'f(i) = i² → hᵢ = (h(k)+i²) mod m','f(i) = i² — linear คือ i, double คือ i·h₂(k)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="ft5b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ การค้นหาใน closed hashing หยุดแล้วตอบ "ไม่เจอ" เมื่อพบ ___ หรือตรวจครบตาราง</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft5c" placeholder="พบอะไร?">
-      <button class="fill-btn" onclick="checkFill('ft5c','ช่องว่าง',['ช่องว่างในตาราง','empty','empty slot','ช่องที่ว่าง'],[],'✅ พบช่องว่าง = k ไม่มีแน่นอน (ถ้ามีต้องเจอก่อนถึงช่องว่าง)','❌ พบ \"ช่องว่าง\" — ถ้า k มีจริงต้องอยู่ก่อนช่องว่างเสมอ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ การค้นหาใน closed hashing หยุดแล้วตอบ "ไม่เจอ" เมื่อพบ ___ หรือตรวจครบตาราง</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="พบอะไร?">
+        <button class="ex-btn" onclick="checkFill('in3','ช่องว่าง',['ช่องว่างในตาราง','empty','empty slot','ช่องที่ว่าง'],[],'พบช่องว่าง = k ไม่มีแน่นอน (ถ้ามีต้องเจอก่อนถึงช่องว่าง)','พบ \"ช่องว่าง\" — ถ้า k มีจริงต้องอยู่ก่อนช่องว่างเสมอ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="ft5c-msg" class="fill-msg"></div>
   </div>
 </div>
 

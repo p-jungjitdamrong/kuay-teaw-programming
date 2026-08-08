@@ -367,13 +367,13 @@ acc.<span class="fn">deposit</span>(<span class="nm">50_000</span>).<span class=
     <span class="kw">pass</span>
 
 <span class="fn">print</span>(<span class="fn">C</span>().<span class="fn">greet</span>())</pre>
-    <div id="mc-t6" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-t6','A','C','❌ A เรียกเมื่อ C ไม่มี greet → ขึ้น B แต่ B เรียก super().greet() ซึ่งเป็น A')">A) A</button>
-      <button class="mc-btn" onclick="pickMC('mc-t6','B','C','❌ B เรียกเมื่อ C ไม่มี greet → B.greet() → แต่มี super() ด้วย')">B) B</button>
-      <button class="mc-btn" onclick="pickMC('mc-t6','C','C','✅ C ไม่มี greet → B.greet() → "B + " + A.greet() → "B + A"')">C) B + A</button>
-      <button class="mc-btn" onclick="pickMC('mc-t6','D','C','❌ ไม่มี error — C สืบทอด greet จาก B ได้')">D) AttributeError</button>
+    <div class="mc-opts" id="mc-t6">
+      <div class="mc-opt" onclick="pickMC('mc-t6',0,2,'A เรียกเมื่อ C ไม่มี greet → ขึ้น B แต่ B เรียก super().greet() ซึ่งเป็น A')"><span class="mc-ltr">A</span> A</div>
+      <div class="mc-opt" onclick="pickMC('mc-t6',1,2,'B เรียกเมื่อ C ไม่มี greet → B.greet() → แต่มี super() ด้วย')"><span class="mc-ltr">B</span> B</div>
+      <div class="mc-opt" onclick="pickMC('mc-t6',2,2,'C ไม่มี greet → B.greet() → "B + " + A.greet() → "B + A"')"><span class="mc-ltr">C</span> B + A</div>
+      <div class="mc-opt" onclick="pickMC('mc-t6',3,2,'ไม่มี error — C สืบทอด greet จาก B ได้')"><span class="mc-ltr">D</span> AttributeError</div>
     </div>
-  </div>
+    <div class="ex-feedback" id="mc-t6-fb"></div></div>
 </div>
 
 <!-- ════ SLIDE 11 — Fill-in ════ -->
@@ -383,26 +383,32 @@ acc.<span class="fn">deposit</span>(<span class="nm">50_000</span>).<span class=
     <div class="slide-eyebrow">บทที่ 6 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① เรียก constructor ของ parent class ใน Python ใช้ฟังก์ชันอะไร?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f6a" placeholder="function()">
-      <button class="fill-btn" onclick="checkFill('f6a','super()',['super','super().__init__()'],[],'✅ super() — แล้วเรียก method เช่น super().__init__()','❌ ใช้ super() แล้วตามด้วย method: super().__init__()')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① เรียก constructor ของ parent class ใน Python ใช้ฟังก์ชันอะไร?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="function()">
+        <button class="ex-btn" onclick="checkFill('in1','super()',['super','super().__init__()'],[],'super() — แล้วเรียก method เช่น super().__init__()','ใช้ super() แล้วตามด้วย method: super().__init__()')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="f6a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② decorator ที่บังคับให้ subclass ต้อง implement method?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f6b" placeholder="@...">
-      <button class="fill-btn" onclick="checkFill('f6b','@abstractmethod',['abstractmethod'],[],'✅ @abstractmethod — จาก abc module','❌ ใช้ @abstractmethod decorator (import จาก abc)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② decorator ที่บังคับให้ subclass ต้อง implement method?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="@...">
+        <button class="ex-btn" onclick="checkFill('in2','@abstractmethod',['abstractmethod'],[],'@abstractmethod — จาก abc module','ใช้ @abstractmethod decorator (import จาก abc)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="f6b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ Python OOP concept ที่ทำให้ทำงานกับ object ต่าง type ได้โดยไม่สน type จริงๆ?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f6c" placeholder="...">
-      <button class="fill-btn" onclick="checkFill('f6c','duck typing',['duck-typing','ductyping'],[],'✅ Duck Typing — ถ้ามี method ที่ต้องการ ก็ทำงานด้วยได้','❌ เรียกว่า Duck Typing')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ Python OOP concept ที่ทำให้ทำงานกับ object ต่าง type ได้โดยไม่สน type จริงๆ?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="...">
+        <button class="ex-btn" onclick="checkFill('in3','duck typing',['duck-typing','ductyping'],[],'Duck Typing — ถ้ามี method ที่ต้องการ ก็ทำงานด้วยได้','เรียกว่า Duck Typing')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="f6c-msg" class="fill-msg"></div>
   </div>
 </div>
 

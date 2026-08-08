@@ -288,13 +288,13 @@ unique.<span class="fn">discard</span>(<span class="st">"A999"</span>)   <span c
     <pre class="code-block"><span class="nm">d</span> = {<span class="st">"a"</span>: <span class="nm">1</span>, <span class="st">"b"</span>: <span class="nm">2</span>, <span class="st">"c"</span>: <span class="nm">3</span>}
 <span class="nm">result</span> = [v*<span class="nm">2</span> <span class="kw">for</span> k, v <span class="kw">in</span> d.<span class="fn">items</span>() <span class="kw">if</span> v > <span class="nm">1</span>]
 <span class="fn">print</span>(<span class="nm">result</span>)</pre>
-    <div id="mc-t4" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-t4','A','C','❌ [2,4,6] รวม a:1 ด้วย แต่ condition ตัด v&lt;=1 ออก')">A) [2, 4, 6]</button>
-      <button class="mc-btn" onclick="pickMC('mc-t4','B','C','❌ [2,3] คือ value ตั้งต้น ไม่ได้ x2')">B) [2, 3]</button>
-      <button class="mc-btn" onclick="pickMC('mc-t4','C','C','✅ v>1 → b:2, c:3 แล้ว *2 → [4,6]')">C) [4, 6]</button>
-      <button class="mc-btn" onclick="pickMC('mc-t4','D','C','❌ [1,4,6] ไม่ถูก — v=1 ไม่ผ่าน condition v>1')">D) [1, 4, 6]</button>
+    <div class="mc-opts" id="mc-t4">
+      <div class="mc-opt" onclick="pickMC('mc-t4',0,2,'[2,4,6] รวม a:1 ด้วย แต่ condition ตัด v&lt;=1 ออก')"><span class="mc-ltr">A</span> [2, 4, 6]</div>
+      <div class="mc-opt" onclick="pickMC('mc-t4',1,2,'[2,3] คือ value ตั้งต้น ไม่ได้ x2')"><span class="mc-ltr">B</span> [2, 3]</div>
+      <div class="mc-opt" onclick="pickMC('mc-t4',2,2,'v>1 → b:2, c:3 แล้ว *2 → [4,6]')"><span class="mc-ltr">C</span> [4, 6]</div>
+      <div class="mc-opt" onclick="pickMC('mc-t4',3,2,'[1,4,6] ไม่ถูก — v=1 ไม่ผ่าน condition v>1')"><span class="mc-ltr">D</span> [1, 4, 6]</div>
     </div>
-  </div>
+    <div class="ex-feedback" id="mc-t4-fb"></div></div>
 </div>
 
 <!-- ════ SLIDE 10 — Fill-in ════ -->
@@ -304,26 +304,32 @@ unique.<span class="fn">discard</span>(<span class="st">"A999"</span>)   <span c
     <div class="slide-eyebrow">บทที่ 4 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① method ของ dict ที่ใช้อ่าน key โดยไม่ error ถ้า key ไม่มี?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f4a" placeholder="method name">
-      <button class="fill-btn" onclick="checkFill('f4a','get',['get()','dict.get'],[],'✅ .get(key, default) — ไม่ error ถ้า key ไม่มี','❌ ใช้ .get(key, default_value)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① method ของ dict ที่ใช้อ่าน key โดยไม่ error ถ้า key ไม่มี?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="method name">
+        <button class="ex-btn" onclick="checkFill('in1','get',['get()','dict.get'],[],'.get(key, default) — ไม่ error ถ้า key ไม่มี','ใช้ .get(key, default_value)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="f4a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② กรองค่าซ้ำออกจาก list [1,2,2,3,3,3] ให้เหลือแต่ unique ค่า</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f4b" placeholder="expression">
-      <button class="fill-btn" onclick="checkFill('f4b','list(set([1,2,2,3,3,3]))',['set([1,2,2,3,3,3])','list(set([1,2,3]))'],[],'✅ set() กรอง duplicate แล้วแปลงกลับเป็น list','❌ ใช้ set() กรองก่อน แล้ว list() แปลงกลับ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② กรองค่าซ้ำออกจาก list [1,2,2,3,3,3] ให้เหลือแต่ unique ค่า</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="expression">
+        <button class="ex-btn" onclick="checkFill('in2','list(set([1,2,2,3,3,3]))',['set([1,2,2,3,3,3])','list(set([1,2,3]))'],[],'set() กรอง duplicate แล้วแปลงกลับเป็น list','ใช้ set() กรองก่อน แล้ว list() แปลงกลับ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="f4b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ collection ชนิดไหนที่ immutable (เปลี่ยนแปลงหลัง create ไม่ได้)?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f4c" placeholder="ชื่อ type">
-      <button class="fill-btn" onclick="checkFill('f4c','tuple',[],[],  '✅ tuple — immutable · ใช้เป็น key ของ dict ได้','❌ list และ dict mutable, set mutable, tuple คือ immutable')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ collection ชนิดไหนที่ immutable (เปลี่ยนแปลงหลัง create ไม่ได้)?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ชื่อ type">
+        <button class="ex-btn" onclick="checkFill('in3','tuple',[],[],  '✅ tuple — immutable · ใช้เป็น key ของ dict ได้','list และ dict mutable, set mutable, tuple คือ immutable')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="f4c-msg" class="fill-msg"></div>
   </div>
 </div>
 

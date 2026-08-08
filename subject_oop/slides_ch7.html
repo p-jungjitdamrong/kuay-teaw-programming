@@ -455,13 +455,13 @@ bb <span class="kw">instanceof</span> Rollable  <span class="cm">// true (ผ่
     <pre class="code-block" style="margin-bottom:14px">Ball b = <span class="kw">new</span> <span class="fn">BallB</span>();     <span class="cm">// BallB extends BallA (Override roll เท่านั้น)</span>
 b.<span class="fn">inflate</span>(<span class="nm">100</span>);
 ((Rollable) b).<span class="fn">roll</span>();</pre>
-    <div id="mc-l7" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-l7','A','B','❌ roll() ถูก BallB Override แล้ว — Dynamic Binding เรียกของร่างจริง')">A) BallA inflate / BallA is rolling</button>
-      <button class="mc-btn" onclick="pickMC('mc-l7','B','B','✅ inflate: BallB ไม่ได้ Override → ใช้ของ BallA · roll: BallB Override → ใช้ของ BallB')">B) BallA inflate / BallB is rolling</button>
-      <button class="mc-btn" onclick="pickMC('mc-l7','C','B','❌ BallB ไม่ได้ Override inflate — จึงตกทอดของ BallA มาใช้')">C) BallB inflate / BallB is rolling</button>
-      <button class="mc-btn" onclick="pickMC('mc-l7','D','B','❌ ไม่ error — BallB เป็น Rollable ผ่าน BallA การ cast ถูกต้อง')">D) ClassCastException</button>
+    <div class="mc-opts" id="mc-l7">
+      <div class="mc-opt" onclick="pickMC('mc-l7',0,1,'roll() ถูก BallB Override แล้ว — Dynamic Binding เรียกของร่างจริง')"><span class="mc-ltr">A</span> BallA inflate / BallA is rolling</div>
+      <div class="mc-opt" onclick="pickMC('mc-l7',1,1,'inflate: BallB ไม่ได้ Override → ใช้ของ BallA · roll: BallB Override → ใช้ของ BallB')"><span class="mc-ltr">B</span> BallA inflate / BallB is rolling</div>
+      <div class="mc-opt" onclick="pickMC('mc-l7',2,1,'BallB ไม่ได้ Override inflate — จึงตกทอดของ BallA มาใช้')"><span class="mc-ltr">C</span> BallB inflate / BallB is rolling</div>
+      <div class="mc-opt" onclick="pickMC('mc-l7',3,1,'ไม่ error — BallB เป็น Rollable ผ่าน BallA การ cast ถูกต้อง')"><span class="mc-ltr">D</span> ClassCastException</div>
     </div>
-    <pre class="code-block" style="margin-top:12px"><span class="cm">// Dynamic Binding ดู "ร่างจริง" (BallB) เสมอ:
+    <div class="ex-feedback" id="mc-l7-fb"></div><pre class="code-block" style="margin-top:12px"><span class="cm">// Dynamic Binding ดู "ร่างจริง" (BallB) เสมอ:
 //   inflate() — BallB ไม่มี → ไล่ขึ้นไปเจอของ BallA → "BallA inflate"
 //   roll()    — BallB Override ไว้ → "BallB is rolling"
 // ตัวแปรประกาศเป็น Ball ไม่มีผลต่อว่า "ตัวไหนถูกเรียก" มีผลแค่ compile-time check</span></pre>
@@ -475,26 +475,32 @@ b.<span class="fn">inflate</span>(<span class="nm">100</span>);
     <div class="slide-eyebrow">Lab 7 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① class รับสัญญาจาก interface ใช้คีย์เวิร์ด ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl7a" placeholder="keyword">
-      <button class="fill-btn" onclick="checkFill('fl7a','implements',['implement'],[],'✅ class BallA extends Ball implements Rollable','❌ คือ implements — extends ใช้กับ class, implements ใช้กับ interface')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① class รับสัญญาจาก interface ใช้คีย์เวิร์ด ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in1','implements',['implement'],[],'class BallA extends Ball implements Rollable','คือ implements — extends ใช้กับ class, implements ใช้กับ interface')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fl7a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Java เลือก method ตามร่างจริงของ object ตอน runtime เรียกกลไกนี้ว่า Dynamic ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl7b" placeholder="คำศัพท์">
-      <button class="fill-btn" onclick="checkFill('fl7b','binding',['Binding','dynamic binding'],[],'✅ Dynamic Binding — ประกาศชนิดแม่ แต่รันตามร่างจริงของลูก','❌ คือ Binding — Dynamic Binding เลือก method ของร่างจริงตอน runtime')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② Java เลือก method ตามร่างจริงของ object ตอน runtime เรียกกลไกนี้ว่า Dynamic ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="คำศัพท์">
+        <button class="ex-btn" onclick="checkFill('in2','binding',['Binding','dynamic binding'],[],'Dynamic Binding — ประกาศชนิดแม่ แต่รันตามร่างจริงของลูก','คือ Binding — Dynamic Binding เลือก method ของร่างจริงตอน runtime')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fl7b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ ราคา 700 บาท บัตรลด 2.5% — จ่ายจริงกี่บาท?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fl7c" placeholder="ตัวเลข">
-      <button class="fill-btn" onclick="checkFill('fl7c','682.5',['682.50','682.5 บาท'],[],'✅ 700 × (1 − 0.025) = 682.5 — ตรง output โจทย์เป๊ะ','❌ 700 × 0.975 = 682.5 บาท')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ ราคา 700 บาท บัตรลด 2.5% — จ่ายจริงกี่บาท?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ตัวเลข">
+        <button class="ex-btn" onclick="checkFill('in3','682.5',['682.50','682.5 บาท'],[],'700 × (1 − 0.025) = 682.5 — ตรง output โจทย์เป๊ะ','700 × 0.975 = 682.5 บาท')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fl7c-msg" class="fill-msg"></div>
   </div>
 </div>
 

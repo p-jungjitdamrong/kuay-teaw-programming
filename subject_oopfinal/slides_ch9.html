@@ -368,13 +368,13 @@ catch(Exception) ดักไปหมดแล้ว → catch(IOException) ไ
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 9 · ลองข้อสอบ</div>
     <h2 class="slide-title">ข้อใดเป็น Checked Exception?</h2>
-    <div id="mc-o9" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-o9','A','C','❌ NullPointerException อยู่ใต้ RuntimeException = Unchecked')">A) NullPointerException</button>
-      <button class="mc-btn" onclick="pickMC('mc-o9','B','C','❌ ArithmeticException (หารศูนย์) อยู่ใต้ RuntimeException = Unchecked')">B) ArithmeticException</button>
-      <button class="mc-btn" onclick="pickMC('mc-o9','C','C','✅ IOException ไม่อยู่ในตระกูล Error/RuntimeException → Checked → compiler บังคับให้ try-catch หรือ throws')">C) IOException</button>
-      <button class="mc-btn" onclick="pickMC('mc-o9','D','C','❌ ArrayIndexOutOfBoundsException อยู่ใต้ RuntimeException = Unchecked (แบบ lab num[5])')">D) ArrayIndexOutOfBoundsException</button>
+    <div class="mc-opts" id="mc-o9">
+      <div class="mc-opt" onclick="pickMC('mc-o9',0,2,'NullPointerException อยู่ใต้ RuntimeException = Unchecked')"><span class="mc-ltr">A</span> NullPointerException</div>
+      <div class="mc-opt" onclick="pickMC('mc-o9',1,2,'ArithmeticException (หารศูนย์) อยู่ใต้ RuntimeException = Unchecked')"><span class="mc-ltr">B</span> ArithmeticException</div>
+      <div class="mc-opt" onclick="pickMC('mc-o9',2,2,'IOException ไม่อยู่ในตระกูล Error/RuntimeException → Checked → compiler บังคับให้ try-catch หรือ throws')"><span class="mc-ltr">C</span> IOException</div>
+      <div class="mc-opt" onclick="pickMC('mc-o9',3,2,'ArrayIndexOutOfBoundsException อยู่ใต้ RuntimeException = Unchecked (แบบ lab num[5])')"><span class="mc-ltr">D</span> ArrayIndexOutOfBoundsException</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">Unchecked = Error + RuntimeException (compiler ปล่อยผ่าน)
+    <div class="ex-feedback" id="mc-o9-fb"></div><pre class="code-block" style="margin-top:12px">Unchecked = Error + RuntimeException (compiler ปล่อยผ่าน)
 Checked   = ที่เหลือทั้งหมด (compiler บังคับ) — IOException, FileNotFoundException, ClassNotFoundException
 
 ข้อ A, B, D ล้วนเป็นลูกของ RuntimeException ทั้งหมด → Unchecked</pre>
@@ -388,26 +388,32 @@ Checked   = ที่เหลือทั้งหมด (compiler บังค
     <div class="slide-eyebrow">ติวบทที่ 9 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 10</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Error และ Exception ต่างสืบทอดมาจากคลาส ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo9a" placeholder="ชื่อคลาส">
-      <button class="fill-btn" onclick="checkFill('fo9a','Throwable',['throwable','java.lang.Throwable'],[],'✅ java.lang.Throwable — ให้ getMessage() และ printStackTrace() มา','❌ Throwable — เป็นรากของทั้ง Error และ Exception')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① Error และ Exception ต่างสืบทอดมาจากคลาส ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ชื่อคลาส">
+        <button class="ex-btn" onclick="checkFill('in1','Throwable',['throwable','java.lang.Throwable'],[],'java.lang.Throwable — ให้ getMessage() และ printStackTrace() มา','Throwable — เป็นรากของทั้ง Error และ Exception')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fo9a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② บล็อกที่ทำงาน "เสมอ" ไม่ว่าจะเกิด exception หรือไม่ คือ ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo9b" placeholder="ชื่อบล็อก">
-      <button class="fill-btn" onclick="checkFill('fo9b','finally',['finally block','ไฟนอลลี่'],[],'✅ finally block — ใช้เก็บกวาด ปิดไฟล์/connection','❌ finally — ทำงานเสมอ แม้มี return ใน try')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② บล็อกที่ทำงาน "เสมอ" ไม่ว่าจะเกิด exception หรือไม่ คือ ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ชื่อบล็อก">
+        <button class="ex-btn" onclick="checkFill('in2','finally',['finally block','ไฟนอลลี่'],[],'finally block — ใช้เก็บกวาด ปิดไฟล์/connection','finally — ทำงานเสมอ แม้มี return ใน try')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fo9b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ ประกาศที่หัว method ว่าอาจโยน exception ใช้คีย์เวิร์ด ___ (throw หรือ throws)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fo9c" placeholder="keyword">
-      <button class="fill-btn" onclick="checkFill('fo9c','throws',['throws'],['throw '],'✅ throws (มี s) ที่หัว method · throw (ไม่มี s) คือคำสั่งโยนจริงในตัว method','❌ throws — มี s ใช้ประกาศที่หัว method, ไม่มี s ใช้โยนจริง')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ ประกาศที่หัว method ว่าอาจโยน exception ใช้คีย์เวิร์ด ___ (throw หรือ throws)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in3','throws',['throws'],['throw '],'throws (มี s) ที่หัว method · throw (ไม่มี s) คือคำสั่งโยนจริงในตัว method','throws — มี s ใช้ประกาศที่หัว method, ไม่มี s ใช้โยนจริง')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fo9c-msg" class="fill-msg"></div>
   </div>
 </div>
 

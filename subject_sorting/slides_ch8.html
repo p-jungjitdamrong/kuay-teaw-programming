@@ -536,13 +536,13 @@ int fib(int n) {<br>
     <span class="fn">mystery_sort</span>(arr, l, m);
     <span class="fn">mystery_sort</span>(arr, m+<span class="nm">1</span>, r);
 }</pre>
-    <div id="mc-sp" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-sp','A','B','❌ มีทั้ง array temp และ call stack — ต้องนับทั้งคู่ แล้วเลือกที่ใหญ่กว่า')">A) O(log n) — recurse แบบ f(n/2)</button>
-      <button class="mc-btn" onclick="pickMC('mc-sp','B','B','✅ temp[r-l+1] สร้างทุก call รวม O(n) + call stack O(log n) → เลือกใหญ่สุด = O(n)')">B) O(n) — temp array ขนาด n</button>
-      <button class="mc-btn" onclick="pickMC('mc-sp','C','B','❌ 2D ต้องเห็น arr[n][n] — ตรงนี้มีแค่ 1D')">C) O(n²) — สร้าง array ทุก level</button>
-      <button class="mc-btn" onclick="pickMC('mc-sp','D','B','❌ มี temp array ขึ้นกับ n — ไม่ใช่ O(1)')">D) O(1) — in-place</button>
+    <div class="mc-opts" id="mc-sp">
+      <div class="mc-opt" onclick="pickMC('mc-sp',0,1,'มีทั้ง array temp และ call stack — ต้องนับทั้งคู่ แล้วเลือกที่ใหญ่กว่า')"><span class="mc-ltr">A</span> O(log n) — recurse แบบ f(n/2)</div>
+      <div class="mc-opt" onclick="pickMC('mc-sp',1,1,'temp[r-l+1] สร้างทุก call รวม O(n) + call stack O(log n) → เลือกใหญ่สุด = O(n)')"><span class="mc-ltr">B</span> O(n) — temp array ขนาด n</div>
+      <div class="mc-opt" onclick="pickMC('mc-sp',2,1,'2D ต้องเห็น arr[n][n] — ตรงนี้มีแค่ 1D')"><span class="mc-ltr">C</span> O(n²) — สร้าง array ทุก level</div>
+      <div class="mc-opt" onclick="pickMC('mc-sp',3,1,'มี temp array ขึ้นกับ n — ไม่ใช่ O(1)')"><span class="mc-ltr">D</span> O(1) — in-place</div>
     </div>
-    <pre class="code-block" style="margin-top:10px"><span class="cm">/* วิเคราะห์:
+    <div class="ex-feedback" id="mc-sp-fb"></div><pre class="code-block" style="margin-top:10px"><span class="cm">/* วิเคราะห์:
    ① temp[r-l+1]: ทุก call สร้าง array ขนาด O(n) รวมกัน
    ② call stack: log n ชั้น
    ③ เลือกที่ใหญ่กว่า: max(O(n), O(log n)) = O(n)
@@ -557,26 +557,32 @@ int fib(int n) {<br>
     <div class="slide-eyebrow">บทพิเศษ · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① <code class="inline-code">int arr[n];</code> ทำให้ Space Complexity เป็น O(___)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fsp1" placeholder="O(?)">
-      <button class="fill-btn" onclick="checkFill('fsp1','n',['O(n)','o(n)'],[],'✅ O(n) — สร้าง array n ช่อง ขนาดขึ้นกับ n','❌ O(n) — int arr[n] สร้าง n ช่องใน memory')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① <code class="inline-code">int arr[n];</code> ทำให้ Space Complexity เป็น O(___)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="O(?)">
+        <button class="ex-btn" onclick="checkFill('in1','n',['O(n)','o(n)'],[],'O(n) — สร้าง array n ช่อง ขนาดขึ้นกับ n','O(n) — int arr[n] สร้าง n ช่องใน memory')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fsp1-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Quick Sort average case Space เป็น O(___) เพราะ call stack ลึก ___ ชั้น</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fsp2" placeholder="O(?)">
-      <button class="fill-btn" onclick="checkFill('fsp2','log n',['O(log n)','o(log n)','logn','log(n)'],[],'✅ O(log n) — average case pivot แบ่งครึ่ง call stack ลึก log₂(n) ชั้น','❌ O(log n) — pivot แบ่งครึ่งทุกครั้ง ลึก log n ชั้น')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② Quick Sort average case Space เป็น O(___) เพราะ call stack ลึก ___ ชั้น</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="O(?)">
+        <button class="ex-btn" onclick="checkFill('in2','log n',['O(log n)','o(log n)','logn','log(n)'],[],'O(log n) — average case pivot แบ่งครึ่ง call stack ลึก log₂(n) ชั้น','O(log n) — pivot แบ่งครึ่งทุกครั้ง ลึก log n ชั้น')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fsp2-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Heap Sort ใช้ Space O(___) เพราะ heapify ทำงาน ___ (in-place / out-of-place)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fsp3" placeholder="O(?)">
-      <button class="fill-btn" onclick="checkFill('fsp3','1',['O(1)','o(1)'],[],'✅ O(1) — Heap Sort heapify ทำ in-place ใน array เดิม ไม่สร้าง array ใหม่','❌ O(1) — Heap Sort in-place, สร้างแค่ตัวแปร i, largest')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ Heap Sort ใช้ Space O(___) เพราะ heapify ทำงาน ___ (in-place / out-of-place)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="O(?)">
+        <button class="ex-btn" onclick="checkFill('in3','1',['O(1)','o(1)'],[],'O(1) — Heap Sort heapify ทำ in-place ใน array เดิม ไม่สร้าง array ใหม่','O(1) — Heap Sort in-place, สร้างแค่ตัวแปร i, largest')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fsp3-msg" class="fill-msg"></div>
   </div>
 </div>
 

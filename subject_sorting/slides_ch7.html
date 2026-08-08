@@ -550,13 +550,13 @@ for (i = 1; i &lt;= n; i *= 2)<br>
         }
     }
 }</pre>
-    <div id="mc-bo7" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-bo7','A','C','❌ outer n แต่ inner ไม่ใช่ n — j เพิ่มเป็น 2 เท่า')">A) O(n²)</button>
-      <button class="mc-btn" onclick="pickMC('mc-bo7','B','C','❌ ไม่ใช่ค่าคงที่ — มี outer loop วน n ครั้ง')">B) O(log n)</button>
-      <button class="mc-btn" onclick="pickMC('mc-bo7','C','C','✅ outer i วน n ครั้ง · inner j วน log₂(n) ครั้ง (j *= 2) → n × log n = O(n log n)')">C) O(n log n)</button>
-      <button class="mc-btn" onclick="pickMC('mc-bo7','D','C','❌ ยังมี outer loop — ไม่ใช่แค่ log n')">D) O(n)</button>
+    <div class="mc-opts" id="mc-bo7">
+      <div class="mc-opt" onclick="pickMC('mc-bo7',0,2,'outer n แต่ inner ไม่ใช่ n — j เพิ่มเป็น 2 เท่า')"><span class="mc-ltr">A</span> O(n²)</div>
+      <div class="mc-opt" onclick="pickMC('mc-bo7',1,2,'ไม่ใช่ค่าคงที่ — มี outer loop วน n ครั้ง')"><span class="mc-ltr">B</span> O(log n)</div>
+      <div class="mc-opt" onclick="pickMC('mc-bo7',2,2,'outer i วน n ครั้ง · inner j วน log₂(n) ครั้ง (j *= 2) → n × log n = O(n log n)')"><span class="mc-ltr">C</span> O(n log n)</div>
+      <div class="mc-opt" onclick="pickMC('mc-bo7',3,2,'ยังมี outer loop — ไม่ใช่แค่ log n')"><span class="mc-ltr">D</span> O(n)</div>
     </div>
-    <pre class="code-block" style="margin-top:12px"><span class="cm">/* วิเคราะห์:
+    <div class="ex-feedback" id="mc-bo7-fb"></div><pre class="code-block" style="margin-top:12px"><span class="cm">/* วิเคราะห์:
    outer i: วน 0..n-1 → n ครั้ง
    inner j: 1,2,4,8,...จนถึง n → log₂(n) ครั้ง
    รวม: n × log₂(n) → O(n log n) */</span></pre>
@@ -570,26 +570,32 @@ for (i = 1; i &lt;= n; i *= 2)<br>
     <div class="slide-eyebrow">บทที่ 7 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① <code class="inline-code">for(i=1; i&lt;n; i*=2)</code> วนกี่ครั้ง? → Big O คือ?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fbo7a" placeholder="O(?)">
-      <button class="fill-btn" onclick="checkFill('fbo7a','log n',['O(log n)','o(log n)','log(n)','logn'],[],'✅ O(log n) — i เพิ่มเป็น 2 เท่าทุกรอบ วน log₂(n) ครั้ง','❌ คือ O(log n) เพราะ i*=2 ทุกรอบ → วน log₂(n) ครั้ง')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① <code class="inline-code">for(i=1; i&lt;n; i*=2)</code> วนกี่ครั้ง? → Big O คือ?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="O(?)">
+        <button class="ex-btn" onclick="checkFill('in1','log n',['O(log n)','o(log n)','log(n)','logn'],[],'O(log n) — i เพิ่มเป็น 2 เท่าทุกรอบ วน log₂(n) ครั้ง','คือ O(log n) เพราะ i*=2 ทุกรอบ → วน log₂(n) ครั้ง')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fbo7a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② n² + 3n + 100 → Big O คือ?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fbo7b" placeholder="O(?)">
-      <button class="fill-btn" onclick="checkFill('fbo7b','n^2',['O(n²)','O(n^2)','o(n2)','n²','n2'],[],'✅ O(n²) — ทิ้ง 3n และ 100 ทิ้ง constant ด้วย','❌ O(n²) — เก็บแค่ term ที่ใหญ่สุด ทิ้ง lower-order terms และ constants')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② n² + 3n + 100 → Big O คือ?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="O(?)">
+        <button class="ex-btn" onclick="checkFill('in2','n^2',['O(n²)','O(n^2)','o(n2)','n²','n2'],[],'O(n²) — ทิ้ง 3n และ 100 ทิ้ง constant ด้วย','O(n²) — เก็บแค่ term ที่ใหญ่สุด ทิ้ง lower-order terms และ constants')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fbo7b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Merge Sort ใช้ T(n) = 2T(n/2) + n → Big O คือ?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fbo7c" placeholder="O(?)">
-      <button class="fill-btn" onclick="checkFill('fbo7c','n log n',['O(n log n)','o(n log n)','nlogn','n*logn'],[],'✅ O(n log n) — Master Theorem: a=2, b=2, f(n)=n → T(n)=O(n log n)','❌ O(n log n) — T(n)=2T(n/2)+n แก้ได้ด้วย Master Theorem')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ Merge Sort ใช้ T(n) = 2T(n/2) + n → Big O คือ?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="O(?)">
+        <button class="ex-btn" onclick="checkFill('in3','n log n',['O(n log n)','o(n log n)','nlogn','n*logn'],[],'O(n log n) — Master Theorem: a=2, b=2, f(n)=n → T(n)=O(n log n)','O(n log n) — T(n)=2T(n/2)+n แก้ได้ด้วย Master Theorem')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fbo7c-msg" class="fill-msg"></div>
   </div>
 </div>
 

@@ -285,13 +285,13 @@
     <pre class="code-block"><span class="nm">a</span>, <span class="nm">b</span> = <span class="nm">10</span>, <span class="nm">3</span>
 <span class="nm">result</span> = <span class="st">f"{<span class="nm">a</span>//<span class="nm">b</span>} เศษ {<span class="nm">a</span>%<span class="nm">b</span>}"</span>
 <span class="fn">print</span>(<span class="nm">result</span>)</pre>
-    <div id="mc-t1" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-t1','A','C','❌ 3.333 คือ a/b — นี่ใช้ // ซึ่งเป็น integer division')">A) 3.333 เศษ 1</button>
-      <button class="mc-btn" onclick="pickMC('mc-t1','B','C','❌ a//b = 3 ถูก แต่ a%b = 1 ไม่ใช่ 0')">B) 3 เศษ 0</button>
-      <button class="mc-btn" onclick="pickMC('mc-t1','C','C','✅ 10//3 = 3, 10%3 = 1 — f-string ใส่ค่าลงไปได้เลย')">C) 3 เศษ 1</button>
-      <button class="mc-btn" onclick="pickMC('mc-t1','D','C','❌ ไม่มี TypeError — // และ % ทำงานกับ int ปกติ')">D) TypeError</button>
+    <div class="mc-opts" id="mc-t1">
+      <div class="mc-opt" onclick="pickMC('mc-t1',0,2,'3.333 คือ a/b — นี่ใช้ // ซึ่งเป็น integer division')"><span class="mc-ltr">A</span> 3.333 เศษ 1</div>
+      <div class="mc-opt" onclick="pickMC('mc-t1',1,2,'a//b = 3 ถูก แต่ a%b = 1 ไม่ใช่ 0')"><span class="mc-ltr">B</span> 3 เศษ 0</div>
+      <div class="mc-opt" onclick="pickMC('mc-t1',2,2,'10//3 = 3, 10%3 = 1 — f-string ใส่ค่าลงไปได้เลย')"><span class="mc-ltr">C</span> 3 เศษ 1</div>
+      <div class="mc-opt" onclick="pickMC('mc-t1',3,2,'ไม่มี TypeError — // และ % ทำงานกับ int ปกติ')"><span class="mc-ltr">D</span> TypeError</div>
     </div>
-  </div>
+    <div class="ex-feedback" id="mc-t1-fb"></div></div>
 </div>
 
 <!-- ════ SLIDE 10 — Fill-in ════ -->
@@ -301,26 +301,32 @@
     <div class="slide-eyebrow">บทที่ 1 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① แปลง string "25000" ให้เป็น int เพื่อคำนวณ</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f1a" placeholder="เติมฟังก์ชัน">
-      <button class="fill-btn" onclick="checkFill('f1a','int',['int()'],[],'✅ int() แปลง string → integer','❌ ใช้ built-in function ที่แปลงเป็น integer')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① แปลง string "25000" ให้เป็น int เพื่อคำนวณ</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="เติมฟังก์ชัน">
+        <button class="ex-btn" onclick="checkFill('in1','int',['int()'],[],'int() แปลง string → integer','ใช้ built-in function ที่แปลงเป็น integer')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="f1a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② f-string แสดงตัวเลข 1234567 ให้มี comma และ 2 decimal → <code class="inline-code">1,234,567.00</code></p>
-    <div class="fill-row">
-      <input class="fill-input" id="f1b" placeholder="f'{x:...}'">
-      <button class="fill-btn" onclick="checkFill('f1b',',.2f',['f\"{x:,.2f}\"','f\'{x:,.2f}\'',':,.2f'],[],'✅ ,.2f — comma separator + 2 decimal places','❌ format spec คือ ,.2f')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② f-string แสดงตัวเลข 1234567 ให้มี comma และ 2 decimal → <code class="inline-code">1,234,567.00</code></div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="f'{x:...}'">
+        <button class="ex-btn" onclick="checkFill('in2',',.2f',['f\"{x:,.2f}\"','f\'{x:,.2f}\'',':,.2f'],[],',.2f — comma separator + 2 decimal places','format spec คือ ,.2f')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="f1b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ ผลของ <code class="inline-code">7 ** 2</code> คือ?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f1c" placeholder="ตัวเลข">
-      <button class="fill-btn" onclick="checkFill('f1c','49',[],[],  '✅ 7**2 = 49 — ** คือยกกำลัง','❌ ** คือยกกำลัง: 7**2 = 7×7')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ ผลของ <code class="inline-code">7 ** 2</code> คือ?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ตัวเลข">
+        <button class="ex-btn" onclick="checkFill('in3','49',[],[],  '✅ 7**2 = 49 — ** คือยกกำลัง','** คือยกกำลัง: 7**2 = 7×7')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="f1c-msg" class="fill-msg"></div>
   </div>
 </div>
 

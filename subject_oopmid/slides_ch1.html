@@ -414,13 +414,13 @@ error: class not found
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 1 · ลองข้อสอบ</div>
     <h2 class="slide-title">ข้อใดอธิบาย bytecode ถูกต้อง?</h2>
-    <div id="mc-j1" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-j1','A','C','❌ bytecode ไม่ใช่ machine code — ต้องผ่าน JVM แปลอีกชั้น')">A) โค้ดที่ CPU รันได้โดยตรง</button>
-      <button class="mc-btn" onclick="pickMC('mc-j1','B','C','❌ นั่นคือ source code (.java) — bytecode คือผลจากการ compile แล้ว')">B) โค้ดภาษา Java ที่คนเขียน</button>
-      <button class="mc-btn" onclick="pickMC('mc-j1','C','C','✅ bytecode (.class) คือผลจาก javac — เหมือนกันทุก platform แล้วให้ JVM ของแต่ละเครื่องแปลตอนรัน')">C) ผลจากการ compile (.class) ที่ JVM นำไปแปลรัน</button>
-      <button class="mc-btn" onclick="pickMC('mc-j1','D','C','❌ JAR คือไฟล์รวบรวม .class หลายไฟล์ — ไม่ใช่นิยามของ bytecode')">D) ไฟล์ .jar ที่ export จาก IDE</button>
+    <div class="mc-opts" id="mc-j1">
+      <div class="mc-opt" onclick="pickMC('mc-j1',0,2,'bytecode ไม่ใช่ machine code — ต้องผ่าน JVM แปลอีกชั้น')"><span class="mc-ltr">A</span> โค้ดที่ CPU รันได้โดยตรง</div>
+      <div class="mc-opt" onclick="pickMC('mc-j1',1,2,'นั่นคือ source code (.java) — bytecode คือผลจากการ compile แล้ว')"><span class="mc-ltr">B</span> โค้ดภาษา Java ที่คนเขียน</div>
+      <div class="mc-opt" onclick="pickMC('mc-j1',2,2,'bytecode (.class) คือผลจาก javac — เหมือนกันทุก platform แล้วให้ JVM ของแต่ละเครื่องแปลตอนรัน')"><span class="mc-ltr">C</span> ผลจากการ compile (.class) ที่ JVM นำไปแปลรัน</div>
+      <div class="mc-opt" onclick="pickMC('mc-j1',3,2,'JAR คือไฟล์รวบรวม .class หลายไฟล์ — ไม่ใช่นิยามของ bytecode')"><span class="mc-ltr">D</span> ไฟล์ .jar ที่ export จาก IDE</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">.java ──javac──▶ .class (bytecode, เหมือนกันทุกเครื่อง) ──java/JVM──▶ รัน (JVM ต่างกันตามเครื่อง)
+    <div class="ex-feedback" id="mc-j1-fb"></div><pre class="code-block" style="margin-top:12px">.java ──javac──▶ .class (bytecode, เหมือนกันทุกเครื่อง) ──java/JVM──▶ รัน (JVM ต่างกันตามเครื่อง)
 
 ประโยคเดียวจบ: "compile ครั้งเดียว รันได้ทุกที่ เพราะ JVM รับหน้าที่ความต่างของแต่ละ platform"</pre>
   </div>
@@ -433,26 +433,32 @@ error: class not found
     <div class="slide-eyebrow">ติวบทที่ 1 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 2</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① คำสั่ง compile ไฟล์ HelloWorld.java คือ ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj1a" placeholder="คำสั่ง">
-      <button class="fill-btn" onclick="checkFill('fj1a','javac HelloWorld.java',['javac helloworld.java','javac'],[],'✅ javac HelloWorld.java → ได้ HelloWorld.class','❌ javac HelloWorld.java (javac = compiler)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① คำสั่ง compile ไฟล์ HelloWorld.java คือ ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="คำสั่ง">
+        <button class="ex-btn" onclick="checkFill('in1','javac HelloWorld.java',['javac helloworld.java','javac'],[],'javac HelloWorld.java → ได้ HelloWorld.class','javac HelloWorld.java (javac = compiler)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fj1a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② JRE = JVM + ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj1b" placeholder="อะไร?">
-      <button class="fill-btn" onclick="checkFill('fj1b','Java API',['api','java api','library','libraries'],[],'✅ JRE = JVM + Java API — ไว้รันโปรแกรม · JDK = JRE + เครื่องมือพัฒนา','❌ Java API — JRE ไว้รัน, JDK ไว้พัฒนา')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② JRE = JVM + ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="อะไร?">
+        <button class="ex-btn" onclick="checkFill('in2','Java API',['api','java api','library','libraries'],[],'JRE = JVM + Java API — ไว้รันโปรแกรม · JDK = JRE + เครื่องมือพัฒนา','Java API — JRE ไว้รัน, JDK ไว้พัฒนา')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fj1b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ main ต้องเป็น static เพราะ JVM เรียกโดยไม่ต้อง ___ object ก่อน</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fj1c" placeholder="keyword">
-      <button class="fill-btn" onclick="checkFill('fj1c','new',['new','สร้าง'],[],'✅ ไม่ต้อง new — ตอนโปรแกรมเริ่ม ยังไม่มี object ใดเลย','❌ new (สร้าง object) — static เรียกผ่านคลาสได้เลย')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ main ต้องเป็น static เพราะ JVM เรียกโดยไม่ต้อง ___ object ก่อน</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="keyword">
+        <button class="ex-btn" onclick="checkFill('in3','new',['new','สร้าง'],[],'ไม่ต้อง new — ตอนโปรแกรมเริ่ม ยังไม่มี object ใดเลย','new (สร้าง object) — static เรียกผ่านคลาสได้เลย')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fj1c-msg" class="fill-msg"></div>
   </div>
 </div>
 

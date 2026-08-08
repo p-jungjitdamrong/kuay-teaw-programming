@@ -405,13 +405,13 @@ dequeue จากคิว → push ลง ___ → pop ออกมา = กล�
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 6 · ลองข้อสอบ</div>
     <h2 class="slide-title">CQ[5] วงกลม: Front=3, Rear=4 แล้ว enqueue(9) — Rear ใหม่คือ?</h2>
-    <div id="mc-t6" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-t6','A','B','❌ Rear=5 ไม่มีจริง — array มีแค่ index 0-4 ต้อง mod วนกลับ')">A) Rear = 5</button>
-      <button class="mc-btn" onclick="pickMC('mc-t6','B','B','✅ Rear = (4+1) % 5 = 0 — วนกลับหัวตาราง ค่า 9 ลง CQ[0]')">B) Rear = 0</button>
-      <button class="mc-btn" onclick="pickMC('mc-t6','C','B','❌ คิวยังไม่เต็ม (Front=3 แปลว่าช่อง 0-2 ว่าง) — enqueue ได้')">C) เพิ่มไม่ได้ คิวเต็ม</button>
-      <button class="mc-btn" onclick="pickMC('mc-t6','D','B','❌ Front ไม่เปลี่ยนตอน enqueue — Front เปลี่ยนเฉพาะตอน dequeue')">D) Front = 4</button>
+    <div class="mc-opts" id="mc-t6">
+      <div class="mc-opt" onclick="pickMC('mc-t6',0,1,'Rear=5 ไม่มีจริง — array มีแค่ index 0-4 ต้อง mod วนกลับ')"><span class="mc-ltr">A</span> Rear = 5</div>
+      <div class="mc-opt" onclick="pickMC('mc-t6',1,1,'Rear = (4+1) % 5 = 0 — วนกลับหัวตาราง ค่า 9 ลง CQ[0]')"><span class="mc-ltr">B</span> Rear = 0</div>
+      <div class="mc-opt" onclick="pickMC('mc-t6',2,1,'คิวยังไม่เต็ม (Front=3 แปลว่าช่อง 0-2 ว่าง) — enqueue ได้')"><span class="mc-ltr">C</span> เพิ่มไม่ได้ คิวเต็ม</div>
+      <div class="mc-opt" onclick="pickMC('mc-t6',3,1,'Front ไม่เปลี่ยนตอน enqueue — Front เปลี่ยนเฉพาะตอน dequeue')"><span class="mc-ltr">D</span> Front = 4</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">Rear = (Rear + 1) % maxsize = (4 + 1) % 5 = 0   → Q[0] = 9
+    <div class="ex-feedback" id="mc-t6-fb"></div><pre class="code-block" style="margin-top:12px">Rear = (Rear + 1) % maxsize = (4 + 1) % 5 = 0   → Q[0] = 9
 
 จุดหลอกซ้ำกับบท 5: ชนขอบขวาต้อง mod วนกลับ
 และอย่าลืม — enqueue แตะแค่ Rear · dequeue แตะแค่ Front</pre>
@@ -425,26 +425,32 @@ dequeue จากคิว → push ลง ___ → pop ออกมา = กล�
     <div class="slide-eyebrow">ติวบทที่ 6 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ปิดบทสุดท้ายก่อน Cheat Sheet</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Queue ทำงานแบบ ___ (ตัวย่อ 4 ตัวอักษร)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft6a" placeholder="ตัวย่อ">
-      <button class="fill-btn" onclick="checkFill('ft6a','FIFO',['fifo','first in first out'],[],'✅ FIFO — First In First Out เข้าก่อนออกก่อน','❌ FIFO (First In First Out) — คู่เทียบคือ Stack = LIFO')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① Queue ทำงานแบบ ___ (ตัวย่อ 4 ตัวอักษร)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ตัวย่อ">
+        <button class="ex-btn" onclick="checkFill('in1','FIFO',['fifo','first in first out'],[],'FIFO — First In First Out เข้าก่อนออกก่อน','FIFO (First In First Out) — คู่เทียบคือ Stack = LIFO')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="ft6a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② Circular Array: Rear ตัวถัดไป = (Rear + 1) % ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft6b" placeholder="ตัวแปร">
-      <button class="fill-btn" onclick="checkFill('ft6b','maxsize',['max size','ขนาดตาราง','N','maxsize'],[],'✅ % maxsize — ชนขอบขวาวนกลับช่อง 0','❌ % maxsize (ขนาดอาเรย์) — mod ทำให้ index วนเป็นวงกลม')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② Circular Array: Rear ตัวถัดไป = (Rear + 1) % ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ตัวแปร">
+        <button class="ex-btn" onclick="checkFill('in2','maxsize',['max size','ขนาดตาราง','N','maxsize'],[],'% maxsize — ชนขอบขวาวนกลับช่อง 0','% maxsize (ขนาดอาเรย์) — mod ทำให้ index วนเป็นวงกลม')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="ft6b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ Radix sort ต้องใช้ Queue เพราะต้องรักษา ___ ของข้อมูลที่ลง bucket เดียวกัน</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft6c" placeholder="รักษาอะไร?">
-      <button class="fill-btn" onclick="checkFill('ft6c','ลำดับ',['ลำดับเดิม','order','ลำดับการเข้า','ลำดับข้อมูล'],[],'✅ ลำดับเดิม (FIFO) — คุณสมบัติ stable · ใช้ Stack ลำดับกลับด้าน ผลรอบก่อนพัง','❌ รักษา \"ลำดับเดิม\" — FIFO ทำให้ sort เป็น stable')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ Radix sort ต้องใช้ Queue เพราะต้องรักษา ___ ของข้อมูลที่ลง bucket เดียวกัน</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="รักษาอะไร?">
+        <button class="ex-btn" onclick="checkFill('in3','ลำดับ',['ลำดับเดิม','order','ลำดับการเข้า','ลำดับข้อมูล'],[],'ลำดับเดิม (FIFO) — คุณสมบัติ stable · ใช้ Stack ลำดับกลับด้าน ผลรอบก่อนพัง','รักษา \"ลำดับเดิม\" — FIFO ทำให้ sort เป็น stable')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="ft6c-msg" class="fill-msg"></div>
   </div>
 </div>
 

@@ -211,13 +211,13 @@
     <div class="slide-eyebrow">Cheat Sheet · ข้อสุดท้าย</div>
     <h2 class="slide-title">ข้อรวบยอด — เลือกโครงสร้างข้ามบท</h2>
     <p class="slide-lead">โรงพยาบาลต้องเรียกคิวคนไข้ตาม "ระดับความฉุกเฉิน" (วิกฤตก่อนเสมอ) มีคนไข้เข้า-ออกตลอดเวลา — ใช้โครงสร้างใดเหมาะสุด?</p>
-    <div id="mc-ff" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-ff','A','C','❌ Queue ธรรมดา = มาก่อนได้ก่อน — คนไข้วิกฤตที่มาทีหลังจะไม่ถูกเรียกก่อน')">A) Queue ธรรมดา</button>
-      <button class="mc-btn" onclick="pickMC('mc-ff','B','C','❌ BST ค้นหาเก่ง แต่ "เอาตัว max ออกซ้ำๆ" heap ทำได้ตรงกว่าและ max อยู่รากตลอด')">B) Binary Search Tree</button>
-      <button class="mc-btn" onclick="pickMC('mc-ff','C','C','✅ Priority Queue ที่สร้างด้วย MaxHeap — ตัวฉุกเฉินสุดอยู่รากเสมอ ดู O(1) เอาออก O(log n) เพิ่มคนไข้ใหม่ O(log n)')">C) Priority Queue (MaxHeap)</button>
-      <button class="mc-btn" onclick="pickMC('mc-ff','D','C','❌ Stack = ล่าสุดออกก่อน — คนไข้มาใหม่แซงคนวิกฤตที่รอนาน ไม่ตรงโจทย์')">D) Stack</button>
+    <div class="mc-opts" id="mc-ff">
+      <div class="mc-opt" onclick="pickMC('mc-ff',0,2,'Queue ธรรมดา = มาก่อนได้ก่อน — คนไข้วิกฤตที่มาทีหลังจะไม่ถูกเรียกก่อน')"><span class="mc-ltr">A</span> Queue ธรรมดา</div>
+      <div class="mc-opt" onclick="pickMC('mc-ff',1,2,'BST ค้นหาเก่ง แต่ "เอาตัว max ออกซ้ำๆ" heap ทำได้ตรงกว่าและ max อยู่รากตลอด')"><span class="mc-ltr">B</span> Binary Search Tree</div>
+      <div class="mc-opt" onclick="pickMC('mc-ff',2,2,'Priority Queue ที่สร้างด้วย MaxHeap — ตัวฉุกเฉินสุดอยู่รากเสมอ ดู O(1) เอาออก O(log n) เพิ่มคนไข้ใหม่ O(log n)')"><span class="mc-ltr">C</span> Priority Queue (MaxHeap)</div>
+      <div class="mc-opt" onclick="pickMC('mc-ff',3,2,'Stack = ล่าสุดออกก่อน — คนไข้มาใหม่แซงคนวิกฤตที่รอนาน ไม่ตรงโจทย์')"><span class="mc-ltr">D</span> Stack</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">keyword "สำคัญสุด/ฉุกเฉินสุดออกก่อน" + "เพิ่มลบตลอดเวลา" → Priority Queue → Heap
+    <div class="ex-feedback" id="mc-ff-fb"></div><pre class="code-block" style="margin-top:12px">keyword "สำคัญสุด/ฉุกเฉินสุดออกก่อน" + "เพิ่มลบตลอดเวลา" → Priority Queue → Heap
 (เทียบ multiple queue ของ midterm: ได้แค่ priority ไม่กี่ระดับ — heap ทำได้ละเอียดกว่า)</pre>
   </div>
 </div>

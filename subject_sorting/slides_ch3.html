@@ -301,13 +301,13 @@ Worst: O(n²)  ← reverse sorted</pre>
     <div class="slide-eyebrow">บทที่ 3 · Trace</div>
     <h2 class="slide-title">หลัง i=2 ของ {5, 2, 4, 6, 1}?</h2>
     <p class="slide-lead">Insertion Sort: i=1 จัดการ key=2, i=2 จัดการ key=4 — ผลลัพธ์หลัง i=2 คืออะไร?</p>
-    <div id="mc-i3" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-i3','A','B','❌ ยัง sort ไม่ถึง 6 ตอน i=2 — แค่ sorted portion [0..2]')">A) {2,4,5,6,1}</button>
-      <button class="mc-btn" onclick="pickMC('mc-i3','B','B','✅ i=1: key=2 shift5→{2,5,4,6,1}, i=2: key=4 shift5→{2,4,5,6,1}')">B) {2,4,5,6,1}</button>
-      <button class="mc-btn" onclick="pickMC('mc-i3','C','B','❌ ตำแหน่งไม่ถูก — trace i=1 ก่อน key=2')">C) {2,5,4,6,1}</button>
-      <button class="mc-btn" onclick="pickMC('mc-i3','D','B','❌ sorted portion [0..2] ถูกต้อง แต่ตัวหลังยังเดิม')">D) {1,2,4,5,6}</button>
+    <div class="mc-opts" id="mc-i3">
+      <div class="mc-opt" onclick="pickMC('mc-i3',0,1,'ยัง sort ไม่ถึง 6 ตอน i=2 — แค่ sorted portion [0..2]')"><span class="mc-ltr">A</span> {2,4,5,6,1}</div>
+      <div class="mc-opt" onclick="pickMC('mc-i3',1,1,'i=1: key=2 shift5→{2,5,4,6,1}, i=2: key=4 shift5→{2,4,5,6,1}')"><span class="mc-ltr">B</span> {2,4,5,6,1}</div>
+      <div class="mc-opt" onclick="pickMC('mc-i3',2,1,'ตำแหน่งไม่ถูก — trace i=1 ก่อน key=2')"><span class="mc-ltr">C</span> {2,5,4,6,1}</div>
+      <div class="mc-opt" onclick="pickMC('mc-i3',3,1,'sorted portion [0..2] ถูกต้อง แต่ตัวหลังยังเดิม')"><span class="mc-ltr">D</span> {1,2,4,5,6}</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">i=1: key=2
+    <div class="ex-feedback" id="mc-i3-fb"></div><pre class="code-block" style="margin-top:12px">i=1: key=2
   j=0: arr[0]=5 > 2 → shift: {5,5,4,6,1}
   j=-1: หยุด → arr[0]=2 → {2,5,4,6,1}
 
@@ -323,24 +323,30 @@ i=2: key=4
   <div class="slide-body">
     <div class="slide-eyebrow">บทที่ 3 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① outer loop ของ Insertion Sort เริ่มจาก i = ___</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fi3a" placeholder="ค่าเริ่มต้น">
-      <button class="fill-btn" onclick="checkFill('fi3a','1',['1'],[],'✅ i=1 เพราะ arr[0] เดี่ยวๆ ถือว่า sorted แล้ว','❌ ต้อง i=1 เพราะ sorted portion เริ่มจาก arr[0] ที่มีแค่ 1 ตัว')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① outer loop ของ Insertion Sort เริ่มจาก i = ___</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ค่าเริ่มต้น">
+        <button class="ex-btn" onclick="checkFill('in1','1',['1'],[],'i=1 เพราะ arr[0] เดี่ยวๆ ถือว่า sorted แล้ว','ต้อง i=1 เพราะ sorted portion เริ่มจาก arr[0] ที่มีแค่ 1 ตัว')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fi3a-msg" class="fill-msg"></div>
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② Insertion Sort ใช้ ___ แทน swap เพื่อลด write operations</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fi3b" placeholder="operation ชื่อ?">
-      <button class="fill-btn" onclick="checkFill('fi3b','shift',['shifting','เลื่อน'],[],'✅ shift — arr[j+1]=arr[j] เขียนแค่ 1 ตำแหน่ง ไม่เหมือน swap ที่เขียน 2 ตำแหน่ง','❌ คือ shift (เลื่อน) — arr[j+1]=arr[j] ใช้ write น้อยกว่า swap')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② Insertion Sort ใช้ ___ แทน swap เพื่อลด write operations</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="operation ชื่อ?">
+        <button class="ex-btn" onclick="checkFill('in2','shift',['shifting','เลื่อน'],[],'shift — arr[j+1]=arr[j] เขียนแค่ 1 ตำแหน่ง ไม่เหมือน swap ที่เขียน 2 ตำแหน่ง','คือ shift (เลื่อน) — arr[j+1]=arr[j] ใช้ write น้อยกว่า swap')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fi3b-msg" class="fill-msg"></div>
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ Insertion Sort เป็น Online Algorithm คือหมายความว่าอะไร?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fi3c" placeholder="อธิบายสั้นๆ">
-      <button class="fill-btn" onclick="checkFill('fi3c','รับข้อมูลทีละตัว',['รับข้อมูลทีละตัวได้','insert ได้ทีละตัว','online','รับข้อมูลมาแล้วแทรกได้เลย','realtime'],[],'✅ รับ element ใหม่แล้วแทรกเข้า sorted array ได้ทันที ไม่ต้องรอข้อมูลครบ','❌ Online = สามารถรับข้อมูลทีละตัวแล้ว maintain sorted array ได้เลย')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ Insertion Sort เป็น Online Algorithm คือหมายความว่าอะไร?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="อธิบายสั้นๆ">
+        <button class="ex-btn" onclick="checkFill('in3','รับข้อมูลทีละตัว',['รับข้อมูลทีละตัวได้','insert ได้ทีละตัว','online','รับข้อมูลมาแล้วแทรกได้เลย','realtime'],[],'รับ element ใหม่แล้วแทรกเข้า sorted array ได้ทันที ไม่ต้องรอข้อมูลครบ','Online = สามารถรับข้อมูลทีละตัวแล้ว maintain sorted array ได้เลย')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fi3c-msg" class="fill-msg"></div>
   </div>
 </div>
 

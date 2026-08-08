@@ -424,13 +424,13 @@ count++ ทำงานกี่ครั้ง? Big-O เท่าไหร่?
   <div class="slide-body">
     <div class="slide-eyebrow">ติวบทที่ 2 · ลองข้อสอบ</div>
     <h2 class="slide-title">จากโจทย์เช็คตัวเอง — Big-O คือ?</h2>
-    <div id="mc-t2" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-t2','A','B','❌ O(n) คือลูปเดี่ยว — ลูปในวนตาม i ซึ่งโตขึ้นเรื่อยๆ รวมแล้วเกิน n มาก')">A) O(n)</button>
-      <button class="mc-btn" onclick="pickMC('mc-t2','B','B','✅ 1+2+...+n = n(n+1)/2 = (n²+n)/2 → เก็บ term โตสุด ตัด constant → O(n²)')">B) O(n²)</button>
-      <button class="mc-btn" onclick="pickMC('mc-t2','C','B','❌ O(n log n) เกิดเมื่อลูปในเป็นแบบคูณ/หารทีละเท่า — อันนี้ j เพิ่มทีละ 1')">C) O(n log n)</button>
-      <button class="mc-btn" onclick="pickMC('mc-t2','D','B','❌ ครึ่งหนึ่งของ n² ก็ยังเป็น O(n²) — constant 1/2 ถูกตัดทิ้ง')">D) O(n²/2) เป็นคำตอบสุดท้าย</button>
+    <div class="mc-opts" id="mc-t2">
+      <div class="mc-opt" onclick="pickMC('mc-t2',0,1,'O(n) คือลูปเดี่ยว — ลูปในวนตาม i ซึ่งโตขึ้นเรื่อยๆ รวมแล้วเกิน n มาก')"><span class="mc-ltr">A</span> O(n)</div>
+      <div class="mc-opt" onclick="pickMC('mc-t2',1,1,'1+2+...+n = n(n+1)/2 = (n²+n)/2 → เก็บ term โตสุด ตัด constant → O(n²)')"><span class="mc-ltr">B</span> O(n²)</div>
+      <div class="mc-opt" onclick="pickMC('mc-t2',2,1,'O(n log n) เกิดเมื่อลูปในเป็นแบบคูณ/หารทีละเท่า — อันนี้ j เพิ่มทีละ 1')"><span class="mc-ltr">C</span> O(n log n)</div>
+      <div class="mc-opt" onclick="pickMC('mc-t2',3,1,'ครึ่งหนึ่งของ n² ก็ยังเป็น O(n²) — constant 1/2 ถูกตัดทิ้ง')"><span class="mc-ltr">D</span> O(n²/2) เป็นคำตอบสุดท้าย</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">count++ ทำงาน = 1 + 2 + 3 + ... + n = n(n+1)/2 ครั้ง
+    <div class="ex-feedback" id="mc-t2-fb"></div><pre class="code-block" style="margin-top:12px">count++ ทำงาน = 1 + 2 + 3 + ... + n = n(n+1)/2 ครั้ง
 
 T(n) = (n² + n)/2  →  เก็บ n²/2  →  ตัด 1/2  →  <b>O(n²)</b>
 
@@ -445,26 +445,32 @@ T(n) = (n² + n)/2  →  เก็บ n²/2  →  ตัด 1/2  →  <b>O(n²)<
     <div class="slide-eyebrow">ติวบทที่ 2 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูก — ทวนก่อนไปบท 3</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① T(n) = 4n² + 100n + 999 → Big-O คือ O(___)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft2a" placeholder="คำตอบ">
-      <button class="fill-btn" onclick="checkFill('ft2a','n^2',['n²','n2','O(n²)','O(n^2)'],[],'✅ เก็บ 4n² → ตัด 4 → O(n²) แม้ 100n จะดูใหญ่ n²ก็โตแซงเสมอ','❌ O(n²) — เก็บ term โตสุด (n²) แล้วตัด constant')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① T(n) = 4n² + 100n + 999 → Big-O คือ O(___)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="คำตอบ">
+        <button class="ex-btn" onclick="checkFill('in1','n^2',['n²','n2','O(n²)','O(n^2)'],[],'เก็บ 4n² → ตัด 4 → O(n²) แม้ 100n จะดูใหญ่ n²ก็โตแซงเสมอ','O(n²) — เก็บ term โตสุด (n²) แล้วตัด constant')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="ft2a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② for (j = 1; j &lt;= n; j = 2*j) วนกี่รอบ (ตอบเป็นฟังก์ชันของ n)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft2b" placeholder="คำตอบ">
-      <button class="fill-btn" onclick="checkFill('ft2b','log n',['log₂n','log2 n','log n รอบ','logn','O(log n)'],[],'✅ log₂n รอบ — j คูณสองทุกรอบจนเกิน n','❌ log₂n — คูณ/หารทีละเท่า = log เสมอ')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② for (j = 1; j &lt;= n; j = 2*j) วนกี่รอบ (ตอบเป็นฟังก์ชันของ n)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="คำตอบ">
+        <button class="ex-btn" onclick="checkFill('in2','log n',['log₂n','log2 n','log n รอบ','logn','O(log n)'],[],'log₂n รอบ — j คูณสองทุกรอบจนเกิน n','log₂n — คูณ/หารทีละเท่า = log เสมอ')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="ft2b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ 1 + 2 + ... + n = ___ (สูตร)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="ft2c" placeholder="สูตร">
-      <button class="fill-btn" onclick="checkFill('ft2c','n(n+1)/2',['n(n+1)/2','(n(n+1))/2','n*(n+1)/2'],[],'✅ n(n+1)/2 — สูตร Gauss ใช้ทั้งบท 2 และนับเปรียบเทียบ sorting บท 3','❌ n(n+1)/2 — ท่องเลย ใช้สองบท')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ 1 + 2 + ... + n = ___ (สูตร)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="สูตร">
+        <button class="ex-btn" onclick="checkFill('in3','n(n+1)/2',['n(n+1)/2','(n(n+1))/2','n*(n+1)/2'],[],'n(n+1)/2 — สูตร Gauss ใช้ทั้งบท 2 และนับเปรียบเทียบ sorting บท 3','n(n+1)/2 — ท่องเลย ใช้สองบท')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="ft2c-msg" class="fill-msg"></div>
   </div>
 </div>
 

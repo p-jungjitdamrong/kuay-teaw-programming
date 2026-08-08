@@ -253,13 +253,13 @@ final     ห้ามมีลูก (extends ไม่ได้)
 <span class="kw">public class</span> <span class="fn">B</span> <span class="kw">extends</span> A {
     <span class="kw">public</span> <span class="fn">B</span>() { }              <span class="cm">// constructor ว่าง ไม่เรียก super</span>
 }</pre>
-    <div id="mc-jf" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-jf','A','B','❌ ไม่ผ่าน — มีปัญหาที่ constructor ของ B')">A) compile ผ่านปกติ</button>
-      <button class="mc-btn" onclick="pickMC('mc-jf','B','B','✅ B() ไม่เรียก super(...) → Java แอบเรียก super() ว่าง → แต่ A ไม่มี constructor ว่าง (เขียน A(int) เองแล้ว ตัวแถมหาย!) → compile error — จุดหลอก ⑦+⑧ รวมกัน')">B) compile error ที่ B()</button>
-      <button class="mc-btn" onclick="pickMC('mc-jf','C','B','❌ error ตั้งแต่ compile ไม่ทันได้รัน')">C) รันแล้ว exception</button>
-      <button class="mc-btn" onclick="pickMC('mc-jf','D','B','❌ A ปกติดี — ปัญหาอยู่ที่ B ที่หา super() ว่างไม่เจอ')">D) compile error ที่ A</button>
+    <div class="mc-opts" id="mc-jf">
+      <div class="mc-opt" onclick="pickMC('mc-jf',0,1,'ไม่ผ่าน — มีปัญหาที่ constructor ของ B')"><span class="mc-ltr">A</span> compile ผ่านปกติ</div>
+      <div class="mc-opt" onclick="pickMC('mc-jf',1,1,'B() ไม่เรียก super(...) → Java แอบเรียก super() ว่าง → แต่ A ไม่มี constructor ว่าง (เขียน A(int) เองแล้ว ตัวแถมหาย!) → compile error — จุดหลอก ⑦+⑧ รวมกัน')"><span class="mc-ltr">B</span> compile error ที่ B()</div>
+      <div class="mc-opt" onclick="pickMC('mc-jf',2,1,'error ตั้งแต่ compile ไม่ทันได้รัน')"><span class="mc-ltr">C</span> รันแล้ว exception</div>
+      <div class="mc-opt" onclick="pickMC('mc-jf',3,1,'A ปกติดี — ปัญหาอยู่ที่ B ที่หา super() ว่างไม่เจอ')"><span class="mc-ltr">D</span> compile error ที่ A</div>
     </div>
-    <pre class="code-block" style="margin-top:12px"><span class="cm">// ไล่เหตุการณ์: B() ไม่เรียก super → Java เติม super() ให้
+    <div class="ex-feedback" id="mc-jf-fb"></div><pre class="code-block" style="margin-top:12px"><span class="cm">// ไล่เหตุการณ์: B() ไม่เรียก super → Java เติม super() ให้
 // → หา A() ว่างๆ ใน A → ไม่มี! (A เขียน A(int) เอง default เลยหาย)
 // → compile error
 // วิธีแก้: public B() { super(0); }  หรือเพิ่ม public A() {} ใน A</span></pre>

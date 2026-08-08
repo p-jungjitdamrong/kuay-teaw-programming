@@ -316,13 +316,13 @@ Step 2: sort ตาม date
   <div class="slide-body">
     <div class="slide-eyebrow">บทที่ 4 · Trace</div>
     <h2 class="slide-title">Merge [2,5,8] กับ [1,4,7] — ผลคือ?</h2>
-    <div id="mc-m4" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-m4','A','C','❌ ลำดับไม่ถูก — ดู merge step: L[0]=2, R[0]=1 → 1&lt;2 มาก่อน')">A) {2,1,4,5,7,8}</button>
-      <button class="mc-btn" onclick="pickMC('mc-m4','B','C','❌ ตัวเลขครบ แต่ลำดับผิด')">B) {1,2,4,5,7,8} อันนี้ถูก แต่กด C แทน</button>
-      <button class="mc-btn" onclick="pickMC('mc-m4','C','C','✅ 1&lt;2→1, 2&lt;4→2, 4&lt;5→4, 5&lt;7→5, 7&lt;8→7, เหลือ 8 → {1,2,4,5,7,8}')">C) {1,2,4,5,7,8}</button>
-      <button class="mc-btn" onclick="pickMC('mc-m4','D','C','❌ ไม่ถูก — merge ทำตามลำดับ comparison ทีละคู่')">D) {1,2,4,5,8,7}</button>
+    <div class="mc-opts" id="mc-m4">
+      <div class="mc-opt" onclick="pickMC('mc-m4',0,2,'ลำดับไม่ถูก — ดู merge step: L[0]=2, R[0]=1 → 1&lt;2 มาก่อน')"><span class="mc-ltr">A</span> {2,1,4,5,7,8}</div>
+      <div class="mc-opt" onclick="pickMC('mc-m4',1,2,'ตัวเลขครบ แต่ลำดับผิด')"><span class="mc-ltr">B</span> {1,2,4,5,7,8} อันนี้ถูก แต่กด C แทน</div>
+      <div class="mc-opt" onclick="pickMC('mc-m4',2,2,'1&lt;2→1, 2&lt;4→2, 4&lt;5→4, 5&lt;7→5, 7&lt;8→7, เหลือ 8 → {1,2,4,5,7,8}')"><span class="mc-ltr">C</span> {1,2,4,5,7,8}</div>
+      <div class="mc-opt" onclick="pickMC('mc-m4',3,2,'ไม่ถูก — merge ทำตามลำดับ comparison ทีละคู่')"><span class="mc-ltr">D</span> {1,2,4,5,8,7}</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">L=[2,5,8]  R=[1,4,7]
+    <div class="ex-feedback" id="mc-m4-fb"></div><pre class="code-block" style="margin-top:12px">L=[2,5,8]  R=[1,4,7]
 i=0,j=0: L[0]=2 > R[0]=1 → take 1, j=1
 i=0,j=1: L[0]=2 ≤ R[1]=4 → take 2, i=1
 i=1,j=1: L[1]=5 > R[1]=4 → take 4, j=2
@@ -339,24 +339,30 @@ Result: {1,2,4,5,7,8}</pre>
   <div class="slide-body">
     <div class="slide-eyebrow">บทที่ 4 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Merge Sort base case คือเมื่อ l ___ r → return</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fm4a" placeholder="เงื่อนไข">
-      <button class="fill-btn" onclick="checkFill('fm4a','>=',['> ','>=','มากกว่าเท่ากับ'],[],'✅ l >= r หมายถึง subarray มีแค่ 1 ตัว (l==r) หรือว่าง → ไม่ต้อง sort','❌ l >= r — เมื่อ l==r มี 1 ตัว sorted แล้ว เมื่อ l>r เป็น empty')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① Merge Sort base case คือเมื่อ l ___ r → return</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="เงื่อนไข">
+        <button class="ex-btn" onclick="checkFill('in1','>=',['> ','>=','มากกว่าเท่ากับ'],[],'l >= r หมายถึง subarray มีแค่ 1 ตัว (l==r) หรือว่าง → ไม่ต้อง sort','l >= r — เมื่อ l==r มี 1 ตัว sorted แล้ว เมื่อ l>r เป็น empty')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fm4a-msg" class="fill-msg"></div>
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② Merge Sort ใช้ Space O(___) เพราะต้องสร้าง temp arrays</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fm4b" placeholder="complexity">
-      <button class="fill-btn" onclick="checkFill('fm4b','n',['o(n)','O(n)'],[],'✅ O(n) — temp arrays L, R รวมกัน = n elements','❌ O(n) — ทุก level ของ recursion ใช้ temp arrays รวม n elements')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② Merge Sort ใช้ Space O(___) เพราะต้องสร้าง temp arrays</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="complexity">
+        <button class="ex-btn" onclick="checkFill('in2','n',['o(n)','O(n)'],[],'O(n) — temp arrays L, R รวมกัน = n elements','O(n) — ทุก level ของ recursion ใช้ temp arrays รวม n elements')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fm4b-msg" class="fill-msg"></div>
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ ใน merge function ต้องใช้ <code class="inline-code">L[i] ___ R[j]</code> เพื่อให้ Stable</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fm4c" placeholder="operator">
-      <button class="fill-btn" onclick="checkFill('fm4c','<=',['<= ','น้อยกว่าเท่ากับ'],[],'✅ <= เมื่อค่าเท่ากัน L (ซ้าย = เดิมมาก่อน) ถูกหยิบก่อน → Stable','❌ ต้อง <= ไม่ใช่ < เพราะถ้าใช้ < เมื่อค่าเท่ากัน R จะถูกหยิบก่อน → Unstable')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ ใน merge function ต้องใช้ <code class="inline-code">L[i] ___ R[j]</code> เพื่อให้ Stable</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="operator">
+        <button class="ex-btn" onclick="checkFill('in3','<=',['<= ','น้อยกว่าเท่ากับ'],[],'<= เมื่อค่าเท่ากัน L (ซ้าย = เดิมมาก่อน) ถูกหยิบก่อน → Stable','ต้อง <= ไม่ใช่ < เพราะถ้าใช้ < เมื่อค่าเท่ากัน R จะถูกหยิบก่อน → Unstable')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fm4c-msg" class="fill-msg"></div>
   </div>
 </div>
 

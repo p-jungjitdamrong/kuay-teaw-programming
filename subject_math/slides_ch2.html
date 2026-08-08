@@ -447,13 +447,13 @@ IPv6 ใช้ 128 bits → มีกี่ address?<br>2¹²⁸ ใหญ่ข
     <div class="slide-eyebrow">บทที่ 2 · MCQ</div>
     <h2 class="slide-title">11010110₂ = เท่าไหร่ในฐาน 10?</h2>
     <p class="slide-lead">ใช้ค่าประจำหลัก: 128 64 32 16 8 4 2 1</p>
-    <div id="mc-bn2" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-bn2','A','B','❌ 198 = 11000110₂ — เช็ค bit ตำแหน่ง 16 อีกที')">A) 198</button>
-      <button class="mc-btn" onclick="pickMC('mc-bn2','B','B','✅ 128+64+16+4+2 = 214 — บวกเฉพาะหลักที่เป็น 1')">B) 214</button>
-      <button class="mc-btn" onclick="pickMC('mc-bn2','C','B','❌ 226 = 11100010₂ — ลองวางใต้ค่าประจำหลักใหม่')">C) 226</button>
-      <button class="mc-btn" onclick="pickMC('mc-bn2','D','B','❌ 182 = 10110110₂ — bit ที่ 64 กับ 32 สลับกัน')">D) 182</button>
+    <div class="mc-opts" id="mc-bn2">
+      <div class="mc-opt" onclick="pickMC('mc-bn2',0,1,'198 = 11000110₂ — เช็ค bit ตำแหน่ง 16 อีกที')"><span class="mc-ltr">A</span> 198</div>
+      <div class="mc-opt" onclick="pickMC('mc-bn2',1,1,'128+64+16+4+2 = 214 — บวกเฉพาะหลักที่เป็น 1')"><span class="mc-ltr">B</span> 214</div>
+      <div class="mc-opt" onclick="pickMC('mc-bn2',2,1,'226 = 11100010₂ — ลองวางใต้ค่าประจำหลักใหม่')"><span class="mc-ltr">C</span> 226</div>
+      <div class="mc-opt" onclick="pickMC('mc-bn2',3,1,'182 = 10110110₂ — bit ที่ 64 กับ 32 สลับกัน')"><span class="mc-ltr">D</span> 182</div>
     </div>
-    <pre class="code-block" style="margin-top:12px">  1    1    0    1    0    1    1    0
+    <div class="ex-feedback" id="mc-bn2-fb"></div><pre class="code-block" style="margin-top:12px">  1    1    0    1    0    1    1    0
 128   64   32   16    8    4    2    1
  ✓    ✓    ·    ✓    ·    ✓    ✓    ·
 
@@ -470,26 +470,32 @@ IPv6 ใช้ 128 bits → มีกี่ address?<br>2¹²⁸ ใหญ่ข
     <div class="slide-eyebrow">บทที่ 2 · Fill-in</div>
     <h2 class="slide-title">เติมให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① 25₁₀ = ___₂ (ฐาน 2)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fbn2a" placeholder="เลขฐาน 2">
-      <button class="fill-btn" onclick="checkFill('fbn2a','11001',['011001','0011001'],[],'✅ 16+8+1 = 25 → 11001₂','❌ 25 = 16+8+1 → 11001₂ (หารสองเก็บเศษ: 1,0,0,1,1 อ่านย้อน)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① 25₁₀ = ___₂ (ฐาน 2)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="เลขฐาน 2">
+        <button class="ex-btn" onclick="checkFill('in1','11001',['011001','0011001'],[],'16+8+1 = 25 → 11001₂','25 = 16+8+1 → 11001₂ (หารสองเก็บเศษ: 1,0,0,1,1 อ่านย้อน)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fbn2a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">② 1111₂ = ___₁₀ (ฐาน 10)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fbn2b" placeholder="เลขฐาน 10">
-      <button class="fill-btn" onclick="checkFill('fbn2b','15',['15'],[],'✅ 8+4+2+1 = 15 — 4 bits เต็ม = 2⁴−1','❌ 8+4+2+1 = 15 (n bits เต็ม = 2ⁿ−1 เสมอ)')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② 1111₂ = ___₁₀ (ฐาน 10)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="เลขฐาน 10">
+        <button class="ex-btn" onclick="checkFill('in2','15',['15'],[],'8+4+2+1 = 15 — 4 bits เต็ม = 2⁴−1','8+4+2+1 = 15 (n bits เต็ม = 2ⁿ−1 เสมอ)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fbn2b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:16px;color:var(--dim)">③ 0xFF = ___₁₀ (ฐาน 10)</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fbn2c" placeholder="เลขฐาน 10">
-      <button class="fill-btn" onclick="checkFill('fbn2c','255',['255'],[],'✅ F=15 → 15×16 + 15 = 255 = 11111111₂ (1 byte เต็ม)','❌ 0xFF = 15×16+15 = 255 — ค่า max ของ 1 byte')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ 0xFF = ___₁₀ (ฐาน 10)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="เลขฐาน 10">
+        <button class="ex-btn" onclick="checkFill('in3','255',['255'],[],'F=15 → 15×16 + 15 = 255 = 11111111₂ (1 byte เต็ม)','0xFF = 15×16+15 = 255 — ค่า max ของ 1 byte')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fbn2c-msg" class="fill-msg"></div>
   </div>
 </div>
 

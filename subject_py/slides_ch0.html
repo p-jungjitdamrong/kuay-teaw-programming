@@ -281,13 +281,13 @@
 <span class="nm">x</span> = <span class="nm">x</span> * <span class="nm">2</span>
 <span class="nm">x</span> = <span class="st">f"ยอด: {<span class="nm">x</span>} บาท"</span>
 <span class="fn">print</span>(<span class="nm">x</span>)</pre>
-    <div id="mc-trace0" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-trace0','A','B','❌ x ยังเป็น int 20 — แต่บรรทัดที่ 3 assign string ใหม่แล้ว')">A) 20</button>
-      <button class="mc-btn" onclick="pickMC('mc-trace0','B','B','✅ x เปลี่ยน type ได้ตลอด — Python Dynamic Typing!')">B) ยอด: 20 บาท</button>
-      <button class="mc-btn" onclick="pickMC('mc-trace0','C','B','❌ TypeError เกิดถ้าบวก int+str แต่ที่นี่ใช้ f-string ซึ่ง ok')">C) TypeError</button>
-      <button class="mc-btn" onclick="pickMC('mc-trace0','D','B','❌ f-string ใส่ค่า x ลงไปใน string ได้เลย ไม่ต้องแปลง')">D) ยอด: {x} บาท</button>
+    <div class="mc-opts" id="mc-trace0">
+      <div class="mc-opt" onclick="pickMC('mc-trace0',0,1,'x ยังเป็น int 20 — แต่บรรทัดที่ 3 assign string ใหม่แล้ว')"><span class="mc-ltr">A</span> 20</div>
+      <div class="mc-opt" onclick="pickMC('mc-trace0',1,1,'x เปลี่ยน type ได้ตลอด — Python Dynamic Typing!')"><span class="mc-ltr">B</span> ยอด: 20 บาท</div>
+      <div class="mc-opt" onclick="pickMC('mc-trace0',2,1,'TypeError เกิดถ้าบวก int+str แต่ที่นี่ใช้ f-string ซึ่ง ok')"><span class="mc-ltr">C</span> TypeError</div>
+      <div class="mc-opt" onclick="pickMC('mc-trace0',3,1,'f-string ใส่ค่า x ลงไปใน string ได้เลย ไม่ต้องแปลง')"><span class="mc-ltr">D</span> ยอด: {x} บาท</div>
     </div>
-  </div>
+    <div class="ex-feedback" id="mc-trace0-fb"></div></div>
 </div>
 
 <!-- ════ SLIDE 10 — Fill-in ════ -->
@@ -297,26 +297,32 @@
     <div class="slide-eyebrow">บทที่ 0 · Fill-in</div>
     <h2 class="slide-title">เติมคำให้ถูกต้อง</h2>
 
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① ตรวจสอบ type ของตัวแปรใน Python ใช้ built-in function ชื่อว่า?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f0a" placeholder="ชื่อ function">
-      <button class="fill-btn" onclick="checkFill('f0a','type',[],[],'✅ type() — เช่น type(42) คือ &lt;class int&gt;','❌ ลองใหม่')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① ตรวจสอบ type ของตัวแปรใน Python ใช้ built-in function ชื่อว่า?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ชื่อ function">
+        <button class="ex-btn" onclick="checkFill('in1','type',[],[],'type() — เช่น type(42) คือ &lt;class int&gt;','ลองใหม่')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="f0a-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② ใน Python Indentation ใช้กี่ spaces ตาม PEP 8?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f0b" placeholder="ตัวเลข">
-      <button class="fill-btn" onclick="checkFill('f0b','4',['four'],[],  '✅ 4 spaces ตาม PEP 8','❌ ลองนับดู')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② ใน Python Indentation ใช้กี่ spaces ตาม PEP 8?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ตัวเลข">
+        <button class="ex-btn" onclick="checkFill('in2','4',['four'],[],  '✅ 4 spaces ตาม PEP 8','ลองนับดู')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="f0b-msg" class="fill-msg"></div>
 
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ ชื่อตัวแปรแบบ Pythonic (PEP 8) สำหรับ "ยอดเงินในบัญชี" เขียนว่า?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="f0c" placeholder="ชื่อตัวแปร">
-      <button class="fill-btn" onclick="checkFill('f0c','account_balance',['account balance','accountbalance'],[],  '✅ snake_case — account_balance คือ Pythonic','❌ PEP 8 ใช้ snake_case — คั่นด้วย _ ตัวเล็กทั้งหมด')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ ชื่อตัวแปรแบบ Pythonic (PEP 8) สำหรับ "ยอดเงินในบัญชี" เขียนว่า?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ชื่อตัวแปร">
+        <button class="ex-btn" onclick="checkFill('in3','account_balance',['account balance','accountbalance'],[],  '✅ snake_case — account_balance คือ Pythonic','PEP 8 ใช้ snake_case — คั่นด้วย _ ตัวเล็กทั้งหมด')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="f0c-msg" class="fill-msg"></div>
   </div>
 </div>
 

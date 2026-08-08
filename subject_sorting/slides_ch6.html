@@ -299,13 +299,13 @@ i=1: swap(arr[0],arr[1])={1,3,4,5,10}
     <div class="slide-eyebrow">บทที่ 6 · Trace MCQ</div>
     <h2 class="slide-title">Build Max Heap จาก {3,1,6,5,2,4}?</h2>
     <p class="slide-lead">heapify จาก i = n/2-1 = 2 ถึง 0</p>
-    <div id="mc-h6" class="mc-group">
-      <button class="mc-btn" onclick="pickMC('mc-h6','A','C','❌ ลอง heapify i=2: arr[2]=6, left=arr[5]=4, right=none → largest=2 ไม่ swap')">A) {6,5,4,3,2,1}</button>
-      <button class="mc-btn" onclick="pickMC('mc-h6','B','C','❌ trace i=0 ให้ดี')">B) {6,5,3,1,2,4}</button>
-      <button class="mc-btn" onclick="pickMC('mc-h6','C','C','✅ i=2: arr[2]=6>arr[5]=4 no swap; i=1: arr[1]=1,left=5,right=2→largest=3(5)swap→{3,5,6,1,2,4}; i=0: arr[0]=3,left=5,right=6→largest=2(6)swap→{6,5,3,1,2,4}? heapify(2): arr[2]=3,left=5(4)<no child? → {6,5,4,1,2,3}')">C) {6,5,4,1,2,3}</button>
-      <button class="mc-btn" onclick="pickMC('mc-h6','D','C','❌ heap property: parent ≥ children ต้องตรวจทุกตำแหน่ง')">D) {3,5,6,1,2,4}</button>
+    <div class="mc-opts" id="mc-h6">
+      <div class="mc-opt" onclick="pickMC('mc-h6',0,2,'ลอง heapify i=2: arr[2]=6, left=arr[5]=4, right=none → largest=2 ไม่ swap')"><span class="mc-ltr">A</span> {6,5,4,3,2,1}</div>
+      <div class="mc-opt" onclick="pickMC('mc-h6',1,2,'trace i=0 ให้ดี')"><span class="mc-ltr">B</span> {6,5,3,1,2,4}</div>
+      <div class="mc-opt" onclick="pickMC('mc-h6',2,2,'i=2: arr[2]=6>arr[5]=4 no swap; i=1: arr[1]=1,left=5,right=2→largest=3(5)swap→{3,5,6,1,2,4}; i=0: arr[0]=3,left=5,right=6→largest=2(6)swap→{6,5,3,1,2,4}? heapify(2): arr[2]=3,left=5(4)<no child? → {6,5,4,1,2,3}')"><span class="mc-ltr">C</span> {6,5,4,1,2,3}</div>
+      <div class="mc-opt" onclick="pickMC('mc-h6',3,2,'heap property: parent ≥ children ต้องตรวจทุกตำแหน่ง')"><span class="mc-ltr">D</span> {3,5,6,1,2,4}</div>
     </div>
-    <pre class="code-block" style="margin-top:10px;font-size:11px">arr = {3,1,6,5,2,4}  (idx 0-5)
+    <div class="ex-feedback" id="mc-h6-fb"></div><pre class="code-block" style="margin-top:10px;font-size:11px">arr = {3,1,6,5,2,4}  (idx 0-5)
 i=2: arr[2]=6, l=5(4), r=6(ไม่มี) → largest=2 → no swap
 i=1: arr[1]=1, l=3(5), r=4(2) → largest=3(5) → swap(arr[1],arr[3])
      → {3,5,6,1,2,4} → heapify(3): l=7,r=8 ไม่มี → done
@@ -321,24 +321,30 @@ i=0: arr[0]=3, l=1(5), r=2(6) → largest=2(6) → swap(arr[0],arr[2])
   <div class="slide-body">
     <div class="slide-eyebrow">บทที่ 6 · แบบฝึกหัด</div>
     <h2 class="slide-title">เลือก Algorithm ให้ถูก Scenario</h2>
-    <p style="font-size:13px;margin-bottom:8px;color:var(--dim)">① Sort account numbers (0–9,999,999) จำนวน 1 ล้านรายการ — ควรใช้?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fh6a" placeholder="ชื่อ algorithm">
-      <button class="fill-btn" onclick="checkFill('fh6a','counting sort',['counting','count sort','radix sort','radix'],[],'✅ Counting Sort หรือ Radix Sort — integer ที่รู้ขอบเขต O(n+k) หรือ O(dn)','❌ ใช้ Counting Sort (k=10M) หรือ Radix Sort (d=7) ดีกว่า comparison sort')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">① Sort account numbers (0–9,999,999) จำนวน 1 ล้านรายการ — ควรใช้?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ชื่อ algorithm">
+        <button class="ex-btn" onclick="checkFill('in1','counting sort',['counting','count sort','radix sort','radix'],[],'Counting Sort หรือ Radix Sort — integer ที่รู้ขอบเขต O(n+k) หรือ O(dn)','ใช้ Counting Sort (k=10M) หรือ Radix Sort (d=7) ดีกว่า comparison sort')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
     </div>
-    <div id="fh6a-msg" class="fill-msg"></div>
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">② O(n log n) guaranteed + O(1) space + Unstable — คือ algorithm อะไร?</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fh6b" placeholder="ชื่อ algorithm">
-      <button class="fill-btn" onclick="checkFill('fh6b','heap sort',['heapsort','heap'],[],'✅ Heap Sort — O(n log n) ทุก case, O(1) space, Unstable','❌ Heap Sort: O(n log n) guaranteed, O(1) in-place, แต่ Unstable')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">② O(n log n) guaranteed + O(1) space + Unstable — คือ algorithm อะไร?</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ชื่อ algorithm">
+        <button class="ex-btn" onclick="checkFill('in2','heap sort',['heapsort','heap'],[],'Heap Sort — O(n log n) ทุก case, O(1) space, Unstable','Heap Sort: O(n log n) guaranteed, O(1) in-place, แต่ Unstable')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
     </div>
-    <div id="fh6b-msg" class="fill-msg"></div>
-    <p style="font-size:13px;margin-bottom:8px;margin-top:18px;color:var(--dim)">③ Counting Sort ใช้ O(___)space เพื่อเก็บ count array</p>
-    <div class="fill-row">
-      <input class="fill-input" id="fh6c" placeholder="complexity">
-      <button class="fill-btn" onclick="checkFill('fh6c','k',['O(k)','o(k)'],[],'✅ O(k) โดย k คือขอบเขตค่า — count array มี k+1 ช่อง','❌ O(k) — count array มีขนาด max_value+1 ช่อง')">ตรวจ</button>
+    <div class="exercise">
+      <div class="ex-q">③ Counting Sort ใช้ O(___)space เพื่อเก็บ count array</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="complexity">
+        <button class="ex-btn" onclick="checkFill('in3','k',['O(k)','o(k)'],[],'O(k) โดย k คือขอบเขตค่า — count array มี k+1 ช่อง','O(k) — count array มีขนาด max_value+1 ช่อง')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
     </div>
-    <div id="fh6c-msg" class="fill-msg"></div>
   </div>
 </div>
 
