@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ชุดที่ 3 — Tree &amp; Hash | ตะลุยโจทย์ Data Structures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#14532d;--cal:#e3f2e7;--cam:#3d8f5b;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.prob{background:#fff;border:1px solid var(--line);border-left:4px solid var(--ca);border-radius:8px;padding:14px 18px;margin:8px 0;font-size:13.5px;line-height:1.8;}
+.prob b{color:var(--ca);}
+.io{font-family:var(--mono);font-size:12.5px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:8px 0;white-space:pre;color:var(--ca);line-height:1.6;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.6;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:5px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);}
+.t td:first-child{font-weight:700;color:var(--ca);}
+.lang{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--ca);color:#fff;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🧩 ตะลุยโจทย์ Data Structures</div>
+        <div class="cover-title">ชุดที่ 3<br><em>Tree &amp; Hash</em></div>
+        <div class="cover-subtitle">ระดับ 3 · เรื่องที่ต้องคิดแบบเวียนบังเกิด (recursive) — ยากตอนเริ่ม แต่โค้ดสั้นที่สุด</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 1: สร้าง BST แล้วเดิน 3 แบบ</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 2: หาความสูง + นับใบของต้นไม้</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 3: Hash Table แก้ชนด้วย chaining</div>
+          <div class="topic-row"><div class="topic-dot"></div>ทุกโจทย์: วิธีคิด → ภาพ → C + Python</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">🌳</div>
+        <div class="cover-badge">3 โจทย์ · C + PYTHON</div>
+        <div class="cover-slides-count">9 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">สร้าง BST แล้วเดิน 3 แบบ</h2>
+    <div class="prob">
+      <b>โจทย์:</b> รับตัวเลขมาเรื่อยๆ จนเจอ <b>−1</b> ให้ใส่ลง <b>Binary Search Tree</b>
+      (ค่าน้อยกว่าไปซ้าย มากกว่าไปขวา ค่าซ้ำไม่ต้องใส่) แล้วแสดงผลการเดินต้นไม้ทั้ง <b>3 แบบ</b>:
+      preorder, inorder, postorder
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">ป้อน: 50 30 70 20 40 60 80 -1
+
+ต้นไม้ที่ได้:
+            50
+          ╱    ╲
+        30      70
+       ╱  ╲    ╱  ╲
+     20   40  60   80
+
+preorder : 50 30 20 40 70 60 80
+inorder  : 20 30 40 50 60 70 80
+postorder: 20 40 30 60 80 70 50</div>
+        <div class="exam">🔑 <b>สังเกต inorder ให้ดี</b> — ได้ผลลัพธ์<b>เรียงจากน้อยไปมากเสมอ</b> นี่คือคุณสมบัติสำคัญที่สุดของ BST และเป็นคำถามที่ออกสอบบ่อยที่สุด</div>
+      </div>
+      <div>
+        <div class="code-label">ความต่างของ 3 แบบ — แค่ย้ายที่พิมพ์</div>
+        <table class="t">
+          <thead><tr><th>แบบ</th><th>ลำดับ</th><th>ใช้ทำอะไร</th></tr></thead>
+          <tbody>
+            <tr><td>preorder</td><td>ตัวเอง → ซ้าย → ขวา</td><td>คัดลอกต้นไม้</td></tr>
+            <tr><td>inorder</td><td>ซ้าย → ตัวเอง → ขวา</td><td>เรียงข้อมูล</td></tr>
+            <tr><td>postorder</td><td>ซ้าย → ขวา → ตัวเอง</td><td>ลบต้นไม้ทิ้ง</td></tr>
+          </tbody>
+        </table>
+        <div class="exam"><b>วิธีจำ:</b> คำว่า <b>pre / in / post</b> บอกว่า<b>"ตัวเอง"อยู่ตรงไหน</b> — pre=ก่อน, in=กลาง, post=หลัง ส่วนซ้ายมาก่อนขวาเสมอทั้ง 3 แบบ</div>
+        <div class="code-label">การใส่ค่าลง BST — ตามหาที่ว่าง</div>
+        <div class="diagram">ใส่ 40 ลงต้นไม้ที่มี 50, 30:
+
+ ที่ 50: 40 &lt; 50 → ไปซ้าย
+ ที่ 30: 40 &gt; 30 → ไปขวา
+ ขวาของ 30 ว่าง → วางตรงนี้
+
+        50
+       ╱
+     30
+       ╲
+        40</div>
+        <div class="exam">⏸️ <b>หยุดลองเอง</b> — ลองวาดต้นไม้จากลำดับ <span style="font-family:monospace">10 20 30 40</span> ดู แล้วดูว่าเกิดอะไรขึ้น (เฉลย: กลายเป็นเส้นตรงเอียงขวา = ต้นไม้เสียสมดุล ค้นหากลายเป็น O(n))</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 1 เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · เฉลย</div>
+    <h2 class="slide-title">โค้ดเต็ม — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;stdlib.h&gt;</span>
+
+<span class="kw">struct</span> Node {
+    <span class="kw">int</span> data;
+    <span class="kw">struct</span> Node *left, *right;
+};
+
+<span class="kw">struct</span> Node* newNode(<span class="kw">int</span> v) {
+    <span class="kw">struct</span> Node *p = malloc(<span class="kw">sizeof</span>(<span class="kw">struct</span> Node));
+    p-&gt;data = v;
+    p-&gt;left = p-&gt;right = NULL;
+    <span class="kw">return</span> p;
+}
+
+<span class="cm">// ใส่ค่า — เขียนแบบเวียนบังเกิด สั้นที่สุด</span>
+<span class="kw">struct</span> Node* insert(<span class="kw">struct</span> Node *root, <span class="kw">int</span> v) {
+    <span class="kw">if</span> (root == NULL) <span class="kw">return</span> newNode(v);   <span class="cm">// เจอที่ว่าง</span>
+    <span class="kw">if</span> (v &lt; root-&gt;data)
+        root-&gt;left  = insert(root-&gt;left, v);
+    <span class="kw">else</span> <span class="kw">if</span> (v &gt; root-&gt;data)
+        root-&gt;right = insert(root-&gt;right, v);
+    <span class="cm">// v == data → ไม่ทำอะไร (ห้ามค่าซ้ำ)</span>
+    <span class="kw">return</span> root;
+}
+
+<span class="kw">void</span> preorder(<span class="kw">struct</span> Node *r) {
+    <span class="kw">if</span> (r == NULL) <span class="kw">return</span>;
+    printf(<span class="st">"%d "</span>, r-&gt;data);   <span class="cm">// ← ตัวเองก่อน</span>
+    preorder(r-&gt;left);
+    preorder(r-&gt;right);
+}
+
+<span class="kw">void</span> inorder(<span class="kw">struct</span> Node *r) {
+    <span class="kw">if</span> (r == NULL) <span class="kw">return</span>;
+    inorder(r-&gt;left);
+    printf(<span class="st">"%d "</span>, r-&gt;data);   <span class="cm">// ← ตัวเองตรงกลาง</span>
+    inorder(r-&gt;right);
+}
+
+<span class="kw">void</span> postorder(<span class="kw">struct</span> Node *r) {
+    <span class="kw">if</span> (r == NULL) <span class="kw">return</span>;
+    postorder(r-&gt;left);
+    postorder(r-&gt;right);
+    printf(<span class="st">"%d "</span>, r-&gt;data);   <span class="cm">// ← ตัวเองทีหลัง</span>
+}
+
+<span class="kw">int</span> main() {
+    <span class="kw">struct</span> Node *root = NULL;
+    <span class="kw">int</span> v;
+    <span class="kw">while</span> (scanf(<span class="st">"%d"</span>, &amp;v) == <span class="nu">1</span> &amp;&amp; v != <span class="nu">-1</span>)
+        root = insert(root, v);
+
+    printf(<span class="st">"preorder : "</span>); preorder(root);  printf(<span class="st">"\n"</span>);
+    printf(<span class="st">"inorder  : "</span>); inorder(root);   printf(<span class="st">"\n"</span>);
+    printf(<span class="st">"postorder: "</span>); postorder(root); printf(<span class="st">"\n"</span>);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block"><span class="kw">class</span> Node:
+    <span class="kw">def</span> __init__(self, data):
+        self.data  = data
+        self.left  = <span class="kw">None</span>
+        self.right = <span class="kw">None</span>
+
+<span class="kw">def</span> insert(root, v):
+    <span class="kw">if</span> root <span class="kw">is</span> <span class="kw">None</span>:
+        <span class="kw">return</span> Node(v)
+    <span class="kw">if</span> v &lt; root.data:
+        root.left  = insert(root.left, v)
+    <span class="kw">elif</span> v &gt; root.data:
+        root.right = insert(root.right, v)
+    <span class="kw">return</span> root
+
+<span class="kw">def</span> preorder(r):
+    <span class="kw">if</span> r <span class="kw">is</span> <span class="kw">None</span>: <span class="kw">return</span>
+    print(r.data, end=<span class="st">" "</span>)
+    preorder(r.left)
+    preorder(r.right)
+
+<span class="kw">def</span> inorder(r):
+    <span class="kw">if</span> r <span class="kw">is</span> <span class="kw">None</span>: <span class="kw">return</span>
+    inorder(r.left)
+    print(r.data, end=<span class="st">" "</span>)
+    inorder(r.right)
+
+<span class="kw">def</span> postorder(r):
+    <span class="kw">if</span> r <span class="kw">is</span> <span class="kw">None</span>: <span class="kw">return</span>
+    postorder(r.left)
+    postorder(r.right)
+    print(r.data, end=<span class="st">" "</span>)
+
+root = <span class="kw">None</span>
+<span class="kw">while</span> <span class="kw">True</span>:
+    v = <span class="kw">int</span>(input())
+    <span class="kw">if</span> v == <span class="nu">-1</span>: <span class="kw">break</span>
+    root = insert(root, v)
+
+print(<span class="st">"preorder : "</span>, end=<span class="st">""</span>); preorder(root);  print()
+print(<span class="st">"inorder  : "</span>, end=<span class="st">""</span>); inorder(root);   print()
+print(<span class="st">"postorder: "</span>, end=<span class="st">""</span>); postorder(root); print()</pre>
+        <div class="exam">🔑 <b>โครงของฟังก์ชันเวียนบังเกิดทุกตัวในเรื่องต้นไม้ เหมือนกันหมด 2 ส่วน:</b><br>
+        ① <b>ฐาน</b> — ถ้า NULL ให้หยุด (ไม่มีบรรทัดนี้ = โปรแกรมพังทันที)<br>
+        ② <b>ตัวเอง + เรียกซ้ำซ้าย/ขวา</b> — สลับตำแหน่งของ "ตัวเอง" เท่านั้นก็ได้ทั้ง 3 แบบ</div>
+        <div class="exam"><b>อย่าลืม <span style="font-family:monospace">root = insert(root, v)</span></b> — เหมือนกับ linked list ตอนแทรกหัว ถ้าไม่รับค่ากลับ ต้นไม้จะว่างตลอด</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">หาความสูง + นับใบของต้นไม้</h2>
+    <div class="prob">
+      <b>โจทย์:</b> จากต้นไม้ที่สร้างไว้ ให้หา<br>
+      ① <b>ความสูง (height)</b> = จำนวนระดับที่ลึกที่สุด &nbsp; ② <b>จำนวนใบ (leaf)</b> = โหนดที่ไม่มีลูกเลย<br>
+      ③ <b>จำนวนโหนดทั้งหมด</b>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">ต้นไม้:
+            50          ← ระดับ 1
+          ╱    ╲
+        30      70      ← ระดับ 2
+       ╱  ╲       ╲
+     20   40       80   ← ระดับ 3
+
+ความสูง   = 3
+จำนวนใบ   = 3   (20, 40, 80)
+จำนวนโหนด = 6</div>
+        <div class="prob"><b>ทำไมข้อนี้ถึงต้องคิดแบบเวียนบังเกิด?</b><br>
+        เพราะ "ความสูงของต้นไม้" นิยามด้วยตัวมันเอง:<br>
+        <b>ความสูง = 1 + ความสูงของกิ่งที่สูงกว่า</b><br>
+        พอนิยามเป็นแบบนี้ โค้ดก็เขียนตามนิยามได้ตรงๆ เลย</div>
+      </div>
+      <div>
+        <div class="code-label">แปลนิยามเป็นโค้ด — ทั้ง 3 ข้อ</div>
+        <div class="diagram">height(r):
+  ถ้า r ว่าง        → 0
+  ไม่งั้น           → 1 + max(height(ซ้าย),
+                              height(ขวา))
+
+countLeaf(r):
+  ถ้า r ว่าง        → 0
+  ถ้าไม่มีลูกทั้งคู่ → 1
+  ไม่งั้น           → countLeaf(ซ้าย)
+                     + countLeaf(ขวา)
+
+countNode(r):
+  ถ้า r ว่าง        → 0
+  ไม่งั้น           → 1 + countNode(ซ้าย)
+                        + countNode(ขวา)</div>
+        <div class="exam">💡 <b>สังเกตว่าทั้ง 3 ตัวมีโครงเดียวกันเป๊ะ:</b> เช็คว่าง → คืน 0 · แล้วรวมผลของซ้ายกับขวา ต่างกันแค่<b>จะบวก 1 ตอนไหน</b> — จำโครงนี้ได้ก็เขียนโจทย์ตระกูลนี้ได้ทั้งหมด</div>
+        <div class="exam">⏸️ <b>หยุดลองเอง</b> — ลองเขียน <span style="font-family:monospace">sumAll(r)</span> ที่หาผลรวมค่าทุกโหนด โดยใช้โครงเดียวกัน (เฉลย: ว่าง→0, ไม่งั้น→ <span style="font-family:monospace">r-&gt;data + sumAll(ซ้าย) + sumAll(ขวา)</span>)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 2 เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · เฉลย</div>
+    <h2 class="slide-title">โค้ด + ตารางเดินโปรแกรม</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="kw">int</span> height(<span class="kw">struct</span> Node *r) {
+    <span class="kw">if</span> (r == NULL) <span class="kw">return</span> <span class="nu">0</span>;
+    <span class="kw">int</span> hl = height(r-&gt;left);
+    <span class="kw">int</span> hr = height(r-&gt;right);
+    <span class="kw">return</span> <span class="nu">1</span> + (hl &gt; hr ? hl : hr);   <span class="cm">// 1 + max</span>
+}
+
+<span class="kw">int</span> countLeaf(<span class="kw">struct</span> Node *r) {
+    <span class="kw">if</span> (r == NULL) <span class="kw">return</span> <span class="nu">0</span>;
+    <span class="kw">if</span> (r-&gt;left == NULL &amp;&amp; r-&gt;right == NULL)
+        <span class="kw">return</span> <span class="nu">1</span>;                       <span class="cm">// เป็นใบ</span>
+    <span class="kw">return</span> countLeaf(r-&gt;left) + countLeaf(r-&gt;right);
+}
+
+<span class="kw">int</span> countNode(<span class="kw">struct</span> Node *r) {
+    <span class="kw">if</span> (r == NULL) <span class="kw">return</span> <span class="nu">0</span>;
+    <span class="kw">return</span> <span class="nu">1</span> + countNode(r-&gt;left) + countNode(r-&gt;right);
+}
+
+<span class="cm">// เรียกใช้</span>
+printf(<span class="st">"ความสูง   = %d\n"</span>, height(root));
+printf(<span class="st">"จำนวนใบ   = %d\n"</span>, countLeaf(root));
+printf(<span class="st">"จำนวนโหนด = %d\n"</span>, countNode(root));</pre>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block"><span class="kw">def</span> height(r):
+    <span class="kw">if</span> r <span class="kw">is</span> <span class="kw">None</span>:
+        <span class="kw">return</span> <span class="nu">0</span>
+    <span class="kw">return</span> <span class="nu">1</span> + <span class="kw">max</span>(height(r.left), height(r.right))
+
+<span class="kw">def</span> count_leaf(r):
+    <span class="kw">if</span> r <span class="kw">is</span> <span class="kw">None</span>:
+        <span class="kw">return</span> <span class="nu">0</span>
+    <span class="kw">if</span> r.left <span class="kw">is</span> <span class="kw">None</span> <span class="kw">and</span> r.right <span class="kw">is</span> <span class="kw">None</span>:
+        <span class="kw">return</span> <span class="nu">1</span>
+    <span class="kw">return</span> count_leaf(r.left) + count_leaf(r.right)
+
+<span class="kw">def</span> count_node(r):
+    <span class="kw">if</span> r <span class="kw">is</span> <span class="kw">None</span>:
+        <span class="kw">return</span> <span class="nu">0</span>
+    <span class="kw">return</span> <span class="nu">1</span> + count_node(r.left) + count_node(r.right)
+
+print(<span class="st">"ความสูง   ="</span>, height(root))
+print(<span class="st">"จำนวนใบ   ="</span>, count_leaf(root))
+print(<span class="st">"จำนวนโหนด ="</span>, count_node(root))</pre>
+      </div>
+      <div>
+        <div class="code-label">ตามรอย height() ทีละชั้น</div>
+        <div class="diagram">        50
+      ╱    ╲
+    30      70
+   ╱  ╲       ╲
+ 20   40       80
+
+height(20) = 1 + max(0,0) = 1
+height(40) = 1 + max(0,0) = 1
+height(30) = 1 + max(1,1) = 2
+height(80) = 1 + max(0,0) = 1
+height(70) = 1 + max(0,1) = 2
+height(50) = 1 + max(2,2) = 3  ✔
+
+อ่านจากล่างขึ้นบน — ใบคำนวณเสร็จก่อน
+แล้วส่งค่ากลับขึ้นไปให้พ่อ</div>
+        <div class="exam">⚠️ <b>จุดที่ต้องระวังในข้อสอบ:</b> บางตำรานิยาม "ความสูง" ว่านับ<b>จำนวนเส้นเชื่อม</b> (ต้นไม้ข้างบนจะได้ 2 ไม่ใช่ 3) และบางตำรานับ<b>จำนวนระดับ</b> (ได้ 3)<br>
+        → เวลาสอบให้ดูว่าอาจารย์นิยามแบบไหน ถ้าใช้แบบนับเส้นเชื่อม เปลี่ยนเคสฐานจาก <span style="font-family:monospace">return 0</span> เป็น <span style="font-family:monospace">return -1</span> เท่านั้น</div>
+        <div class="exam"><b>เคสขอบ:</b> ต้นไม้ว่าง → ทั้ง 3 ฟังก์ชันคืน 0 ถูกต้อง · มีโหนดเดียว → ความสูง 1, ใบ 1, โหนด 1</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 3 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">Hash Table แก้ชนด้วย Chaining</h2>
+    <div class="prob">
+      <b>โจทย์:</b> สร้าง Hash Table ขนาด <b>7 ช่อง</b> ใช้ฟังก์ชันแฮช <span style="font-family:monospace">h(k) = k % 7</span>
+      แก้ปัญหาการชนกัน (collision) ด้วยวิธี <b>chaining</b> (ต่อ linked list ในช่องเดียวกัน)<br>
+      รองรับ <b>insert</b> และ <b>search</b> พร้อมบอกว่าค้นหาแล้วเทียบไปกี่ครั้ง
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">ใส่: 15 22 8 29 3
+
+h(15)=15%7=1   h(22)=22%7=1
+h(8) = 8%7=1   h(29)=29%7=1
+h(3) = 3%7=3
+
+ตาราง:
+ [0] → NULL
+ [1] → 3ตัวชนกัน...
+       29 → 8 → 22 → 15
+ [2] → NULL
+ [3] → 3
+ [4] → NULL
+ [5] → NULL
+ [6] → NULL
+
+search(8)  → เจอ! เทียบ 2 ครั้ง
+search(20) → h=6 ช่องว่าง → ไม่เจอ</div>
+        <div class="exam">⚠️ ตัวอย่างนี้จงใจให้<b>ชนกันเยอะ</b> เพื่อให้เห็นว่าถ้าเลือกขนาดตารางหรือฟังก์ชันแฮชไม่ดี hash table จะกลายเป็น linked list ธรรมดา — ค้นหาจาก O(1) เหลือ O(n)</div>
+      </div>
+      <div>
+        <div class="prob"><b>ทำไมต้องมี chaining?</b><br>
+        เพราะ <span style="font-family:monospace">k % 7</span> ทำให้ค่าหลายตัวได้ช่องเดียวกัน (15, 22, 8, 29 ได้ช่อง 1 หมด) — เรียกว่า <b>collision</b><br>
+        chaining แก้ด้วยการให้แต่ละช่องเป็น<b>หัวของ linked list</b> ใครชนก็ต่อเข้าไปในโซ่</div>
+        <div class="code-label">2 วิธีแก้ชนที่ต้องรู้จัก</div>
+        <table class="t">
+          <thead><tr><th>วิธี</th><th>ทำยังไง</th><th>ข้อเสีย</th></tr></thead>
+          <tbody>
+            <tr><td>Chaining</td><td>ต่อ list ในช่อง</td><td>ใช้หน่วยความจำเพิ่ม</td></tr>
+            <tr><td>Linear Probing</td><td>เลื่อนหาช่องว่างถัดไป</td><td>เกิดกลุ่มติดกัน ช้าลง</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">💡 <b>ทำไม insert แบบต่อหัว (ใส่ไว้หน้าสุด) ถึงนิยม?</b> เพราะเร็ว O(1) ไม่ต้องเดินไปท้ายโซ่ — สังเกตในตัวอย่างว่า 29 ที่ใส่ทีหลังกลับอยู่หน้าสุด</div>
+        <div class="exam">⏸️ <b>หยุดลองเอง</b> — ถ้าเปลี่ยนขนาดตารางจาก 7 เป็น 10 ค่า 15 22 8 29 3 จะไปช่องไหนบ้าง? (เฉลย: 5, 2, 8, 9, 3 — กระจายดีกว่าเยอะ)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 3 เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · เฉลย</div>
+    <h2 class="slide-title">โค้ดเต็ม — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;stdlib.h&gt;</span>
+<span class="cm">#define</span> SIZE <span class="nu">7</span>
+
+<span class="kw">struct</span> Node { <span class="kw">int</span> key; <span class="kw">struct</span> Node *next; };
+
+<span class="kw">struct</span> Node *table[SIZE] = {NULL};   <span class="cm">// ทุกช่องเริ่มว่าง</span>
+
+<span class="kw">int</span> hashFn(<span class="kw">int</span> k) { <span class="kw">return</span> k % SIZE; }
+
+<span class="kw">void</span> insertKey(<span class="kw">int</span> k) {
+    <span class="kw">int</span> idx = hashFn(k);
+    <span class="kw">struct</span> Node *n = malloc(<span class="kw">sizeof</span>(<span class="kw">struct</span> Node));
+    n-&gt;key  = k;
+    n-&gt;next = table[idx];      <span class="cm">// ต่อหัว — O(1)</span>
+    table[idx] = n;
+    printf(<span class="st">"ใส่ %d ลงช่อง %d\n"</span>, k, idx);
+}
+
+<span class="kw">int</span> search(<span class="kw">int</span> k) {
+    <span class="kw">int</span> idx = hashFn(k);
+    <span class="kw">int</span> steps = <span class="nu">0</span>;
+    <span class="kw">struct</span> Node *cur = table[idx];
+    <span class="kw">while</span> (cur != NULL) {
+        steps++;
+        <span class="kw">if</span> (cur-&gt;key == k) {
+            printf(<span class="st">"เจอ %d ที่ช่อง %d (เทียบ %d ครั้ง)\n"</span>,
+                   k, idx, steps);
+            <span class="kw">return</span> <span class="nu">1</span>;
+        }
+        cur = cur-&gt;next;
+    }
+    printf(<span class="st">"ไม่เจอ %d (เทียบ %d ครั้ง)\n"</span>, k, steps);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}
+
+<span class="kw">void</span> show() {
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; SIZE; i++) {
+        printf(<span class="st">"[%d]"</span>, i);
+        <span class="kw">for</span> (<span class="kw">struct</span> Node *c = table[i]; c; c = c-&gt;next)
+            printf(<span class="st">" -&gt; %d"</span>, c-&gt;key);
+        printf(<span class="st">"\n"</span>);
+    }
+}
+
+<span class="kw">int</span> main() {
+    <span class="kw">int</span> keys[] = {<span class="nu">15</span>, <span class="nu">22</span>, <span class="nu">8</span>, <span class="nu">29</span>, <span class="nu">3</span>};
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; <span class="nu">5</span>; i++) insertKey(keys[i]);
+    show();
+    search(<span class="nu">8</span>);
+    search(<span class="nu">20</span>);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block">SIZE = <span class="nu">7</span>
+
+<span class="kw">class</span> Node:
+    <span class="kw">def</span> __init__(self, key):
+        self.key  = key
+        self.next = <span class="kw">None</span>
+
+table = [<span class="kw">None</span>] * SIZE
+
+<span class="kw">def</span> hash_fn(k):
+    <span class="kw">return</span> k % SIZE
+
+<span class="kw">def</span> insert_key(k):
+    idx = hash_fn(k)
+    n = Node(k)
+    n.next = table[idx]        <span class="cm"># ต่อหัว</span>
+    table[idx] = n
+    print(<span class="st">f"ใส่ {k} ลงช่อง {idx}"</span>)
+
+<span class="kw">def</span> search(k):
+    idx   = hash_fn(k)
+    steps = <span class="nu">0</span>
+    cur   = table[idx]
+    <span class="kw">while</span> cur <span class="kw">is</span> <span class="kw">not</span> <span class="kw">None</span>:
+        steps += <span class="nu">1</span>
+        <span class="kw">if</span> cur.key == k:
+            print(<span class="st">f"เจอ {k} ที่ช่อง {idx} (เทียบ {steps} ครั้ง)"</span>)
+            <span class="kw">return</span> <span class="kw">True</span>
+        cur = cur.next
+    print(<span class="st">f"ไม่เจอ {k} (เทียบ {steps} ครั้ง)"</span>)
+    <span class="kw">return</span> <span class="kw">False</span>
+
+<span class="kw">def</span> show():
+    <span class="kw">for</span> i <span class="kw">in</span> range(SIZE):
+        row = []
+        cur = table[i]
+        <span class="kw">while</span> cur:
+            row.append(<span class="kw">str</span>(cur.key))
+            cur = cur.next
+        print(<span class="st">f"[{i}]"</span>, <span class="st">" -&gt; "</span>.join(row) <span class="kw">if</span> row <span class="kw">else</span> <span class="st">""</span>)
+
+<span class="kw">for</span> k <span class="kw">in</span> [<span class="nu">15</span>, <span class="nu">22</span>, <span class="nu">8</span>, <span class="nu">29</span>, <span class="nu">3</span>]:
+    insert_key(k)
+show()
+search(<span class="nu">8</span>)
+search(<span class="nu">20</span>)</pre>
+        <div class="exam">📌 <b>สิ่งที่ข้อสอบชอบถาม:</b> "ถ้าใส่ค่าเหล่านี้ลงตาราง จงวาดผลลัพธ์" — ให้คำนวณ <span style="font-family:monospace">k % SIZE</span> ทีละตัว แล้ววาดโซ่ โดยจำไว้ว่า<b>ตัวที่ใส่ทีหลังอยู่หน้าสุด</b> (ถ้าโจทย์ใช้วิธีต่อหัว)</div>
+        <div class="exam"><b>ทำไมนิยมเลือกขนาดตารางเป็นจำนวนเฉพาะ?</b> เช่น 7, 11, 13 — เพราะช่วยให้ <span style="font-family:monospace">k % SIZE</span> กระจายค่าได้ทั่วกว่า ลดโอกาสชนเมื่อข้อมูลมีรูปแบบซ้ำๆ</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ตรวจความเข้าใจ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ตรวจความเข้าใจ</div>
+    <h2 class="slide-title">4 ข้อรวบยอด</h2>
+    <div class="two-col">
+      <div>
+        <div class="exercise">
+          <div class="ex-q">1) การเดินต้นไม้แบบไหนที่ให้ผลลัพธ์เรียงจากน้อยไปมากใน BST?</div>
+          <div class="mc-opts" id="q1">
+            <div class="mc-opt" onclick="pickMC('q1',0,1,'preorder พิมพ์ราก (50) ออกมาก่อน จึงไม่เรียง')"><span class="mc-ltr">A</span>preorder</div>
+            <div class="mc-opt" onclick="pickMC('q1',1,1,'ถูก! ซ้าย(น้อยกว่า) → ตัวเอง → ขวา(มากกว่า) จึงได้ลำดับเรียงเสมอ')"><span class="mc-ltr">B</span>inorder</div>
+            <div class="mc-opt" onclick="pickMC('q1',2,1,'postorder พิมพ์รากทีหลังสุด จึงไม่เรียง')"><span class="mc-ltr">C</span>postorder</div>
+          </div>
+          <div class="ex-feedback" id="q1-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">2) เติมคำ: ทุกฟังก์ชันเวียนบังเกิดของต้นไม้ต้องมี "เคสฐาน" ที่เช็คว่าโหนดเป็นอะไร (ตอบภาษา C)</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in1" placeholder="เช่น r == ...">
+            <button class="ex-btn" onclick="checkFill('in1','NULL',['null','r == NULL','ว่าง'],['None'],'ถ้าไม่มีบรรทัดนี้ ฟังก์ชันจะเรียกตัวเองไม่รู้จบจนโปรแกรมพัง','ในภาษา C ตอบ NULL (ส่วน Python ใช้ None)')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb1"></div>
+        </div>
+      </div>
+      <div>
+        <div class="exercise">
+          <div class="ex-q">3) ตาราง hash ขนาด 7 ใส่ค่า 45 จะลงช่องไหน? (h(k) = k % 7)</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in2" placeholder="ตอบเป็นตัวเลข">
+            <button class="ex-btn" onclick="checkFill('in2','3',['ช่อง 3','[3]'],['45'],'45 = 7×6 + 3 → เศษ 3 จึงลงช่อง 3','คำนวณ 45 % 7 — เอา 7 คูณ 6 ได้ 42 เหลือเศษ 3')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb2"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">4) ถ้าใส่ค่าเรียงขึ้น 10 20 30 40 50 ลง BST จะเกิดอะไรขึ้น?</div>
+          <div class="mc-opts" id="q2">
+            <div class="mc-opt" onclick="pickMC('q2',0,1,'BST ธรรมดาไม่จัดสมดุลให้เอง — ต้องใช้ AVL หรือ Red-Black Tree ถึงจะจัดให้')"><span class="mc-ltr">A</span>ต้นไม้จัดสมดุลให้อัตโนมัติ</div>
+            <div class="mc-opt" onclick="pickMC('q2',1,1,'ถูก! ทุกค่ามากกว่าตัวก่อนหน้า จึงไปขวาตลอด กลายเป็นเส้นตรง ค้นหาเสื่อมเป็น O(n)')"><span class="mc-ltr">B</span>กลายเป็นเส้นตรงเอียงขวา ค้นหาช้าเป็น O(n)</div>
+            <div class="mc-opt" onclick="pickMC('q2',2,1,'ใส่ได้ปกติ ไม่ error — แค่รูปร่างต้นไม้แย่')"><span class="mc-ltr">C</span>โปรแกรมพัง เพราะใส่ไม่ได้</div>
+          </div>
+          <div class="ex-feedback" id="q2-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🌳</div>
+      <div class="summary-title">จบชุดที่ 3 — Tree &amp; Hash</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">โจทย์ 1 BST + traversal</div><div class="sum-body">น้อยไปซ้าย มากไปขวา · pre/in/post ต่างกันแค่ตำแหน่งที่พิมพ์ตัวเอง · inorder = เรียง</div></div>
+        <div class="sum-card"><div class="sum-head">โจทย์ 2 height &amp; leaf</div><div class="sum-body">โครงเดียวกันหมด: ว่าง→0 · แล้วรวมผลซ้าย+ขวา ต่างกันแค่บวก 1 ตอนไหน</div></div>
+        <div class="sum-card"><div class="sum-head">โจทย์ 3 Hash chaining</div><div class="sum-body">h(k)=k%SIZE · ชนแล้วต่อหัว list · ค้นหาเดินเฉพาะโซ่ในช่องนั้น</div></div>
+        <div class="sum-card"><div class="sum-head">กฎของ recursive</div><div class="sum-body">ต้องมีเคสฐาน (NULL → คืนค่า) เสมอ ไม่งั้นเรียกตัวเองไม่รู้จบ</div></div>
+        <div class="sum-card"><div class="sum-head">กับดักที่ออกสอบ</div><div class="sum-body">ใส่ค่าเรียงลง BST → ต้นไม้เป็นเส้นตรง O(n) · hash ชนเยอะ → O(n) เหมือนกัน</div></div>
+        <div class="sum-card"><div class="sum-head">ทั้ง 4 ชุดจบแล้ว</div><div class="sum-body">กลับไปทวนชุดที่ยังไม่มั่นใจ แล้วลองเขียนโค้ดใหม่จากศูนย์โดยไม่ดูเฉลย</div></div>
+      </div>
+      <a href="index.html" class="summary-next">→ กลับหน้าวิชาตะลุยโจทย์ DS</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 9</span>
+      <span class="nav-chapter" id="chapterLabel">ชุดที่ 3 — Tree &amp; Hash</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','① โจทย์ BST + เดิน 3 แบบ','① เฉลย C + Python','② โจทย์ height + leaf','② เฉลย + ตารางเดิน','③ โจทย์ Hash chaining','③ เฉลย C + Python','ตรวจความเข้าใจ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

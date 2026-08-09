@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ชุดที่ 1 — Linked List | ตะลุยโจทย์ Data Structures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#14532d;--cal:#e3f2e7;--cam:#3d8f5b;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.prob{background:#fff;border:1px solid var(--line);border-left:4px solid var(--ca);border-radius:8px;padding:14px 18px;margin:8px 0;font-size:13.5px;line-height:1.8;}
+.prob b{color:var(--ca);}
+.io{font-family:var(--mono);font-size:12.5px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:8px 0;white-space:pre;color:var(--ca);line-height:1.6;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.6;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:5px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);}
+.t td:first-child{font-weight:700;color:var(--ca);}
+.lang{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--ca);color:#fff;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🧩 ตะลุยโจทย์ Data Structures</div>
+        <div class="cover-title">ชุดที่ 1<br><em>Linked List</em></div>
+        <div class="cover-subtitle">ระดับ 1 · ท่าพื้นฐานที่ออกสอบทุกปี — แทรก ลบ และกลับด้าน</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 1: แทรกโหนดให้ลิสต์ยังเรียงอยู่</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 2: ลบโหนดที่มีค่าซ้ำทั้งหมด</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 3: กลับด้านลิสต์ (reverse)</div>
+          <div class="topic-row"><div class="topic-dot"></div>ทุกโจทย์: วิธีคิด → ผังงาน → C + Python</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">🔗</div>
+        <div class="cover-badge">3 โจทย์ · C + PYTHON</div>
+        <div class="cover-slides-count">10 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">แทรกโหนดให้ลิสต์ยังเรียงอยู่</h2>
+    <div class="prob">
+      <b>โจทย์:</b> มี linked list ที่<b>เรียงจากน้อยไปมากอยู่แล้ว</b> รับค่าใหม่เข้ามาทีละตัว
+      ให้แทรกลงในตำแหน่งที่ถูกต้อง เพื่อให้ลิสต์<b>ยังคงเรียงอยู่เสมอ</b><br>
+      รับค่าไปเรื่อยๆ จนกว่าจะเจอ <b>−1</b> แล้วพิมพ์ลิสต์ทั้งหมด
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">ป้อน: 30 10 50 20 -1
+
+ใส่ 30 → 30
+ใส่ 10 → 10 30       (แทรกหัว)
+ใส่ 50 → 10 30 50    (แทรกท้าย)
+ใส่ 20 → 10 20 30 50 (แทรกกลาง)
+
+ผลลัพธ์: 10 20 30 50</div>
+        <div class="code-label" style="margin-top:6px">3 กรณีที่ต้องแยก</div>
+        <div class="diagram">① แทรกหัว  — ค่าใหม่น้อยกว่าตัวแรก
+   [10]→[30]→[50]
+    ↑ head ต้องเปลี่ยน!
+
+② แทรกกลาง — เจอตัวที่มากกว่า
+   [10]→[20]→[30]
+         ↑ ตัวใหม่
+
+③ แทรกท้าย — ไม่มีตัวไหนมากกว่า
+   [10]→[30]→[50]→NULL
+                ↑ ตัวใหม่</div>
+      </div>
+      <div>
+        <div class="prob">
+          <b>ทำไมข้อนี้ถึงเป็นข้อบังคับต้องทำเป็น?</b><br>
+          เพราะมันรวม<b>ทุกทักษะพื้นฐาน</b>ไว้ในข้อเดียว: สร้างโหนด · เดินลิสต์ · หาโหนดก่อนหน้า · แก้ pointer ตามลำดับที่ถูก · จัดการเคส head<br>
+          ถ้าทำข้อนี้ได้ อีก 2 ข้อในชุดนี้จะง่ายลงมาก
+        </div>
+        <div class="exam">⏸️ <b>หยุดลองเอง</b> — ลองเขียนบนกระดาษก่อน โดยตอบ 2 คำถามนี้ให้ได้: <b>(1)</b> จะรู้ได้ยังไงว่าต้องหยุดที่โหนดไหน? <b>(2)</b> ต้องเก็บ pointer ตัวไหนไว้บ้าง?</div>
+        <div class="exam">💡 <b>ใบ้:</b> การแทรกต้องรู้จัก "โหนดก่อนหน้า" เสมอ — แต่ linked list เดินย้อนกลับไม่ได้ ดังนั้นต้อง<b>หยุดให้ถูกจังหวะ</b> ตอนที่ยังยืนอยู่บนโหนดก่อนหน้า</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 1 วิธีคิด -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · วิธีคิด</div>
+    <h2 class="slide-title">หยุดที่โหนด "ก่อนหน้า" ให้ถูกจังหวะ</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">STEP 1 — แตกปัญหา
+  ① สร้างโหนดใหม่ n
+  ② ถ้าลิสต์ว่าง หรือ ค่าใหม่ &lt;= ตัวแรก
+       → แทรกหัว: n-&gt;next = head; head = n
+  ③ ไม่งั้น: เดินหา "โหนดก่อนหน้า"
+       cur = head
+       while (cur-&gt;next != NULL
+              &amp;&amp; cur-&gt;next-&gt;data &lt; v)
+           cur = cur-&gt;next
+  ④ แทรกหลัง cur:
+       n-&gt;next   = cur-&gt;next   ← ทำก่อน
+       cur-&gt;next = n</span></pre>
+        <div class="exam"><b>เงื่อนไข while มี 2 ส่วน อ่านให้ขาด:</b><br>
+        <span style="font-family:monospace">cur-&gt;next != NULL</span> = ยังไม่ถึงท้ายลิสต์ (กันหลุด)<br>
+        <span style="font-family:monospace">cur-&gt;next-&gt;data &lt; v</span> = ตัวถัดไปยังน้อยกว่า → เดินต่อได้<br>
+        พอหลุดออกจากลูป <b>cur คือโหนดก่อนหน้าพอดี</b></div>
+        <div class="code-label">เดินด้วยมือ: แทรก 20 ใน 10→30→50</div>
+        <div class="diagram">cur=[10] : next=[30], 30&lt;20? ไม่ → หยุด
+cur คือ [10] ✔
+
+n-&gt;next   = [30]
+[10]-&gt;next = n
+ผล: 10 → 20 → 30 → 50</div>
+      </div>
+      <div>
+        <div class="code-label">ผังงาน</div>
+        <div class="diagram">      ┌──────────┐
+      │  START   │
+      └────┬─────┘
+           ▼
+    ╔══════════════╗
+    ║ รับค่า v      ║
+    ╚══════╤═══════╝
+           ▼
+      ╱─────────╲  ใช่  ┌──────────┐
+     ╱ v == −1   ╲─────▶│ พิมพ์ลิสต์│→ END
+     ╲           ╱      └──────────┘
+      ╲─────────╱
+           │ ไม่
+           ▼
+    ┌─────────────┐
+    │ สร้างโหนด n │
+    └──────┬──────┘
+           ▼
+   ╱─────────────────╲  ใช่  ┌──────────────┐
+  ╱ head==NULL หรือ   ╲─────▶│ n-&gt;next=head │
+  ╲ v &lt;= head-&gt;data   ╱      │ head = n     │
+   ╲─────────────────╱       └──────┬───────┘
+           │ ไม่                    │
+           ▼                        │
+    ┌─────────────┐                 │
+    │ cur = head  │                 │
+    └──────┬──────┘                 │
+           ▼                        │
+     ╱───────────────╲ ใช่          │
+    ╱ cur-&gt;next!=NULL ╲───┐         │
+    ╲ &amp;&amp; next&lt;v      ╱    │         │
+     ╲───────────────╱     ▼        │
+           │ ไม่     ┌──────────┐   │
+           │         │cur=cur-&gt;  │  │
+           │         │  next     │  │
+           │         └────┬─────┘   │
+           │◀─────────────┘         │
+           ▼                        │
+    ┌────────────────────┐          │
+    │ n-&gt;next = cur-&gt;next │         │
+    │ cur-&gt;next = n       │         │
+    └─────────┬──────────┘          │
+              └──────────┬──────────┘
+                         ▼
+                  (วนรับค่าถัดไป)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 1 เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · เฉลย</div>
+    <h2 class="slide-title">โค้ดเต็ม — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;stdlib.h&gt;</span>
+
+<span class="kw">struct</span> Node { <span class="kw">int</span> data; <span class="kw">struct</span> Node *next; };
+
+<span class="kw">struct</span> Node* newNode(<span class="kw">int</span> v) {
+    <span class="kw">struct</span> Node *p = malloc(<span class="kw">sizeof</span>(<span class="kw">struct</span> Node));
+    p-&gt;data = v; p-&gt;next = NULL;
+    <span class="kw">return</span> p;
+}
+
+<span class="kw">struct</span> Node* insertSorted(<span class="kw">struct</span> Node *head, <span class="kw">int</span> v) {
+    <span class="kw">struct</span> Node *n = newNode(v);
+
+    <span class="cm">// เคส ① แทรกหัว (รวมเคสลิสต์ว่างไว้ด้วย)</span>
+    <span class="kw">if</span> (head == NULL || v &lt;= head-&gt;data) {
+        n-&gt;next = head;
+        <span class="kw">return</span> n;              <span class="cm">// head ตัวใหม่</span>
+    }
+
+    <span class="cm">// เคส ②③ เดินหาโหนดก่อนหน้า</span>
+    <span class="kw">struct</span> Node *cur = head;
+    <span class="kw">while</span> (cur-&gt;next != NULL &amp;&amp; cur-&gt;next-&gt;data &lt; v)
+        cur = cur-&gt;next;
+
+    n-&gt;next   = cur-&gt;next;     <span class="cm">// ① ต่อตัวใหม่ก่อน</span>
+    cur-&gt;next = n;             <span class="cm">// ② แล้วค่อยแก้ตัวเดิม</span>
+    <span class="kw">return</span> head;
+}
+
+<span class="kw">int</span> main() {
+    <span class="kw">struct</span> Node *head = NULL;
+    <span class="kw">int</span> v;
+    <span class="kw">while</span> (scanf(<span class="st">"%d"</span>, &amp;v) == <span class="nu">1</span> &amp;&amp; v != <span class="nu">-1</span>)
+        head = insertSorted(head, v);   <span class="cm">// ต้องรับค่ากลับ!</span>
+
+    <span class="kw">for</span> (<span class="kw">struct</span> Node *c = head; c != NULL; c = c-&gt;next)
+        printf(<span class="st">"%d "</span>, c-&gt;data);
+    printf(<span class="st">"\n"</span>);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block"><span class="kw">class</span> Node:
+    <span class="kw">def</span> __init__(self, data):
+        self.data = data
+        self.next = <span class="kw">None</span>
+
+<span class="kw">def</span> insert_sorted(head, v):
+    n = Node(v)
+
+    <span class="cm"># เคส ① แทรกหัว</span>
+    <span class="kw">if</span> head <span class="kw">is</span> <span class="kw">None</span> <span class="kw">or</span> v &lt;= head.data:
+        n.next = head
+        <span class="kw">return</span> n
+
+    <span class="cm"># เคส ②③ เดินหาโหนดก่อนหน้า</span>
+    cur = head
+    <span class="kw">while</span> cur.next <span class="kw">is</span> <span class="kw">not</span> <span class="kw">None</span> <span class="kw">and</span> cur.next.data &lt; v:
+        cur = cur.next
+
+    n.next   = cur.next
+    cur.next = n
+    <span class="kw">return</span> head
+
+head = <span class="kw">None</span>
+<span class="kw">while</span> <span class="kw">True</span>:
+    v = <span class="kw">int</span>(input())
+    <span class="kw">if</span> v == <span class="nu">-1</span>:
+        <span class="kw">break</span>
+    head = insert_sorted(head, v)
+
+cur = head
+<span class="kw">while</span> cur:
+    print(cur.data, end=<span class="st">" "</span>)
+    cur = cur.next
+print()</pre>
+        <div class="exam">⚠️ <b>จุดตายที่ทำให้โปรแกรมพัง:</b> ถ้าเขียนแค่ <span style="font-family:monospace">insertSorted(head, v);</span> โดยไม่เขียน <span style="font-family:monospace">head =</span> ข้างหน้า → พอแทรกหัว head ในฟังก์ชันเปลี่ยน แต่ head ข้างนอกไม่เปลี่ยน ข้อมูลหาย</div>
+        <div class="exam"><b>เทสต์เคสขอบ:</b> ป้อน −1 ทันที (ลิสต์ว่าง) · ป้อนค่าเท่ากันซ้ำ (5 5 5) · ป้อนเรียงลง (50 40 30) → แทรกหัวทุกรอบ · ป้อนเรียงขึ้น (10 20 30) → แทรกท้ายทุกรอบ</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">ลบโหนดที่มีค่าซ้ำทั้งหมด</h2>
+    <div class="prob">
+      <b>โจทย์:</b> มี linked list อยู่ ให้รับค่า <b>x</b> แล้ว<b>ลบทุกโหนดที่มีค่าเท่ากับ x</b> (ไม่ใช่แค่ตัวแรก)
+      แล้วพิมพ์ลิสต์ที่เหลือ พร้อมบอกว่าลบไปกี่โหนด
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่าง 1 — ค่าซ้ำอยู่กลาง</div>
+        <div class="io">ลิสต์: 5 → 3 → 5 → 7 → 5
+ลบ x = 5
+
+ผลลัพธ์: 3 → 7
+ลบไป 3 โหนด</div>
+        <div class="code-label" style="margin-top:6px">ตัวอย่าง 2 — ค่าซ้ำติดกันที่หัว</div>
+        <div class="io">ลิสต์: 5 → 5 → 5 → 9
+ลบ x = 5
+
+ผลลัพธ์: 9
+ลบไป 3 โหนด</div>
+        <div class="code-label" style="margin-top:6px">ตัวอย่าง 3 — ลบหมดทั้งลิสต์</div>
+        <div class="io">ลิสต์: 5 → 5
+ลบ x = 5
+
+ผลลัพธ์: (ลิสต์ว่าง)
+ลบไป 2 โหนด</div>
+      </div>
+      <div>
+        <div class="prob"><b>ตรงไหนที่ยากกว่าข้อ 1?</b><br>
+        ① ต้องลบ<b>หลายตัว</b> ไม่ใช่ตัวเดียว<br>
+        ② ตัวที่ต้องลบอาจ<b>ติดกัน</b> — ถ้าเขียนแบบเลื่อน cur ทุกรอบจะ<b>ข้ามตัวที่สอง</b><br>
+        ③ ตัวที่ต้องลบอาจอยู่<b>ที่หัว</b> และอาจติดกันหลายตัวที่หัวด้วย</div>
+        <div class="code-label">บั๊กคลาสสิกที่ต้องเห็นก่อน</div>
+        <div class="diagram">ลิสต์ 5→5→9 ลบ 5 ด้วยโค้ดผิด:
+
+  cur=[5ตัวแรก] → ลบ → head=[5ตัวสอง]
+  แล้ว cur = cur-&gt;next  ← ผิด!
+  cur ตอนนี้เป็น [9] แล้ว
+  → [5ตัวสอง] ไม่โดนตรวจเลย
+
+  ผลลัพธ์ผิด: 5 → 9
+
+กฎ: <b>ลบแล้วอย่าเลื่อน — ตรวจตำแหน่งเดิมซ้ำ</b></div>
+        <div class="exam">⏸️ <b>หยุดลองเอง</b> — เขียนโค้ดที่ผ่านทั้ง 3 ตัวอย่างข้างซ้าย โดยเฉพาะตัวอย่าง 3 ที่ลิสต์ต้องกลายเป็นว่าง (head = NULL)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 2 วิธีคิด + เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · วิธีคิด + เฉลย</div>
+    <h2 class="slide-title">ลบหัวให้หมดก่อน แล้วค่อยลบตัวกลาง</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">แผน 2 ท่อน — คิดแยกกันจะง่ายมาก
+
+ท่อนที่ 1: จัดการหัวให้จบก่อน
+  while (head != NULL &amp;&amp; head-&gt;data == x)
+      tmp = head; head = head-&gt;next; free(tmp)
+  ← ใช้ while ไม่ใช่ if เพราะหัวอาจซ้ำหลายตัว
+
+ท่อนที่ 2: หลังจากนี้ head ปลอดภัยแน่นอน
+  cur = head
+  while (cur != NULL &amp;&amp; cur-&gt;next != NULL)
+      ถ้า cur-&gt;next-&gt;data == x
+          ตัด cur-&gt;next ออก (ไม่เลื่อน cur)
+      ไม่งั้น
+          cur = cur-&gt;next</span></pre>
+        <div class="exam"><b>ทำไมท่อน 2 ถึงมองที่ <span style="font-family:monospace">cur-&gt;next</span> ไม่ใช่ <span style="font-family:monospace">cur</span>?</b> เพราะการลบต้องใช้โหนดก่อนหน้า ถ้ายืนอยู่บนตัวที่จะลบ จะย้อนกลับไปหาตัวก่อนหน้าไม่ได้ — <b>ยืนก่อนหนึ่งก้าวเสมอ</b></div>
+        <div class="code-label">เดินด้วยมือ: 5→3→5→7→5 ลบ 5</div>
+        <div class="diagram">ท่อน1: head=5 ตรง → ลบ → head=3
+       head=3 ไม่ตรง → หยุด
+ท่อน2: cur=3, next=5 ตรง → ลบ
+       cur=3, next=7 ไม่ตรง → เลื่อน
+       cur=7, next=5 ตรง → ลบ
+       cur=7, next=NULL → จบ
+ผล: 3 → 7  (ลบไป 3)</div>
+      </div>
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="kw">struct</span> Node* deleteAll(<span class="kw">struct</span> Node *head, <span class="kw">int</span> x, <span class="kw">int</span> *cnt) {
+    *cnt = <span class="nu">0</span>;
+
+    <span class="cm">// ท่อน 1 — ลบที่หัวจนกว่าหัวจะไม่ใช่ x</span>
+    <span class="kw">while</span> (head != NULL &amp;&amp; head-&gt;data == x) {
+        <span class="kw">struct</span> Node *tmp = head;
+        head = head-&gt;next;
+        free(tmp);
+        (*cnt)++;
+    }
+
+    <span class="cm">// ท่อน 2 — ลบตัวกลาง/ตัวท้าย</span>
+    <span class="kw">struct</span> Node *cur = head;
+    <span class="kw">while</span> (cur != NULL &amp;&amp; cur-&gt;next != NULL) {
+        <span class="kw">if</span> (cur-&gt;next-&gt;data == x) {
+            <span class="kw">struct</span> Node *tmp = cur-&gt;next;
+            cur-&gt;next = tmp-&gt;next;   <span class="cm">// ข้ามตัวที่ลบ</span>
+            free(tmp);
+            (*cnt)++;
+            <span class="cm">// ไม่เลื่อน cur! ตรวจตัวถัดไปที่เลื่อนมาแทน</span>
+        } <span class="kw">else</span> {
+            cur = cur-&gt;next;
+        }
+    }
+    <span class="kw">return</span> head;
+}</pre>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block"><span class="kw">def</span> delete_all(head, x):
+    cnt = <span class="nu">0</span>
+
+    <span class="cm"># ท่อน 1 — ลบที่หัว</span>
+    <span class="kw">while</span> head <span class="kw">is</span> <span class="kw">not</span> <span class="kw">None</span> <span class="kw">and</span> head.data == x:
+        head = head.next
+        cnt += <span class="nu">1</span>
+
+    <span class="cm"># ท่อน 2 — ลบตัวกลาง/ตัวท้าย</span>
+    cur = head
+    <span class="kw">while</span> cur <span class="kw">is</span> <span class="kw">not</span> <span class="kw">None</span> <span class="kw">and</span> cur.next <span class="kw">is</span> <span class="kw">not</span> <span class="kw">None</span>:
+        <span class="kw">if</span> cur.next.data == x:
+            cur.next = cur.next.next
+            cnt += <span class="nu">1</span>
+        <span class="kw">else</span>:
+            cur = cur.next
+
+    <span class="kw">return</span> head, cnt
+
+head, n = delete_all(head, <span class="nu">5</span>)
+print(<span class="st">f"ลบไป {n} โหนด"</span>)</pre>
+        <div class="exam"><b>ต่างกันตรง free():</b> C ต้องเก็บ tmp ไว้ก่อนแล้ว free ทีหลัง — ถ้า free ก่อนแล้วค่อยอ่าน <span style="font-family:monospace">tmp-&gt;next</span> จะอ่านหน่วยความจำที่คืนไปแล้ว · Python ไม่ต้องทำอะไร ตัวเก็บขยะจัดการเอง</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 3 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">กลับด้านลิสต์ (Reverse)</h2>
+    <div class="prob">
+      <b>โจทย์:</b> มี linked list อยู่ ให้<b>กลับลำดับทั้งลิสต์</b> โดย<b>ห้ามสร้างโหนดใหม่</b> และ<b>ห้ามใช้อาร์เรย์ช่วย</b>
+      — ต้องกลับด้านด้วยการเปลี่ยนทิศลูกศรเท่านั้น
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">ก่อน: 10 → 20 → 30 → NULL
+หลัง: 30 → 20 → 10 → NULL</div>
+        <div class="code-label" style="margin-top:6px">แนวคิด: กลับลูกศรทีละอัน</div>
+        <div class="diagram">เริ่ม:
+ NULL   [10]→[20]→[30]→NULL
+  ↑      ↑
+ prev   cur
+
+รอบ 1: ให้ 10 ชี้ NULL
+ NULL←[10]  [20]→[30]→NULL
+        ↑     ↑
+      prev   cur
+
+รอบ 2: ให้ 20 ชี้ 10
+ NULL←[10]←[20]  [30]→NULL
+              ↑    ↑
+            prev  cur
+
+รอบ 3: ให้ 30 ชี้ 20
+ NULL←[10]←[20]←[30]  NULL
+                  ↑    ↑
+                prev  cur
+
+cur เป็น NULL → จบ
+head ตัวใหม่ = prev = [30]</div>
+      </div>
+      <div>
+        <div class="prob"><b>ปัญหาที่ต้องแก้:</b><br>
+        พอเราสั่ง <span style="font-family:monospace">cur-&gt;next = prev</span> ลูกศรเดิมที่ชี้ไปข้างหน้า<b>หายทันที</b> — แล้วจะเดินต่อยังไง?<br><br>
+        <b>คำตอบ:</b> ต้อง<b>จำตัวถัดไปไว้ก่อน</b> ในตัวแปร <span style="font-family:monospace">nxt</span> ก่อนจะกลับลูกศร</div>
+        <div class="code-label">3 ตัวแปรที่ต้องมี</div>
+        <table class="t">
+          <thead><tr><th>ตัวแปร</th><th>หมายถึง</th></tr></thead>
+          <tbody>
+            <tr><td>prev</td><td>โหนดข้างหลัง (ที่กลับแล้ว) เริ่มที่ NULL</td></tr>
+            <tr><td>cur</td><td>โหนดที่กำลังกลับลูกศร เริ่มที่ head</td></tr>
+            <tr><td>nxt</td><td>ที่จองไว้ก่อนตัดลูกศร กันหลงทาง</td></tr>
+          </tbody>
+        </table>
+        <div class="exam"><b>ลำดับ 4 บรรทัดในลูป — ท่องให้ได้:</b><br>
+        ① <span style="font-family:monospace">nxt = cur-&gt;next</span> (จำก่อน)<br>
+        ② <span style="font-family:monospace">cur-&gt;next = prev</span> (กลับลูกศร)<br>
+        ③ <span style="font-family:monospace">prev = cur</span> (เลื่อน prev)<br>
+        ④ <span style="font-family:monospace">cur = nxt</span> (เลื่อน cur)<br>
+        สลับลำดับเมื่อไหร่ = พังทันที</div>
+        <div class="exam">⏸️ <b>หยุดลองเอง</b> — ปิดสไลด์ถัดไป แล้วเขียนลูป 4 บรรทัดนี้จากความเข้าใจ (ไม่ใช่ท่องจำ) ให้ได้</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 3 วิธีคิด + เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · เฉลย</div>
+    <h2 class="slide-title">โค้ด 6 บรรทัดที่ต้องเขียนได้ในข้อสอบ</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="kw">struct</span> Node* reverse(<span class="kw">struct</span> Node *head) {
+    <span class="kw">struct</span> Node *prev = NULL;
+    <span class="kw">struct</span> Node *cur  = head;
+
+    <span class="kw">while</span> (cur != NULL) {
+        <span class="kw">struct</span> Node *nxt = cur-&gt;next;  <span class="cm">// ① จำไว้ก่อน</span>
+        cur-&gt;next = prev;               <span class="cm">// ② กลับลูกศร</span>
+        prev = cur;                     <span class="cm">// ③ เลื่อน prev</span>
+        cur  = nxt;                     <span class="cm">// ④ เลื่อน cur</span>
+    }
+    <span class="kw">return</span> prev;   <span class="cm">// prev คือ head ตัวใหม่</span>
+}
+
+<span class="kw">int</span> main() {
+    <span class="cm">// ... สร้างลิสต์ 10 20 30 ...</span>
+    head = reverse(head);      <span class="cm">// ต้องรับค่ากลับ</span>
+    <span class="kw">for</span> (<span class="kw">struct</span> Node *c = head; c; c = c-&gt;next)
+        printf(<span class="st">"%d "</span>, c-&gt;data);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block"><span class="kw">def</span> reverse(head):
+    prev = <span class="kw">None</span>
+    cur  = head
+    <span class="kw">while</span> cur <span class="kw">is</span> <span class="kw">not</span> <span class="kw">None</span>:
+        nxt = cur.next     <span class="cm"># ① จำไว้ก่อน</span>
+        cur.next = prev    <span class="cm"># ② กลับลูกศร</span>
+        prev = cur         <span class="cm"># ③ เลื่อน prev</span>
+        cur  = nxt         <span class="cm"># ④ เลื่อน cur</span>
+    <span class="kw">return</span> prev
+
+head = reverse(head)</pre>
+      </div>
+      <div>
+        <div class="code-label">ตารางเดินโปรแกรม (10 → 20 → 30)</div>
+        <table class="t">
+          <thead><tr><th>รอบ</th><th>prev</th><th>cur</th><th>nxt</th></tr></thead>
+          <tbody>
+            <tr><td>เริ่ม</td><td>NULL</td><td>10</td><td>—</td></tr>
+            <tr><td>1</td><td>10</td><td>20</td><td>20</td></tr>
+            <tr><td>2</td><td>20</td><td>30</td><td>30</td></tr>
+            <tr><td>3</td><td>30</td><td>NULL</td><td>NULL</td></tr>
+            <tr><td>จบ</td><td>30 ← head ใหม่</td><td>NULL</td><td>—</td></tr>
+          </tbody>
+        </table>
+        <div class="exam"><b>เคสขอบ 2 ข้อที่โค้ดนี้ผ่านอยู่แล้ว:</b><br>
+        · ลิสต์ว่าง (head=NULL) → cur=NULL ลูปไม่ทำงาน คืน NULL ถูกต้อง<br>
+        · มีตัวเดียว → รอบเดียว ให้ตัวนั้นชี้ NULL คืนตัวเดิม ถูกต้อง<br>
+        ไม่ต้องเขียน if พิเศษ — โครงนี้ครอบคลุมหมดแล้ว</div>
+        <div class="exercise">
+          <div class="ex-q">ถ้าสลับบรรทัด ① กับ ② (กลับลูกศรก่อนจำ) จะเกิดอะไรขึ้น?</div>
+          <div class="mc-opts" id="q1">
+            <div class="mc-opt" onclick="pickMC('q1',0,1,'ไม่ใช่ — ลิสต์ไม่กลับด้าน แต่พังหนักกว่านั้น')"><span class="mc-ltr">A</span>ลิสต์กลับด้านไม่ครบ แต่ไม่พัง</div>
+            <div class="mc-opt" onclick="pickMC('q1',1,1,'ถูก! พอ cur-&gt;next = prev แล้ว nxt จะได้ค่า prev ทำให้เดินย้อนกลับไปทางเดิม กลายเป็นลูปไม่รู้จบ และโหนดที่เหลือหายหมด')"><span class="mc-ltr">B</span>nxt ได้ค่าผิด → วนไม่รู้จบ + ข้อมูลหาย</div>
+            <div class="mc-opt" onclick="pickMC('q1',2,1,'ไม่ใช่ — คอมไพล์ผ่านปกติ พังตอนรันเท่านั้น')"><span class="mc-ltr">C</span>คอมไพล์ไม่ผ่าน</div>
+          </div>
+          <div class="ex-feedback" id="q1-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ตรวจความเข้าใจ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ตรวจความเข้าใจ</div>
+    <h2 class="slide-title">3 ข้อรวบยอดของชุดนี้</h2>
+    <div class="two-col">
+      <div>
+        <div class="exercise">
+          <div class="ex-q">1) เติมคำสั่งที่หายไป — เดินไปโหนดถัดไปในภาษา C</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in1" placeholder="cur = ____;">
+            <button class="ex-btn" onclick="checkFill('in1','cur->next',['cur-&gt;next','cur->next;','cur = cur->next'],['cur.next'],'ท่ามาตรฐานที่ใช้ทุกโจทย์','ในภาษา C ใช้ลูกศร -&gt; ไม่ใช่จุด — ตอบ cur-&gt;next')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb1"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">2) ตอนลบโหนดที่ค่าซ้ำติดกัน หลังลบแล้วต้องทำอะไรกับ cur? (ตอบ: เลื่อน / ไม่เลื่อน)</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in2" placeholder="พิมพ์คำตอบ">
+            <button class="ex-btn" onclick="checkFill('in2','ไม่เลื่อน',['ไม่เลื่อน','อยู่ที่เดิม','ไม่ต้องเลื่อน'],['เลื่อน'],'ต้องตรวจตำแหน่งเดิมซ้ำ เพราะตัวถัดไปเลื่อนเข้ามาแทนที่แล้ว','ถ้าเลื่อนจะข้ามตัวที่เลื่อนเข้ามาแทน — ตอบว่าไม่เลื่อน')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb2"></div>
+        </div>
+      </div>
+      <div>
+        <div class="exercise">
+          <div class="ex-q">3) ฟังก์ชัน reverse ควรคืนค่าอะไรกลับไป?</div>
+          <div class="mc-opts" id="q2">
+            <div class="mc-opt" onclick="pickMC('q2',0,1,'head เดิมกลายเป็นตัวสุดท้ายไปแล้ว')"><span class="mc-ltr">A</span>head ตัวเดิม</div>
+            <div class="mc-opt" onclick="pickMC('q2',1,1,'ถูก! ตอนลูปจบ prev ยืนอยู่ที่โหนดสุดท้ายของลิสต์เดิม = หัวใหม่')"><span class="mc-ltr">B</span>prev</div>
+            <div class="mc-opt" onclick="pickMC('q2',2,1,'cur เป็น NULL ตอนลูปจบเสมอ')"><span class="mc-ltr">C</span>cur</div>
+          </div>
+          <div class="ex-feedback" id="q2-fb"></div>
+        </div>
+        <div class="exam">💡 <b>ถ้าตอบผิดข้อ 3</b> ให้กลับไปดูตารางเดินโปรแกรมในสไลด์ก่อนหน้า — แถวสุดท้ายบอกคำตอบไว้แล้ว</div>
+        <div class="exam">📌 3 ท่าของชุดนี้ (แทรกแบบเรียง · ลบหลายตัว · reverse) คือ<b>ท่าที่ออกสอบซ้ำมากที่สุด</b>ในเรื่อง linked list — เขียนมือเปล่าให้ได้ทั้ง 3 ท่าก่อนไปชุดถัดไป</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔗</div>
+      <div class="summary-title">จบชุดที่ 1 — Linked List</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">โจทย์ 1 แทรกแบบเรียง</div><div class="sum-body">แยกเคสหัวออกมาก่อน แล้วเดินหาโหนดก่อนหน้าด้วยเงื่อนไข cur-&gt;next</div></div>
+        <div class="sum-card"><div class="sum-head">โจทย์ 2 ลบค่าซ้ำ</div><div class="sum-body">ท่อน 1 ลบหัวด้วย while · ท่อน 2 ลบกลางโดย<b>ไม่เลื่อน cur</b>หลังลบ</div></div>
+        <div class="sum-card"><div class="sum-head">โจทย์ 3 reverse</div><div class="sum-body">prev/cur/nxt · 4 บรรทัด: จำ → กลับ → เลื่อน prev → เลื่อน cur · คืน prev</div></div>
+        <div class="sum-card"><div class="sum-head">กฎที่ใช้ทุกข้อ</div><div class="sum-body">ต่อลูกศรตัวใหม่ก่อน · ยืนก่อนหนึ่งก้าวเสมอ · จำ next ก่อนตัด</div></div>
+        <div class="sum-card"><div class="sum-head">กับดัก C</div><div class="sum-body">ต้องเขียน head = f(head,...) · เก็บ tmp ก่อน free · ใช้ -&gt; ไม่ใช่ .</div></div>
+        <div class="sum-card"><div class="sum-head">เคสขอบประจำ</div><div class="sum-body">ลิสต์ว่าง · เหลือตัวเดียว · ทำที่หัว · ค่าซ้ำติดกัน</div></div>
+      </div>
+      <a href="slides_ch2.html" class="summary-next">→ ชุดที่ 2: Stack &amp; Queue</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 10</span>
+      <span class="nav-chapter" id="chapterLabel">ชุดที่ 1 — Linked List</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','① โจทย์แทรกแบบเรียง','① วิธีคิด + ผังงาน','① เฉลย C + Python','② โจทย์ลบค่าซ้ำ','② วิธีคิด + เฉลย','③ โจทย์ reverse','③ เฉลย + ตารางเดิน','ตรวจความเข้าใจ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

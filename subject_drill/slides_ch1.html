@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ชุดที่ 1 — เลขและลูป | ตะลุยโจทย์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#7c2d12;--cal:#fbe9e0;--cam:#c2643a;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.prob{background:#fff;border:1px solid var(--line);border-left:4px solid var(--ca);border-radius:8px;padding:14px 18px;margin:8px 0;font-size:13.5px;line-height:1.8;}
+.prob b{color:var(--ca);}
+.io{font-family:var(--mono);font-size:12.5px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:8px 0;white-space:pre;color:var(--ca);line-height:1.6;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.6;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:5px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);}
+.t td:first-child{font-weight:700;color:var(--ca);}
+.lang{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--ca);color:#fff;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🧗 ก๋วยเตี๋ยวเรือ Programming · ตะลุยโจทย์</div>
+        <div class="cover-title">ชุดที่ 1<br><em>เลขและลูป</em></div>
+        <div class="cover-subtitle">ระดับ 1 · โจทย์ที่ใช้ลูปกับ if เป็นหลัก — ฝึกหา pattern ของการวนซ้ำ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 1: เลขสมบูรณ์ (Perfect Number)</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 2: พีระมิดตัวเลข</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 3: แปลงเลขฐาน 10 → ฐาน 2</div>
+          <div class="topic-row"><div class="topic-dot"></div>ทุกโจทย์: วิธีคิด → ผังงาน → C + Python</div>
+          <div class="topic-row"><div class="topic-dot"></div>ลองทำเองก่อนดูเฉลยเสมอ</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">🥉</div>
+        <div class="cover-badge">3 โจทย์ · C + PYTHON</div>
+        <div class="cover-slides-count">12 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== โจทย์ 1 ===== -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">เลขสมบูรณ์ (Perfect Number)</h2>
+    <div class="prob">
+      <b>โจทย์:</b> รับจำนวนเต็มบวก n แล้วตรวจสอบว่าเป็น <b>เลขสมบูรณ์</b> หรือไม่<br>
+      เลขสมบูรณ์ = จำนวนที่ผลรวมของตัวหารทั้งหมด (ไม่รวมตัวมันเอง) เท่ากับตัวมันเอง<br>
+      พร้อมแสดงตัวหารที่พบทั้งหมด
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างการทำงาน 1</div>
+        <div class="io">Enter n: 6
+ตัวหาร: 1 2 3
+ผลรวม: 6
+6 เป็นเลขสมบูรณ์</div>
+        <div class="code-label" style="margin-top:6px">ตัวอย่างการทำงาน 2</div>
+        <div class="io">Enter n: 28
+ตัวหาร: 1 2 4 7 14
+ผลรวม: 28
+28 เป็นเลขสมบูรณ์</div>
+      </div>
+      <div>
+        <div class="code-label">ตัวอย่างการทำงาน 3</div>
+        <div class="io">Enter n: 12
+ตัวหาร: 1 2 3 4 6
+ผลรวม: 16
+12 ไม่เป็นเลขสมบูรณ์</div>
+        <div class="code-label" style="margin-top:6px">ตัวอย่างการทำงาน 4 (เคสขอบ)</div>
+        <div class="io">Enter n: 1
+ตัวหาร: (ไม่มี)
+ผลรวม: 0
+1 ไม่เป็นเลขสมบูรณ์</div>
+      </div>
+    </div>
+    <div class="exam">⏸️ <b>หยุดตรงนี้ก่อน</b> — ลองเดิน STEP 1–3 (อ่านโจทย์ → แตกปัญหา → ผังงาน) ด้วยตัวเองอย่างน้อย 15 นาที แล้วค่อยเลื่อนไปหน้าถัดไป</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · วิธีคิด</div>
+    <h2 class="slide-title">STEP 1–3: แตกปัญหาและวาดผังงาน</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">STEP 1 — อ่านโจทย์
+  IN : n (จำนวนเต็มบวก)
+  OUT: รายการตัวหาร, ผลรวม, ผลสรุป
+  เงื่อนไข: "ไม่รวมตัวมันเอง"
+           → ตัวหารที่สนใจคือ 1 ถึง n−1
+
+STEP 2 — แตกปัญหา
+  ทำด้วยมือกับ n=6:
+    6 หาร 1 ลงตัว → 1 เป็นตัวหาร
+    6 หาร 2 ลงตัว → 2 เป็นตัวหาร
+    6 หาร 3 ลงตัว → 3 เป็นตัวหาร
+    6 หาร 4 ไม่ลง → ข้าม
+    6 หาร 5 ไม่ลง → ข้าม
+    รวม 1+2+3 = 6 = n ✓
+
+  → สิ่งที่ทำซ้ำ = "เช็คว่า i หาร n ลงตัวไหม"
+    วน i จาก 1 ถึง n−1  ← ได้ลูปแล้ว!
+  → ตัดสินใจ = "ลงตัวไหม" (n % i == 0)
+  → สะสม = sum += i</span></pre>
+      </div>
+      <div>
+        <div class="code-label">STEP 3 — ผังงาน</div>
+        <div class="diagram">     ⬭ เริ่ม
+        │
+     ▱ รับ n
+        │
+  ▭ sum = 0, i = 1
+        │
+        ▼
+┌──▶ ◇ i &lt;= n-1 ──เท็จ──┐
+│       │ จริง          │
+│   ◇ n % i == 0        │
+│    จริง│  │เท็จ        │
+│  ▽ แสดง i │           │
+│  ▭ sum+=i │           │
+│       └──┬┘           │
+│      ▭ i = i + 1      │
+└──────────┘            │
+                        ▼
+              ▽ แสดง sum
+                        │
+              ◇ sum == n
+             จริง│   │เท็จ
+        ▽"เป็น"  │   ▽"ไม่เป็น"
+                 └─┬─┘
+              ⬭ จบ</div>
+        <pre class="code-block"><span class="cm">STEP 5 — เคสขอบที่ต้องระวัง
+  n = 1 → ลูปไม่ทำงานเลย (i=1 &gt; n−1=0)
+          sum = 0 ≠ 1 → ไม่เป็น ✓ ถูกต้อง</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดที่คนพลาด:</b> วน <code class="inline-code">i</code> ถึง <b>n−1</b> ไม่ใช่ n — เพราะโจทย์บอก "ไม่รวมตัวมันเอง" · ถ้าวนถึง n จะได้ sum เกินเสมอ (n หาร n ลงตัว)</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · เฉลย</div>
+    <h2 class="slide-title">STEP 4: เขียนโค้ด — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> n, i, sum = <span class="nm">0</span>;
+
+    <span class="fn">printf</span>(<span class="st">"Enter n: "</span>);
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, &n);
+
+    <span class="fn">printf</span>(<span class="st">"ตัวหาร: "</span>);
+    <span class="kw">for</span> (i = <span class="nm">1</span>; i &lt;= n - <span class="nm">1</span>; i++) {
+        <span class="kw">if</span> (n % i == <span class="nm">0</span>) {      <span class="cm">/* หารลงตัว */</span>
+            <span class="fn">printf</span>(<span class="st">"%d "</span>, i);
+            sum += i;             <span class="cm">/* สะสม */</span>
+        }
+    }
+    <span class="fn">printf</span>(<span class="st">"\nผลรวม: %d\n"</span>, sum);
+
+    <span class="kw">if</span> (sum == n)
+        <span class="fn">printf</span>(<span class="st">"%d เป็นเลขสมบูรณ์\n"</span>, n);
+    <span class="kw">else</span>
+        <span class="fn">printf</span>(<span class="st">"%d ไม่เป็นเลขสมบูรณ์\n"</span>, n);
+
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block">n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Enter n: "</span>))
+sum = <span class="nm">0</span>
+
+<span class="fn">print</span>(<span class="st">"ตัวหาร: "</span>, end=<span class="st">''</span>)
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, n):        <span class="cm"># 1 ถึง n−1</span>
+    <span class="kw">if</span> n % i == <span class="nm">0</span>:            <span class="cm"># หารลงตัว</span>
+        <span class="fn">print</span>(i, end=<span class="st">' '</span>)
+        sum += i                <span class="cm"># สะสม</span>
+
+<span class="fn">print</span>(<span class="st">f"\nผลรวม: </span>{sum}<span class="st">"</span>)
+
+<span class="kw">if</span> sum == n:
+    <span class="fn">print</span>(<span class="st">f"</span>{n}<span class="st"> เป็นเลขสมบูรณ์"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">f"</span>{n}<span class="st"> ไม่เป็นเลขสมบูรณ์"</span>)</pre>
+        <pre class="code-block"><span class="cm"># สังเกตความต่าง:
+# C:      for (i=1; i&lt;=n-1; i++)
+# Python: for i in range(1, n)
+#         ← range ไม่รวมตัวสุดท้าย
+#           จึงเขียน n เฉยๆ ได้เลย
+
+# ตรรกะเหมือนกันเป๊ะ — ต่างแค่ไวยากรณ์</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ปรับปรุงให้เร็วขึ้น (ท้าทาย):</b> ตัวหารของ n มาเป็นคู่เสมอ (ถ้า i หารลงตัว แล้ว n/i ก็หารลงตัว) → วนแค่ถึง √n ก็พอ ลดจาก O(n) เหลือ O(√n) · ลองเขียนดู</div>
+  </div>
+</div>
+
+<!-- ===== โจทย์ 2 ===== -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">พีระมิดตัวเลข</h2>
+    <div class="prob">
+      <b>โจทย์:</b> รับจำนวนแถว n แล้วแสดงพีระมิดตัวเลขตามรูปแบบด้านล่าง<br>
+      โดยแถวที่ i จะมีตัวเลข 1 ถึง i และมีช่องว่างนำหน้าเพื่อจัดให้เป็นรูปพีระมิด
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างการทำงาน 1</div>
+        <div class="io">Enter rows: 4
+   1
+  12
+ 123
+1234</div>
+        <div class="code-label" style="margin-top:6px">ตัวอย่างการทำงาน 2</div>
+        <div class="io">Enter rows: 6
+     1
+    12
+   123
+  1234
+ 12345
+123456</div>
+      </div>
+      <div>
+        <div class="code-label">วิเคราะห์รูปแบบ (ทำตารางก่อน!)</div>
+        <table class="t">
+          <thead><tr><th>แถว i</th><th>ช่องว่าง</th><th>ตัวเลข</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>3</td><td>1</td></tr>
+            <tr><td>2</td><td>2</td><td>1 2</td></tr>
+            <tr><td>3</td><td>1</td><td>1 2 3</td></tr>
+            <tr><td>4</td><td>0</td><td>1 2 3 4</td></tr>
+            <tr><td><b>สูตร</b></td><td><b>n − i</b></td><td><b>1 ถึง i</b></td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="cm"># n=4 → แถว 1 มีช่องว่าง 4−1 = 3 ✓
+#       แถว 4 มีช่องว่าง 4−4 = 0 ✓
+# ได้สูตรแล้ว → เขียนลูปได้ทันที</span></pre>
+      </div>
+    </div>
+    <div class="exam">⏸️ <b>หยุดลองเอง</b> — โจทย์นี้ต้องใช้ <b>ลูปซ้อน 2 ชั้น</b> และลูปในมี 2 ตัว (ช่องว่าง + ตัวเลข) · ตารางด้านขวาให้สูตรมาแล้ว ลองเขียนผังงานดู</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · วิธีคิด</div>
+    <h2 class="slide-title">STEP 2–3: โครงลูปซ้อนและผังงาน</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">STEP 2 — แตกปัญหา
+
+  แต่ละแถวทำ 3 อย่างตามลำดับ:
+    ① พิมพ์ช่องว่าง (n−i) ตัว
+    ② พิมพ์ตัวเลข 1 ถึง i
+    ③ ขึ้นบรรทัดใหม่
+
+  ทำซ้ำ n แถว → ลูปนอกวน i = 1..n
+  ในแต่ละแถว ① กับ ② ก็วนซ้ำ
+    → ลูปใน 2 ตัว (คนละลูป ไม่ซ้อนกัน)
+
+  โครงที่ได้:
+    for i in 1..n:
+        for s in 1..(n-i):  พิมพ์ " "
+        for j in 1..i:      พิมพ์ j
+        ขึ้นบรรทัดใหม่</span></pre>
+        <pre class="code-block"><span class="cm">⚠️ จุดที่คนพลาดที่สุด:
+  ขึ้นบรรทัดใหม่ต้องอยู่ใน "ลูปนอก"
+  ถ้าเผลอใส่ในลูปใน → ทุกตัวเลข
+  ขึ้นบรรทัดใหม่ กลายเป็นแนวตั้ง</span></pre>
+      </div>
+      <div>
+        <div class="code-label">STEP 3 — ผังงาน</div>
+        <div class="diagram">     ▱ รับ n
+        │
+     ▭ i = 1
+        ▼
+┌──▶ ◇ i &lt;= n ──เท็จ──▶ ⬭ จบ
+│       │ จริง
+│    ▭ s = 1
+│       ▼
+│  ┌─▶ ◇ s &lt;= n-i ─เท็จ─┐
+│  │    ▽ พิมพ์ " "      │
+│  └────▭ s = s + 1      │
+│          ┌─────────────┘
+│       ▭ j = 1
+│          ▼
+│  ┌─▶ ◇ j &lt;= i ──เท็จ──┐
+│  │    ▽ พิมพ์ j        │
+│  └────▭ j = j + 1      │
+│          ┌─────────────┘
+│    ▽ ขึ้นบรรทัดใหม่  ← ในลูปนอก!
+│       │
+└──── ▭ i = i + 1</div>
+      </div>
+    </div>
+    <div class="exam"><b>เทคนิคที่ใช้ได้กับโจทย์รูปแบบทุกข้อ:</b> ทำตาราง "แถว i ↔ จำนวนที่ต้องพิมพ์" ก่อนเสมอ — ได้สูตรแล้วเขียนลูปได้ทันที ไม่ต้องเดา</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · เฉลย</div>
+    <h2 class="slide-title">STEP 4: เขียนโค้ด — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> n, i, j, s;
+
+    <span class="fn">printf</span>(<span class="st">"Enter rows: "</span>);
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, &n);
+
+    <span class="kw">for</span> (i = <span class="nm">1</span>; i &lt;= n; i++) {       <span class="cm">/* แต่ละแถว */</span>
+
+        <span class="kw">for</span> (s = <span class="nm">1</span>; s &lt;= n - i; s++)   <span class="cm">/* ช่องว่าง */</span>
+            <span class="fn">printf</span>(<span class="st">" "</span>);
+
+        <span class="kw">for</span> (j = <span class="nm">1</span>; j &lt;= i; j++)       <span class="cm">/* ตัวเลข */</span>
+            <span class="fn">printf</span>(<span class="st">"%d"</span>, j);
+
+        <span class="fn">printf</span>(<span class="st">"\n"</span>);               <span class="cm">/* จบแถว */</span>
+    }
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+        <pre class="code-block"><span class="cm">/* C: printf ไม่ขึ้นบรรทัดให้เอง
+   จึงพิมพ์ต่อกันได้เลย
+   ต้องใส่ \n เองตอนจบแถว */</span></pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block">n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Enter rows: "</span>))
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, n+<span class="nm">1</span>):        <span class="cm"># แต่ละแถว</span>
+
+    <span class="kw">for</span> s <span class="kw">in</span> <span class="fn">range</span>(n - i):        <span class="cm"># ช่องว่าง</span>
+        <span class="fn">print</span>(<span class="st">" "</span>, end=<span class="st">''</span>)
+
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, i+<span class="nm">1</span>):     <span class="cm"># ตัวเลข</span>
+        <span class="fn">print</span>(j, end=<span class="st">''</span>)
+
+    <span class="fn">print</span>()                     <span class="cm"># จบแถว</span></pre>
+        <pre class="code-block"><span class="cm"># Python: print ขึ้นบรรทัดให้อัตโนมัติ
+# จึงต้องใส่ end='' เพื่อ "ไม่ให้ขึ้น"
+# แล้วใช้ print() เปล่าตอนจบแถว
+# ← ตรงข้ามกับ C พอดี!</span></pre>
+        <div class="code-label" style="margin-top:6px">เขียนสั้นแบบ Python</div>
+        <pre class="code-block"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, n+<span class="nm">1</span>):
+    nums = <span class="st">''</span>.<span class="fn">join</span>(<span class="fn">str</span>(j) <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, i+<span class="nm">1</span>))
+    <span class="fn">print</span>(<span class="st">" "</span> * (n-i) + nums)
+<span class="cm"># " " * 3 = "   " คูณ string ได้!</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ความต่างที่ต้องจำ:</b> <b>C</b> — <code class="inline-code">printf</code> ไม่ขึ้นบรรทัดให้ ต้องใส่ <code class="inline-code">\n</code> เอง · <b>Python</b> — <code class="inline-code">print</code> ขึ้นให้อัตโนมัติ ต้องใส่ <code class="inline-code">end=''</code> เพื่อไม่ให้ขึ้น</div>
+  </div>
+</div>
+
+<!-- ===== โจทย์ 3 ===== -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">แปลงเลขฐาน 10 → ฐาน 2</h2>
+    <div class="prob">
+      <b>โจทย์:</b> รับจำนวนเต็มบวกฐาน 10 แล้วแปลงเป็นเลขฐาน 2<br>
+      <b>ห้ามใช้ฟังก์ชันสำเร็จรูป</b> (เช่น <code class="inline-code">bin()</code> ของ Python) — ต้องเขียนขั้นตอนเอง
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">Enter number: 13
+13 in binary = 1101</div>
+        <div class="io">Enter number: 45
+45 in binary = 101101</div>
+        <div class="io">Enter number: 8
+8 in binary = 1000</div>
+        <div class="io">Enter number: 0
+0 in binary = 0</div>
+      </div>
+      <div>
+        <div class="code-label">ทำด้วยมือก่อน — n = 13</div>
+        <table class="t">
+          <thead><tr><th>หาร</th><th>ผลลัพธ์</th><th>เศษ</th></tr></thead>
+          <tbody>
+            <tr><td>13 ÷ 2</td><td>6</td><td>1 ↑</td></tr>
+            <tr><td>6 ÷ 2</td><td>3</td><td>0 │</td></tr>
+            <tr><td>3 ÷ 2</td><td>1</td><td>1 │</td></tr>
+            <tr><td>1 ÷ 2</td><td>0</td><td>1 │</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="cm"># อ่านเศษ "จากล่างขึ้นบน" → 1101 ✓
+
+# สิ่งที่ทำซ้ำ: หาร 2 เก็บเศษ
+# หยุดเมื่อ: ผลลัพธ์เป็น 0
+# ⚠️ ปัญหา: ได้เศษจากหลังมาหน้า
+#          ต้องกลับลำดับ!</span></pre>
+      </div>
+    </div>
+    <div class="exam">⏸️ <b>หยุดลองเอง</b> — โจทย์นี้จุดยากอยู่ที่ <b>"ได้คำตอบกลับด้าน"</b> · คิดดูว่าจะเก็บเศษไว้ยังไงแล้วพลิกกลับ (ใบ้: array หรือต่อ string ไว้ข้างหน้า)</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · วิธีคิด</div>
+    <h2 class="slide-title">STEP 2–3: จัดการปัญหา "ลำดับกลับด้าน"</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">STEP 2 — แตกปัญหา
+
+  ① วนหาร 2 เก็บเศษ จนผลลัพธ์เป็น 0
+  ② กลับลำดับเศษ
+  ③ แสดงผล
+
+  ปัญหา ② แก้ได้ 3 วิธี:
+
+  วิธี A — เก็บใน array แล้ววนย้อน
+     bits[count++] = n % 2
+     แล้ว for (i=count-1; i&gt;=0; i--)
+     ← ใช้ได้ทั้ง C และ Python
+
+  วิธี B — ต่อ string ไว้ "ข้างหน้า"
+     result = str(n%2) + result
+     ← สั้นที่สุด แต่ทำได้ง่ายใน Python
+
+  วิธี C — ใช้ recursion
+     ← สวยแต่เกินระดับนี้</span></pre>
+        <pre class="code-block"><span class="cm">⚠️ เคสขอบสำคัญ: n = 0
+  ลูป while (n &gt; 0) ไม่ทำงานเลย
+  → ได้ผลลัพธ์ว่าง!
+  ต้องเช็คแยก: ถ้า n == 0 พิมพ์ "0"</span></pre>
+      </div>
+      <div>
+        <div class="code-label">STEP 3 — ผังงาน (วิธี A)</div>
+        <div class="diagram">     ▱ รับ n
+        │
+     ◇ n == 0 ──จริง──▶ ▽ "0" ─▶ จบ
+        │ เท็จ
+   ▭ count = 0
+        ▼
+┌──▶ ◇ n &gt; 0 ──เท็จ──┐
+│    ▭ bits[count]    │
+│         = n % 2     │
+│    ▭ count++        │
+│    ▭ n = n / 2      │
+└─────────┘           │
+          ┌───────────┘
+    ▭ i = count-1
+          ▼
+┌──▶ ◇ i &gt;= 0 ──เท็จ──▶ ⬭ จบ
+│    ▽ พิมพ์ bits[i]
+└──── ▭ i = i - 1
+      ← วนย้อนกลับ!</div>
+      </div>
+    </div>
+    <div class="exam"><b>บทเรียนของโจทย์นี้:</b> เมื่อ "ได้คำตอบกลับด้าน" — เก็บไว้ก่อนแล้วค่อยวนย้อน · pattern นี้ใช้กับโจทย์กลับ string, กลับตัวเลข, แปลงฐานอื่นๆ ได้หมด</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · เฉลย</div>
+    <h2 class="slide-title">STEP 4: เขียนโค้ด — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> n, i, count = <span class="nm">0</span>;
+    <span class="kw">int</span> bits[<span class="nm">32</span>];              <span class="cm">/* int 32 บิตพอ */</span>
+
+    <span class="fn">printf</span>(<span class="st">"Enter number: "</span>);
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, &n);
+
+    <span class="kw">if</span> (n == <span class="nm">0</span>) {              <span class="cm">/* เคสขอบ! */</span>
+        <span class="fn">printf</span>(<span class="st">"0 in binary = 0\n"</span>);
+        <span class="kw">return</span> <span class="nm">0</span>;
+    }
+
+    <span class="kw">int</span> original = n;         <span class="cm">/* เก็บไว้แสดงผล */</span>
+
+    <span class="kw">while</span> (n &gt; <span class="nm">0</span>) {
+        bits[count] = n % <span class="nm">2</span>;   <span class="cm">/* เก็บเศษ */</span>
+        count++;
+        n = n / <span class="nm">2</span>;             <span class="cm">/* หารต่อ */</span>
+    }
+
+    <span class="fn">printf</span>(<span class="st">"%d in binary = "</span>, original);
+    <span class="kw">for</span> (i = count - <span class="nm">1</span>; i &gt;= <span class="nm">0</span>; i--)  <span class="cm">/* วนย้อน! */</span>
+        <span class="fn">printf</span>(<span class="st">"%d"</span>, bits[i]);
+    <span class="fn">printf</span>(<span class="st">"\n"</span>);
+
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block">n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Enter number: "</span>))
+original = n
+
+<span class="kw">if</span> n == <span class="nm">0</span>:                    <span class="cm"># เคสขอบ!</span>
+    <span class="fn">print</span>(<span class="st">"0 in binary = 0"</span>)
+<span class="kw">else</span>:
+    bits = []
+    <span class="kw">while</span> n &gt; <span class="nm">0</span>:
+        bits.<span class="fn">append</span>(n % <span class="nm">2</span>)      <span class="cm"># เก็บเศษ</span>
+        n = n // <span class="nm">2</span>             <span class="cm"># ⚠️ // ไม่ใช่ /</span>
+
+    result = <span class="st">''</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(bits)-<span class="nm">1</span>, -<span class="nm">1</span>, -<span class="nm">1</span>):  <span class="cm"># วนย้อน</span>
+        result += <span class="fn">str</span>(bits[i])
+
+    <span class="fn">print</span>(<span class="st">f"</span>{original}<span class="st"> in binary = </span>{result}<span class="st">"</span>)</pre>
+        <div class="code-label" style="margin-top:6px">เขียนสั้นแบบ Python (วิธี B)</div>
+        <pre class="code-block">n = <span class="fn">int</span>(<span class="fn">input</span>())
+result = <span class="st">''</span>
+<span class="kw">if</span> n == <span class="nm">0</span>:
+    result = <span class="st">'0'</span>
+<span class="kw">while</span> n &gt; <span class="nm">0</span>:
+    result = <span class="fn">str</span>(n % <span class="nm">2</span>) + result   <span class="cm"># ต่อ "ข้างหน้า"</span>
+    n //= <span class="nm">2</span>                       <span class="cm"># → ไม่ต้องกลับลำดับ!</span>
+<span class="fn">print</span>(result)
+
+<span class="cm"># หรือใช้ bits[::-1] กลับ list ทั้งก้อน
+# result = ''.join(str(b) for b in bits[::-1])</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดที่ต้องระวังใน Python:</b> ใช้ <code class="inline-code">//</code> (หารปัดลง) ไม่ใช่ <code class="inline-code">/</code> — เพราะ <code class="inline-code">/</code> ให้ float ทำให้ <code class="inline-code">while n &gt; 0</code> วนไม่จบ · ใน C ใช้ <code class="inline-code">/</code> ได้เพราะ int หาร int ปัดลงอยู่แล้ว</div>
+  </div>
+</div>
+
+<!-- Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💪</div>
+      <div class="think-label">โจทย์ท้าทาย</div>
+      <div class="think-q">ลองทำเองแบบไม่มีเฉลย — ใช้ 5 ขั้นเหมือนเดิม<br><br>
+<div style="background:var(--cal);padding:14px 20px;border-radius:8px;display:inline-block;text-align:left;font-size:13.5px;line-height:1.8;max-width:640px">
+<b>โจทย์:</b> รับจำนวนเต็มบวก n แล้วแสดงผลรวมของหลักทุกหลัก<br>
+และตรวจว่าผลรวมนั้นหารด้วย 3 ลงตัวหรือไม่<br>
+<span style="font-family:monospace;font-size:12px;color:var(--ca)">n = 1234 → หลัก: 1+2+3+4 = 10 → ไม่หารด้วย 3 ลงตัว<br>
+n = 123  → หลัก: 1+2+3 = 6  → หารด้วย 3 ลงตัว</span>
+</div><br><br>
+<em>ใบ้ STEP 2: แยกหลักด้วย <code>n % 10</code> (ได้หลักหน่วย)<br>
+แล้วตัดหลักนั้นทิ้งด้วย <code>n // 10</code> วนจนกว่า n จะเป็น 0<br>
+← pattern เดียวกับโจทย์แปลงฐาน 2 เลย!</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🥉</div>
+      <div class="summary-title">จบชุดที่ 1 — เลขและลูป</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">โจทย์ 1 เลขสมบูรณ์</div><div class="sum-body">วน i = 1..n−1 · เช็ค n%i==0 · สะสม sum · เปรียบเทียบกับ n</div></div>
+        <div class="sum-card"><div class="sum-head">โจทย์ 2 พีระมิด</div><div class="sum-body">ทำตาราง "แถว i ↔ จำนวน" หาสูตรก่อน · ขึ้นบรรทัดใหม่อยู่ลูปนอก</div></div>
+        <div class="sum-card"><div class="sum-head">โจทย์ 3 แปลงฐาน</div><div class="sum-body">หาร 2 เก็บเศษ · ได้กลับด้าน → เก็บ array แล้ววนย้อน หรือต่อ string ข้างหน้า</div></div>
+        <div class="sum-card"><div class="sum-head">Pattern ที่ได้</div><div class="sum-body">"ทำด้วยมือก่อน" → เห็นสิ่งที่ทำซ้ำ = ลูป · สิ่งที่ตัดสินใจ = if</div></div>
+        <div class="sum-card"><div class="sum-head">เคสขอบที่เจอ</div><div class="sum-body">n=1 (ลูปไม่ทำงาน) · n=0 (ผลลัพธ์ว่าง) — ต้องเช็คแยกเสมอ</div></div>
+        <div class="sum-card"><div class="sum-head">C vs Python</div><div class="sum-body">printf ต้องใส่ \n เอง · print ต้องใส่ end='' · Python ใช้ // แทน /</div></div>
+      </div>
+      <a href="slides_ch2.html" class="summary-next">→ ชุดที่ 2: จัดการชุดข้อมูล (array / list)</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">ชุดที่ 1 — เลขและลูป</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','① โจทย์เลขสมบูรณ์','① วิธีคิด + ผังงาน','① เฉลย C + Python','② โจทย์พีระมิด','② วิธีคิด + ผังงาน','② เฉลย C + Python','③ โจทย์แปลงฐาน 2','③ วิธีคิด + ผังงาน','③ เฉลย C + Python','โจทย์ท้าทาย','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

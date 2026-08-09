@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เลือกโครงสร้างให้ถูก | ตะลุยโจทย์ Data Structures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#14532d;--cal:#e3f2e7;--cam:#3d8f5b;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.prob{background:#fff;border:1px solid var(--line);border-left:4px solid var(--ca);border-radius:8px;padding:14px 18px;margin:8px 0;font-size:13.5px;line-height:1.8;}
+.prob b{color:var(--ca);}
+.io{font-family:var(--mono);font-size:12.5px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:8px 0;white-space:pre;color:var(--ca);line-height:1.6;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.6;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:5px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);}
+.t td:first-child{font-weight:700;color:var(--ca);}
+.lang{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--ca);color:#fff;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🧩 ก๋วยเตี๋ยวเรือ Programming · ตะลุยโจทย์ Data Structures</div>
+        <div class="cover-title">เลือกโครงสร้าง<br><em>ให้ถูกตั้งแต่แรก</em></div>
+        <div class="cover-subtitle">ก่อนจะเขียนโค้ดเป็น ต้องเลือกให้เป็นก่อน — เจอโจทย์แบบไหน ใช้อะไร</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>คำถาม 3 ข้อที่ตอบแล้วรู้เลยว่าใช้อะไร</div>
+          <div class="topic-row"><div class="topic-dot"></div>Array vs Linked List — เทียบต้นทุนจริง</div>
+          <div class="topic-row"><div class="topic-dot"></div>Stack / Queue / Tree / Hash ใช้ตอนไหน</div>
+          <div class="topic-row"><div class="topic-dot"></div>วิธีวาดภาพก่อนเขียนโค้ด</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">🧭</div>
+        <div class="cover-badge">อ่านก่อนตะลุยโจทย์</div>
+        <div class="cover-slides-count">10 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ทำไมถึงตัน</div>
+    <h2 class="slide-title">ปัญหาไม่ใช่ "เขียนโค้ดไม่เป็น" แต่คือ "ไม่รู้จะใช้อะไร"</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          <b>สถานการณ์ที่เจอในห้องสอบ:</b><br>
+          โจทย์ให้ "เก็บรายชื่อนักศึกษาที่เข้ามาตามลำดับ แล้วเรียกออกทีละคนตามลำดับที่มา"<br><br>
+          คนที่ตัน → นึกถึง linked list, พยายามเขียน struct, พันกันที่ pointer, หมดเวลา<br>
+          คนที่ผ่าน → อ่านคำว่า <b>"ตามลำดับที่มา"</b> แล้วรู้ทันทีว่านี่คือ <b>Queue</b> เขียน 20 บรรทัดจบ
+        </div>
+        <div class="exam"><b>ความต่างไม่ได้อยู่ที่ทักษะการพิมพ์โค้ด</b> — อยู่ที่การอ่านโจทย์แล้ว<b>แปลเป็นชื่อโครงสร้าง</b>ได้ภายใน 30 วินาทีแรก</div>
+      </div>
+      <div>
+        <div class="code-label">คำในโจทย์ → โครงสร้างที่ตรงกัน</div>
+        <table class="t">
+          <thead><tr><th>เจอคำว่า</th><th>ให้นึกถึง</th></tr></thead>
+          <tbody>
+            <tr><td>ตามลำดับที่มา / มาก่อนได้ก่อน / คิว</td><td>Queue</td></tr>
+            <tr><td>ล่าสุดก่อน / ย้อนกลับ / undo / วงเล็บ</td><td>Stack</td></tr>
+            <tr><td>เพิ่ม-ลบตรงกลางบ่อย / ไม่รู้ขนาด</td><td>Linked List</td></tr>
+            <tr><td>เข้าถึงตำแหน่งที่ i ตรงๆ</td><td>Array</td></tr>
+            <tr><td>ค้นหาเร็ว / เรียงอยู่แล้ว</td><td>BST</td></tr>
+            <tr><td>ค้นด้วย key / ตาราง / นับความถี่</td><td>Hash Table</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">📌 ท่องตารางนี้ให้ได้ก่อนสอบ — โจทย์เขียนโปรแกรมส่วนใหญ่<b>ใบ้ชื่อโครงสร้างไว้ในตัวโจทย์แล้ว</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">วิธีเลือก</div>
+    <h2 class="slide-title">ถาม 3 คำถาม แล้วจะได้คำตอบ</h2>
+    <div class="two-col">
+      <div>
+        <div class="diagram">        ┌────────────────────┐
+        │ อ่านโจทย์จบแล้ว    │
+        └─────────┬──────────┘
+                  ▼
+    ╱───────────────────────────╲
+   ╱ ① ลำดับการเข้า-ออกสำคัญไหม? ╲
+   ╲───────────┬───────────────────╱
+      ใช่      │              │ ไม่
+               ▼              ▼
+   ┌───────────────────┐   ╱──────────────╲
+   │ เข้าท้ายออกหน้า   │  ╱ ② ค้นหาบ่อย    ╲
+   │  → Queue          │  ╲ กว่าเพิ่ม-ลบ?  ╱
+   │ เข้าออกทางเดียวกัน│   ╲──────────────╱
+   │  → Stack          │      ใช่│    │ไม่
+   └───────────────────┘        ▼    ▼
+              ┌──────────────────┐  ╱──────────────╲
+              │ มี key ชัดเจน?   │ ╱ ③ เพิ่ม-ลบตรง ╲
+              │ ใช่ → Hash Table │ ╲ กลางบ่อยไหม?  ╱
+              │ ไม่ → BST        │  ╲──────────────╱
+              └──────────────────┘   ใช่│      │ไม่
+                                       ▼      ▼
+                              ┌────────────┐ ┌───────┐
+                              │Linked List │ │ Array │
+                              └────────────┘ └───────┘</div>
+      </div>
+      <div>
+        <div class="prob">
+          <b>① ลำดับสำคัญไหม?</b><br>
+          ถ้าโจทย์บังคับว่าใครเข้าก่อนต้องออกก่อน (หรือหลังสุดออกก่อน) → จบที่ Stack/Queue ไม่ต้องคิดต่อ
+        </div>
+        <div class="prob">
+          <b>② ค้นหาบ่อยกว่าแก้ไขไหม?</b><br>
+          ถ้างานหลักคือ "หาว่ามี x ไหม" ซ้ำๆ เยอะๆ → อย่าใช้ลิสต์ธรรมดา (ต้องไล่ทีละตัว) ให้ใช้ BST หรือ Hash
+        </div>
+        <div class="prob">
+          <b>③ เพิ่ม-ลบตรงกลางบ่อยไหม?</b><br>
+          Array ลบตรงกลางต้องเลื่อนของทั้งแถว · Linked List แค่ต่อลูกศรใหม่ → นี่คือเหตุผลเดียวที่ linked list มีอยู่
+        </div>
+        <div class="exam">⏸️ <b>ลองเอง</b> — "ระบบ undo ของโปรแกรมวาดรูป" ตอบข้อ ① ว่าอะไร? (คำตอบ: หลังสุดออกก่อน → <b>Stack</b>)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">เทียบต้นทุน</div>
+    <h2 class="slide-title">Array vs Linked List — ตัวเลขที่ต้องจำ</h2>
+    <div class="two-col">
+      <div>
+        <table class="t">
+          <thead><tr><th>งาน</th><th>Array</th><th>Linked List</th></tr></thead>
+          <tbody>
+            <tr><td>อ่านตัวที่ i</td><td>O(1) ⚡</td><td>O(n)</td></tr>
+            <tr><td>เพิ่มหัว</td><td>O(n)</td><td>O(1) ⚡</td></tr>
+            <tr><td>เพิ่มท้าย</td><td>O(1)*</td><td>O(n) หรือ O(1) ถ้ามี tail</td></tr>
+            <tr><td>ลบตรงกลาง</td><td>O(n)</td><td>O(1)** </td></tr>
+            <tr><td>ค้นหาค่า</td><td>O(n)</td><td>O(n)</td></tr>
+            <tr><td>หน่วยความจำ</td><td>ต่อเนื่อง ประหยัด</td><td>+ pointer ทุกโหนด</td></tr>
+          </tbody>
+        </table>
+        <div class="exam"><b>* </b>ถ้ายังไม่เต็ม &nbsp;<b>**</b> ถ้ารู้ตำแหน่งโหนดก่อนหน้าอยู่แล้ว (ถ้าต้องไล่หาก่อนก็ยัง O(n))</div>
+      </div>
+      <div>
+        <div class="code-label">ทำไม array ลบตรงกลางถึงแพง</div>
+        <div class="diagram">ลบ index 1 จาก [10, 20, 30, 40]
+
+  [10][20][30][40]
+        ↓ ลบ
+  [10][ ][30][40]
+        ← ← ← ต้องเลื่อนทุกตัวมาชิด
+  [10][30][40]
+
+  ยิ่งข้อมูลเยอะ ยิ่งเลื่อนนาน = O(n)</div>
+        <div class="code-label">ทำไม linked list ถึงถูก</div>
+        <div class="diagram">  [10]→[20]→[30]→[40]→NULL
+        ลบ 20
+  [10]───────↗
+       (แค่ย้ายลูกศรของ 10
+        ให้ชี้ไป 30 = 1 คำสั่ง)
+
+  แต่กว่าจะ "ไปถึง" 10 ต้องไล่จาก
+  head ทีละตัว ← นี่คือราคาที่จ่าย</div>
+        <div class="exam">💡 สรุปสั้น: <b>Array เก่งเรื่องอ่าน · Linked List เก่งเรื่องแก้</b> — โจทย์บอกเองว่าจะทำอะไรบ่อย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โครงที่ต้องเขียนได้จากความจำ</div>
+    <h2 class="slide-title">Node — เทียบ C กับ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;stdlib.h&gt;</span>
+
+<span class="kw">struct</span> Node {
+    <span class="kw">int</span> data;
+    <span class="kw">struct</span> Node *next;   <span class="cm">// ต้องมี struct นำหน้า</span>
+};
+
+<span class="cm">// สร้างโหนดใหม่ — ท่องให้ได้ทั้งก้อน</span>
+<span class="kw">struct</span> Node* newNode(<span class="kw">int</span> v) {
+    <span class="kw">struct</span> Node *p = malloc(<span class="kw">sizeof</span>(<span class="kw">struct</span> Node));
+    p-&gt;data = v;
+    p-&gt;next = NULL;
+    <span class="kw">return</span> p;
+}
+
+<span class="kw">int</span> main() {
+    <span class="kw">struct</span> Node *head = newNode(<span class="nu">10</span>);
+    head-&gt;next = newNode(<span class="nu">20</span>);
+
+    <span class="cm">// เดินลิสต์ — ท่ามาตรฐาน</span>
+    <span class="kw">struct</span> Node *cur = head;
+    <span class="kw">while</span> (cur != NULL) {
+        printf(<span class="st">"%d "</span>, cur-&gt;data);
+        cur = cur-&gt;next;
+    }
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block"><span class="kw">class</span> Node:
+    <span class="kw">def</span> __init__(self, data):
+        self.data = data
+        self.next = <span class="kw">None</span>
+
+head = Node(<span class="nu">10</span>)
+head.next = Node(<span class="nu">20</span>)
+
+<span class="cm"># เดินลิสต์ — ท่ามาตรฐาน</span>
+cur = head
+<span class="kw">while</span> cur <span class="kw">is</span> <span class="kw">not</span> <span class="kw">None</span>:
+    print(cur.data, end=<span class="st">" "</span>)
+    cur = cur.next</pre>
+        <table class="t">
+          <thead><tr><th>เรื่อง</th><th>C</th><th>Python</th></tr></thead>
+          <tbody>
+            <tr><td>จองหน่วยความจำ</td><td>malloc()</td><td>Node(...) อัตโนมัติ</td></tr>
+            <tr><td>คืนหน่วยความจำ</td><td>free() ต้องเรียกเอง</td><td>อัตโนมัติ (GC)</td></tr>
+            <tr><td>เข้าถึงฟิลด์</td><td>p-&gt;data</td><td>p.data</td></tr>
+            <tr><td>ค่าว่าง</td><td>NULL</td><td>None</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">⚠️ <b>ท่าเดินลิสต์ <span style="font-family:monospace">cur = cur-&gt;next</span> จะใช้ในทุกโจทย์ของวิชานี้</b> — ถ้ายังต้องนึก ให้เขียนซ้ำ 5 รอบจนขึ้นใจก่อนไปต่อ</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 5 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">เทคนิคที่ช่วยได้จริง</div>
+    <h2 class="slide-title">วาดกล่องกับลูกศรก่อน แล้วค่อยพิมพ์</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob"><b>กติกา:</b> ห้ามพิมพ์โค้ด linked list ก่อนวาดภาพ "ก่อน" กับ "หลัง" ให้ครบ — 90% ของบั๊กมาจากการเรียงลำดับคำสั่งผิด ซึ่งภาพจะฟ้องทันที</div>
+        <div class="code-label">ตัวอย่าง: แทรก n ระหว่าง a กับ b</div>
+        <div class="diagram">ก่อน:
+  [a] ──→ [b]
+  [n] (ลอยอยู่)
+
+หลัง:
+  [a] ──→ [n] ──→ [b]
+
+ลำดับคำสั่งที่ถูก:
+  ① n-&gt;next = a-&gt;next;   (n ชี้ b ก่อน)
+  ② a-&gt;next = n;         (แล้วค่อยให้ a ชี้ n)</div>
+      </div>
+      <div>
+        <div class="code-label">ถ้าสลับลำดับจะพังยังไง</div>
+        <div class="diagram">❌ ① a-&gt;next = n;
+   ② n-&gt;next = a-&gt;next;
+
+  พอทำ ① เสร็จ a-&gt;next กลายเป็น n
+  แล้ว ② จะได้ n-&gt;next = n
+
+  [a] ──→ [n] ⟲ (ชี้ตัวเอง)
+           [b] หลุดหายไปเลย
+
+  ผลลัพธ์: วนลูปไม่รู้จบ + ข้อมูลหาย</div>
+        <div class="exam">🔑 <b>กฎเหล็ก:</b> ตอนแทรก ให้<b>ต่อลูกศรของโหนดใหม่ก่อนเสมอ</b> แล้วค่อยแก้ลูกศรของโหนดเดิม — เพราะพอแก้ตัวเดิมไปแล้ว จะหาทางไปโหนดถัดไปไม่เจอ</div>
+        <div class="exam">📝 ในห้องสอบ: วาดลงกระดาษข้อสอบมุมขวาได้เลย ไม่มีใครหักคะแนน แต่ช่วยไม่ให้พลาดจุดนี้</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 6 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">เคสขอบ</div>
+    <h2 class="slide-title">4 เคสที่ต้องเทสต์ทุกครั้ง</h2>
+    <div class="two-col">
+      <div>
+        <table class="t">
+          <thead><tr><th>เคส</th><th>ต้องเช็คว่า</th></tr></thead>
+          <tbody>
+            <tr><td>ลิสต์ว่าง</td><td>head == NULL แล้วโค้ดไม่ crash</td></tr>
+            <tr><td>มีตัวเดียว</td><td>ลบแล้ว head กลายเป็น NULL</td></tr>
+            <tr><td>ทำที่ตัวแรก</td><td>ต้องแก้ head ด้วย ไม่ใช่แค่ next</td></tr>
+            <tr><td>ทำที่ตัวสุดท้าย</td><td>ตัวใหม่สุดท้ายต้อง next = NULL</td></tr>
+          </tbody>
+        </table>
+        <div class="exam"><b>ทำไมเคส "ตัวแรก" ถึงพลาดกันเยอะ?</b> เพราะโหนดอื่นๆ ถูกชี้โดย <span style="font-family:monospace">prev-&gt;next</span> แต่โหนดแรกถูกชี้โดยตัวแปร <span style="font-family:monospace">head</span> — คนละที่กัน จึงต้องเขียนโค้ดคนละแบบ</div>
+      </div>
+      <div>
+        <div class="code-label">โครงป้องกันเคสขอบ (C)</div>
+        <pre class="code-block"><span class="kw">struct</span> Node* deleteVal(<span class="kw">struct</span> Node *head, <span class="kw">int</span> v) {
+    <span class="kw">if</span> (head == NULL) <span class="kw">return</span> NULL;      <span class="cm">// เคสว่าง</span>
+
+    <span class="kw">if</span> (head-&gt;data == v) {                <span class="cm">// เคสตัวแรก</span>
+        <span class="kw">struct</span> Node *tmp = head;
+        head = head-&gt;next;
+        free(tmp);
+        <span class="kw">return</span> head;
+    }
+
+    <span class="kw">struct</span> Node *cur = head;
+    <span class="kw">while</span> (cur-&gt;next != NULL &amp;&amp; cur-&gt;next-&gt;data != v)
+        cur = cur-&gt;next;
+
+    <span class="kw">if</span> (cur-&gt;next != NULL) {              <span class="cm">// เจอ</span>
+        <span class="kw">struct</span> Node *tmp = cur-&gt;next;
+        cur-&gt;next = tmp-&gt;next;
+        free(tmp);
+    }
+    <span class="kw">return</span> head;
+}</pre>
+        <div class="exam">💡 สังเกตว่าฟังก์ชัน <b>คืนค่า head กลับไป</b> — เพราะ head อาจเปลี่ยน ถ้าไม่คืน ผู้เรียกจะยังถือ head เก่าที่ถูก free ไปแล้ว</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 7 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ตรวจความเข้าใจ</div>
+    <h2 class="slide-title">เลือกโครงสร้างให้ถูก</h2>
+    <div class="two-col">
+      <div>
+        <div class="exercise">
+          <div class="ex-q">1) "ระบบพิมพ์เอกสาร งานที่สั่งก่อนต้องพิมพ์ก่อน" ควรใช้โครงสร้างอะไร?</div>
+          <div class="mc-opts" id="q1">
+            <div class="mc-opt" onclick="pickMC('q1',0,1,'ลำดับ มาก่อนได้ก่อน = FIFO = Queue')"><span class="mc-ltr">A</span>Stack</div>
+            <div class="mc-opt" onclick="pickMC('q1',1,1,'ถูก! มาก่อนได้ก่อน = FIFO = Queue')"><span class="mc-ltr">B</span>Queue</div>
+            <div class="mc-opt" onclick="pickMC('q1',2,1,'BST ใช้ตอนต้องค้นหาเร็ว ไม่ใช่เรื่องลำดับ')"><span class="mc-ltr">C</span>BST</div>
+          </div>
+          <div class="ex-feedback" id="q1-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">2) ต้องอ่านข้อมูลตัวที่ i บ่อยมาก แต่แทบไม่เพิ่ม-ลบเลย ควรใช้อะไร?</div>
+          <div class="mc-opts" id="q2">
+            <div class="mc-opt" onclick="pickMC('q2',0,0,'ถูก! Array อ่านตำแหน่งที่ i ได้ O(1)')"><span class="mc-ltr">A</span>Array</div>
+            <div class="mc-opt" onclick="pickMC('q2',1,0,'Linked List ต้องไล่จาก head ทุกครั้ง = O(n)')"><span class="mc-ltr">B</span>Linked List</div>
+            <div class="mc-opt" onclick="pickMC('q2',2,0,'Stack หยิบได้แค่ตัวบนสุด')"><span class="mc-ltr">C</span>Stack</div>
+          </div>
+          <div class="ex-feedback" id="q2-fb"></div>
+        </div>
+      </div>
+      <div>
+        <div class="exercise">
+          <div class="ex-q">3) เติมคำ: ตอนแทรกโหนดใหม่ ต้องต่อลูกศรของ<b>โหนด____ก่อน</b> แล้วค่อยแก้โหนดเดิม (ตอบ: ใหม่ / เดิม)</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in1" placeholder="พิมพ์คำตอบ">
+            <button class="ex-btn" onclick="checkFill('in1','ใหม่',['โหนดใหม่','new'],[],'ต่อลูกศรของโหนดใหม่ก่อนเสมอ ไม่งั้นจะหาทางไปโหนดถัดไปไม่เจอ','ตอบว่า &quot;ใหม่&quot; — ถ้าแก้โหนดเดิมก่อน ลูกศรเดิมจะหาย')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb1"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">4) เติมคำ: การอ่านตัวที่ i ของ Linked List มีต้นทุนเท่าไร (ตอบในรูป O(...))</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in2" placeholder="เช่น O(1)">
+            <button class="ex-btn" onclick="checkFill('in2','O(n)',['o(n)','On','n'],['O(1)'],'ต้องไล่จาก head ทีละตัว จึงเป็น O(n) — ต่างจาก array ที่เป็น O(1)','ต้องไล่จาก head ทีละตัว ไม่สามารถกระโดดไปตำแหน่งได้เลย')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb2"></div>
+        </div>
+        <div class="exam">ทำครบ 4 ข้อแล้วไปต่อชุดที่ 1 ได้เลย ถ้าข้อไหนผิด ให้ย้อนกลับไปสไลด์ที่เกี่ยวข้องอีกรอบก่อน</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 8 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💪</div>
+      <div class="think-label">อุ่นเครื่องก่อนลุย</div>
+      <div class="think-q">ลองตอบในใจก่อนเปิดชุดที่ 1<br><br>
+<div style="background:var(--cal);padding:14px 20px;border-radius:8px;display:inline-block;text-align:left;font-size:13.5px;line-height:1.8;max-width:660px">
+โจทย์แต่ละข้อนี้ควรใช้โครงสร้างอะไร?<br>
+① เช็คว่าวงเล็บในสมการเปิด-ปิดครบไหม<br>
+② เก็บคะแนนนักศึกษา 50 คน แล้วหาค่าเฉลี่ย<br>
+③ นับว่าแต่ละคำปรากฏในเอกสารกี่ครั้ง<br>
+④ เก็บรายชื่อที่ต้องเรียงตลอด และแทรกเข้ากลางบ่อย
+</div><br><br>
+<em>เฉลย: ① Stack (เจอเปิดใส่ เจอปิดเอาออก) ② Array (รู้จำนวนแน่นอน อ่านอย่างเดียว)<br>
+③ Hash Table (คำ = key, จำนวน = value) ④ Linked List แบบเรียง (แทรกกลางถูก)</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- 9 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🧭</div>
+      <div class="summary-title">สรุป — เลือกให้เป็นก่อนเขียน</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">คำใบ้อยู่ในโจทย์</div><div class="sum-body">"ตามลำดับที่มา"=Queue · "ย้อนกลับ/วงเล็บ"=Stack · "ค้นด้วย key"=Hash</div></div>
+        <div class="sum-card"><div class="sum-head">3 คำถามคัดกรอง</div><div class="sum-body">ลำดับสำคัญไหม → ค้นหาบ่อยไหม → แก้ตรงกลางบ่อยไหม</div></div>
+        <div class="sum-card"><div class="sum-head">Array vs List</div><div class="sum-body">Array เก่งอ่าน O(1) · Linked List เก่งแก้ O(1) แต่อ่าน O(n)</div></div>
+        <div class="sum-card"><div class="sum-head">ท่าพื้นฐาน</div><div class="sum-body">เดินลิสต์: cur = cur-&gt;next จนถึง NULL — ใช้ทุกโจทย์</div></div>
+        <div class="sum-card"><div class="sum-head">กฎเหล็กตอนแทรก</div><div class="sum-body">ต่อลูกศรโหนดใหม่ก่อน แล้วค่อยแก้โหนดเดิม</div></div>
+        <div class="sum-card"><div class="sum-head">4 เคสขอบ</div><div class="sum-body">ว่าง · เหลือตัวเดียว · ทำที่ตัวแรก · ทำที่ตัวสุดท้าย</div></div>
+      </div>
+      <a href="slides_ch1.html" class="summary-next">→ ชุดที่ 1: Linked List</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 10</span>
+      <span class="nav-chapter" id="chapterLabel">เลือกโครงสร้างให้ถูก</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ทำไมถึงตัน','3 คำถามคัดกรอง','Array vs Linked List','โครง Node C/Python','วาดก่อนเขียน','4 เคสขอบ','ตรวจความเข้าใจ','อุ่นเครื่อง','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

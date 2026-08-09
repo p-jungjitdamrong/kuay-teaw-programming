@@ -14,6 +14,8 @@
   --c-ds:#2c4ea0;--c-dsl:#e8edf9;--c-dsm:#5b7fd4;
   --c-oop:#9b1d6a;--c-oopl:#fce7f3;--c-oopm:#d45fa0;
   --c-py:#b84c00;--c-pyl:#fff0e6;--c-pym:#e8763a;
+  --c-dr:#7c2d12;--c-drl:#fbe9e0;--c-drm:#c2643a;
+  --c-dd:#14532d;--c-ddl:#e3f2e7;--c-ddm:#3d8f5b;
   --c-sort:#005f73;--c-sortl:#e0f4f6;--c-sortm:#0a9396;
   --c-math:#6a2c91;--c-mathl:#f3e9fa;--c-mathm:#9b59b6;
   --c-dm:#a4133c;--c-dml:#fde8ef;--c-dmm:#d45a7e;
@@ -47,6 +49,8 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
 .card.ds::after{background:linear-gradient(90deg,var(--c-ds),var(--c-dsm))}
 .card.oop::after{background:linear-gradient(90deg,var(--c-oop),var(--c-oopm))}
 .card.py::after{background:linear-gradient(90deg,var(--c-py),var(--c-pym))}
+.card.dd::after{background:linear-gradient(90deg,var(--c-dd),var(--c-ddm))}
+.card.dr::after{background:linear-gradient(90deg,var(--c-dr),var(--c-drm))}
 .card.sort::after{background:linear-gradient(90deg,var(--c-sort),var(--c-sortm))}
 .card.math::after{background:linear-gradient(90deg,var(--c-math),var(--c-mathm))}
 .card.dm::after{background:linear-gradient(90deg,var(--c-dm),var(--c-dmm))}
@@ -63,6 +67,8 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
 .card.ds .badge{background:var(--c-dsl);color:var(--c-ds)}
 .card.oop .badge{background:var(--c-oopl);color:var(--c-oop)}
 .card.py .badge{background:var(--c-pyl);color:var(--c-py)}
+.card.dd .badge{background:var(--c-ddl);color:var(--c-dd)}
+.card.dr .badge{background:var(--c-drl);color:var(--c-dr)}
 .card.sort .badge{background:var(--c-sortl);color:var(--c-sort)}
 .card.math .badge{background:var(--c-mathl);color:var(--c-math)}
 .card.dm .badge{background:var(--c-dml);color:var(--c-dm)}
@@ -194,6 +200,22 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
       <div class="card-title">Python</div>
       <div class="card-desc">Syntax, OOP, Duck Typing, Comprehension — ทำไม Python ถึงต่างจาก C และ Java</div>
       <div class="chips"><span class="chip">7 บท</span><span class="chip">ครบ Syntax → OOP ขั้นสูง</span></div>
+    </a>
+
+    <a class="card dr" href="subject_drill/index.html">
+      <div class="card-top"><span class="em">🧗</span><span class="arr">→</span></div>
+      <span class="badge">ฝึกคิด</span>
+      <div class="card-title">ตะลุยโจทย์ — กระบวนการคิด</div>
+      <div class="card-desc">โจทย์ + ตัวอย่างการทำงาน + เฉลยผังงาน + โค้ดทั้ง C และ Python · ฝึกแปลงโจทย์เป็นโปรแกรมทีละขั้น</div>
+      <div class="chips"><span class="chip">4 บท</span><span class="chip">C + Python</span></div>
+    </a>
+
+    <a class="card dd" href="subject_drilldata/index.html">
+      <div class="card-top"><span class="em">🧩</span><span class="arr">→</span></div>
+      <span class="badge">ฝึกคิด</span>
+      <div class="card-title">ตะลุยโจทย์ — Data Structures</div>
+      <div class="card-desc">Linked List · Stack &amp; Queue · Tree &amp; Hash — โจทย์ + ตัวอย่างการทำงาน + ผังงาน + โค้ด C และ Python</div>
+      <div class="chips"><span class="chip">4 บท</span><span class="chip">C + Python</span></div>
     </a>
 
   </div>

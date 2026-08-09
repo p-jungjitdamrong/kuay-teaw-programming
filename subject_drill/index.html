@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตะลุยโจทย์ — ก๋วยเตี๋ยวเรือ Programming</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f14;--paper:#f5f2eb;--paper2:#ede9df;--paper3:#e4dfd3;
+  --line:#ccc6b8;--dim:#8a8276;--body:#2e2b25;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans Thai',sans-serif;
+  --s-o:#7c2d12;--s-ol:#fbe9e0;--s-om:#c2643a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--body);min-height:100vh}
+.hero{background:var(--ink);padding:44px 24px 36px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 100%,rgba(194,100,58,.24),transparent);pointer-events:none}
+.hero-bowl{font-size:52px;line-height:1;display:block;margin-bottom:12px;animation:float 3s ease-in-out infinite;position:relative}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.hero-brand{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.3px;margin-bottom:4px;position:relative}
+.hero-tagline{font-family:var(--mono);font-size:11px;color:#546e7a;letter-spacing:1px;margin-bottom:18px;position:relative}
+.main{max-width:960px;margin:0 auto;padding:0 20px 60px}
+.section{padding-top:32px}
+.pep{background:#fff;border:1px solid var(--line);border-left:4px solid var(--s-o);border-radius:10px;padding:16px 20px;margin-top:28px;font-size:13.5px;line-height:1.8}
+.pep b{color:var(--s-o)}
+.steps{display:grid;gap:8px;grid-template-columns:1fr;margin-top:26px}
+@media(min-width:760px){.steps{grid-template-columns:repeat(5,1fr)}}
+.step{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;position:relative}
+.step-n{font-family:var(--mono);font-size:10px;font-weight:700;color:#fff;background:var(--s-o);border-radius:5px;padding:2px 7px;display:inline-block;margin-bottom:6px}
+.step-t{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.step-d{font-size:11.5px;color:var(--dim);line-height:1.55}
+.sec-hd{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sec-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;background:var(--s-ol)}
+.sec-info{flex:1}
+.sec-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:1px}
+.sec-desc{font-size:12px;color:var(--dim)}
+.sec-line{flex:1;height:1px;background:var(--line)}
+.grid{display:grid;gap:11px;grid-template-columns:1fr}
+@media(min-width:520px){.grid{grid-template-columns:repeat(2,1fr)}}
+.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px 18px;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s;position:relative;overflow:hidden}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:13px 13px 0 0;opacity:.5;transition:opacity .18s;background:linear-gradient(90deg,var(--s-o),var(--s-om))}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.08)}
+.card:hover::after{opacity:1}
+.card:hover .arr{transform:translateX(3px);color:var(--body)}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.em{font-size:24px;line-height:1}
+.arr{font-size:13px;color:var(--dim);transition:transform .18s,color .18s;margin-top:2px}
+.badge{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;margin-bottom:5px;display:inline-block;background:var(--s-ol);color:var(--s-o)}
+.card-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.3}
+.card-desc{font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:10px;flex:1}
+.probs{font-family:var(--mono);font-size:11px;color:var(--s-o);background:var(--s-ol);border-radius:6px;padding:6px 9px;margin-bottom:10px;line-height:1.7}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+.chip{font-family:var(--mono);font-size:10px;color:var(--dim);background:var(--paper2);border:1px solid var(--line);border-radius:4px;padding:2px 6px}
+.footer{text-align:center;padding:18px 20px 32px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<div class="hero" style="position:relative">
+  <a href="../index.html" style="position:absolute;top:14px;left:16px;font-family:var(--mono);font-size:11px;color:#9ba3ad;text-decoration:none">← วิชาทั้งหมด</a>
+  <span class="hero-bowl">🧗</span>
+  <div class="hero-brand">ตะลุยโจทย์ — ฝึกคิดแบบโปรแกรมเมอร์</div>
+  <div class="hero-tagline">// โจทย์ + ตัวอย่างการทำงาน + ผังงาน + เฉลยทั้ง C และ Python</div>
+</div>
+
+<div class="main">
+
+  <div class="pep">
+    <b>วิชานี้ต่างจากวิชาอื่นตรงไหน:</b> วิชาอื่นสอน "ไวยากรณ์" — วิชานี้สอน <b>"กระบวนการคิด"</b>
+    ปัญหาของคนเขียนโปรแกรมไม่เป็น มักไม่ใช่จำ syntax ไม่ได้ แต่คือ <b>อ่านโจทย์แล้วไม่รู้จะเริ่มตรงไหน</b>
+    <br>ทุกโจทย์ที่นี่จึงเดินครบ 5 ขั้น: <b>อ่านโจทย์ → แตกปัญหา → ผังงาน → เขียนโค้ด → ทดสอบ</b>
+    และมีเฉลย<b>ทั้งภาษา C และ Python</b> วางคู่กัน เพื่อให้เห็นว่า "ตรรกะเหมือนกัน ต่างแค่ไวยากรณ์"
+    <br><b>วิธีใช้ให้ได้ผล:</b> อ่านโจทย์กับตัวอย่างการทำงานแล้ว <b>ปิดจอ ลองทำเองก่อน</b> อย่างน้อย 15 นาที
+    ค่อยเปิดดูวิธีคิด — เปิดเฉลยเลยจะได้แค่ "เข้าใจ" แต่ไม่ได้ "ทำเป็น"
+  </div>
+
+  <div class="steps">
+    <div class="step"><span class="step-n">STEP 1</span><div class="step-t">อ่านโจทย์</div><div class="step-d">แยกให้ออกว่า input คืออะไร output คืออะไร เงื่อนไขมีอะไรบ้าง</div></div>
+    <div class="step"><span class="step-n">STEP 2</span><div class="step-t">แตกปัญหา</div><div class="step-d">ซอยเป็นขั้นย่อยที่ทำได้ทีละอย่าง + หา pattern ที่ซ้ำ</div></div>
+    <div class="step"><span class="step-n">STEP 3</span><div class="step-t">วาดผังงาน</div><div class="step-d">เขียนลำดับเป็นภาพก่อน — ยังไม่ต้องคิดถึง syntax</div></div>
+    <div class="step"><span class="step-n">STEP 4</span><div class="step-t">เขียนโค้ด</div><div class="step-d">แปลงกล่องในผังงานเป็นบรรทัดโค้ดทีละกล่อง</div></div>
+    <div class="step"><span class="step-n">STEP 5</span><div class="step-t">ทดสอบ</div><div class="step-d">ลองกับตัวอย่างที่โจทย์ให้ + เคสขอบ (0, ติดลบ, ว่าง)</div></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-hd">
+      <div class="sec-icon">🧗</div>
+      <div class="sec-info">
+        <div class="sec-title">ชุดโจทย์ — ไล่ระดับจากง่ายไปยาก</div>
+        <div class="sec-desc">แต่ละชุดมี 3 โจทย์ · ทุกโจทย์มีตัวอย่างการทำงาน ผังงาน และเฉลย C + Python</div>
+      </div>
+      <div class="sec-line"></div>
+    </div>
+    <div class="grid">
+
+      <a class="card" href="slides_ch0.html">
+        <div class="card-top"><span class="em">🧠</span><span class="arr">→</span></div>
+        <span class="badge">เริ่มที่นี่</span>
+        <div class="card-title">กระบวนการคิด 5 ขั้น</div>
+        <div class="card-desc">วิธีอ่านโจทย์ให้แตก, เทคนิคแตกปัญหา, การหา pattern, เคสขอบที่ต้องเช็ค และเทคนิค trace หาบั๊ก</div>
+        <div class="probs">อ่านก่อนลงมือทำโจทย์ — เป็นเครื่องมือที่ใช้ตลอดทั้งวิชา</div>
+        <div class="chips"><span class="chip">11 slides</span><span class="chip">วิธีคิด</span></div>
+      </a>
+
+      <a class="card" href="slides_ch1.html">
+        <div class="card-top"><span class="em">🥉</span><span class="arr">→</span></div>
+        <span class="badge">ระดับ 1 · ลูป + เงื่อนไข</span>
+        <div class="card-title">ชุดที่ 1 — เลขและลูป</div>
+        <div class="card-desc">โจทย์ที่ใช้ลูปกับ if เป็นหลัก ฝึกแตกเงื่อนไขและหา pattern ของการวนซ้ำ</div>
+        <div class="probs">1. เลขสมบูรณ์ (Perfect Number)<br>2. พีระมิดตัวเลข<br>3. แปลงเลขฐาน 10 → ฐาน 2</div>
+        <div class="chips"><span class="chip">12 slides</span><span class="chip">C + Python</span></div>
+      </a>
+
+      <a class="card" href="slides_ch2.html">
+        <div class="card-top"><span class="em">🥈</span><span class="arr">→</span></div>
+        <span class="badge">ระดับ 2 · array / list</span>
+        <div class="card-title">ชุดที่ 2 — จัดการชุดข้อมูล</div>
+        <div class="card-desc">โจทย์ที่ต้องเก็บข้อมูลหลายตัวแล้วประมวลผล ฝึกคิดเรื่องการวนซ้อนและตัวแปรสะสม</div>
+        <div class="probs">1. หาค่ามัธยฐาน (Median)<br>2. ลบค่าซ้ำออกจากชุดข้อมูล<br>3. หาคู่ที่รวมกันได้ผลลัพธ์ที่ต้องการ</div>
+        <div class="chips"><span class="chip">10 slides</span><span class="chip">C + Python</span></div>
+      </a>
+
+      <a class="card" href="slides_ch3.html">
+        <div class="card-top"><span class="em">🥇</span><span class="arr">→</span></div>
+        <span class="badge">ระดับ 3 · ผสม</span>
+        <div class="card-title">ชุดที่ 3 — โจทย์สถานการณ์จริง</div>
+        <div class="card-desc">โจทย์ที่ต้องผสมหลายเทคนิค อ่านโจทย์ยาว แยกเงื่อนไขซับซ้อน — ระดับที่เจอในข้อสอบท้ายเทอม</div>
+        <div class="probs">1. ตรวจสอบรหัสผ่านตามกฎ<br>2. คิดค่าไฟฟ้าแบบขั้นบันได<br>3. ระบบจัดคิวร้านอาหาร</div>
+        <div class="chips"><span class="chip">10 slides</span><span class="chip">C + Python</span></div>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<div class="footer">made with ♥ by ก๋วยเตี๋ยวเรือ Programming · ทำเองก่อนดูเฉลย = ได้ผลจริง 💪</div>
+</body>
+</html>

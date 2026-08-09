@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>กระบวนการคิด 5 ขั้น | ตะลุยโจทย์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#7c2d12;--cal:#fbe9e0;--cam:#c2643a;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;}
+.t td{padding:6px 10px;border:1px solid var(--line);}
+.t td:first-child{font-weight:700;color:var(--ca);white-space:nowrap;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;}
+.prob{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:12px 16px;margin:8px 0;font-size:13.5px;line-height:1.8;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🧗 ก๋วยเตี๋ยวเรือ Programming · ตะลุยโจทย์</div>
+        <div class="cover-title">เริ่มที่นี่<br><em>กระบวนการคิด 5 ขั้น</em></div>
+        <div class="cover-subtitle">เครื่องมือที่ใช้กับทุกโจทย์ — อ่านให้จบก่อนลงมือทำชุดที่ 1</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ทำไมเขียนโปรแกรมไม่เป็น ทั้งที่จำ syntax ได้</div>
+          <div class="topic-row"><div class="topic-dot"></div>STEP 1–2: อ่านโจทย์ + แตกปัญหา</div>
+          <div class="topic-row"><div class="topic-dot"></div>STEP 3–4: ผังงาน + แปลงเป็นโค้ด</div>
+          <div class="topic-row"><div class="topic-dot"></div>STEP 5: ทดสอบ + เคสขอบที่ต้องเช็ค</div>
+          <div class="topic-row"><div class="topic-dot"></div>เทคนิค trace หาบั๊กเมื่อผลไม่ตรง</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">00</div>
+        <div class="cover-badge">วิธีคิด</div>
+        <div class="cover-slides-count">11 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 ปัญหาที่แท้จริง -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">เริ่มที่นี่ · ปัญหาที่แท้จริง</div>
+    <h2 class="slide-title">ทำไมจำ syntax ได้ แต่เขียนโปรแกรมไม่เป็น</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">สิ่งที่เกิดขึ้นเวลาเจอโจทย์</div>
+        <pre class="code-block"><span class="cm">อ่านโจทย์จบ...
+  → "เข้าใจนะ แต่จะเริ่มยังไงดี"
+  → นั่งจ้อจอเปล่า 20 นาที
+  → เปิดเฉลย → "อ๋อ ง่ายนี่หว่า"
+  → เจอโจทย์ใหม่ → ตันอีก
+
+ปัญหาไม่ใช่ "ไม่รู้ syntax"
+ปัญหาคือ "ไม่มีขั้นตอนการคิด"</span></pre>
+        <div class="code-label" style="margin-top:8px">คนที่เขียนเป็นเขาคิดยังไง</div>
+        <pre class="code-block"><span class="cm">เขาไม่ได้เก่งกว่า —
+เขาแค่มี "ลำดับที่ทำเป็นนิสัย"
+
+โจทย์ยากแค่ไหน ก็เดินตามลำดับเดิม
+ทีละขั้น จนมันเล็กพอจะเขียนได้</span></pre>
+      </div>
+      <div>
+        <div class="code-label">5 ขั้นที่จะใช้ตลอดวิชานี้</div>
+        <div class="diagram">① อ่านโจทย์
+   แยก input / output / เงื่อนไข
+        ↓
+② แตกปัญหา
+   ซอยเป็นขั้นย่อย + หา pattern
+        ↓
+③ วาดผังงาน
+   เรียงลำดับเป็นภาพ (ยังไม่คิด syntax)
+        ↓
+④ เขียนโค้ด
+   แปลงกล่อง → บรรทัด ทีละกล่อง
+        ↓
+⑤ ทดสอบ
+   ตัวอย่างโจทย์ + เคสขอบ</div>
+        <pre class="code-block"><span class="cm"># ⚠️ คนส่วนใหญ่ข้ามไป ① → ④ เลย
+# แล้วก็ตัน — เพราะข้ามขั้นที่สำคัญที่สุด
+# (②) ไป</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>กติกาของวิชานี้:</b> ทุกโจทย์จะเดินครบ 5 ขั้นให้ดู — <b>อย่าเพิ่งดูเฉลยโค้ด</b> ให้ลองทำถึงขั้น ③ (ผังงาน) ด้วยตัวเองก่อนเสมอ นั่นคือจุดที่ทักษะเกิดจริง</div>
+  </div>
+</div>
+
+<!-- 2 step 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">STEP 1 · อ่านโจทย์</div>
+    <h2 class="slide-title">อ่านโจทย์ให้แตก — จับ 3 อย่างนี้ก่อน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์ตัวอย่าง</div>
+        <div class="prob"><b>โจทย์:</b> รับคะแนนนักเรียน n คน แล้วแสดงคะแนนเฉลี่ย
+        และบอกว่ามีกี่คนที่ได้คะแนนสูงกว่าค่าเฉลี่ย</div>
+        <div class="code-label" style="margin-top:8px">แยก 3 อย่าง</div>
+        <table class="t">
+          <tbody>
+            <tr><td>INPUT</td><td>n (จำนวนคน) และคะแนน n ตัว</td></tr>
+            <tr><td>OUTPUT</td><td>① ค่าเฉลี่ย ② จำนวนคนที่เกินค่าเฉลี่ย</td></tr>
+            <tr><td>เงื่อนไข</td><td>"สูงกว่า" = มากกว่าเท่านั้น (ไม่รวมเท่ากับ)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="code-label">สิ่งที่ได้จากการแยก</div>
+        <pre class="code-block"><span class="cm"># รู้ทันทีว่า:
+# • ต้องรับค่าหลายตัว → ใช้ลูป
+# • ต้อง "เก็บไว้ใช้ทีหลัง" → ต้องมี array/list
+#   (เพราะต้องวนรอบสองเพื่อเทียบกับค่าเฉลี่ย!)
+# • ต้องมีตัวสะสม 2 ตัว: total กับ count</span></pre>
+        <div class="code-label" style="margin-top:8px">คำถามที่ต้องถามตัวเองทุกครั้ง</div>
+        <pre class="code-block"><span class="cm">□ ต้องรับข้อมูลกี่ตัว? รู้จำนวนล่วงหน้าไหม
+  → รู้ = for  ·  ไม่รู้ = while
+
+□ ต้องใช้ข้อมูลซ้ำอีกรอบไหม
+  → ใช้ซ้ำ = ต้องเก็บใน array/list
+  → ใช้ครั้งเดียว = ประมวลผลทันทีได้
+
+□ output มีกี่อย่าง
+  → แต่ละอย่างต้องมีตัวแปรรองรับ
+
+□ มีคำที่กำกวมไหม
+  → "สูงกว่า" vs "ไม่ต่ำกว่า" ต่างกัน!</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>คำที่ต้องอ่านให้ละเอียด:</b> "มากกว่า" (&gt;) vs "ไม่น้อยกว่า" (≥) · "ระหว่าง 1-10" รวม 1 กับ 10 ไหม · "หารลงตัว" = <code class="inline-code">% == 0</code> — คำเดียวเปลี่ยนคำตอบทั้งข้อ</div>
+  </div>
+</div>
+
+<!-- 3 step 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">STEP 2 · แตกปัญหา</div>
+    <h2 class="slide-title">ขั้นที่สำคัญที่สุด — ซอยจนเล็กพอจะเขียนได้</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">จากโจทย์เดิม — ซอยเป็นขั้น</div>
+        <pre class="code-block"><span class="cm">โจทย์ใหญ่: "หาค่าเฉลี่ยและนับคนที่เกิน"
+
+ซอยเป็น:
+  ① รับ n
+  ② รับคะแนน n ตัว เก็บใน list
+  ③ หาผลรวม
+  ④ คำนวณเฉลี่ย = ผลรวม / n
+  ⑤ วนอีกรอบ นับคนที่ &gt; เฉลี่ย
+  ⑥ แสดงผล
+
+← แต่ละขั้นตอนนี้ "เขียนโค้ดได้เลย"
+  โดยไม่ต้องคิดอะไรเพิ่ม
+  = ซอยละเอียดพอแล้ว</span></pre>
+      </div>
+      <div>
+        <div class="code-label">เทคนิคซอย 3 แบบ</div>
+        <pre class="code-block"><span class="cm">① ซอยตามลำดับเวลา
+   "ก่อนอื่นต้อง... แล้วค่อย... สุดท้าย..."
+
+② ซอยตาม output
+   output มี 3 อย่าง → แยกคิดทีละอย่าง
+   ว่าแต่ละอย่างต้องใช้อะไรบ้าง
+
+③ ซอยจากตัวอย่าง (ทรงพลังที่สุด)
+   ลองทำด้วยมือกับตัวเลขจริง
+   แล้วจดว่า "มือเราทำอะไรบ้าง"
+   → นั่นคือขั้นตอนของโปรแกรม</span></pre>
+        <div class="code-label" style="margin-top:6px">เกณฑ์ว่าซอยพอหรือยัง</div>
+        <pre class="code-block"><span class="cm">ถามตัวเอง:
+"ขั้นนี้ เขียนเป็นโค้ดได้กี่บรรทัด?"
+
+  1-5 บรรทัด → พอแล้ว ✓
+  ยังตอบไม่ได้ → ซอยต่อ</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เทคนิค "ทำด้วยมือก่อน" คือของจริง:</b> เจอโจทย์ที่คิดไม่ออก ให้เอาตัวเลขตัวอย่างมาทำด้วยมือบนกระดาษ แล้วสังเกตว่าตัวเองทำอะไรซ้ำๆ — <b>สิ่งที่ทำซ้ำคือลูป · สิ่งที่ต้องตัดสินใจคือ if</b></div>
+  </div>
+</div>
+
+<!-- 4 หา pattern -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">STEP 2 · หา pattern</div>
+    <h2 class="slide-title">แปลง "สิ่งที่ทำซ้ำ" ให้เป็นลูป</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่าง: พิมพ์สามเหลี่ยม</div>
+        <div class="diagram">แถว 1: *
+แถว 2: **
+แถว 3: ***
+แถว 4: ****</div>
+        <pre class="code-block"><span class="cm">ทำด้วยมือแล้วสังเกต:
+  แถว 1 → พิมพ์ * 1 ตัว
+  แถว 2 → พิมพ์ * 2 ตัว
+  แถว 3 → พิมพ์ * 3 ตัว
+
+pattern: แถว i → พิมพ์ * i ตัว
+         └────┬────┘
+       ลูปนอก = แถว
+       ลูปใน  = จำนวนดาว (ตาม i)</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ตารางหา pattern — ใช้ได้ทุกโจทย์</div>
+        <table class="t">
+          <thead><tr><th>รอบที่ (i)</th><th>ทำอะไร</th><th>เป็นสูตรว่า</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>ดาว 1 ตัว</td><td>i</td></tr>
+            <tr><td>2</td><td>ดาว 2 ตัว</td><td>i</td></tr>
+            <tr><td>3</td><td>ดาว 3 ตัว</td><td>i</td></tr>
+            <tr><td>n</td><td>ดาว n ตัว</td><td><b>i</b></td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="cm"># ได้สูตรแล้ว → เขียนลูปได้ทันที
+for i in range(1, n+1):
+    for j in range(i):      ← ใช้สูตรตรงนี้
+        print("*", end='')
+    print()</span></pre>
+        <pre class="code-block"><span class="cm"># pattern แบบอื่นที่เจอบ่อย
+แถว i มี (n−i) ตัว   → ลดลง
+แถว i มี (2i−1) ตัว  → 1,3,5,7 (เลขคี่)
+แถว i เว้นวรรค (n−i) → ทำให้ชิดขวา</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>สูตรทองของโจทย์ลูป:</b> ทำตารางว่า "รอบที่ i ทำอะไร" 3-4 รอบ แล้วหาว่ามันสัมพันธ์กับ i ยังไง — ได้สูตรเมื่อไหร่ เขียนลูปได้ทันที</div>
+  </div>
+</div>
+
+<!-- 5 step 3-4 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">STEP 3–4 · ผังงาน → โค้ด</div>
+    <h2 class="slide-title">แปลงกล่องเป็นบรรทัด — ตารางแปลงตรงตัว</h2>
+    <div class="two-col">
+      <div>
+        <table class="t">
+          <thead><tr><th>ผังงาน</th><th>C</th><th>Python</th></tr></thead>
+          <tbody>
+            <tr><td>▱ รับข้อมูล</td><td>scanf("%d",&amp;x);</td><td>x = int(input())</td></tr>
+            <tr><td>▭ คำนวณ</td><td>y = x * 2;</td><td>y = x * 2</td></tr>
+            <tr><td>▽ แสดงผล</td><td>printf("%d", y);</td><td>print(y)</td></tr>
+            <tr><td>◇ ตัดสินใจ</td><td>if (x &gt; 0) { }</td><td>if x &gt; 0:</td></tr>
+            <tr><td>◇ + ย้อนกลับ</td><td>while (i &lt; n) { }</td><td>while i &lt; n:</td></tr>
+            <tr><td>วนตามจำนวน</td><td>for(i=0;i&lt;n;i++)</td><td>for i in range(n):</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="code-label">ตรรกะเหมือนกัน ต่างแค่ไวยากรณ์</div>
+        <pre class="code-block"><span class="cm">/* C — ต้องประกาศชนิด + { } + ; */</span>
+<span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> i, sum = <span class="nm">0</span>;
+    <span class="kw">for</span> (i = <span class="nm">1</span>; i &lt;= <span class="nm">10</span>; i++) {
+        sum += i;
+    }
+    <span class="fn">printf</span>(<span class="st">"%d\n"</span>, sum);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+        <pre class="code-block"><span class="cm"># Python — ไม่ต้องประกาศชนิด ใช้เยื้อง</span>
+sum = <span class="nm">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">11</span>):
+    sum += i
+<span class="fn">print</span>(sum)</pre>
+        <pre class="code-block"><span class="cm"># ผังงานเดียวกัน → โค้ด 2 ภาษา
+# ← นี่คือเหตุผลที่ต้องวาดผังงานก่อน
+#   คิดครั้งเดียว ใช้ได้ทุกภาษา</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อดีของการวาดผังงานก่อน:</b> แยก "การคิด" ออกจาก "การจำ syntax" — คิดจบแล้วค่อยกังวลว่า C ต้องมี <code class="inline-code">;</code> หรือ Python ต้องเยื้อง · คนที่ตันมักพยายามทำสองอย่างพร้อมกัน</div>
+  </div>
+</div>
+
+<!-- 6 step 5 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">STEP 5 · ทดสอบ</div>
+    <h2 class="slide-title">เคสขอบ — จุดที่โปรแกรมมักพัง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">เช็คลิสต์เคสที่ต้องลอง</div>
+        <table class="t">
+          <thead><tr><th>เคส</th><th>ตัวอย่าง</th></tr></thead>
+          <tbody>
+            <tr><td>ตัวอย่างโจทย์</td><td>ต้องตรงเป๊ะทุกตัว</td></tr>
+            <tr><td>ค่าน้อยสุด</td><td>n = 1, list มีตัวเดียว</td></tr>
+            <tr><td>ค่าว่าง</td><td>n = 0, list ว่าง, string ว่าง</td></tr>
+            <tr><td>ค่าติดลบ</td><td>−5, −1</td></tr>
+            <tr><td>ศูนย์</td><td>0 (โดยเฉพาะตัวหาร!)</td></tr>
+            <tr><td>ค่าเท่ากันหมด</td><td>[5,5,5]</td></tr>
+            <tr><td>เรียงกลับด้าน</td><td>[5,4,3,2,1]</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="code-label">บั๊กยอดฮิตที่เคสขอบจับได้</div>
+        <pre class="code-block"><span class="cm"># ① หารด้วยศูนย์
+avg = total / n        ← n = 0 → พัง!
+if n &gt; 0:
+    avg = total / n
+
+# ② list ว่าง แต่ไปหยิบ [0]
+mx = a[0]              ← a = [] → IndexError
+if len(a) &gt; 0:
+    mx = a[0]
+
+# ③ ค่าเริ่มต้นของ max ผิด
+mx = 0                 ← ถ้าข้อมูลติดลบหมด
+                         จะได้ 0 ซึ่งผิด!
+mx = a[0]              ← ถูกต้อง
+
+# ④ off-by-one
+for i in range(1, n)   ← ขาดตัวสุดท้าย
+for i in range(1, n+1) ← ถูก</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>นิสัยที่ควรติด:</b> เขียนเสร็จปุ๊บ ลองเคส <b>n=0, n=1, ค่าติดลบ</b> ทันที — สามเคสนี้จับบั๊กได้เกินครึ่งของบั๊กทั้งหมด และเป็นเคสที่ข้อสอบชอบซ่อนไว้</div>
+  </div>
+</div>
+
+<!-- 7 trace -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">เครื่องมือเสริม · หาบั๊ก</div>
+    <h2 class="slide-title">ผลไม่ตรง — หาบั๊กด้วยตาราง trace</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โค้ดที่ผลไม่ตรง</div>
+        <pre class="code-block"><span class="cm"># ต้องการผลรวม 1..5 = 15
+# แต่ได้ 10</span>
+total = <span class="nm">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">5</span>):
+    total += i
+<span class="fn">print</span>(total)</pre>
+        <div class="code-label" style="margin-top:8px">วาดตาราง trace</div>
+        <table class="t">
+          <thead><tr><th>รอบ</th><th>i</th><th>total</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>1</td><td>1</td></tr>
+            <tr><td>2</td><td>2</td><td>3</td></tr>
+            <tr><td>3</td><td>3</td><td>6</td></tr>
+            <tr><td>4</td><td>4</td><td>10</td></tr>
+            <tr><td>—</td><td colspan="2">จบ · <b>ไม่มีรอบ i=5!</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="code-label">เจอบั๊กแล้ว</div>
+        <pre class="code-block"><span class="cm"># range(1, 5) → 1,2,3,4 ไม่มี 5
+# แก้เป็น range(1, 5+1)</span>
+
+total = <span class="nm">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">5</span>+<span class="nm">1</span>):   <span class="cm"># ✓</span>
+    total += i
+<span class="fn">print</span>(total)          <span class="cm"># 15 ✓</span></pre>
+        <div class="code-label" style="margin-top:8px">อีกวิธี — print ดักดู</div>
+        <pre class="code-block">total = <span class="nm">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">5</span>):
+    total += i
+    <span class="fn">print</span>(<span class="st">f"i=</span>{i}<span class="st"> total=</span>{total}<span class="st">"</span>)  <span class="cm"># ดักดู</span>
+<span class="cm"># เห็นเลยว่า i หยุดที่ 4</span>
+
+<span class="cm"># เขียนเสร็จแล้วอย่าลืมลบ print ดัก!</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>2 เครื่องมือหาบั๊ก:</b> <b>ตาราง trace</b> (ทำบนกระดาษ ใช้ในห้องสอบได้) · <b>print ดักค่า</b> (ตอนเขียนจริงบนเครื่อง) — ทั้งคู่ตอบคำถามเดียวกันคือ "ตัวแปรมีค่าอะไรในแต่ละรอบ"</div>
+  </div>
+</div>
+
+<!-- 8 ตัวอย่างเดินครบ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ตัวอย่าง · เดินครบ 5 ขั้น</div>
+    <h2 class="slide-title">ลองเดินครบทั้ง 5 ขั้นกับโจทย์เดิม</h2>
+    <div class="prob"><b>โจทย์:</b> รับคะแนน n คน แสดงค่าเฉลี่ย และนับว่ามีกี่คนได้สูงกว่าค่าเฉลี่ย</div>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">STEP 1 — อ่านโจทย์
+  IN : n, คะแนน n ตัว
+  OUT: ค่าเฉลี่ย, จำนวนคนที่ &gt; เฉลี่ย
+  เงื่อนไข: "สูงกว่า" = &gt; (ไม่รวมเท่ากับ)
+
+STEP 2 — แตกปัญหา
+  ① รับ n
+  ② วนรับคะแนน เก็บใน array/list
+  ③ หา total
+  ④ avg = total / n
+  ⑤ วนอีกรอบ นับ x &gt; avg
+  ⑥ แสดงผล
+  ← ต้องเก็บใน array เพราะใช้ 2 รอบ!
+
+STEP 3 — ผังงาน</span></pre>
+        <div class="diagram">▱ รับ n
+   ↓
+┌▶◇ i &lt; n ──เท็จ─┐
+│  ▱ รับ a[i]    │
+│  ▭ total+=a[i] │
+└──▭ i++         │
+       ┌─────────┘
+   ▭ avg = total/n
+   ▭ count = 0
+       ↓
+┌▶◇ i &lt; n ──เท็จ─┐
+│  ◇ a[i] &gt; avg  │
+│    ▭ count++   │
+└──▭ i++         │
+       ┌─────────┘
+   ▽ แสดง avg, count</div>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm">STEP 4 — เขียนโค้ด (Python)</span>
+n = <span class="fn">int</span>(<span class="fn">input</span>())
+a = []
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+    a.<span class="fn">append</span>(<span class="fn">int</span>(<span class="fn">input</span>()))
+
+total = <span class="fn">sum</span>(a)
+avg = total / n
+
+count = <span class="nm">0</span>
+<span class="kw">for</span> x <span class="kw">in</span> a:
+    <span class="kw">if</span> x &gt; avg:
+        count += <span class="nm">1</span>
+
+<span class="fn">print</span>(<span class="st">f"เฉลี่ย </span>{avg:.<span class="nm">2</span>f}<span class="st">"</span>)
+<span class="fn">print</span>(<span class="st">f"สูงกว่าเฉลี่ย </span>{count}<span class="st"> คน"</span>)</pre>
+        <pre class="code-block"><span class="cm">STEP 5 — ทดสอบ
+  n=3, [10,20,30] → avg 20.00, count 1 ✓
+  n=1, [50]       → avg 50.00, count 0 ✓
+  n=3, [5,5,5]    → avg 5.00,  count 0 ✓
+                    (เท่ากันไม่นับ ถูกตามโจทย์)
+  n=0             → ⚠️ หารศูนย์!
+                    → ต้องเช็ค if n &gt; 0</span></pre>
+      </div>
+    </div>
+    <div class="exam">สังเกตว่า <b>STEP 5 จับบั๊กที่ STEP 1-4 มองไม่เห็น</b> (n=0 หารศูนย์) — นี่คือเหตุผลที่ต้องทดสอบเคสขอบเสมอ ไม่ใช่แค่ตัวอย่างที่โจทย์ให้</div>
+  </div>
+</div>
+
+<!-- 9 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">ลองเอง!</div>
+      <div class="think-q">ลองเดิน STEP 1–2 กับโจทย์นี้ (ยังไม่ต้องเขียนโค้ด)<br><br>
+<div style="background:var(--cal);padding:14px 20px;border-radius:8px;display:inline-block;text-align:left;font-size:14px;line-height:1.8;max-width:600px">
+<b>โจทย์:</b> รับตัวเลข n แล้วแสดงว่า n เป็นจำนวนเฉพาะหรือไม่<br>
+<span style="font-family:monospace;font-size:12.5px;color:var(--ca)">n = 7  → "7 เป็นจำนวนเฉพาะ"<br>
+n = 12 → "12 ไม่เป็นจำนวนเฉพาะ"</span>
+</div><br><br>
+<em>STEP 1: input คืออะไร · output คืออะไร · "จำนวนเฉพาะ" นิยามว่าอะไร<br>
+STEP 2: จะรู้ได้ยังไงว่าเป็นจำนวนเฉพาะ — ต้องทำอะไรซ้ำๆ ไหม<br><br>
+ใบ้: ลองทำด้วยมือกับ n=12 ดู — เราทำอะไรบ้าง?<br>
+12 หาร 2 ลงตัวไหม? หาร 3 ลงตัวไหม? ... นั่นแหละคือลูป</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- 10 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🧠</div>
+      <div class="summary-title">สรุป — กระบวนการคิด 5 ขั้น</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">STEP 1 อ่านโจทย์</div><div class="sum-body">แยก INPUT / OUTPUT / เงื่อนไข · ระวังคำกำกวม (มากกว่า vs ไม่น้อยกว่า)</div></div>
+        <div class="sum-card"><div class="sum-head">STEP 2 แตกปัญหา</div><div class="sum-body">ซอยจนแต่ละขั้นเขียนได้ 1-5 บรรทัด · <b>ทำด้วยมือก่อนแล้วจดว่าทำอะไร</b></div></div>
+        <div class="sum-card"><div class="sum-head">หา pattern</div><div class="sum-body">ทำตาราง "รอบที่ i ทำอะไร" → หาสูตรที่สัมพันธ์กับ i → ได้ลูป</div></div>
+        <div class="sum-card"><div class="sum-head">STEP 3–4</div><div class="sum-body">ผังงานก่อน แล้วแปลงกล่อง → บรรทัด · ผังงานเดียวเขียนได้ทั้ง C และ Python</div></div>
+        <div class="sum-card"><div class="sum-head">STEP 5 ทดสอบ</div><div class="sum-body">ตัวอย่างโจทย์ + <b>n=0, n=1, ค่าติดลบ</b> — สามเคสนี้จับบั๊กได้เกินครึ่ง</div></div>
+        <div class="sum-card"><div class="sum-head">หาบั๊ก</div><div class="sum-body">ตาราง trace (บนกระดาษ) หรือ print ดักค่า — ดูว่าตัวแปรเป็นอะไรแต่ละรอบ</div></div>
+      </div>
+      <a href="slides_ch1.html" class="summary-next">→ ชุดที่ 1: เลขและลูป (3 โจทย์)</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 11</span>
+      <span class="nav-chapter" id="chapterLabel">กระบวนการคิด 5 ขั้น</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ปัญหาที่แท้จริง','STEP 1 อ่านโจทย์','STEP 2 แตกปัญหา','หา pattern','STEP 3-4 ผังงาน→โค้ด','STEP 5 เคสขอบ','หาบั๊กด้วย trace','เดินครบ 5 ขั้น','ลองเอง','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
