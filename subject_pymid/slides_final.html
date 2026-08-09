@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheat Sheet ก่อนเข้าห้องสอบ | ติวสอบ Python Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#b45309;--cal:#fdf0dc;--cam:#e0a458;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.cs{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.cs th{background:var(--ca);color:#fff;padding:5px 10px;text-align:left;font-weight:600;}
+.cs td{padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);}
+.cs td:first-child{font-family:var(--sans);font-weight:600;}
+.cs td.a{color:var(--ca);font-weight:700;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ติวสอบ Midterm · Computers &amp; Programming</div>
+        <div class="cover-title">ด่านสุดท้าย<br><em>Cheat Sheet</em></div>
+        <div class="cover-subtitle">ทวนรอบสุดท้าย — ทุกค่า ทุกตาราง ทุกจุดหลอกของ lecture 1–7</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ตารางค่าที่ต้องจำขึ้นใจ</div>
+          <div class="topic-row"><div class="topic-dot"></div>ลำดับตัวดำเนินการครบทุกตัว</div>
+          <div class="topic-row"><div class="topic-dot"></div>10 จุดหลอกที่เสียคะแนนฟรี</div>
+          <div class="topic-row"><div class="topic-dot"></div>โค้ด 5 ท่าท่องจำ + แผนคืนก่อนสอบ</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">✓</div>
+        <div class="cover-badge">ทวน 30 นาทีจบ</div>
+        <div class="cover-slides-count">9 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 ตารางค่า -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ค่าที่ต้องจำ</div>
+    <h2 class="slide-title">ตารางค่าจากสไลด์อาจารย์ — จำให้ขึ้นใจ</h2>
+    <div class="two-col">
+      <div>
+        <table class="cs">
+          <thead><tr><th>นิพจน์</th><th>ผล</th><th>ทำไม</th></tr></thead>
+          <tbody>
+            <tr><td>5 / 2</td><td class="a">2.5</td><td>/ ได้ float เสมอ</td></tr>
+            <tr><td>5 // 2</td><td class="a">2</td><td>ปัดลง</td></tr>
+            <tr><td>5 % 2</td><td class="a">1</td><td>เศษ</td></tr>
+            <tr><td>−5 / 2</td><td class="a">−2.5</td><td></td></tr>
+            <tr><td>−5 % 2</td><td class="a">1 ⚠️</td><td>ตามตัวหาร</td></tr>
+            <tr><td>−7 // 2</td><td class="a">−4 ⚠️</td><td>ปัดลง</td></tr>
+            <tr><td>5 / 0</td><td class="a">Error</td><td>ZeroDivision</td></tr>
+            <tr><td>5 % 0</td><td class="a">Error</td><td>ZeroDivision</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <table class="cs">
+          <thead><tr><th>นิพจน์</th><th>ผล</th><th>ทำไม</th></tr></thead>
+          <tbody>
+            <tr><td>2 ** 3</td><td class="a">8</td><td>ยกกำลัง</td></tr>
+            <tr><td>2**3**2</td><td class="a">512</td><td>ขวา→ซ้าย</td></tr>
+            <tr><td>int(3.9)</td><td class="a">3 ⚠️</td><td>ตัดทิ้ง</td></tr>
+            <tr><td>round(3.9)</td><td class="a">4</td><td>ปัด</td></tr>
+            <tr><td>int("3.5")</td><td class="a">Error</td><td>ต้องผ่าน float</td></tr>
+            <tr><td>"5"+"3"</td><td class="a">"53"</td><td>ต่อข้อความ</td></tr>
+            <tr><td>bool("0")</td><td class="a">True ⚠️</td><td>str ไม่ว่าง</td></tr>
+            <tr><td>True + 1</td><td class="a">2</td><td>True = 1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="exam"><b>4 ตัวที่ต้องจำที่สุด (⚠️):</b> <code class="inline-code">−5 % 2 = 1</code> · <code class="inline-code">−7 // 2 = −4</code> · <code class="inline-code">int(3.9) = 3</code> · <code class="inline-code">bool("0") = True</code> — สี่ตัวนี้คือที่คนตอบผิดมากที่สุด</div>
+  </div>
+</div>
+
+<!-- 2 ลำดับ + range -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · กฎ</div>
+    <h2 class="slide-title">ลำดับตัวดำเนินการ + range()</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ลำดับครบทุกตัว (สูง → ต่ำ)</div>
+        <pre class="code-block"><span class="nm">1</span>.  ( )                วงเล็บ
+<span class="nm">2</span>.  **                 ยกกำลัง (ขวา→ซ้าย)
+<span class="nm">3</span>.  * / // %           คูณ หาร
+<span class="nm">4</span>.  + −                บวก ลบ
+<span class="nm">5</span>.  &lt; &lt;= &gt; &gt;= == !=    เปรียบเทียบ
+<span class="nm">6</span>.  not
+<span class="nm">7</span>.  and
+<span class="nm">8</span>.  or
+
+<span class="cm"># ลำดับเท่ากัน → ซ้ายไปขวา
+# (ยกเว้น ** ที่ขวาไปซ้าย)</span></pre>
+      </div>
+      <div>
+        <div class="code-label">range() — ไม่รวมตัวสุดท้ายเสมอ</div>
+        <pre class="code-block"><span class="fn">range</span>(<span class="nm">5</span>)          <span class="cm"># 0 1 2 3 4</span>
+<span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">5</span>)       <span class="cm"># 1 2 3 4</span>
+<span class="fn">range</span>(<span class="nm">1</span>, n+<span class="nm">1</span>)     <span class="cm"># 1 ... n  ← อยากถึง n</span>
+<span class="fn">range</span>(<span class="nm">0</span>, <span class="nm">10</span>, <span class="nm">2</span>)   <span class="cm"># 0 2 4 6 8</span>
+<span class="fn">range</span>(<span class="nm">5</span>, <span class="nm">0</span>, -<span class="nm">1</span>)   <span class="cm"># 5 4 3 2 1</span></pre>
+        <div class="code-label" style="margin-top:8px">ค่าเริ่มต้นตัวสะสม</div>
+        <pre class="code-block">บวก   → <span class="nm">0</span>
+คูณ   → <span class="nm">1</span>   <span class="cm">⚠️ ไม่ใช่ 0!</span>
+หา max → ค่าต่ำมาก (-<span class="nm">1</span> หรือตัวแรก)
+หา min → ค่าสูงมาก
+flag  → <span class="kw">True</span> แล้วเปลี่ยนเป็น <span class="kw">False</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3 จุดหลอก 1-5 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ห้ามพลาด</div>
+    <h2 class="slide-title">10 จุดหลอกเสียคะแนนฟรี (1–5)</h2>
+    <pre class="code-block"><span class="cm">① input() คืน string เสมอ</span>
+   a = input(); b = input()
+   a + b  →  ต่อข้อความ! ("10"+"20" = "1020")
+   ต้อง int(input()) หรือ float(input()) ก่อนคำนวณ
+
+<span class="cm">② range ไม่รวมตัวสุดท้าย</span>
+   range(1, 5) → 1,2,3,4  (ไม่มี 5!)
+   อยากถึง n → range(1, n+1)
+
+<span class="cm">③ −5 % 2 = 1 (ไม่ใช่ −1)</span>
+   Python: % มีเครื่องหมาย<b>ตามตัวหาร</b>
+   และ // <b>ปัดลงเสมอ</b> (−7//2 = −4)
+
+<span class="cm">④ int(3.9) = 3 (ตัดทิ้ง ไม่ปัด)</span>
+   อยากปัดใช้ round(3.9) = 4
+
+<span class="cm">⑤ เรียงเงื่อนไข elif ผิดลำดับ</span>
+   if s&gt;=60: "C" / elif s&gt;=80: "A"  → คะแนน 90 ได้ "C"!
+   ต้องเรียง<b>แคบไปกว้าง</b> (80 → 70 → 60)</pre>
+  </div>
+</div>
+
+<!-- 4 จุดหลอก 6-10 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ห้ามพลาด</div>
+    <h2 class="slide-title">10 จุดหลอกเสียคะแนนฟรี (6–10)</h2>
+    <pre class="code-block"><span class="cm">⑥ ลืมโคลอน : ท้าย if / for / while</span>
+   if x &gt; 0        ❌ SyntaxError
+   if x &gt; 0:       ✓
+
+<span class="cm">⑦ Indentation ผิดชั้น</span>
+   บรรทัดที่เยื้องเท่ากัน = block เดียวกัน
+   print() ที่ไม่เยื้อง = อยู่นอก if/for → ทำงานเสมอ
+
+<span class="cm">⑧ Python ไม่มี ++ และ −−</span>
+   x++     ❌ SyntaxError
+   x += 1  ✓
+
+<span class="cm">⑨ = กับ == คนละตัว</span>
+   x = 5   กำหนดค่า
+   x == 5  เปรียบเทียบ  ·  if x = 5: ❌ SyntaxError
+
+<span class="cm">⑩ while ลืมเปลี่ยนค่าตัวแปรเงื่อนไข</span>
+   i = 0
+   while i &lt; 5:
+       print(i)      ← ลืม i += 1 → infinite loop!</pre>
+    <div class="exam"><b>คืนก่อนสอบอ่านสองหน้านี้รอบเดียวพอ</b> — สิบข้อนี้คือจุดที่เสียคะแนนโดยไม่จำเป็น ทั้งที่เข้าใจเนื้อหาแล้ว</div>
+  </div>
+</div>
+
+<!-- 5 โค้ด 5 ท่า -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · โค้ดท่องจำ</div>
+    <h2 class="slide-title">โค้ด 5 ท่า — เขียนได้จากความจำ = ข้อเขียนโปรแกรมผ่าน</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm"># ① รับค่า → คำนวณ → แสดง</span>
+r = <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"รัศมี: "</span>))
+area = <span class="nm">3.14159</span> * r ** <span class="nm">2</span>
+<span class="fn">print</span>(<span class="st">f"พื้นที่ = </span>{area:.<span class="nm">2</span>f}<span class="st">"</span>)
+
+<span class="cm"># ② ตัดสินใจหลายทาง (elif)</span>
+s = <span class="fn">int</span>(<span class="fn">input</span>())
+<span class="kw">if</span> s &gt;= <span class="nm">80</span>:   <span class="fn">print</span>(<span class="st">"A"</span>)
+<span class="kw">elif</span> s &gt;= <span class="nm">70</span>: <span class="fn">print</span>(<span class="st">"B"</span>)
+<span class="kw">elif</span> s &gt;= <span class="nm">60</span>: <span class="fn">print</span>(<span class="st">"C"</span>)
+<span class="kw">else</span>:         <span class="fn">print</span>(<span class="st">"F"</span>)
+
+<span class="cm"># ③ Counting loop + สะสม</span>
+total = <span class="nm">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, n+<span class="nm">1</span>):
+    total += i
+<span class="fn">print</span>(total)</pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm"># ④ Sentinel loop (รับจนเจอค่าหยุด)</span>
+total = <span class="nm">0</span>
+n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"เลข (0=จบ): "</span>))
+<span class="kw">while</span> n != <span class="nm">0</span>:
+    total += n
+    n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"เลข (0=จบ): "</span>))
+<span class="fn">print</span>(total)
+<span class="cm"># ⚠️ รับค่า 2 ที่! ก่อนลูป + ท้ายลูป</span>
+
+<span class="cm"># ⑤ ลูป + if (นับ/หาสุด)</span>
+count = <span class="nm">0</span>
+mx = -<span class="nm">1</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">5</span>):
+    x = <span class="fn">int</span>(<span class="fn">input</span>())
+    <span class="kw">if</span> x % <span class="nm">2</span> == <span class="nm">0</span>:
+        count += <span class="nm">1</span>
+    <span class="kw">if</span> x &gt; mx:
+        mx = x
+<span class="fn">print</span>(count, mx)</pre>
+      </div>
+    </div>
+    <div class="exam"><b>ทดสอบตัวเอง:</b> ปิดจอ เขียนทั้ง 5 ท่าลงกระดาษใน 15 นาที — ผ่าน = ข้อเขียนโปรแกรมของ midterm พร้อมแล้ว เพราะโจทย์ส่วนใหญ่คือการผสม 5 ท่านี้</div>
+  </div>
+</div>
+
+<!-- 6 แผน -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · แผน</div>
+    <h2 class="slide-title">แผนคืนก่อนสอบ + ในห้องสอบ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">คืนก่อนสอบ (2 ชั่วโมง)</div>
+        <pre class="code-block">□ 20 นาที: ตารางค่า (หน้าแรก)
+  ปิดเฉลยแล้วตอบเอง
+□ 20 นาที: ลำดับตัวดำเนินการ
+  + range() ทุกรูปแบบ
+□ 30 นาที: เขียนโค้ด 5 ท่า
+  ลงกระดาษ ไม่เปิดดู
+□ 20 นาที: อ่าน 10 จุดหลอก
+□ 20 นาที: ฝึกตาราง trace
+  จากโจทย์ลูปในบท 4
+□ 10 นาที: ทวนสัญลักษณ์ผังงาน
+□ นอน! อดนอนแล้ว trace พลาด
+  เสียมากกว่าได้</pre>
+      </div>
+      <div>
+        <div class="code-label">ในห้องสอบ</div>
+        <pre class="code-block">① กวาดทั้งฉบับ 2 นาที
+   ข้อคำนวณ/ปรนัย ทำก่อน (เร็ว+ชัวร์)
+
+② ข้อ "โปรแกรมพิมพ์อะไร"
+   → <b>วาดตาราง trace</b> เสมอ
+   → เขียนค่าตัวแปรทุกรอบ
+   → ห้ามคิดในหัวรวดเดียว
+
+③ ข้อคำนวณนิพจน์
+   → เขียนผลลัพธ์กำกับทุกขั้น
+   → เช็คว่าผลเป็น int หรือ float
+
+④ ข้อเขียนโปรแกรม ทำท้ายสุด
+   → เขียนโครงก่อน (input/คำนวณ/print)
+
+⑤ เหลือเวลา เช็ค:
+   - โคลอน : ครบไหม
+   - เยื้องตรงกันไหม
+   - int(input()) แปลงชนิดแล้วยัง
+   - range ถึงตัวสุดท้ายหรือเปล่า</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 7 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Cheat Sheet · ข้อรวบยอด</div>
+    <h2 class="slide-title">ข้อสุดท้าย — ผสมทุกบท</h2>
+    <pre class="code-block" style="margin-bottom:14px">total = <span class="nm">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">6</span>):
+    <span class="kw">if</span> i % <span class="nm">2</span> == <span class="nm">0</span>:
+        total += i
+    <span class="kw">else</span>:
+        total -= i
+<span class="fn">print</span>(total)</pre>
+    <div class="mc-opts" id="mc-fin">
+      <div class="mc-opt" onclick="pickMC('mc-fin',0,1,'15 คือผลรวมทั้งหมด — แต่โค้ดนี้เลขคี่ถูกลบออก')"><span class="mc-ltr">A</span> 15</div>
+      <div class="mc-opt" onclick="pickMC('mc-fin',1,1,'i=1 คี่ →−1 · i=2 คู่ →+2 (=1) · i=3 คี่ →−3 (=−2) · i=4 คู่ →+4 (=2) · i=5 คี่ →−5 (=−3)')"><span class="mc-ltr">B</span> -3</div>
+      <div class="mc-opt" onclick="pickMC('mc-fin',2,1,'3 จะเกิดถ้าบวกเลขคี่ลบเลขคู่ — แต่โค้ดทำตรงข้าม (คู่บวก คี่ลบ)')"><span class="mc-ltr">C</span> 3</div>
+      <div class="mc-opt" onclick="pickMC('mc-fin',3,1,'range(1,6) ให้ 1..5 ผลรวมไม่เป็น 0 — ลองไล่ทีละรอบ')"><span class="mc-ltr">D</span> 0</div>
+    </div>
+    <div class="ex-feedback" id="mc-fin-fb"></div>
+    <pre class="code-block" style="margin-top:12px">range(1,6) → i = 1,2,3,4,5   ·   คู่ = บวก · คี่ = ลบ
+
+i=1 คี่ → 0−1 = −1
+i=2 คู่ → −1+2 = 1
+i=3 คี่ → 1−3 = −2
+i=4 คู่ → −2+4 = 2
+i=5 คี่ → 2−5 = <b>−3</b></pre>
+  </div>
+</div>
+
+<!-- 8 Final -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🏆</div>
+      <div class="summary-title">พร้อมสอบ Midterm แล้ว</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">บท 1</div><div class="sum-body">ภาษา 3 ระดับ · กฎ 3 ข้อ (case/comment/indent) · input() คืน string</div></div>
+        <div class="sum-card"><div class="sum-head">บท 2</div><div class="sum-body">−5%2=1 · int(3.9)=3 · 5/0 Error · ลำดับ ( ) ** */%  +− </div></div>
+        <div class="sum-card"><div class="sum-head">บท 3</div><div class="sum-body">สัญลักษณ์ผังงาน 5 ตัว · if ต้องมี : + เยื้อง · elif เรียงแคบไปกว้าง</div></div>
+        <div class="sum-card"><div class="sum-head">บท 4</div><div class="sum-body">range ไม่รวมตัวสุดท้าย · Counting/Sentinel · ตัวสะสมคูณเริ่มที่ 1</div></div>
+        <div class="sum-card"><div class="sum-head">เทคนิคห้องสอบ</div><div class="sum-body">วาดตาราง trace ทุกข้อ "พิมพ์อะไร" · เขียนค่ากำกับทุกขั้น</div></div>
+        <div class="sum-card"><div class="sum-head">ก่อนส่งกระดาษ</div><div class="sum-body">เช็ค : ครบ · เยื้องตรง · แปลงชนิดแล้ว · range ถึงตัวสุดท้ายไหม</div></div>
+      </div>
+      <a href="index.html" class="summary-next">🏠 กลับหน้าหลัก — ทวนบทไหนอีกรอบก็ได้ สู้ๆ 💪</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 9</span>
+      <span class="nav-chapter" id="chapterLabel">Cheat Sheet ก่อนเข้าห้องสอบ</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ตารางค่าที่ต้องจำ','ลำดับ + range','จุดหลอก 1-5','จุดหลอก 6-10','โค้ด 5 ท่า','แผนก่อนสอบ','ข้อรวบยอด','พร้อมสอบแล้ว'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

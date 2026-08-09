@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ชุดที่ 2 — จัดการชุดข้อมูล | ตะลุยโจทย์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#7c2d12;--cal:#fbe9e0;--cam:#c2643a;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.prob{background:#fff;border:1px solid var(--line);border-left:4px solid var(--ca);border-radius:8px;padding:14px 18px;margin:8px 0;font-size:13.5px;line-height:1.8;}
+.prob b{color:var(--ca);}
+.io{font-family:var(--mono);font-size:12.5px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:8px 0;white-space:pre;color:var(--ca);line-height:1.6;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.6;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:5px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);}
+.t td:first-child{font-weight:700;color:var(--ca);}
+.lang{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--ca);color:#fff;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🧗 ก๋วยเตี๋ยวเรือ Programming · ตะลุยโจทย์</div>
+        <div class="cover-title">ชุดที่ 2<br><em>จัดการชุดข้อมูล</em></div>
+        <div class="cover-subtitle">ระดับ 2 · เก็บข้อมูลหลายตัวแล้วประมวลผล — ฝึกลูปซ้อนและตัวแปรสะสม</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 1: หาค่ามัธยฐาน (Median)</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 2: ลบค่าซ้ำออกจากชุดข้อมูล</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 3: หาคู่ที่รวมกันได้ผลลัพธ์ที่ต้องการ</div>
+          <div class="topic-row"><div class="topic-dot"></div>ทุกโจทย์: วิธีคิด → ผังงาน → C + Python</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">🥈</div>
+        <div class="cover-badge">3 โจทย์ · C + PYTHON</div>
+        <div class="cover-slides-count">10 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== โจทย์ 1 ===== -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">หาค่ามัธยฐาน (Median)</h2>
+    <div class="prob">
+      <b>โจทย์:</b> รับตัวเลข n ตัว แล้วหา<b>ค่ามัธยฐาน</b> (ค่ากลางหลังเรียงลำดับ)<br>
+      • ถ้า n เป็น<b>เลขคี่</b> → มัธยฐานคือตัวกลางตัวเดียว<br>
+      • ถ้า n เป็น<b>เลขคู่</b> → มัธยฐานคือค่าเฉลี่ยของสองตัวกลาง<br>
+      <b>ห้ามใช้ฟังก์ชัน sort สำเร็จรูป</b> — ต้องเขียนการเรียงเอง
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่าง 1 — จำนวนคี่</div>
+        <div class="io">n = 5
+ข้อมูล: 7 2 9 4 5
+เรียงแล้ว: 2 4 5 7 9
+มัธยฐาน = 5</div>
+        <div class="code-label" style="margin-top:6px">ตัวอย่าง 2 — จำนวนคู่</div>
+        <div class="io">n = 4
+ข้อมูล: 8 3 1 6
+เรียงแล้ว: 1 3 6 8
+มัธยฐาน = (3+6)/2 = 4.50</div>
+      </div>
+      <div>
+        <div class="code-label">หา pattern ของตำแหน่งกลาง</div>
+        <table class="t">
+          <thead><tr><th>n</th><th>index (เริ่ม 0)</th><th>ตัวกลาง</th></tr></thead>
+          <tbody>
+            <tr><td>5 (คี่)</td><td>0 1 <b>2</b> 3 4</td><td>a[2] = a[n//2]</td></tr>
+            <tr><td>7 (คี่)</td><td>0 1 2 <b>3</b> 4 5 6</td><td>a[3] = a[n//2]</td></tr>
+            <tr><td>4 (คู่)</td><td>0 <b>1 2</b> 3</td><td>(a[1]+a[2])/2</td></tr>
+            <tr><td>6 (คู่)</td><td>0 1 <b>2 3</b> 4 5</td><td>(a[2]+a[3])/2</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="cm"># สูตรที่ได้:
+# คี่ → a[n//2]
+# คู่ → (a[n//2 - 1] + a[n//2]) / 2</span></pre>
+      </div>
+    </div>
+    <div class="exam">⏸️ <b>หยุดลองเอง</b> — โจทย์นี้มี 2 ส่วน: <b>เรียงข้อมูล</b> (ใช้ selection/bubble sort) + <b>เลือกตัวกลาง</b> (แยกเคสคี่/คู่) · ตารางให้สูตรมาแล้ว</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · วิธีคิด</div>
+    <h2 class="slide-title">STEP 2–3: เรียงข้อมูลแล้วเลือกตัวกลาง</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">STEP 2 — แตกปัญหา
+  ① รับ n และข้อมูล n ตัว
+  ② เรียงข้อมูลจากน้อยไปมาก
+  ③ เช็คว่า n คี่หรือคู่
+  ④ เลือก/คำนวณตัวกลางตามเคส
+  ⑤ แสดงผล
+
+  ขั้น ② ซอยต่อ — Selection Sort:
+    วน i จาก 0 ถึง n−2
+      หา index ของตัวน้อยสุดใน a[i..n−1]
+      สลับกับ a[i]
+  ← สิ่งที่ทำซ้ำ 2 ชั้น = ลูปซ้อน</span></pre>
+        <div class="code-label" style="margin-top:6px">Selection Sort — ทำด้วยมือ</div>
+        <pre class="code-block"><span class="cm">[7, 2, 9, 4, 5]
+i=0: min ใน [7,2,9,4,5] = 2 (idx1) → สลับ
+     [2, 7, 9, 4, 5]
+i=1: min ใน [7,9,4,5] = 4 (idx3) → สลับ
+     [2, 4, 9, 7, 5]
+i=2: min ใน [9,7,5] = 5 (idx4) → สลับ
+     [2, 4, 5, 7, 9]
+i=3: min ใน [7,9] = 7 (ตัวเอง) → ไม่สลับ
+     [2, 4, 5, 7, 9] ✓ เรียงเสร็จ</span></pre>
+      </div>
+      <div>
+        <div class="code-label">STEP 3 — ผังงาน</div>
+        <div class="diagram">   ▱ รับ n และ a[0..n-1]
+        │
+   ▭ i = 0
+        ▼
+┌─▶ ◇ i &lt;= n-2 ──เท็จ──┐
+│   ▭ min = i           │
+│   ▭ j = i+1           │
+│      ▼                │
+│  ┌▶ ◇ j &lt;= n-1 ─เท็จ┐ │
+│  │  ◇ a[j] &lt; a[min] │ │
+│  │   จริง▭ min = j   │ │
+│  └──── ▭ j++         │ │
+│         ┌────────────┘ │
+│   ▭ สลับ a[i] ↔ a[min] │
+└──── ▭ i++              │
+          ┌──────────────┘
+     ◇ n % 2 == 1
+    จริง│      │เท็จ
+ ▭ med=a[n/2] │ ▭ med=(a[n/2-1]
+              │      +a[n/2])/2
+        └──┬──┘
+      ▽ แสดง med</div>
+      </div>
+    </div>
+    <div class="exam"><b>เคสขอบ:</b> n=1 → ลูป sort ไม่ทำงาน (i=0 &gt; n−2=−1) และ n//2 = 0 → med = a[0] ✓ ถูกต้องอัตโนมัติ · n=0 → ต้องเช็คแยก (ไม่มีข้อมูลให้หาค่ากลาง)</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · เฉลย</div>
+    <h2 class="slide-title">STEP 4: เขียนโค้ด — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> n, i, j, min, tmp;
+    <span class="kw">int</span> a[<span class="nm">100</span>];
+    <span class="kw">double</span> med;
+
+    <span class="fn">scanf</span>(<span class="st">"%d"</span>, &n);
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n; i++)
+        <span class="fn">scanf</span>(<span class="st">"%d"</span>, &a[i]);
+
+    <span class="cm">/* Selection Sort */</span>
+    <span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n - <span class="nm">1</span>; i++) {
+        min = i;
+        <span class="kw">for</span> (j = i + <span class="nm">1</span>; j &lt; n; j++)
+            <span class="kw">if</span> (a[j] &lt; a[min]) min = j;
+        <span class="kw">if</span> (min != i) {          <span class="cm">/* สลับ */</span>
+            tmp = a[i]; a[i] = a[min]; a[min] = tmp;
+        }
+    }
+
+    <span class="kw">if</span> (n % <span class="nm">2</span> == <span class="nm">1</span>)
+        med = a[n/<span class="nm">2</span>];
+    <span class="kw">else</span>
+        med = (a[n/<span class="nm">2</span> - <span class="nm">1</span>] + a[n/<span class="nm">2</span>]) / <span class="nm">2.0</span>;
+    <span class="cm">/*                             ↑ 2.0 สำคัญ! */</span>
+
+    <span class="fn">printf</span>(<span class="st">"มัธยฐาน = %.2f\n"</span>, med);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block">n = <span class="fn">int</span>(<span class="fn">input</span>())
+a = []
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+    a.<span class="fn">append</span>(<span class="fn">int</span>(<span class="fn">input</span>()))
+
+<span class="cm"># Selection Sort</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n - <span class="nm">1</span>):
+    mn = i
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i + <span class="nm">1</span>, n):
+        <span class="kw">if</span> a[j] &lt; a[mn]:
+            mn = j
+    <span class="kw">if</span> mn != i:
+        a[i], a[mn] = a[mn], a[i]    <span class="cm"># สลับใน 1 บรรทัด!</span>
+
+<span class="kw">if</span> n % <span class="nm">2</span> == <span class="nm">1</span>:
+    med = a[n//<span class="nm">2</span>]
+<span class="kw">else</span>:
+    med = (a[n//<span class="nm">2</span> - <span class="nm">1</span>] + a[n//<span class="nm">2</span>]) / <span class="nm">2</span>
+
+<span class="fn">print</span>(<span class="st">f"มัธยฐาน = </span>{med:.<span class="nm">2</span>f}<span class="st">"</span>)</pre>
+        <pre class="code-block"><span class="cm"># 2 จุดต่างที่สำคัญ:
+
+# ① สลับค่า
+#   C:      tmp = a; a = b; b = tmp;
+#   Python: a, b = b, a      ← สั้นกว่ามาก
+
+# ② หาร
+#   C:      / 2.0 (ไม่งั้น int หาร int ปัดทิ้ง!)
+#   Python: / 2   (ได้ float อยู่แล้ว)
+#           แต่ index ต้องใช้ // (ต้องเป็น int)</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>กับดักที่เจ็บที่สุดของโจทย์นี้:</b> ใน C ถ้าเขียน <code class="inline-code">(a[1]+a[2]) / 2</code> จะได้ผลปัดทิ้ง (int หาร int) — ต้องเขียน <code class="inline-code">/ 2.0</code> · ส่วน Python ต้องใช้ <code class="inline-code">//</code> ตอนคำนวณ index เพราะ index ต้องเป็น int</div>
+  </div>
+</div>
+
+<!-- ===== โจทย์ 2 ===== -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">ลบค่าซ้ำออกจากชุดข้อมูล</h2>
+    <div class="prob">
+      <b>โจทย์:</b> รับตัวเลข n ตัว แล้วแสดงเฉพาะค่าที่<b>ไม่ซ้ำกัน</b> โดยเรียงตามลำดับที่ปรากฏครั้งแรก<br>
+      พร้อมบอกว่ามีค่าที่ไม่ซ้ำทั้งหมดกี่ตัว · <b>ห้ามใช้ set()</b>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่าง 1</div>
+        <div class="io">n = 7
+ข้อมูล: 3 5 3 8 5 1 8
+ผลลัพธ์: 3 5 8 1
+จำนวนค่าไม่ซ้ำ: 4</div>
+        <div class="code-label" style="margin-top:6px">ตัวอย่าง 2 (เคสขอบ)</div>
+        <div class="io">n = 4
+ข้อมูล: 7 7 7 7
+ผลลัพธ์: 7
+จำนวนค่าไม่ซ้ำ: 1</div>
+      </div>
+      <div>
+        <div class="code-label">ทำด้วยมือ — คิดยังไง</div>
+        <pre class="code-block"><span class="cm">ข้อมูล: 3 5 3 8 5 1 8
+
+หยิบ 3 → ยังไม่มีในผลลัพธ์ → เพิ่ม  [3]
+หยิบ 5 → ยังไม่มี → เพิ่ม          [3,5]
+หยิบ 3 → มีแล้ว! → ข้าม            [3,5]
+หยิบ 8 → ยังไม่มี → เพิ่ม          [3,5,8]
+หยิบ 5 → มีแล้ว → ข้าม             [3,5,8]
+หยิบ 1 → ยังไม่มี → เพิ่ม          [3,5,8,1]
+หยิบ 8 → มีแล้ว → ข้าม             [3,5,8,1]
+
+สิ่งที่ทำซ้ำ:
+  "เช็คว่าตัวนี้มีในผลลัพธ์แล้วหรือยัง"
+  ← การเช็คนี้เองก็ต้องวนดูทุกตัวในผลลัพธ์
+  → <b>ลูปซ้อน 2 ชั้น</b></span></pre>
+      </div>
+    </div>
+    <div class="exam">⏸️ <b>หยุดลองเอง</b> — จุดสำคัญคือ "เช็คว่ามีแล้วหรือยัง" ต้องใช้ลูปอีกชั้นหนึ่ง + ต้องมี <b>flag</b> บอกว่าเจอหรือไม่</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · วิธีคิด + เฉลย</div>
+    <h2 class="slide-title">ใช้ flag บอกว่า "เจอแล้วหรือยัง"</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">STEP 2 — แตกปัญหา
+  ① สร้าง array ผลลัพธ์ว่าง (count = 0)
+  ② วนทุกตัวในข้อมูลเดิม (i)
+       ③ ตั้ง flag found = 0
+       ④ วนทุกตัวในผลลัพธ์ (j)
+            ถ้าเจอค่าเท่ากัน → found = 1
+       ⑤ ถ้า found == 0 → เพิ่มลงผลลัพธ์
+  ⑥ แสดงผลลัพธ์ + count
+
+  ← pattern "ตั้ง flag → วนเช็ค → ตัดสินใจ"
+    ใช้ได้กับโจทย์ "มีอยู่แล้วไหม" ทุกข้อ</span></pre>
+        <div class="diagram">  ▭ count = 0
+  ▭ i = 0
+     ▼
+┌▶◇ i &lt; n ──เท็จ──┐
+│ ▭ found = 0     │
+│ ▭ j = 0         │
+│    ▼            │
+│ ┌▶◇ j &lt; count ─┐│
+│ │ ◇ res[j]==a[i]││
+│ │  จริง▭found=1 ││
+│ └── ▭ j++      ││
+│      ┌─────────┘│
+│ ◇ found == 0    │
+│  จริง▭ res[count]│
+│      = a[i]     │
+│      ▭ count++  │
+└──── ▭ i++       │
+       ┌──────────┘
+   ▽ แสดง res, count</div>
+      </div>
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="kw">int</span> n, i, j, count = <span class="nm">0</span>, found;
+<span class="kw">int</span> a[<span class="nm">100</span>], res[<span class="nm">100</span>];
+
+<span class="fn">scanf</span>(<span class="st">"%d"</span>, &n);
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n; i++) <span class="fn">scanf</span>(<span class="st">"%d"</span>, &a[i]);
+
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n; i++) {
+    found = <span class="nm">0</span>;                    <span class="cm">/* ตั้ง flag */</span>
+    <span class="kw">for</span> (j = <span class="nm">0</span>; j &lt; count; j++)
+        <span class="kw">if</span> (res[j] == a[i]) {
+            found = <span class="nm">1</span>;
+            <span class="kw">break</span>;               <span class="cm">/* เจอแล้ว ไม่ต้องหาต่อ */</span>
+        }
+    <span class="kw">if</span> (!found) {                 <span class="cm">/* ยังไม่มี → เพิ่ม */</span>
+        res[count] = a[i];
+        count++;
+    }
+}
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; count; i++) <span class="fn">printf</span>(<span class="st">"%d "</span>, res[i]);
+<span class="fn">printf</span>(<span class="st">"\nจำนวนค่าไม่ซ้ำ: %d\n"</span>, count);</pre>
+        <span class="lang" style="margin-top:6px">PYTHON</span>
+        <pre class="code-block">n = <span class="fn">int</span>(<span class="fn">input</span>())
+a = [<span class="fn">int</span>(<span class="fn">input</span>()) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n)]
+
+res = []
+<span class="kw">for</span> x <span class="kw">in</span> a:
+    found = <span class="kw">False</span>
+    <span class="kw">for</span> y <span class="kw">in</span> res:
+        <span class="kw">if</span> y == x:
+            found = <span class="kw">True</span>
+            <span class="kw">break</span>
+    <span class="kw">if</span> <span class="kw">not</span> found:
+        res.<span class="fn">append</span>(x)
+
+<span class="fn">print</span>(*res)
+<span class="fn">print</span>(<span class="st">f"จำนวนค่าไม่ซ้ำ: </span>{<span class="fn">len</span>(res)}<span class="st">"</span>)
+
+<span class="cm"># Python เขียนสั้นได้ด้วย in
+# for x in a:
+#     if x not in res:      ← in เช็คให้เลย
+#         res.append(x)</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>Pattern "flag" ใช้ได้ทุกโจทย์แนว "มีไหม/ใช่ไหม":</b> ตั้ง flag เป็นค่าเริ่มต้น → วนเช็ค → เจอแล้วเปลี่ยน flag + <code class="inline-code">break</code> → ตัดสินใจจาก flag · โจทย์จำนวนเฉพาะก็ใช้ pattern นี้</div>
+  </div>
+</div>
+
+<!-- ===== โจทย์ 3 ===== -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">หาคู่ที่รวมกันได้ผลลัพธ์ที่ต้องการ</h2>
+    <div class="prob">
+      <b>โจทย์:</b> รับตัวเลข n ตัว และค่าเป้าหมาย target<br>
+      หาว่ามี<b>คู่ของตัวเลข</b> (2 ตัวที่ต่างตำแหน่งกัน) ที่บวกกันได้เท่ากับ target หรือไม่<br>
+      ถ้ามี ให้แสดงทุกคู่ที่เป็นไปได้ (ไม่นับคู่ซ้ำ เช่น (2,7) กับ (7,2) นับเป็นคู่เดียว)
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่าง 1</div>
+        <div class="io">n = 5, target = 9
+ข้อมูล: 2 7 11 4 5
+พบคู่: (2, 7)
+       (4, 5)
+รวม 2 คู่</div>
+        <div class="code-label" style="margin-top:6px">ตัวอย่าง 2</div>
+        <div class="io">n = 4, target = 100
+ข้อมูล: 1 2 3 4
+ไม่พบคู่ที่รวมกันได้ 100</div>
+      </div>
+      <div>
+        <div class="code-label">คิดยังไงไม่ให้นับซ้ำ</div>
+        <pre class="code-block"><span class="cm">ถ้าวนแบบนี้:
+  for i in 0..n-1:
+      for j in 0..n-1:
+  → จะได้ (2,7) และ (7,2) ซ้ำกัน
+    และยังจับคู่ตัวเองด้วย (2,2)!
+
+ทางแก้: ให้ j เริ่มที่ i+1 เสมอ
+  for i in 0..n-2:
+      for j in i+1..n-1:
+  → เทียบแต่ละคู่แค่ครั้งเดียว ✓
+    และไม่จับคู่ตัวเองด้วย ✓</span></pre>
+        <div class="diagram">i=0: j = 1,2,3,4   (5-1 คู่)
+i=1: j = 2,3,4     (5-2 คู่)
+i=2: j = 3,4
+i=3: j = 4
+     ← ครอบคลุมทุกคู่ ไม่ซ้ำ</div>
+      </div>
+    </div>
+    <div class="exam">⏸️ <b>หยุดลองเอง</b> — เทคนิค <code class="inline-code">j = i+1</code> คือหัวใจของโจทย์ "จับคู่" ทั้งหมด · จำนวนคู่ทั้งหมด = n(n−1)/2 (สูตร Gauss จากวิชา Big-O!)</div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · วิธีคิด + เฉลย</div>
+    <h2 class="slide-title">ลูปซ้อนแบบ j = i+1</h2>
+    <div class="two-col">
+      <div>
+        <div class="diagram">    ▱ รับ n, target, a[]
+         │
+    ▭ found = 0
+    ▭ i = 0
+         ▼
+ ┌─▶ ◇ i &lt;= n-2 ──เท็จ──┐
+ │    ▭ j = i + 1        │
+ │       ▼               │
+ │  ┌─▶ ◇ j &lt;= n-1 ─เท็จ┐│
+ │  │  ◇ a[i]+a[j]      ││
+ │  │      == target    ││
+ │  │   จริง│           ││
+ │  │  ▽ แสดง (a[i],a[j])││
+ │  │  ▭ found++        ││
+ │  └──── ▭ j++         ││
+ │          ┌────────────┘│
+ └───── ▭ i++             │
+            ┌─────────────┘
+       ◇ found == 0
+        จริง▽ "ไม่พบคู่"
+        เท็จ▽ "รวม found คู่"</div>
+      </div>
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="kw">int</span> n, target, i, j, found = <span class="nm">0</span>;
+<span class="kw">int</span> a[<span class="nm">100</span>];
+
+<span class="fn">scanf</span>(<span class="st">"%d %d"</span>, &n, &target);
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n; i++) <span class="fn">scanf</span>(<span class="st">"%d"</span>, &a[i]);
+
+<span class="kw">for</span> (i = <span class="nm">0</span>; i &lt; n - <span class="nm">1</span>; i++) {
+    <span class="kw">for</span> (j = i + <span class="nm">1</span>; j &lt; n; j++) {    <span class="cm">/* j เริ่มที่ i+1! */</span>
+        <span class="kw">if</span> (a[i] + a[j] == target) {
+            <span class="fn">printf</span>(<span class="st">"พบคู่: (%d, %d)\n"</span>, a[i], a[j]);
+            found++;
+        }
+    }
+}
+<span class="kw">if</span> (found == <span class="nm">0</span>)
+    <span class="fn">printf</span>(<span class="st">"ไม่พบคู่ที่รวมกันได้ %d\n"</span>, target);
+<span class="kw">else</span>
+    <span class="fn">printf</span>(<span class="st">"รวม %d คู่\n"</span>, found);</pre>
+        <span class="lang" style="margin-top:6px">PYTHON</span>
+        <pre class="code-block">n, target = <span class="fn">map</span>(<span class="fn">int</span>, <span class="fn">input</span>().<span class="fn">split</span>())
+a = [<span class="fn">int</span>(<span class="fn">input</span>()) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n)]
+
+found = <span class="nm">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n - <span class="nm">1</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i + <span class="nm">1</span>, n):      <span class="cm"># j เริ่มที่ i+1</span>
+        <span class="kw">if</span> a[i] + a[j] == target:
+            <span class="fn">print</span>(<span class="st">f"พบคู่: (</span>{a[i]}<span class="st">, </span>{a[j]}<span class="st">)"</span>)
+            found += <span class="nm">1</span>
+
+<span class="kw">if</span> found == <span class="nm">0</span>:
+    <span class="fn">print</span>(<span class="st">f"ไม่พบคู่ที่รวมกันได้ </span>{target}<span class="st">"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">f"รวม </span>{found}<span class="st"> คู่"</span>)</pre>
+        <pre class="code-block"><span class="cm"># ประสิทธิภาพ: O(n²)
+# วิธีเร็วกว่า (O(n)) ใช้ dict เก็บ
+# ค่าที่เคยเจอ แล้วเช็ค target−x
+# ← ลองเขียนดูเป็นการบ้าน!</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เทคนิค j = i+1 ใช้ได้กับโจทย์ตระกูล "จับคู่" ทั้งหมด:</b> หาคู่ที่ผลรวมเท่ากับ X · หาคู่ที่ห่างกันมากสุด · เช็คว่ามีค่าซ้ำไหม — ทุกข้อใช้โครงเดียวกัน</div>
+  </div>
+</div>
+
+<!-- Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💪</div>
+      <div class="think-label">โจทย์ท้าทาย</div>
+      <div class="think-q">ลองทำเองแบบไม่มีเฉลย<br><br>
+<div style="background:var(--cal);padding:14px 20px;border-radius:8px;display:inline-block;text-align:left;font-size:13.5px;line-height:1.8;max-width:640px">
+<b>โจทย์:</b> รับตัวเลข n ตัว แล้วหา<b>ค่าฐานนิยม (Mode)</b><br>
+= ค่าที่ปรากฏบ่อยที่สุด พร้อมบอกว่าปรากฏกี่ครั้ง<br>
+<span style="font-family:monospace;font-size:12px;color:var(--ca)">ข้อมูล: 3 7 3 5 7 3 → ฐานนิยม = 3 (ปรากฏ 3 ครั้ง)</span>
+</div><br><br>
+<em>ใบ้: ผสม 2 เทคนิคจากชุดนี้<br>
+① ลูปซ้อนนับความถี่ของแต่ละตัว (เหมือนโจทย์ลบค่าซ้ำ)<br>
+② เก็บตัวที่นับได้มากสุด (pattern หาค่ามากสุด)<br><br>
+ระวังเคสขอบ: ถ้ามีหลายค่าปรากฏเท่ากันจะเลือกตัวไหน?</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🥈</div>
+      <div class="summary-title">จบชุดที่ 2 — จัดการชุดข้อมูล</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">โจทย์ 1 มัธยฐาน</div><div class="sum-body">เรียงก่อน (Selection Sort) → แยกเคสคี่/คู่ → a[n//2] หรือเฉลย 2 ตัวกลาง</div></div>
+        <div class="sum-card"><div class="sum-head">โจทย์ 2 ลบค่าซ้ำ</div><div class="sum-body">pattern flag: ตั้ง found=0 → วนเช็ค → break เมื่อเจอ → ตัดสินใจ</div></div>
+        <div class="sum-card"><div class="sum-head">โจทย์ 3 หาคู่</div><div class="sum-body">ลูปซ้อนแบบ <b>j = i+1</b> → ไม่นับซ้ำ ไม่จับคู่ตัวเอง</div></div>
+        <div class="sum-card"><div class="sum-head">Pattern ที่ได้</div><div class="sum-body">flag (มีไหม) · j=i+1 (จับคู่) · เรียงก่อนแล้วค่อยหา (มัธยฐาน)</div></div>
+        <div class="sum-card"><div class="sum-head">กับดัก C</div><div class="sum-body">int หาร int ปัดทิ้ง → ต้องเขียน / 2.0 เมื่อต้องการทศนิยม</div></div>
+        <div class="sum-card"><div class="sum-head">กับดัก Python</div><div class="sum-body">index ต้องเป็น int → ใช้ // ไม่ใช่ / ตอนคำนวณตำแหน่ง</div></div>
+      </div>
+      <a href="slides_ch3.html" class="summary-next">→ ชุดที่ 3: โจทย์สถานการณ์จริง</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 10</span>
+      <span class="nav-chapter" id="chapterLabel">ชุดที่ 2 — จัดการชุดข้อมูล</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','① โจทย์มัธยฐาน','① วิธีคิด + ผังงาน','① เฉลย C + Python','② โจทย์ลบค่าซ้ำ','② วิธีคิด + เฉลย','③ โจทย์หาคู่','③ วิธีคิด + เฉลย','โจทย์ท้าทาย','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

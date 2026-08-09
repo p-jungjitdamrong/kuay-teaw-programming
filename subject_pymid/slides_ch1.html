@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 1 — พื้นฐาน Python | ติวสอบ Python Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#b45309;--cal:#fdf0dc;--cam:#e0a458;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;}
+.t td{padding:6px 10px;border:1px solid var(--line);}
+.t td:first-child{font-family:var(--mono);font-weight:700;color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ติวสอบ Midterm · Computers &amp; Programming</div>
+        <div class="cover-title">ติวบทที่ 1<br><em>พื้นฐาน Python</em></div>
+        <div class="cover-subtitle">lecture 1–2 · กฎ 3 ข้อที่ผิดแล้วโค้ดพังทั้งโปรแกรม</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ภาษาคอมพิวเตอร์ 3 ระดับ (ข้อทฤษฎีฟรี)</div>
+          <div class="topic-row"><div class="topic-dot"></div>กฎ 3 ข้อ: case-sensitive · comment · indentation</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตัวแปร ชนิดข้อมูล และ reserved words</div>
+          <div class="topic-row"><div class="topic-dot"></div>input() / print() — จุดหลอกเรื่อง string</div>
+          <div class="topic-row"><div class="topic-dot"></div>math module ที่อาจารย์สอน</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">M1</div>
+        <div class="cover-badge">รากของทุกบท</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 ภาษา 3 ระดับ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · lecture 1</div>
+    <h2 class="slide-title">ภาษาคอมพิวเตอร์ 3 ระดับ — ข้อทฤษฎีที่แจกคะแนน</h2>
+    <table class="t">
+      <thead><tr><th style="width:22%">ระดับ</th><th>เขียนยังไง</th><th>คุณสมบัติ</th></tr></thead>
+      <tbody>
+        <tr><td>ภาษาเครื่อง<br>Machine</td><td>เลขฐาน 2 (0 กับ 1)<br><code class="inline-code">00000101 10101010 00000110</code></td><td>ภาษาเดียวที่คอมพิวเตอร์เข้าใจทันที · เร็วสุด · <b>ผูกกับ CPU รุ่นนั้น (Machine Dependent)</b></td></tr>
+        <tr><td>ภาษาระดับต่ำ<br>Assembly</td><td>ชื่อย่อคำสั่ง ADD, LD, MUL, SUB<br>ชื่อตำแหน่งหน่วยความจำ R1, R2</td><td>คนอ่านง่ายขึ้น · ยังผูกกับเครื่องอยู่ · เรียกอีกชื่อว่า <b>Symbolic language</b></td></tr>
+        <tr><td>ภาษาระดับสูง<br>High-Level</td><td>ใกล้ภาษาคน — Python, C, Java</td><td>ไม่ผูกกับเครื่อง · เขียนครั้งเดียวใช้ได้หลาย platform</td></tr>
+      </tbody>
+    </table>
+    <div class="two-col" style="margin-top:6px">
+      <div>
+        <pre class="code-block"><span class="cm"># นิยาม "โปรแกรม" ตามสไลด์:
+# "ชุดของคำสั่งที่มีขั้นตอน
+#  เพื่อสั่งคอมพิวเตอร์ให้ทำงาน
+#  สิ่งหนึ่งสิ่งใด"
+#  ← คีย์เวิร์ด: มีขั้นตอน</span></pre>
+      </div>
+      <div>
+        <pre class="code-block"><span class="cm"># ทุกภาษาต้องถูกแปลงเป็น "ภาษาเครื่อง"
+# Compiler   — แปลทั้งไฟล์ก่อนรัน (C, Java)
+# Interpreter — แปลทีละบรรทัดแล้วรันเลย
+#               ← Python เป็นแบบนี้</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อสอบชอบถาม:</b> "ภาษาใดที่คอมพิวเตอร์เข้าใจได้ทันที" → <b>ภาษาเครื่อง</b> · "ภาษาใดขึ้นกับเครื่อง (Machine Dependent)" → <b>ภาษาเครื่องและ Assembly</b> · "Python จัดอยู่ระดับใด" → <b>ระดับสูง</b></div>
+  </div>
+</div>
+
+<!-- 2 กฎ 3 ข้อ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · หัวใจ lecture 2</div>
+    <h2 class="slide-title">กฎ 3 ข้อของโปรแกรม Python</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① Case-sensitive — ตัวพิมพ์ใหญ่/เล็กคนละตัว</div>
+        <pre class="code-block">name = <span class="st">"สมชาย"</span>
+<span class="fn">print</span>(Name)   <span class="cm"># ❌ NameError!</span>
+<span class="cm">#     ↑ N ใหญ่ = คนละตัวแปร</span>
+
+Score = <span class="nm">10</span>
+score = <span class="nm">20</span>
+<span class="cm"># นี่คือตัวแปร 2 ตัวคนละตัวกัน!</span>
+
+<span class="fn">Print</span>(<span class="st">"hi"</span>)   <span class="cm"># ❌ ต้อง print เล็ก</span></pre>
+        <div class="code-label" style="margin-top:8px">② Comment — 2 แบบ</div>
+        <pre class="code-block"><span class="cm"># คอมเมนต์บรรทัดเดียว</span>
+
+<span class="st">'''
+คอมเมนต์หลายบรรทัด
+ใช้ 3-single quote
+'''</span>
+
+<span class="cm"># คอมไพเลอร์ไม่ประมวลผล
+# ใช้อธิบายโปรแกรมให้คนอื่น/ตัวเอง</span></pre>
+      </div>
+      <div>
+        <div class="code-label">③ Indentation Rules — สำคัญที่สุด!</div>
+        <pre class="code-block"><span class="cm"># Python ไม่มี { } จึงใช้ "การเยื้อง"
+# บอกว่าโค้ดอยู่ในบล็อกไหน</span>
+
+<span class="kw">if</span> x &gt; <span class="nm">0</span>:
+    <span class="fn">print</span>(<span class="st">"บวก"</span>)      <span class="cm"># ← ในบล็อก if</span>
+    <span class="fn">print</span>(<span class="st">"ยังอยู่ใน if"</span>)
+<span class="fn">print</span>(<span class="st">"นอก if แล้ว"</span>)   <span class="cm"># ← ไม่เยื้อง = นอกบล็อก</span></pre>
+        <pre class="code-block"><span class="cm"># ❌ ผิดหลัก indentation</span>
+<span class="kw">if</span> x &gt; <span class="nm">0</span>:
+    <span class="fn">print</span>(<span class="st">"A"</span>)
+        <span class="fn">print</span>(<span class="st">"B"</span>)   <span class="cm"># เยื้องเกิน → IndentationError</span>
+
+<span class="cm"># ⚠️ หมายเหตุจากสไลด์:
+# "บางครั้งไม่สามารถใช้ผสมกันได้
+#  ระหว่างเว้นวรรคกับแท็บ"
+# → เลือกอย่างเดียว (นิยม 4 spaces)</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เก็งข้อสอบ:</b> ให้โค้ดมาแล้วถามว่า error ไหม — ดู 3 อย่างนี้ก่อนเสมอ: ① ตัวพิมพ์ตรงกันไหม ② โคลอน <code class="inline-code">:</code> ครบไหม ③ <b>เยื้องตรงกันทั้งบล็อกไหม</b></div>
+  </div>
+</div>
+
+<!-- 3 ตัวแปร ชนิดข้อมูล -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · ตัวแปร</div>
+    <h2 class="slide-title">ตัวแปร ชนิดข้อมูล และ Reserved Words</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ชนิดข้อมูลพื้นฐาน 4 ตัว</div>
+        <pre class="code-block">a = <span class="nm">10</span>            <span class="cm"># int    จำนวนเต็ม</span>
+b = <span class="nm">3.14</span>          <span class="cm"># float  ทศนิยม</span>
+c = <span class="st">"สวัสดี"</span>       <span class="cm"># str    ข้อความ</span>
+d = <span class="kw">True</span>          <span class="cm"># bool   True/False</span>
+
+<span class="fn">print</span>(<span class="fn">type</span>(a))    <span class="cm"># &lt;class 'int'&gt;</span></pre>
+        <div class="code-label" style="margin-top:8px">Python ไม่ต้องประกาศชนิด</div>
+        <pre class="code-block"><span class="cm"># C:      int x = 10;
+# Python: x = 10        ← รู้เอง</span>
+
+x = <span class="nm">10</span>      <span class="cm"># ตอนนี้เป็น int</span>
+x = <span class="st">"abc"</span>   <span class="cm"># เปลี่ยนเป็น str ได้เลย!</span>
+<span class="cm"># เรียกว่า Dynamic Typing</span></pre>
+      </div>
+      <div>
+        <div class="code-label">กฎการตั้งชื่อตัวแปร</div>
+        <pre class="code-block"><span class="cm">✓ ขึ้นต้นด้วยตัวอักษร หรือ _
+✓ ตามด้วยตัวอักษร ตัวเลข _ ได้
+✗ ห้ามขึ้นต้นด้วยตัวเลข
+✗ ห้ามมีช่องว่างหรืออักขระพิเศษ
+✗ ห้ามใช้ reserved words</span>
+
+score1 = <span class="nm">10</span>    <span class="cm">✓</span>
+_name  = <span class="st">"a"</span>   <span class="cm">✓</span>
+<span class="nm">1</span>score = <span class="nm">10</span>    <span class="cm">✗ ขึ้นต้นด้วยเลข</span>
+my name = <span class="nm">5</span>    <span class="cm">✗ มีช่องว่าง</span>
+<span class="kw">if</span> = <span class="nm">3</span>         <span class="cm">✗ reserved word</span></pre>
+        <div class="code-label" style="margin-top:6px">Reserved Words (ห้ามใช้ตั้งชื่อ)</div>
+        <pre class="code-block"><span class="kw">if elif else for while break continue
+def return import from in is not and or
+True False None class try except finally
+lambda global pass with as</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ข้อสอบคลาสสิก:</b> "ชื่อตัวแปรใดใช้ไม่ได้" — ไล่เช็ค 3 ข้อ: ขึ้นต้นด้วยตัวเลขไหม · มีช่องว่าง/อักขระพิเศษไหม · เป็น reserved word ไหม</div>
+  </div>
+</div>
+
+<!-- 4 input output -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · input/output</div>
+    <h2 class="slide-title">input() คืน string เสมอ — จุดหลอกอันดับ 1</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">❌ ผิดที่คนพลาดมากที่สุด</div>
+        <pre class="code-block">a = <span class="fn">input</span>(<span class="st">"เลข 1: "</span>)   <span class="cm"># "5"</span>
+b = <span class="fn">input</span>(<span class="st">"เลข 2: "</span>)   <span class="cm"># "3"</span>
+<span class="fn">print</span>(a + b)</pre>
+        <div class="code-block" style="color:var(--ca)">53      ← ไม่ใช่ 8!</div>
+        <pre class="code-block"><span class="cm"># เพราะ input() คืน "string"
+# "5" + "3" = ต่อข้อความ = "53"</span></pre>
+        <div class="code-label" style="margin-top:8px">✓ ต้องแปลงก่อน</div>
+        <pre class="code-block">a = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"เลข 1: "</span>))
+b = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"เลข 2: "</span>))
+<span class="fn">print</span>(a + b)      <span class="cm"># 8 ✓</span>
+
+<span class="cm"># ทศนิยมใช้ float()</span>
+w = <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"น้ำหนัก: "</span>))</pre>
+      </div>
+      <div>
+        <div class="code-label">print() — คั่นด้วย , หรือ +</div>
+        <pre class="code-block">name = <span class="st">"สมชาย"</span>; age = <span class="nm">20</span>
+
+<span class="cm"># ใช้ , — เว้นวรรคให้อัตโนมัติ ปนชนิดได้</span>
+<span class="fn">print</span>(<span class="st">"ชื่อ"</span>, name, <span class="st">"อายุ"</span>, age)
+<span class="cm"># ชื่อ สมชาย อายุ 20</span>
+
+<span class="cm"># ใช้ + — ต้องเป็น string ทั้งหมด!</span>
+<span class="fn">print</span>(<span class="st">"ชื่อ "</span> + name)          <span class="cm">✓</span>
+<span class="fn">print</span>(<span class="st">"อายุ "</span> + age)           <span class="cm">✗ TypeError</span>
+<span class="fn">print</span>(<span class="st">"อายุ "</span> + <span class="fn">str</span>(age))      <span class="cm">✓</span>
+
+<span class="cm"># f-string — สะดวกสุด</span>
+<span class="fn">print</span>(<span class="st">f"ชื่อ </span>{name}<span class="st"> อายุ </span>{age}<span class="st">"</span>)</pre>
+        <pre class="code-block"><span class="cm"># ไม่ขึ้นบรรทัดใหม่</span>
+<span class="fn">print</span>(<span class="st">"A"</span>, end=<span class="st">''</span>)
+<span class="fn">print</span>(<span class="st">"B"</span>)        <span class="cm"># AB</span>
+
+<span class="cm"># เปลี่ยนตัวคั่น</span>
+<span class="fn">print</span>(<span class="st">"a"</span>,<span class="st">"b"</span>,<span class="st">"c"</span>, sep=<span class="st">"-"</span>)  <span class="cm"># a-b-c</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ท่องไว้:</b> <code class="inline-code">input()</code> คืน <b>string เสมอ</b> · <code class="inline-code">,</code> ใน print เว้นวรรคให้และปนชนิดได้ · <code class="inline-code">+</code> ต้องเป็น string ทั้งหมด — ข้อสอบชอบให้ <code class="inline-code">"5"+"3"</code> แล้วถามผลลัพธ์</div>
+  </div>
+</div>
+
+<!-- 5 math -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · math</div>
+    <h2 class="slide-title">math module + ฟังก์ชัน built-in</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ต้อง import ก่อนใช้</div>
+        <pre class="code-block"><span class="kw">import</span> math
+
+math.<span class="fn">sqrt</span>(<span class="nm">25</span>)      <span class="cm"># 5.0  รากที่สอง</span>
+math.<span class="fn">pow</span>(<span class="nm">2</span>, <span class="nm">3</span>)     <span class="cm"># 8.0  ยกกำลัง</span>
+math.<span class="fn">ceil</span>(<span class="nm">4.2</span>)      <span class="cm"># 5    ปัดขึ้น</span>
+math.<span class="fn">floor</span>(<span class="nm">4.8</span>)     <span class="cm"># 4    ปัดลง</span>
+math.<span class="fn">fabs</span>(-<span class="nm">3</span>)       <span class="cm"># 3.0  ค่าสัมบูรณ์</span>
+math.pi              <span class="cm"># 3.14159...</span>
+
+<span class="cm"># ⚠️ ลืม import → NameError</span></pre>
+      </div>
+      <div>
+        <div class="code-label">built-in — ไม่ต้อง import</div>
+        <pre class="code-block"><span class="fn">abs</span>(-<span class="nm">5</span>)          <span class="cm"># 5</span>
+<span class="fn">round</span>(<span class="nm">4.567</span>, <span class="nm">2</span>)  <span class="cm"># 4.57  ปัดทศนิยม 2 ตำแหน่ง</span>
+<span class="fn">round</span>(<span class="nm">4.6</span>)        <span class="cm"># 5</span>
+<span class="fn">max</span>(<span class="nm">3</span>, <span class="nm">7</span>, <span class="nm">5</span>)     <span class="cm"># 7</span>
+<span class="fn">min</span>(<span class="nm">3</span>, <span class="nm">7</span>, <span class="nm">5</span>)     <span class="cm"># 3</span>
+<span class="fn">len</span>(<span class="st">"hello"</span>)     <span class="cm"># 5</span>
+<span class="fn">int</span>(<span class="st">"10"</span>)        <span class="cm"># 10</span>
+<span class="fn">float</span>(<span class="st">"3.5"</span>)     <span class="cm"># 3.5</span>
+<span class="fn">str</span>(<span class="nm">100</span>)         <span class="cm"># "100"</span>
+<span class="fn">type</span>(x)           <span class="cm"># บอกชนิด</span></pre>
+        <pre class="code-block"><span class="cm"># ยกกำลังมี 2 วิธี</span>
+math.<span class="fn">pow</span>(<span class="nm">2</span>, <span class="nm">3</span>)   <span class="cm"># 8.0  (float เสมอ)</span>
+<span class="nm">2</span> ** <span class="nm">3</span>            <span class="cm"># 8    (int ถ้าทั้งคู่ int)</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดต่างที่ออกสอบ:</b> <code class="inline-code">math.pow(2,3)</code> ได้ <b>8.0 (float)</b> แต่ <code class="inline-code">2**3</code> ได้ <b>8 (int)</b> · และ <code class="inline-code">math.sqrt()</code> คืน float เสมอ</div>
+  </div>
+</div>
+
+<!-- 6 โจทย์รวม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · ฝึกทำ</div>
+    <h2 class="slide-title">โจทย์แนวสอบ — เขียนโปรแกรมพื้นฐาน</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">โจทย์: หาพื้นที่วงกลม</div>
+        <pre class="code-block"><span class="kw">import</span> math
+
+r = <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"รัศมี: "</span>))   <span class="cm"># แปลงเป็นตัวเลข!</span>
+area = math.pi * r ** <span class="nm">2</span>
+
+<span class="fn">print</span>(<span class="st">f"พื้นที่ = </span>{area:.<span class="nm">2</span>f}<span class="st">"</span>)
+<span class="cm"># รัศมี: 5 → พื้นที่ = 78.54</span></pre>
+        <div class="code-label" style="margin-top:8px">โจทย์: แลกเงิน</div>
+        <pre class="code-block">baht = <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"เงินบาท: "</span>))
+rate = <span class="nm">35.5</span>
+usd = baht / rate
+<span class="fn">print</span>(<span class="st">f"ได้ </span>{usd:.<span class="nm">2</span>f}<span class="st"> ดอลลาร์"</span>)</pre>
+      </div>
+      <div>
+        <div class="code-label">การจัดรูปแบบตัวเลขที่ต้องรู้</div>
+        <pre class="code-block">x = <span class="nm">1234.5678</span>
+
+<span class="fn">print</span>(<span class="st">f"</span>{x:.<span class="nm">2</span>f}<span class="st">"</span>)     <span class="cm"># 1234.57  ทศนิยม 2</span>
+<span class="fn">print</span>(<span class="st">f"</span>{x:,.<span class="nm">2</span>f}<span class="st">"</span>)    <span class="cm"># 1,234.57 มีลูกน้ำ</span>
+<span class="fn">print</span>(<span class="st">f"</span>{x:<span class="nm">10</span>.<span class="nm">2</span>f}<span class="st">"</span>)   <span class="cm">#    1234.57 กว้าง 10</span>
+
+n = <span class="nm">42</span>
+<span class="fn">print</span>(<span class="st">f"</span>{n:<span class="nm">5</span>}<span class="st">"</span>)       <span class="cm">#    42  ชิดขวา</span>
+<span class="fn">print</span>(<span class="st">f"</span>{n:&lt;<span class="nm">5</span>}<span class="st">"</span>)      <span class="cm"># 42     ชิดซ้าย</span>
+
+<span class="cm"># แบบเก่าที่อาจเจอในสไลด์</span>
+<span class="fn">print</span>(<span class="st">"%.2f"</span> % x)    <span class="cm"># 1234.57</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>โครงโจทย์ 90% ของบทนี้:</b> <b>รับค่า (input+แปลงชนิด) → คำนวณ → แสดงผล (f-string จัดทศนิยม)</b> — ฝึกเขียน 3 บรรทัดนี้ให้คล่อง เจอโจทย์ไหนก็ปรับได้</div>
+  </div>
+</div>
+
+<!-- 7 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">โค้ดนี้พิมพ์อะไร?<br><br>
+<code style="font-family:monospace;font-size:14px;background:var(--cal);padding:10px 18px;border-radius:8px;display:inline-block;text-align:left;line-height:1.9">
+a = input()&nbsp;&nbsp;# ผู้ใช้พิมพ์ 10<br>
+b = input()&nbsp;&nbsp;# ผู้ใช้พิมพ์ 20<br>
+print(a + b)<br>
+print(int(a) + int(b))
+</code><br><br>
+<em>ใบ้: input() คืนอะไรเสมอ?<br>
+บรรทัดแรก + ทำอะไรกับ string สองตัว?<br>
+บรรทัดสอง แปลงแล้ว + ทำอะไร?</em><br><br>
+คำตอบต่างกัน 2 บรรทัด — นี่คือข้อที่ออกสอบบ่อยที่สุดของบทนี้</div>
+    </div>
+  </div>
+</div>
+
+<!-- 8 MCQ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ข้อใดตั้งชื่อตัวแปรได้ถูกต้อง?</h2>
+    <div class="mc-opts" id="mc-m1">
+      <div class="mc-opt" onclick="pickMC('mc-m1',0,2,'ห้ามขึ้นต้นด้วยตัวเลข — 2score ใช้ไม่ได้')"><span class="mc-ltr">A</span> 2score = 80</div>
+      <div class="mc-opt" onclick="pickMC('mc-m1',1,2,'ห้ามมีช่องว่างในชื่อตัวแปร — my score ใช้ไม่ได้')"><span class="mc-ltr">B</span> my score = 80</div>
+      <div class="mc-opt" onclick="pickMC('mc-m1',2,2,'_total ถูกต้อง — ขึ้นต้นด้วย _ ได้ ตามด้วยตัวอักษร ไม่ใช่ reserved word')"><span class="mc-ltr">C</span> _total = 80</div>
+      <div class="mc-opt" onclick="pickMC('mc-m1',3,2,'for เป็น reserved word ห้ามใช้ตั้งชื่อตัวแปร')"><span class="mc-ltr">D</span> for = 80</div>
+    </div>
+    <div class="ex-feedback" id="mc-m1-fb"></div>
+    <pre class="code-block" style="margin-top:12px">ไล่เช็ค 3 ข้อทุกครั้ง:
+① ขึ้นต้นด้วยตัวอักษรหรือ _ เท่านั้น (ห้ามตัวเลข)  → ตัด A
+② ห้ามมีช่องว่างหรืออักขระพิเศษ                    → ตัด B
+③ ห้ามเป็น reserved word (if/for/while/def/...)   → ตัด D</pre>
+  </div>
+</div>
+
+<!-- 9 MCQ2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · ลองข้อสอบ</div>
+    <h2 class="slide-title">โค้ดนี้เกิดอะไรขึ้น?</h2>
+    <pre class="code-block" style="margin-bottom:14px">age = <span class="nm">20</span>
+<span class="fn">print</span>(<span class="st">"อายุ "</span> + age)</pre>
+    <div class="mc-opts" id="mc-m2">
+      <div class="mc-opt" onclick="pickMC('mc-m2',0,2,'ถ้าใช้ , แทน + จะได้ผลนี้ แต่โจทย์ใช้ + ซึ่งปนชนิดไม่ได้')"><span class="mc-ltr">A</span> พิมพ์ "อายุ 20"</div>
+      <div class="mc-opt" onclick="pickMC('mc-m2',1,2,'+ ไม่ได้แปลงชนิดให้อัตโนมัติใน Python')"><span class="mc-ltr">B</span> พิมพ์ "อายุ20"</div>
+      <div class="mc-opt" onclick="pickMC('mc-m2',2,2,'+ ระหว่าง str กับ int ทำไม่ได้ → TypeError · แก้ด้วย str(age) หรือใช้ , แทน')"><span class="mc-ltr">C</span> TypeError</div>
+      <div class="mc-opt" onclick="pickMC('mc-m2',3,2,'ไม่ใช่ NameError — ตัวแปร age ถูกประกาศแล้ว ปัญหาอยู่ที่ชนิดข้อมูล')"><span class="mc-ltr">D</span> NameError</div>
+    </div>
+    <div class="ex-feedback" id="mc-m2-fb"></div>
+    <pre class="code-block" style="margin-top:12px">"อายุ " (str) + 20 (int) → <b>TypeError</b>: can only concatenate str to str
+
+แก้ได้ 3 ทาง:
+  print("อายุ", age)          ← ใช้ , ปนชนิดได้
+  print("อายุ " + str(age))   ← แปลงเป็น str
+  print(f"อายุ {age}")        ← f-string (นิยมสุด)</pre>
+  </div>
+</div>
+
+<!-- 10 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · เติมคำ</div>
+    <h2 class="slide-title">เติมให้ถูก</h2>
+
+    <div class="exercise">
+      <div class="ex-q">① input() คืนค่ากลับมาเป็นชนิดข้อมูลอะไรเสมอ</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ชนิดข้อมูล">
+        <button class="ex-btn" onclick="checkFill('in1','string',['str','สตริง','ข้อความ'],[],'string (str) เสมอ — จะคำนวณต้อง int() หรือ float() ก่อน','string — แม้ผู้ใช้พิมพ์ตัวเลข ก็ได้ string กลับมา')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">② Python ไม่มีเครื่องหมาย { } บอกบล็อกโค้ด จึงใช้หลักการอะไรแทน</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="หลักการ">
+        <button class="ex-btn" onclick="checkFill('in2','indentation',['การเยื้อง','เยื้องโค้ด','indent','indentation rules'],[],'Indentation Rules (การเยื้องโค้ด) — เยื้องผิดชั้น = คนละบล็อก','Indentation (การเยื้อง) — ใช้ space หรือ tab แต่ห้ามผสมกัน')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">③ เขียนคอมเมนต์หลายบรรทัดใน Python ใช้เครื่องหมายอะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="เครื่องหมาย">
+        <button class="ex-btn" onclick="checkFill('in3',&quot;'''&quot;,['3-single quote','triple quote','สามซิงเกิลโควท','\&quot;\&quot;\&quot;'],['#'],&quot;''' (3-single quote) — ส่วน # ใช้คอมเมนต์บรรทัดเดียว&quot;,&quot;''' (3-single quote) ตามสไลด์ — # ใช้บรรทัดเดียว&quot;)">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 11 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">📘</div>
+      <div class="summary-title">จบติวบทที่ 1 — พื้นฐาน Python</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">ภาษา 3 ระดับ</div><div class="sum-body">เครื่อง (0/1, machine dependent) → Assembly → ระดับสูง (Python)</div></div>
+        <div class="sum-card"><div class="sum-head">กฎ 3 ข้อ</div><div class="sum-body">case-sensitive · comment (# หรือ ''') · indentation แทน { }</div></div>
+        <div class="sum-card"><div class="sum-head">ชนิดข้อมูล</div><div class="sum-body">int float str bool · ไม่ต้องประกาศชนิด (dynamic typing)</div></div>
+        <div class="sum-card"><div class="sum-head">ตั้งชื่อตัวแปร</div><div class="sum-body">ห้ามขึ้นต้นด้วยเลข · ห้ามมีช่องว่าง · ห้ามเป็น reserved word</div></div>
+        <div class="sum-card"><div class="sum-head">input()</div><div class="sum-body">คืน string เสมอ! ต้อง int()/float() ก่อนคำนวณ</div></div>
+        <div class="sum-card"><div class="sum-head">print()</div><div class="sum-body">, ปนชนิดได้ + เว้นวรรคให้ · + ต้อง str ทั้งหมด · f-string สะดวกสุด</div></div>
+      </div>
+      <a href="slides_ch2.html" class="summary-next">→ ติวบทที่ 2: Expression (คำนวณให้ถูกทุกข้อ)</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 1 — พื้นฐาน Python</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ภาษา 3 ระดับ','กฎ 3 ข้อ','ตัวแปร + reserved words','input/output','math module','โจทย์แนวสอบ','เช็คตัวเอง','ข้อสอบ: ตั้งชื่อตัวแปร','ข้อสอบ: str + int','เติมคำ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

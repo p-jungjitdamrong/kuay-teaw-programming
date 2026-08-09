@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ชุดที่ 3 — โจทย์สถานการณ์จริง | ตะลุยโจทย์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#7c2d12;--cal:#fbe9e0;--cam:#c2643a;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.prob{background:#fff;border:1px solid var(--line);border-left:4px solid var(--ca);border-radius:8px;padding:14px 18px;margin:8px 0;font-size:13.5px;line-height:1.8;}
+.prob b{color:var(--ca);}
+.io{font-family:var(--mono);font-size:12.5px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:8px 0;white-space:pre;color:var(--ca);line-height:1.6;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.6;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:5px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);}
+.t td:first-child{font-weight:700;color:var(--ca);}
+.lang{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--ca);color:#fff;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🧗 ก๋วยเตี๋ยวเรือ Programming · ตะลุยโจทย์</div>
+        <div class="cover-title">ชุดที่ 3<br><em>โจทย์สถานการณ์จริง</em></div>
+        <div class="cover-subtitle">ระดับ 3 · โจทย์ยาว เงื่อนไขเยอะ — ฝึกแปลภาษาคนเป็นภาษาโปรแกรม</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 1: ตรวจสอบรหัสผ่านตามกฎ</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 2: คิดค่าไฟฟ้าแบบขั้นบันได</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 3: ระบบจัดคิวร้านอาหาร</div>
+          <div class="topic-row"><div class="topic-dot"></div>ทุกโจทย์: วิธีคิด → ผังงาน → C + Python</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">🥇</div>
+        <div class="cover-badge">3 โจทย์ · C + PYTHON</div>
+        <div class="cover-slides-count">10 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== โจทย์ 1 : โจทย์ ===== -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">ตรวจสอบรหัสผ่านตามกฎ</h2>
+    <div class="prob">
+      <b>โจทย์:</b> รับรหัสผ่าน 1 บรรทัด แล้วตรวจว่า<b>ผ่านทุกกฎ</b>หรือไม่ ถ้าไม่ผ่านให้บอกว่า<b>ผิดกฎข้อไหนบ้าง</b><br>
+      ① ยาวอย่างน้อย 8 ตัวอักษร &nbsp; ② มีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว<br>
+      ③ มีตัวพิมพ์เล็กอย่างน้อย 1 ตัว &nbsp; ④ มีตัวเลขอย่างน้อย 1 ตัว<br>
+      ⑤ ห้ามมีช่องว่าง
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างการทำงาน 1</div>
+        <div class="io">รหัสผ่าน: Kuayteaw2024
+ผลลัพธ์: ผ่าน ✔</div>
+        <div class="code-label" style="margin-top:6px">ตัวอย่างการทำงาน 2</div>
+        <div class="io">รหัสผ่าน: abc123
+ผลลัพธ์: ไม่ผ่าน
+ - สั้นกว่า 8 ตัว
+ - ไม่มีตัวพิมพ์ใหญ่</div>
+        <div class="code-label" style="margin-top:6px">ตัวอย่างการทำงาน 3</div>
+        <div class="io">รหัสผ่าน: Hello World1
+ผลลัพธ์: ไม่ผ่าน
+ - มีช่องว่าง</div>
+      </div>
+      <div>
+        <div class="code-label">แปลกฎเป็น "ตัวแปรธง" (flag)</div>
+        <table class="t">
+          <thead><tr><th>กฎ</th><th>ตัวแปร</th><th>เช็คยังไง</th></tr></thead>
+          <tbody>
+            <tr><td>ยาว ≥ 8</td><td>len(s) &gt;= 8</td><td>เช็คทีเดียวจบ</td></tr>
+            <tr><td>พิมพ์ใหญ่</td><td>hasUp</td><td>'A' &lt;= c &lt;= 'Z'</td></tr>
+            <tr><td>พิมพ์เล็ก</td><td>hasLow</td><td>'a' &lt;= c &lt;= 'z'</td></tr>
+            <tr><td>ตัวเลข</td><td>hasDigit</td><td>'0' &lt;= c &lt;= '9'</td></tr>
+            <tr><td>ไม่มีเว้นวรรค</td><td>hasSpace</td><td>c == ' '</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="cm"># กุญแจของข้อนี้:
+# กฎ 4 ข้อหลังต้อง "ดูทุกตัวอักษร"
+# → วนลูป 1 รอบ เช็คพร้อมกันทั้ง 4 ธง
+# ไม่ใช่วน 4 รอบแยกกัน!</span></pre>
+      </div>
+    </div>
+    <div class="exam">⏸️ <b>หยุดลองเอง</b> — โจทย์ยาวแบบนี้ให้ทำอย่างแรกคือ <b>ขีดเส้นใต้คำว่า "อย่างน้อย" กับ "ห้าม"</b> แล้วแปลงเป็นตัวแปรธงทีละข้อ</div>
+  </div>
+</div>
+
+<!-- โจทย์ 1 : วิธีคิด -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · วิธีคิด</div>
+    <h2 class="slide-title">STEP 2–3: ธงหลายอัน วนรอบเดียว</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">STEP 2 — แตกปัญหา
+  ① รับรหัสผ่านทั้งบรรทัด
+  ② ตั้งธงเริ่มต้นเป็น "ยังไม่เจอ"
+     hasUp = hasLow = hasDigit = 0
+     hasSpace = 0
+  ③ วนดูตัวอักษรทีละตัว
+       ถ้าเป็นพิมพ์ใหญ่ → hasUp = 1
+       ถ้าเป็นพิมพ์เล็ก → hasLow = 1
+       ถ้าเป็นตัวเลข   → hasDigit = 1
+       ถ้าเป็นช่องว่าง → hasSpace = 1
+  ④ สรุปผล: ผ่านเมื่อ
+     len>=8 และ hasUp และ hasLow
+     และ hasDigit และ ไม่ hasSpace
+  ⑤ ถ้าไม่ผ่าน พิมพ์เฉพาะข้อที่ตก</span></pre>
+        <div class="exam">💡 ธง (flag) ตั้งครั้งเดียวตอนต้น แล้ว<b>เปลี่ยนได้ทางเดียว</b> (0→1) เพราะโจทย์ถามแค่ "มีไหม" ไม่ได้ถามว่ามีกี่ตัว</div>
+      </div>
+      <div>
+        <div class="code-label">STEP 3 — ผังงาน</div>
+        <div class="diagram">      ┌──────────┐
+      │  START   │
+      └────┬─────┘
+           ▼
+   ╔═══════════════╗
+   ║ รับ s         ║
+   ╚═══════╤═══════╝
+           ▼
+   ┌───────────────┐
+   │ ธงทั้งหมด = 0 │
+   └───────┬───────┘
+           ▼
+      ╱─────────╲   ไม่
+     ╱ ยังมีตัว   ╲──────┐
+     ╲ อักษรอยู่? ╱      │
+      ╲─────────╱        │
+           │ ใช่         │
+           ▼             │
+   ┌───────────────┐     │
+   │ เช็ค c เข้ากับ│     │
+   │ 4 เงื่อนไข    │     │
+   │ ตั้งธงที่ตรง  │     │
+   └───────┬───────┘     │
+           │ ตัวถัดไป    │
+           └──▲──────────┘
+              │           ▼
+        ╱───────────────────╲
+       ╱ ผ่านครบทุกกฎ?      ╲
+       ╲───────┬─────┬───────╱
+          ใช่  │     │ ไม่
+               ▼     ▼
+        ┌─────────┐ ┌──────────────┐
+        │ "ผ่าน"  │ │ พิมพ์ข้อที่ตก│
+        └────┬────┘ └──────┬───────┘
+             └──────┬──────┘
+                    ▼
+                 ┌─────┐
+                 │ END │
+                 └─────┘</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 1 : เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · เฉลย</div>
+    <h2 class="slide-title">โค้ดเต็ม — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+
+<span class="kw">int</span> main() {
+    <span class="kw">char</span> s[<span class="nu">101</span>];
+    fgets(s, <span class="nu">101</span>, stdin);      <span class="cm">// อ่านทั้งบรรทัด (มีเว้นวรรคได้)</span>
+    <span class="kw">int</span> n = strlen(s);
+    <span class="kw">if</span> (n &gt; <span class="nu">0</span> &amp;&amp; s[n<span class="nu">-1</span>] == <span class="st">'\n'</span>) s[--n] = <span class="st">'\0'</span>; <span class="cm">// ตัด \n ท้าย</span>
+
+    <span class="kw">int</span> hasUp = <span class="nu">0</span>, hasLow = <span class="nu">0</span>, hasDigit = <span class="nu">0</span>, hasSpace = <span class="nu">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; n; i++) {
+        <span class="kw">char</span> c = s[i];
+        <span class="kw">if</span> (c &gt;= <span class="st">'A'</span> &amp;&amp; c &lt;= <span class="st">'Z'</span>) hasUp    = <span class="nu">1</span>;
+        <span class="kw">if</span> (c &gt;= <span class="st">'a'</span> &amp;&amp; c &lt;= <span class="st">'z'</span>) hasLow   = <span class="nu">1</span>;
+        <span class="kw">if</span> (c &gt;= <span class="st">'0'</span> &amp;&amp; c &lt;= <span class="st">'9'</span>) hasDigit = <span class="nu">1</span>;
+        <span class="kw">if</span> (c == <span class="st">' '</span>)             hasSpace = <span class="nu">1</span>;
+    }
+
+    <span class="kw">if</span> (n &gt;= <span class="nu">8</span> &amp;&amp; hasUp &amp;&amp; hasLow &amp;&amp; hasDigit &amp;&amp; !hasSpace) {
+        printf(<span class="st">"ผ่าน\n"</span>);
+    } <span class="kw">else</span> {
+        printf(<span class="st">"ไม่ผ่าน\n"</span>);
+        <span class="kw">if</span> (n &lt; <span class="nu">8</span>)   printf(<span class="st">" - สั้นกว่า 8 ตัว\n"</span>);
+        <span class="kw">if</span> (!hasUp)    printf(<span class="st">" - ไม่มีตัวพิมพ์ใหญ่\n"</span>);
+        <span class="kw">if</span> (!hasLow)   printf(<span class="st">" - ไม่มีตัวพิมพ์เล็ก\n"</span>);
+        <span class="kw">if</span> (!hasDigit) printf(<span class="st">" - ไม่มีตัวเลข\n"</span>);
+        <span class="kw">if</span> (hasSpace)  printf(<span class="st">" - มีช่องว่าง\n"</span>);
+    }
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+        <div class="exam"><b>ทำไมใช้ fgets ไม่ใช่ scanf("%s")?</b> เพราะ <span style="font-family:monospace">scanf("%s")</span> หยุดอ่านที่ช่องว่าง — จะจับกฎ ⑤ ไม่ได้เลย</div>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block">s = input()
+
+hasUp = hasLow = hasDigit = hasSpace = <span class="kw">False</span>
+<span class="kw">for</span> c <span class="kw">in</span> s:
+    <span class="kw">if</span> <span class="st">'A'</span> &lt;= c &lt;= <span class="st">'Z'</span>: hasUp    = <span class="kw">True</span>
+    <span class="kw">if</span> <span class="st">'a'</span> &lt;= c &lt;= <span class="st">'z'</span>: hasLow   = <span class="kw">True</span>
+    <span class="kw">if</span> <span class="st">'0'</span> &lt;= c &lt;= <span class="st">'9'</span>: hasDigit = <span class="kw">True</span>
+    <span class="kw">if</span> c == <span class="st">' '</span>:        hasSpace = <span class="kw">True</span>
+
+<span class="kw">if</span> len(s) &gt;= <span class="nu">8</span> <span class="kw">and</span> hasUp <span class="kw">and</span> hasLow <span class="kw">and</span> hasDigit <span class="kw">and</span> <span class="kw">not</span> hasSpace:
+    print(<span class="st">"ผ่าน"</span>)
+<span class="kw">else</span>:
+    print(<span class="st">"ไม่ผ่าน"</span>)
+    <span class="kw">if</span> len(s) &lt; <span class="nu">8</span>: print(<span class="st">" - สั้นกว่า 8 ตัว"</span>)
+    <span class="kw">if</span> <span class="kw">not</span> hasUp:    print(<span class="st">" - ไม่มีตัวพิมพ์ใหญ่"</span>)
+    <span class="kw">if</span> <span class="kw">not</span> hasLow:   print(<span class="st">" - ไม่มีตัวพิมพ์เล็ก"</span>)
+    <span class="kw">if</span> <span class="kw">not</span> hasDigit: print(<span class="st">" - ไม่มีตัวเลข"</span>)
+    <span class="kw">if</span> hasSpace:   print(<span class="st">" - มีช่องว่าง"</span>)</pre>
+        <div class="code-label">Python มี built-in ให้ (ถ้าโจทย์ไม่ห้าม)</div>
+        <pre class="code-block">hasUp    = <span class="kw">any</span>(c.isupper() <span class="kw">for</span> c <span class="kw">in</span> s)
+hasLow   = <span class="kw">any</span>(c.islower() <span class="kw">for</span> c <span class="kw">in</span> s)
+hasDigit = <span class="kw">any</span>(c.isdigit() <span class="kw">for</span> c <span class="kw">in</span> s)
+hasSpace = <span class="st">' '</span> <span class="kw">in</span> s</pre>
+        <div class="exam"><b>เคสขอบที่ต้องเทสต์:</b> รหัสว่างเปล่า ("") · ยาว 8 พอดี (ต้องผ่าน — ใช้ &gt;= ไม่ใช่ &gt;) · มีแต่ตัวเลข · ช่องว่างอยู่ท้ายสุด</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== โจทย์ 2 : โจทย์ ===== -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">คิดค่าไฟฟ้าแบบขั้นบันได</h2>
+    <div class="prob">
+      <b>โจทย์:</b> รับจำนวนหน่วยไฟฟ้าที่ใช้ (kWh) แล้วคำนวณค่าไฟ โดยคิด<b>แบบขั้นบันได</b> —
+      หน่วยที่อยู่ในแต่ละช่วงคิดราคาของช่วงนั้น <b>ไม่ใช่</b>เอาราคาช่วงเดียวคูณทั้งหมด<br>
+      สุดท้ายบวก <b>VAT 7%</b> แล้วแสดงยอดรวมทศนิยม 2 ตำแหน่ง
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตารางอัตรา</div>
+        <table class="t">
+          <thead><tr><th>ช่วงหน่วย</th><th>บาท/หน่วย</th></tr></thead>
+          <tbody>
+            <tr><td>1 – 150</td><td>3.00</td></tr>
+            <tr><td>151 – 400</td><td>4.00</td></tr>
+            <tr><td>401 ขึ้นไป</td><td>5.00</td></tr>
+          </tbody>
+        </table>
+        <div class="code-label" style="margin-top:6px">ตัวอย่าง 1</div>
+        <div class="io">หน่วย: 100
+100 × 3.00      = 300.00
+VAT 7%          =  21.00
+รวม             = 321.00</div>
+        <div class="code-label" style="margin-top:6px">ตัวอย่าง 2</div>
+        <div class="io">หน่วย: 500
+150 × 3.00      = 450.00
+250 × 4.00      = 1000.00
+100 × 5.00      = 500.00
+ค่าไฟ           = 1950.00
+VAT 7%          = 136.50
+รวม             = 2086.50</div>
+      </div>
+      <div>
+        <div class="code-label">กับดักที่คนพลาดกันทั้งห้อง</div>
+        <pre class="code-block"><span class="cm">// ❌ ผิด — คิดราคาช่วงเดียวทั้งก้อน
+if (u &lt;= 150) cost = u * 3;
+else if (u &lt;= 400) cost = u * 4;   // ผิด!
+else cost = u * 5;                 // ผิด!
+
+// 500 หน่วย จะได้ 2500 ซึ่งเกินจริง
+// เพราะ 150 หน่วยแรกต้องคิด 3 บาท</span></pre>
+        <pre class="code-block"><span class="cm">// ✅ ถูก — คิดทีละชั้น แล้วบวกสะสม
+// ชั้น 1: จำนวนหน่วยในช่วง 1–150
+//         = min(u, 150)
+// ชั้น 2: ถ้า u &gt; 150
+//         = min(u, 400) − 150
+// ชั้น 3: ถ้า u &gt; 400
+//         = u − 400</span></pre>
+        <div class="exam">⏸️ <b>หยุดลองเอง</b> — ลองคำนวณด้วยมือที่ u = 150, u = 151, u = 400, u = 401 ก่อนเขียนโค้ด ถ้ามือทำถูก โค้ดจะถูกตาม</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 2 : วิธีคิด + เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · วิธีคิด + เฉลย</div>
+    <h2 class="slide-title">คิดทีละชั้น แล้วบวกสะสม</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">STEP 2 — แตกปัญหา
+  ① รับ u (หน่วยไฟ)
+  ② cost = 0
+  ③ ชั้น 1: หน่วยในช่วง = min(u,150)
+            cost += หน่วยนั้น × 3
+  ④ ชั้น 2: ถ้า u &gt; 150
+            หน่วย = min(u,400) − 150
+            cost += หน่วยนั้น × 4
+  ⑤ ชั้น 3: ถ้า u &gt; 400
+            หน่วย = u − 400
+            cost += หน่วยนั้น × 5
+  ⑥ vat = cost × 0.07
+  ⑦ พิมพ์ cost + vat ทศนิยม 2 ตำแหน่ง</span></pre>
+        <div class="code-label">ตรวจด้วยมือ (trace)</div>
+        <table class="t">
+          <thead><tr><th>u</th><th>ชั้น1</th><th>ชั้น2</th><th>ชั้น3</th><th>ค่าไฟ</th></tr></thead>
+          <tbody>
+            <tr><td>100</td><td>100</td><td>0</td><td>0</td><td>300.00</td></tr>
+            <tr><td>150</td><td>150</td><td>0</td><td>0</td><td>450.00</td></tr>
+            <tr><td>151</td><td>150</td><td>1</td><td>0</td><td>454.00</td></tr>
+            <tr><td>400</td><td>150</td><td>250</td><td>0</td><td>1450.00</td></tr>
+            <tr><td>500</td><td>150</td><td>250</td><td>100</td><td>1950.00</td></tr>
+          </tbody>
+        </table>
+        <div class="exam"><b>เคสขอบ:</b> u = 0 (ต้องได้ 0.00) · u = 150 กับ 151 ต้องต่างกันแค่ 4 บาท — ถ้าต่างกันเยอะแปลว่าคิดผิดแบบก้อนเดียว</div>
+      </div>
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> main() {
+    <span class="kw">int</span> u;
+    scanf(<span class="st">"%d"</span>, &amp;u);
+
+    <span class="kw">double</span> cost = <span class="nu">0.0</span>;
+    <span class="kw">int</span> t1 = (u &lt; <span class="nu">150</span>) ? u : <span class="nu">150</span>;      <span class="cm">// min(u,150)</span>
+    cost += t1 * <span class="nu">3.0</span>;
+
+    <span class="kw">if</span> (u &gt; <span class="nu">150</span>) {
+        <span class="kw">int</span> hi = (u &lt; <span class="nu">400</span>) ? u : <span class="nu">400</span>;  <span class="cm">// min(u,400)</span>
+        cost += (hi - <span class="nu">150</span>) * <span class="nu">4.0</span>;
+    }
+    <span class="kw">if</span> (u &gt; <span class="nu">400</span>) {
+        cost += (u - <span class="nu">400</span>) * <span class="nu">5.0</span>;
+    }
+
+    <span class="kw">double</span> vat   = cost * <span class="nu">0.07</span>;
+    <span class="kw">double</span> total = cost + vat;
+    printf(<span class="st">"ค่าไฟ = %.2f\n"</span>, cost);
+    printf(<span class="st">"VAT   = %.2f\n"</span>, vat);
+    printf(<span class="st">"รวม   = %.2f\n"</span>, total);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block">u = <span class="kw">int</span>(input())
+
+cost = <span class="nu">0.0</span>
+cost += <span class="kw">min</span>(u, <span class="nu">150</span>) * <span class="nu">3.0</span>
+<span class="kw">if</span> u &gt; <span class="nu">150</span>:
+    cost += (<span class="kw">min</span>(u, <span class="nu">400</span>) - <span class="nu">150</span>) * <span class="nu">4.0</span>
+<span class="kw">if</span> u &gt; <span class="nu">400</span>:
+    cost += (u - <span class="nu">400</span>) * <span class="nu">5.0</span>
+
+vat   = cost * <span class="nu">0.07</span>
+total = cost + vat
+print(<span class="st">f"ค่าไฟ = {cost:.2f}"</span>)
+print(<span class="st">f"VAT   = {vat:.2f}"</span>)
+print(<span class="st">f"รวม   = {total:.2f}"</span>)</pre>
+        <div class="exam"><b>C ไม่มี min()</b> สำหรับ int ในตัว → ใช้ <span style="font-family:monospace">(a&lt;b)?a:b</span> หรือ if ธรรมดา · และต้องคูณด้วย <span style="font-family:monospace">3.0</span> ไม่ใช่ <span style="font-family:monospace">3</span> ไม่งั้นได้ int</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== โจทย์ 3 : โจทย์ ===== -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">ระบบจัดคิวร้านอาหาร</h2>
+    <div class="prob">
+      <b>โจทย์:</b> ร้านมีโต๊ะว่าง <b>T</b> โต๊ะ (1 โต๊ะ = 1 กลุ่ม) มีลูกค้ามาต่อคิว <b>n</b> กลุ่ม เรียงตามลำดับที่มาถึง<br>
+      • กลุ่มที่มาถึงตอนมีโต๊ะว่าง → <b>ได้นั่งทันที</b> (โต๊ะว่างลด 1)<br>
+      • กลุ่มที่มาตอนโต๊ะเต็ม → <b>ต้องรอ</b> เก็บไว้ในคิว<br>
+      • เมื่อกลุ่มไหนกินเสร็จ (ป้อนค่า <b>0</b>) → โต๊ะว่างเพิ่ม 1 และเรียกคิวหน้าสุดเข้าทันที<br>
+      สุดท้ายรายงานว่าใครได้นั่งบ้าง และเหลือใครรออยู่
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">รูปแบบข้อมูลเข้า</div>
+        <pre class="code-block"><span class="cm">บรรทัดที่ 1: T (จำนวนโต๊ะ)
+บรรทัดถัดไป: เหตุการณ์ทีละบรรทัด
+  เลขบวก k = กลุ่มหมายเลข k มาถึง
+  0         = มีโต๊ะหนึ่งกินเสร็จ
+  -1        = จบข้อมูล</span></pre>
+        <div class="code-label" style="margin-top:6px">ตัวอย่างการทำงาน</div>
+        <div class="io">T = 2
+เหตุการณ์: 1 2 3 4 0 0 -1
+
+กลุ่ม 1 → ได้โต๊ะ (ว่างเหลือ 1)
+กลุ่ม 2 → ได้โต๊ะ (ว่างเหลือ 0)
+กลุ่ม 3 → เต็ม เข้าคิว [3]
+กลุ่ม 4 → เต็ม เข้าคิว [3,4]
+เสร็จ 1 โต๊ะ → เรียกกลุ่ม 3 เข้า
+เสร็จ 1 โต๊ะ → เรียกกลุ่ม 4 เข้า
+
+ได้นั่ง: 1 2 3 4
+ยังรอ : (ไม่มี)</div>
+      </div>
+      <div>
+        <div class="code-label">แก่นของข้อนี้ = คิว (Queue)</div>
+        <pre class="code-block"><span class="cm">คิว = เข้าท้าย ออกหน้า (FIFO)
+  First In, First Out
+  = มาก่อน ได้ก่อน — ตรงกับ
+    ความยุติธรรมของร้านอาหารพอดี
+
+เก็บด้วยอาร์เรย์ + 2 ตัวชี้:
+  head = ตำแหน่งคนหน้าสุด
+  tail = ตำแหน่งที่จะใส่คนใหม่
+
+  เข้าคิว : q[tail] = k; tail++
+  ออกคิว : k = q[head]; head++
+  คิวว่าง : head == tail
+  จำนวนที่รอ : tail − head</span></pre>
+        <div class="diagram">        head        tail
+          ↓           ↓
+  q = [ _, 3, 4, _, _ ]
+        ออก        เข้า</div>
+        <div class="exam">⏸️ <b>หยุดลองเอง</b> — โจทย์นี้ยาว แต่แก่นมีแค่ 2 การกระทำ: <b>คนมา</b> (มีที่ว่างไหม?) กับ <b>คนออก</b> (มีคนรอไหม?) ที่เหลือคือรายละเอียด</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 3 : วิธีคิด + เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · วิธีคิด + เฉลย</div>
+    <h2 class="slide-title">คนมา / คนออก — แค่ 2 กรณี</h2>
+    <div class="two-col">
+      <div>
+        <pre class="code-block"><span class="cm">STEP 2 — แตกปัญหา
+  ① รับ T, ตั้ง free = T
+  ② วนอ่านเหตุการณ์จนเจอ −1
+  ③ ถ้าเป็นเลขบวก k (คนมา):
+       ถ้า free &gt; 0 → นั่งเลย, free−−
+       ไม่งั้น      → เข้าคิว
+  ④ ถ้าเป็น 0 (คนออก):
+       ถ้าคิวไม่ว่าง → ดึงหน้าสุดเข้านั่ง
+       ไม่งั้น       → free++
+  ⑤ จบ: พิมพ์คนที่ได้นั่ง และคิวที่เหลือ</span></pre>
+        <div class="exam">💡 <b>จุดที่คนพลาด</b> ที่ขั้น ④ — พอมีคนออก อย่ารีบ <span style="font-family:monospace">free++</span> ทันที ต้องเช็คคิวก่อน ถ้ามีคนรอ โต๊ะนั้นถูกใช้ต่อทันที free เท่าเดิม</div>
+        <div class="code-label">ผังงานย่อ</div>
+        <div class="diagram">   อ่าน e
+      │
+      ▼
+  ╱────────╲  ใช่   ┌──────────┐
+ ╱ e == −1  ╲──────▶│ สรุปผล   │
+ ╲          ╱       └──────────┘
+  ╲────────╱
+      │ ไม่
+      ▼
+  ╱────────╲ ใช่  ╱──────────╲ ใช่ ┌────────┐
+ ╱  e &gt; 0   ╲────▶╱ free &gt; 0  ╲───▶│ นั่งเลย│
+ ╲          ╱     ╲           ╱    │ free−− │
+  ╲────────╱       ╲─────────╱     └────────┘
+      │ ไม่ (e==0)      │ ไม่
+      ▼                 ▼
+  ╱──────────╲     ┌──────────┐
+ ╱ คิวมีคน?   ╲    │ เข้าคิว  │
+ ╲            ╱    └──────────┘
+  ╲──────────╱
+   ใช่│   │ไม่
+      ▼   ▼
+ ┌────────┐ ┌────────┐
+ │ดึงคิวเข้า│ │ free++ │
+ └────────┘ └────────┘</div>
+      </div>
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> main() {
+    <span class="kw">int</span> T;
+    scanf(<span class="st">"%d"</span>, &amp;T);
+    <span class="kw">int</span> free_tb = T;
+
+    <span class="kw">int</span> q[<span class="nu">1000</span>], head = <span class="nu">0</span>, tail = <span class="nu">0</span>;   <span class="cm">// คิว</span>
+    <span class="kw">int</span> seated[<span class="nu">1000</span>], sc = <span class="nu">0</span>;           <span class="cm">// คนที่ได้นั่ง</span>
+
+    <span class="kw">int</span> e;
+    <span class="kw">while</span> (scanf(<span class="st">"%d"</span>, &amp;e) == <span class="nu">1</span> &amp;&amp; e != <span class="nu">-1</span>) {
+        <span class="kw">if</span> (e &gt; <span class="nu">0</span>) {                      <span class="cm">// คนมา</span>
+            <span class="kw">if</span> (free_tb &gt; <span class="nu">0</span>) {
+                free_tb--;
+                seated[sc++] = e;
+                printf(<span class="st">"กลุ่ม %d ได้โต๊ะ (ว่างเหลือ %d)\n"</span>, e, free_tb);
+            } <span class="kw">else</span> {
+                q[tail++] = e;
+                printf(<span class="st">"กลุ่ม %d เต็ม เข้าคิว (รอ %d)\n"</span>, e, tail - head);
+            }
+        } <span class="kw">else</span> <span class="kw">if</span> (e == <span class="nu">0</span>) {               <span class="cm">// คนออก</span>
+            <span class="kw">if</span> (head &lt; tail) {              <span class="cm">// คิวไม่ว่าง</span>
+                <span class="kw">int</span> k = q[head++];
+                seated[sc++] = k;
+                printf(<span class="st">"เรียกกลุ่ม %d เข้า\n"</span>, k);
+            } <span class="kw">else</span> {
+                free_tb++;
+                printf(<span class="st">"โต๊ะว่างเพิ่ม (ว่าง %d)\n"</span>, free_tb);
+            }
+        }
+    }
+
+    printf(<span class="st">"ได้นั่ง:"</span>);
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; sc; i++) printf(<span class="st">" %d"</span>, seated[i]);
+    printf(<span class="st">"\nยังรอ :"</span>);
+    <span class="kw">if</span> (head == tail) printf(<span class="st">" (ไม่มี)"</span>);
+    <span class="kw">for</span> (<span class="kw">int</span> i = head; i &lt; tail; i++) printf(<span class="st">" %d"</span>, q[i]);
+    printf(<span class="st">"\n"</span>);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block">T = <span class="kw">int</span>(input())
+free_tb = T
+q = []          <span class="cm"># คิว: เข้าท้าย ออกหน้า</span>
+seated = []
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    e = <span class="kw">int</span>(input())
+    <span class="kw">if</span> e == <span class="nu">-1</span>:
+        <span class="kw">break</span>
+    <span class="kw">if</span> e &gt; <span class="nu">0</span>:                       <span class="cm"># คนมา</span>
+        <span class="kw">if</span> free_tb &gt; <span class="nu">0</span>:
+            free_tb -= <span class="nu">1</span>
+            seated.append(e)
+            print(<span class="st">f"กลุ่ม {e} ได้โต๊ะ (ว่างเหลือ {free_tb})"</span>)
+        <span class="kw">else</span>:
+            q.append(e)
+            print(<span class="st">f"กลุ่ม {e} เต็ม เข้าคิว (รอ {len(q)})"</span>)
+    <span class="kw">elif</span> e == <span class="nu">0</span>:                    <span class="cm"># คนออก</span>
+        <span class="kw">if</span> q:
+            k = q.pop(<span class="nu">0</span>)             <span class="cm"># ดึงหน้าสุด = FIFO</span>
+            seated.append(k)
+            print(<span class="st">f"เรียกกลุ่ม {k} เข้า"</span>)
+        <span class="kw">else</span>:
+            free_tb += <span class="nu">1</span>
+            print(<span class="st">f"โต๊ะว่างเพิ่ม (ว่าง {free_tb})"</span>)
+
+print(<span class="st">"ได้นั่ง:"</span>, *seated)
+print(<span class="st">"ยังรอ :"</span>, *q <span class="kw">if</span> q <span class="kw">else</span> [<span class="st">"(ไม่มี)"</span>])</pre>
+        <div class="exam"><b>Python มี <span style="font-family:monospace">q.pop(0)</span> ให้ใช้เลย</b> แต่ใน C ต้องทำเอง — และวิธี head++ เร็วกว่าการเลื่อนอาร์เรย์ทั้งแถวทุกครั้ง</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💪</div>
+      <div class="think-label">โจทย์ท้าทาย</div>
+      <div class="think-q">ลองทำเองแบบไม่มีเฉลย<br><br>
+<div style="background:var(--cal);padding:14px 20px;border-radius:8px;display:inline-block;text-align:left;font-size:13.5px;line-height:1.8;max-width:660px">
+<b>โจทย์:</b> ร้านเดิม แต่เพิ่มเงื่อนไข <b>"กลุ่ม VIP ลัดคิวได้"</b><br>
+รับข้อมูลเป็นคู่: <span style="font-family:monospace">หมายเลขกลุ่ม ประเภท</span> โดยประเภท 1 = VIP, 0 = ทั่วไป<br>
+VIP ที่มาทีหลังต้องได้นั่งก่อนคนทั่วไปที่รออยู่ แต่ต้องไม่แซง VIP ที่มาก่อนตัวเอง<br>
+<span style="font-family:monospace;font-size:12px;color:var(--ca)">คิว [ท1, ท2] แล้ว VIP มา → คิวเป็น [VIP, ท1, ท2]</span>
+</div><br><br>
+<em>ใบ้: มี 2 ทางเลือก<br>
+① ใช้ <b>2 คิวแยกกัน</b> — คิว VIP กับคิวทั่วไป เวลาเรียกให้ดู VIP ก่อนเสมอ (ง่ายกว่ามาก)<br>
+② ใช้คิวเดียวแต่แทรกตำแหน่ง — ต้องเลื่อนสมาชิก ยุ่งกว่า<br><br>
+เลือกวิธี ① แล้วเทสต์เคสขอบ: VIP มาตอนคิวว่าง · VIP ล้วน · ทั่วไปล้วน</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🥇</div>
+      <div class="summary-title">จบชุดที่ 3 — โจทย์สถานการณ์จริง</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">โจทย์ 1 รหัสผ่าน</div><div class="sum-body">กฎหลายข้อ → ตัวแปรธงหลายตัว → วนรอบเดียวตั้งธงพร้อมกัน แล้วค่อยสรุป</div></div>
+        <div class="sum-card"><div class="sum-head">โจทย์ 2 ค่าไฟ</div><div class="sum-body">ขั้นบันไดต้องคิด<b>ทีละชั้นแล้วบวกสะสม</b> ไม่ใช่คูณราคาช่วงเดียวทั้งก้อน</div></div>
+        <div class="sum-card"><div class="sum-head">โจทย์ 3 คิวร้าน</div><div class="sum-body">FIFO เข้าท้ายออกหน้า · C ใช้ head/tail · Python ใช้ pop(0)</div></div>
+        <div class="sum-card"><div class="sum-head">วิธีอ่านโจทย์ยาว</div><div class="sum-body">ขีดเส้นใต้ตัวเลข เงื่อนไข และคำว่า "อย่างน้อย/ห้าม/ทีละ" แล้วแปลงเป็นตัวแปรทีละคำ</div></div>
+        <div class="sum-card"><div class="sum-head">ทำมือก่อนเสมอ</div><div class="sum-body">ถ้าคำนวณด้วยมือที่ค่าขอบยังไม่ได้ อย่าเพิ่งเขียนโค้ด — จะดีบักไม่จบ</div></div>
+        <div class="sum-card"><div class="sum-head">เคสขอบประจำ</div><div class="sum-body">ค่า 0 · ค่าตรงเส้นแบ่งพอดี (150 vs 151) · ข้อมูลว่าง · ทุกอย่างเต็ม</div></div>
+      </div>
+      <a href="index.html" class="summary-next">→ กลับหน้าวิชาตะลุยโจทย์</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 10</span>
+      <span class="nav-chapter" id="chapterLabel">ชุดที่ 3 — โจทย์สถานการณ์จริง</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','① โจทย์รหัสผ่าน','① วิธีคิด + ผังงาน','① เฉลย C + Python','② โจทย์ค่าไฟขั้นบันได','② วิธีคิด + เฉลย','③ โจทย์คิวร้านอาหาร','③ วิธีคิด + เฉลย','โจทย์ท้าทาย','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

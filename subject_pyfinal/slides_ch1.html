@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 1 — List | ติวสอบ Python Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#4d7c0f;--cal:#eef7dc;--cam:#84b83c;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:6px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);}
+.t td:first-child{font-weight:700;color:var(--ca);}
+.box{display:flex;gap:3px;margin:8px 0;flex-wrap:wrap}
+.cell{border:1.5px solid var(--cam);background:var(--cal);border-radius:6px;padding:6px 4px;text-align:center;font-family:var(--mono);min-width:52px}
+.cell .v{font-size:14px;font-weight:700;color:var(--ca)}
+.cell .i{font-size:10px;color:var(--dim)}
+.cell .n{font-size:10px;color:#c0392b}
+.out{font-family:var(--mono);font-size:13px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:6px 0;white-space:pre;color:var(--ca);}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ติวสอบ Final · Computers &amp; Programming</div>
+        <div class="cover-title">ติวบทที่ 1<br><em>List</em></div>
+        <div class="cover-subtitle">lecture 8 · เก็บข้อมูลหลายตัวในตัวแปรเดียว — index เริ่มที่ 0 เสมอ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>สร้าง list + เข้าถึงด้วย index (เริ่ม 0!)</div>
+          <div class="topic-row"><div class="topic-dot"></div>index ติดลบ — นับจากท้าย</div>
+          <div class="topic-row"><div class="topic-dot"></div>slice [start:stop] — ไม่รวม stop</div>
+          <div class="topic-row"><div class="topic-dot"></div>methods: append insert remove pop sort</div>
+          <div class="topic-row"><div class="topic-dot"></div>วน list + โจทย์หาผลรวม/มากสุด</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">F1</div>
+        <div class="cover-badge">index เริ่ม 0</div>
+        <div class="cover-slides-count">13 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 สร้าง + index -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · พื้นฐาน</div>
+    <h2 class="slide-title">สร้าง List และเข้าถึงด้วย index</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">สร้าง list</div>
+        <pre class="code-block">scores = [<span class="nm">85</span>, <span class="nm">90</span>, <span class="nm">78</span>, <span class="nm">92</span>, <span class="nm">65</span>]
+names  = [<span class="st">"Ann"</span>, <span class="st">"Bob"</span>, <span class="st">"Cat"</span>]
+mixed  = [<span class="nm">1</span>, <span class="st">"a"</span>, <span class="nm">3.5</span>, <span class="kw">True</span>]  <span class="cm"># ปนชนิดได้!</span>
+empty  = []                    <span class="cm"># list ว่าง</span></pre>
+        <div class="code-label" style="margin-top:8px">เข้าถึงสมาชิก</div>
+        <pre class="code-block">scores[<span class="nm">0</span>]    <span class="cm"># 85  ← ตัวแรก index 0</span>
+scores[<span class="nm">2</span>]    <span class="cm"># 78</span>
+scores[<span class="nm">4</span>]    <span class="cm"># 65  ← ตัวสุดท้าย</span>
+scores[<span class="nm">5</span>]    <span class="cm"># ❌ IndexError!</span>
+
+<span class="fn">len</span>(scores)  <span class="cm"># 5  จำนวนสมาชิก</span>
+scores[<span class="fn">len</span>(scores)-<span class="nm">1</span>]  <span class="cm"># 65 ตัวสุดท้าย</span></pre>
+      </div>
+      <div>
+        <div class="code-label">แผนภาพ index</div>
+        <div class="box">
+          <div class="cell"><div class="v">85</div><div class="i">0</div><div class="n">−5</div></div>
+          <div class="cell"><div class="v">90</div><div class="i">1</div><div class="n">−4</div></div>
+          <div class="cell"><div class="v">78</div><div class="i">2</div><div class="n">−3</div></div>
+          <div class="cell"><div class="v">92</div><div class="i">3</div><div class="n">−2</div></div>
+          <div class="cell"><div class="v">65</div><div class="i">4</div><div class="n">−1</div></div>
+        </div>
+        <pre class="code-block"><span class="cm"># index ติดลบ = นับจากท้าย</span>
+scores[-<span class="nm">1</span>]   <span class="cm"># 65  ตัวสุดท้าย ← ใช้บ่อย!</span>
+scores[-<span class="nm">2</span>]   <span class="cm"># 92  ตัวรองสุดท้าย</span>
+scores[-<span class="nm">5</span>]   <span class="cm"># 85  = scores[0]</span></pre>
+        <pre class="code-block"><span class="cm"># แก้ค่าได้ (list เปลี่ยนแปลงได้)</span>
+scores[<span class="nm">0</span>] = <span class="nm">100</span>
+<span class="fn">print</span>(scores)
+<span class="cm"># [100, 90, 78, 92, 65]</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดหลอกอันดับ 1 ของครึ่งหลัง:</b> <b>index เริ่มที่ 0</b> — list มี 5 ตัว index คือ 0–4 ไม่ใช่ 1–5 · <code class="inline-code">scores[5]</code> = <b>IndexError</b> · ตัวสุดท้ายคือ <code class="inline-code">[-1]</code> หรือ <code class="inline-code">[len(list)-1]</code></div>
+  </div>
+</div>
+
+<!-- 2 slice -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · Slice</div>
+    <h2 class="slide-title">Slice [start:stop] — ตัดเป็นช่วง</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">รูปแบบ</div>
+        <pre class="code-block">a = [<span class="nm">10</span>, <span class="nm">20</span>, <span class="nm">30</span>, <span class="nm">40</span>, <span class="nm">50</span>]
+<span class="cm">#     0    1    2    3    4</span>
+
+a[<span class="nm">1</span>:<span class="nm">4</span>]     <span class="cm"># [20,30,40]  ← ไม่รวม index 4!</span>
+a[<span class="nm">0</span>:<span class="nm">3</span>]     <span class="cm"># [10,20,30]</span>
+a[:<span class="nm">3</span>]      <span class="cm"># [10,20,30]  เว้นหน้า = เริ่มที่ 0</span>
+a[<span class="nm">2</span>:]      <span class="cm"># [30,40,50]  เว้นหลัง = ถึงท้าย</span>
+a[:]       <span class="cm"># [10,20,30,40,50] ทั้งหมด</span>
+a[-<span class="nm">2</span>:]     <span class="cm"># [40,50]  2 ตัวท้าย</span></pre>
+        <pre class="code-block"><span class="cm"># มี step ด้วย [start:stop:step]</span>
+a[::<span class="nm">2</span>]     <span class="cm"># [10,30,50]  เว้นตัว</span>
+a[::-<span class="nm">1</span>]    <span class="cm"># [50,40,30,20,10] กลับด้าน!</span></pre>
+      </div>
+      <div>
+        <div class="code-label">กฎเดียวที่ต้องจำ</div>
+        <pre class="code-block"><span class="cm"># a[start:stop]
+#   รวม start
+#   ไม่รวม stop
+# → จำนวนสมาชิก = stop − start</span>
+
+a[<span class="nm">1</span>:<span class="nm">4</span>]  <span class="cm"># ได้ 4−1 = 3 ตัว</span></pre>
+        <div class="box" style="margin-top:8px">
+          <div class="cell" style="opacity:.35"><div class="v">10</div><div class="i">0</div></div>
+          <div class="cell" style="background:var(--ca)"><div class="v" style="color:#fff">20</div><div class="i" style="color:#dbe9c0">1</div></div>
+          <div class="cell" style="background:var(--ca)"><div class="v" style="color:#fff">30</div><div class="i" style="color:#dbe9c0">2</div></div>
+          <div class="cell" style="background:var(--ca)"><div class="v" style="color:#fff">40</div><div class="i" style="color:#dbe9c0">3</div></div>
+          <div class="cell" style="opacity:.35"><div class="v">50</div><div class="i">4</div></div>
+        </div>
+        <pre class="code-block"><span class="cm"># slice ไม่พังแม้เกินขอบเขต</span>
+a[<span class="nm">1</span>:<span class="nm">100</span>]  <span class="cm"># [20,30,40,50] ไม่ error!</span>
+a[<span class="nm">100</span>]    <span class="cm"># ❌ IndexError (เข้าถึงตัวเดียวพัง)</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เหมือน range() เป๊ะ:</b> <code class="inline-code">a[1:4]</code> ได้ index 1,2,3 <b>ไม่รวม 4</b> — กฎ "ไม่รวมตัวสุดท้าย" ใช้ทั้ง range และ slice · และ <code class="inline-code">a[::-1]</code> กลับด้าน list เป็นท่าที่ออกสอบบ่อย</div>
+  </div>
+</div>
+
+<!-- 3 methods -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · Methods</div>
+    <h2 class="slide-title">List Methods ที่ต้องรู้จัก</h2>
+    <table class="t">
+      <thead><tr><th style="width:24%">Method</th><th>ทำอะไร</th><th>ตัวอย่าง (a = [1,2,3])</th></tr></thead>
+      <tbody>
+        <tr><td>append(x)</td><td>เพิ่มต่อท้าย</td><td>a.append(4) → [1,2,3,4]</td></tr>
+        <tr><td>insert(i, x)</td><td>แทรกที่ตำแหน่ง i</td><td>a.insert(0,9) → [9,1,2,3]</td></tr>
+        <tr><td>remove(x)</td><td>ลบตัวที่มี<b>ค่า</b> x (ตัวแรก)</td><td>a.remove(2) → [1,3]</td></tr>
+        <tr><td>pop(i)</td><td>ลบตาม<b>ตำแหน่ง</b> + คืนค่า</td><td>a.pop(0) → คืน 1, a=[2,3]</td></tr>
+        <tr><td>pop()</td><td>ลบตัวท้าย + คืนค่า</td><td>a.pop() → คืน 3, a=[1,2]</td></tr>
+        <tr><td>sort()</td><td>เรียงน้อย→มาก (แก้ตัวเดิม)</td><td>[3,1,2].sort() → [1,2,3]</td></tr>
+        <tr><td>reverse()</td><td>กลับลำดับ</td><td>a.reverse() → [3,2,1]</td></tr>
+        <tr><td>index(x)</td><td>หาตำแหน่งของค่า x</td><td>a.index(2) → 1</td></tr>
+        <tr><td>count(x)</td><td>นับว่ามีค่า x กี่ตัว</td><td>[1,2,2].count(2) → 2</td></tr>
+        <tr><td>clear()</td><td>ล้างทั้งหมด</td><td>a.clear() → []</td></tr>
+      </tbody>
+    </table>
+    <div class="exam"><b>คู่ที่สับสนที่สุด:</b> <code class="inline-code">remove(2)</code> ลบตัวที่<b>มีค่าเป็น 2</b> · <code class="inline-code">pop(2)</code> ลบตัวที่<b>อยู่ตำแหน่ง 2</b> — ข้อสอบชอบให้ list มาแล้วถามผลของสองตัวนี้</div>
+  </div>
+</div>
+
+<!-- 4 sort vs sorted -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · จุดหลอก</div>
+    <h2 class="slide-title">sort() vs sorted() + method คืนค่าอะไร</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">sort() — แก้ list เดิม คืน None</div>
+        <pre class="code-block">a = [<span class="nm">3</span>, <span class="nm">1</span>, <span class="nm">2</span>]
+a.<span class="fn">sort</span>()
+<span class="fn">print</span>(a)          <span class="cm"># [1,2,3] ✓</span>
+
+<span class="cm"># ❌ ผิดที่คนพลาดมาก</span>
+b = a.<span class="fn">sort</span>()
+<span class="fn">print</span>(b)          <span class="cm"># None !!</span>
+<span class="cm"># เพราะ sort() ไม่คืน list
+# มันแก้ตัวเดิมแล้วคืน None</span></pre>
+        <div class="code-label" style="margin-top:8px">sorted() — สร้างใหม่ ไม่แตะเดิม</div>
+        <pre class="code-block">a = [<span class="nm">3</span>, <span class="nm">1</span>, <span class="nm">2</span>]
+b = <span class="fn">sorted</span>(a)
+<span class="fn">print</span>(a)   <span class="cm"># [3,1,2] เดิมไม่เปลี่ยน</span>
+<span class="fn">print</span>(b)   <span class="cm"># [1,2,3] ตัวใหม่</span></pre>
+      </div>
+      <div>
+        <div class="code-label">เรียงมากไปน้อย</div>
+        <pre class="code-block">a.<span class="fn">sort</span>(reverse=<span class="kw">True</span>)   <span class="cm"># [3,2,1]</span>
+<span class="fn">sorted</span>(a, reverse=<span class="kw">True</span>)  <span class="cm"># [3,2,1]</span></pre>
+        <div class="code-label" style="margin-top:8px">method ที่คืน None (แก้ตัวเดิม)</div>
+        <pre class="code-block">append() insert() remove()
+sort()   reverse() clear()
+<span class="cm"># ทั้งหมดคืน None → ห้ามเอาไปรับค่า!</span>
+
+<span class="cm"># method ที่คืนค่าจริง</span>
+pop()      <span class="cm"># คืนตัวที่ถูกลบ</span>
+index()    <span class="cm"># คืนตำแหน่ง</span>
+count()    <span class="cm"># คืนจำนวน</span>
+<span class="fn">len</span>() <span class="fn">sum</span>() <span class="fn">max</span>() <span class="fn">min</span>()  <span class="cm"># built-in</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>กฎจำง่าย:</b> method ที่<b>แก้ list เดิม</b> (append/sort/remove...) คืน <code class="inline-code">None</code> — เขียน <code class="inline-code">a = a.sort()</code> แล้ว a จะกลายเป็น None ทันที (bug ที่หาไม่เจอ)</div>
+  </div>
+</div>
+
+<!-- 5 วน list -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · วน list</div>
+    <h2 class="slide-title">วน list 2 วิธี + built-in ที่ช่วยได้</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① วนค่าตรงๆ (นิยม)</div>
+        <pre class="code-block">scores = [<span class="nm">85</span>, <span class="nm">90</span>, <span class="nm">78</span>]
+
+<span class="kw">for</span> s <span class="kw">in</span> scores:
+    <span class="fn">print</span>(s)
+<span class="cm"># 85 / 90 / 78</span></pre>
+        <div class="code-label" style="margin-top:6px">② วนด้วย index (เมื่อต้องรู้ตำแหน่ง)</div>
+        <pre class="code-block"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(scores)):
+    <span class="fn">print</span>(i, scores[i])
+<span class="cm"># 0 85 / 1 90 / 2 78</span>
+
+<span class="cm"># ต้องแก้ค่าใน list → ต้องใช้แบบนี้</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(scores)):
+    scores[i] += <span class="nm">5</span>      <span class="cm">✓ แก้ได้</span>
+
+<span class="kw">for</span> s <span class="kw">in</span> scores:
+    s += <span class="nm">5</span>              <span class="cm">❌ ไม่เปลี่ยน list!</span></pre>
+      </div>
+      <div>
+        <div class="code-label">built-in ที่ใช้กับ list</div>
+        <pre class="code-block">a = [<span class="nm">85</span>, <span class="nm">90</span>, <span class="nm">78</span>, <span class="nm">92</span>]
+
+<span class="fn">len</span>(a)     <span class="cm"># 4    จำนวนสมาชิก</span>
+<span class="fn">sum</span>(a)     <span class="cm"># 345  ผลรวม</span>
+<span class="fn">max</span>(a)     <span class="cm"># 92   มากสุด</span>
+<span class="fn">min</span>(a)     <span class="cm"># 78   น้อยสุด</span>
+<span class="fn">sum</span>(a)/<span class="fn">len</span>(a)  <span class="cm"># 86.25 เฉลี่ย</span>
+
+<span class="nm">90</span> <span class="kw">in</span> a    <span class="cm"># True  มีไหม</span>
+<span class="nm">99</span> <span class="kw">in</span> a    <span class="cm"># False</span></pre>
+        <div class="code-label" style="margin-top:6px">โจทย์คลาสสิก — เขียนเองไม่ใช้ built-in</div>
+        <pre class="code-block">total = <span class="nm">0</span>
+mx = a[<span class="nm">0</span>]           <span class="cm"># เริ่มที่ตัวแรก!</span>
+<span class="kw">for</span> x <span class="kw">in</span> a:
+    total += x
+    <span class="kw">if</span> x &gt; mx:
+        mx = x
+<span class="fn">print</span>(total, mx, total/<span class="fn">len</span>(a))</pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดหลอก:</b> วนแบบ <code class="inline-code">for s in scores: s += 5</code> <b>ไม่เปลี่ยน list</b> เพราะ s เป็นแค่สำเนาค่า — ถ้าต้องแก้ค่าใน list ต้องวนด้วย index แล้วเขียน <code class="inline-code">scores[i] += 5</code></div>
+  </div>
+</div>
+
+<!-- 6 use case -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · โจทย์แนวสอบ</div>
+    <h2 class="slide-title">โจทย์ที่ออกบ่อย — เขียนให้ได้ทั้ง 3 ข้อ</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① รับคะแนน n คน แล้วสรุป</div>
+        <pre class="code-block">n = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"จำนวนคน: "</span>))
+scores = []                      <span class="cm"># list ว่าง</span>
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+    s = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">f"คะแนนคนที่ </span>{i+<span class="nm">1</span>}<span class="st">: "</span>))
+    scores.<span class="fn">append</span>(s)          <span class="cm"># เพิ่มเข้า list</span>
+
+<span class="fn">print</span>(<span class="st">"รวม   ="</span>, <span class="fn">sum</span>(scores))
+<span class="fn">print</span>(<span class="st">"เฉลี่ย ="</span>, <span class="fn">sum</span>(scores)/<span class="fn">len</span>(scores))
+<span class="fn">print</span>(<span class="st">"สูงสุด ="</span>, <span class="fn">max</span>(scores))
+<span class="fn">print</span>(<span class="st">"ต่ำสุด ="</span>, <span class="fn">min</span>(scores))</pre>
+      </div>
+      <div>
+        <div class="code-label">② นับเฉพาะที่เข้าเงื่อนไข</div>
+        <pre class="code-block">scores = [<span class="nm">85</span>, <span class="nm">45</span>, <span class="nm">90</span>, <span class="nm">60</span>, <span class="nm">30</span>]
+passed = <span class="nm">0</span>
+<span class="kw">for</span> s <span class="kw">in</span> scores:
+    <span class="kw">if</span> s &gt;= <span class="nm">50</span>:
+        passed += <span class="nm">1</span>
+<span class="fn">print</span>(<span class="st">f"ผ่าน </span>{passed}<span class="st">/</span>{<span class="fn">len</span>(scores)}<span class="st"> คน"</span>)
+<span class="cm"># ผ่าน 3/5 คน</span></pre>
+        <div class="code-label" style="margin-top:6px">③ แยกเป็น 2 list</div>
+        <pre class="code-block">nums = [<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>,<span class="nm">5</span>,<span class="nm">6</span>]
+even = []
+odd  = []
+<span class="kw">for</span> x <span class="kw">in</span> nums:
+    <span class="kw">if</span> x % <span class="nm">2</span> == <span class="nm">0</span>:
+        even.<span class="fn">append</span>(x)
+    <span class="kw">else</span>:
+        odd.<span class="fn">append</span>(x)
+<span class="fn">print</span>(even, odd)
+<span class="cm"># [2,4,6] [1,3,5]</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>โครงมาตรฐาน:</b> สร้าง list ว่าง → วนรับค่า → <code class="inline-code">append()</code> → วนประมวลผล/ใช้ built-in — เกือบทุกโจทย์ list ใช้โครงนี้</div>
+  </div>
+</div>
+
+<!-- 7 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">a = [10, 20, 30, 40, 50]<br>ตอบให้ครบทุกข้อ<br><br>
+<code style="font-family:monospace;font-size:14px;background:var(--cal);padding:12px 20px;border-radius:8px;display:inline-block;text-align:left;line-height:2">
+a[1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ?<br>
+a[-1]&nbsp;&nbsp;&nbsp;&nbsp;= ?<br>
+a[1:3]&nbsp;&nbsp;&nbsp;= ?<br>
+len(a)&nbsp;&nbsp;&nbsp;= ?<br>
+a[5]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ?
+</code><br><br>
+<em>ใบ้: index เริ่ม 0 · ติดลบนับจากท้าย ·<br>
+slice ไม่รวมตัวสุดท้าย · list มี 5 ตัว index สูงสุดคือ?</em><br><br>
+<span style="font-size:12px;color:var(--dim)">เฉลย: 20 · 50 · [20,30] · 5 · IndexError</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 8 MCQ1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · ลองข้อสอบ</div>
+    <h2 class="slide-title">a = [1,2,3,4,5] แล้ว a[1:4] ได้อะไร?</h2>
+    <div class="mc-opts" id="mc-li1">
+      <div class="mc-opt" onclick="pickMC('mc-li1',0,1,'[1,2,3,4] คือ a[0:4] — slice เริ่มที่ index 1 ไม่ใช่ 0')"><span class="mc-ltr">A</span> [1, 2, 3, 4]</div>
+      <div class="mc-opt" onclick="pickMC('mc-li1',1,1,'a[1:4] = index 1,2,3 → [2,3,4] · รวม start ไม่รวม stop ✓')"><span class="mc-ltr">B</span> [2, 3, 4]</div>
+      <div class="mc-opt" onclick="pickMC('mc-li1',2,1,'[2,3,4,5] คือ a[1:5] — โจทย์ให้ stop=4 จึงไม่รวม index 4 (ค่า 5)')"><span class="mc-ltr">C</span> [2, 3, 4, 5]</div>
+      <div class="mc-opt" onclick="pickMC('mc-li1',3,1,'slice คืน list เสมอ ไม่ใช่ค่าเดียว — ที่คืนค่าเดียวคือ a[1]')"><span class="mc-ltr">D</span> 2</div>
+    </div>
+    <div class="ex-feedback" id="mc-li1-fb"></div>
+    <pre class="code-block" style="margin-top:12px">a = [1, 2, 3, 4, 5]
+index  0  1  2  3  4
+
+a[1:4] → รวม index 1, 2, 3 (<b>ไม่รวม 4</b>) → [2, 3, 4]
+จำนวนสมาชิก = stop − start = 4 − 1 = 3 ตัว</pre>
+  </div>
+</div>
+
+<!-- 9 MCQ2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · ลองข้อสอบ</div>
+    <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
+    <pre class="code-block" style="margin-bottom:14px">a = [<span class="nm">5</span>, <span class="nm">3</span>, <span class="nm">1</span>]
+b = a.<span class="fn">sort</span>()
+<span class="fn">print</span>(b)</pre>
+    <div class="mc-opts" id="mc-li2">
+      <div class="mc-opt" onclick="pickMC('mc-li2',0,2,'a จะกลายเป็น [1,3,5] จริง แต่ b ไม่ได้รับค่านั้น เพราะ sort() ไม่คืน list')"><span class="mc-ltr">A</span> [1, 3, 5]</div>
+      <div class="mc-opt" onclick="pickMC('mc-li2',1,2,'sort() เรียงจริง แต่คำถามคือค่าของ b ไม่ใช่ a')"><span class="mc-ltr">B</span> [5, 3, 1]</div>
+      <div class="mc-opt" onclick="pickMC('mc-li2',2,2,'sort() แก้ list เดิมแล้วคืน None → b = None · ถ้าอยากได้ list ใหม่ต้องใช้ sorted(a)')"><span class="mc-ltr">C</span> None</div>
+      <div class="mc-opt" onclick="pickMC('mc-li2',3,2,'ไม่ error — โค้ดรันได้ปกติ แค่ b มีค่าเป็น None')"><span class="mc-ltr">D</span> Error</div>
+    </div>
+    <div class="ex-feedback" id="mc-li2-fb"></div>
+    <pre class="code-block" style="margin-top:12px">a.sort()  → แก้ a เป็น [1,3,5] แล้ว<b>คืน None</b>  → b = None
+
+ถ้าอยากได้ list ใหม่:  b = sorted(a)   ✓
+method ที่แก้ตัวเดิมและคืน None: append() insert() remove() sort() reverse() clear()</pre>
+  </div>
+</div>
+
+<!-- 10 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 1 · เติมคำ</div>
+    <h2 class="slide-title">เติมให้ถูก</h2>
+
+    <div class="exercise">
+      <div class="ex-q">① เพิ่มสมาชิกต่อท้าย list ใช้ method ชื่ออะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ชื่อ method">
+        <button class="ex-btn" onclick="checkFill('in1','append',['append()'],['add'],'append(x) — เพิ่มต่อท้าย · ถ้าอยากแทรกตำแหน่งอื่นใช้ insert(i, x)','append() — Python ใช้ append ไม่ใช่ add (add เป็นของ set)')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">② a = [10,20,30] ต้องการเข้าถึงตัวสุดท้าย เขียนได้ 2 แบบคืออะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="เขียนยังไง">
+        <button class="ex-btn" onclick="checkFill('in2','a[-1]',['a[-1] หรือ a[len(a)-1]','a[len(a)-1]','a[2]'],[],'a[-1] (นับจากท้าย) หรือ a[len(a)-1] — ทั้งคู่ได้ 30','a[-1] หรือ a[len(a)-1] — index ติดลบนับจากท้าย')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">③ remove(2) กับ pop(2) ต่างกันอย่างไร (ตอบสั้นๆ)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="ต่างกันยังไง">
+        <button class="ex-btn" onclick="checkFill('in3','remove ลบตามค่า pop ลบตามตำแหน่ง',['remove ลบค่า pop ลบตำแหน่ง','remove=ค่า pop=ตำแหน่ง','remove ตามค่า pop ตามตำแหน่ง','remove ใช้ค่า pop ใช้ index'],[],'remove(2) ลบตัวที่มีค่า 2 · pop(2) ลบตัวที่ index 2 และคืนค่านั้นกลับมา','remove ลบตาม "ค่า" · pop ลบตาม "ตำแหน่ง" (index) และคืนค่ากลับมาด้วย')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 11 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">📋</div>
+      <div class="summary-title">จบติวบทที่ 1 — List</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">index</div><div class="sum-body">เริ่มที่ <b>0</b> · ตัวสุดท้าย = [−1] หรือ [len−1] · เกิน = IndexError</div></div>
+        <div class="sum-card"><div class="sum-head">slice</div><div class="sum-body">a[start:stop] รวม start ไม่รวม stop · a[::−1] กลับด้าน</div></div>
+        <div class="sum-card"><div class="sum-head">เพิ่ม/ลบ</div><div class="sum-body">append ต่อท้าย · insert แทรก · remove ตาม<b>ค่า</b> · pop ตาม<b>ตำแหน่ง</b></div></div>
+        <div class="sum-card"><div class="sum-head">sort vs sorted</div><div class="sum-body">sort() แก้ตัวเดิมคืน <b>None</b> · sorted() สร้างใหม่</div></div>
+        <div class="sum-card"><div class="sum-head">วน list</div><div class="sum-body">for x in a (อ่านอย่างเดียว) · for i in range(len(a)) (ต้องแก้ค่า)</div></div>
+        <div class="sum-card"><div class="sum-head">built-in</div><div class="sum-body">len sum max min · <code class="inline-code">x in a</code> เช็คว่ามีไหม</div></div>
+      </div>
+      <a href="slides_ch2.html" class="summary-next">→ ติวบทที่ 2: Dictionary &amp; String</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 12</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 1 — List</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','สร้าง + index','Slice','Methods','sort vs sorted','วน list','โจทย์แนวสอบ','เช็คตัวเอง','ข้อสอบ: slice','ข้อสอบ: sort()','เติมคำ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

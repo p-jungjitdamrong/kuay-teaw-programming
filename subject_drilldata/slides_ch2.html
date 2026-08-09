@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ชุดที่ 2 — Stack &amp; Queue | ตะลุยโจทย์ Data Structures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#14532d;--cal:#e3f2e7;--cam:#3d8f5b;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.prob{background:#fff;border:1px solid var(--line);border-left:4px solid var(--ca);border-radius:8px;padding:14px 18px;margin:8px 0;font-size:13.5px;line-height:1.8;}
+.prob b{color:var(--ca);}
+.io{font-family:var(--mono);font-size:12.5px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:8px 0;white-space:pre;color:var(--ca);line-height:1.6;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.6;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:5px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);}
+.t td:first-child{font-weight:700;color:var(--ca);}
+.lang{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--ca);color:#fff;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🧩 ตะลุยโจทย์ Data Structures</div>
+        <div class="cover-title">ชุดที่ 2<br><em>Stack &amp; Queue</em></div>
+        <div class="cover-subtitle">ระดับ 2 · โครงสร้างที่กติกาเรียบง่ายที่สุด แต่โจทย์หลอกได้เยอะที่สุด</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 1: ตรวจวงเล็บสมดุล</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 2: Infix → Postfix แล้วคำนวณ</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 3: Circular Queue เต็ม/ว่างยังไง</div>
+          <div class="topic-row"><div class="topic-dot"></div>ทุกโจทย์: วิธีคิด → ผังงาน → C + Python</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">🥞</div>
+        <div class="cover-badge">3 โจทย์ · C + PYTHON</div>
+        <div class="cover-slides-count">9 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">ตรวจวงเล็บสมดุล</h2>
+    <div class="prob">
+      <b>โจทย์:</b> รับข้อความ 1 บรรทัดที่มีวงเล็บ 3 ชนิด <span style="font-family:monospace">( ) [ ] { }</span>
+      ตรวจว่า<b>เปิด-ปิดครบและซ้อนกันถูกต้อง</b>หรือไม่ ถ้าไม่ถูกให้บอก<b>ตำแหน่งที่ผิด</b>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">input : {[a+(b*c)]-d}
+output: สมดุล ✔
+
+input : (a+[b*c)]
+output: ไม่สมดุล ที่ตำแหน่ง 8
+        (เจอ ) แต่ตัวบนสุดคือ [ )
+
+input : ((a+b)
+output: ไม่สมดุล — มีวงเล็บเปิดค้าง
+
+input : a+b)
+output: ไม่สมดุล ที่ตำแหน่ง 4
+        (เจอ ) แต่ stack ว่าง)</div>
+        <div class="exam">⏸️ <b>หยุดคิดก่อน</b> — ทำไมนับจำนวน <span style="font-family:monospace">(</span> เท่ากับ <span style="font-family:monospace">)</span> อย่างเดียวถึงไม่พอ? ลองกับ <span style="font-family:monospace">)a(</span> ดู — นับได้เท่ากันทั้งคู่ แต่ผิดชัดๆ</div>
+      </div>
+      <div>
+        <div class="prob"><b>ทำไมต้องใช้ Stack?</b><br>
+        เพราะวงเล็บที่<b>เปิดหลังสุด ต้องปิดก่อน</b> เสมอ — นี่คือนิยามของ LIFO (Last In, First Out) ตรงตัว<br>
+        <span style="font-family:monospace">{ [ ( ) ] }</span> → ปิด ( ก่อน แล้ว ] แล้ว }</div>
+        <div class="code-label">เดินด้วยมือ: {[a+(b*c)]-d}</div>
+        <div class="diagram">อ่าน  stack       หมายเหตุ
+ {    {           push
+ [    { [         push
+ a    { [
+ +    { [
+ (    { [ (       push
+ b*c  { [ (
+ )    { [         pop เจอ ( → คู่กัน ✔
+ ]    {           pop เจอ [ → คู่กัน ✔
+ -d   {
+ }    (ว่าง)      pop เจอ { → คู่กัน ✔
+
+จบข้อความ stack ว่าง → สมดุล ✔</div>
+        <div class="exam">📌 <b>3 จุดที่ต้องเช็ค — ตกข้อไหนก็ไม่สมดุล:</b><br>
+        ① เจอตัวปิดตอน stack ว่าง<br>
+        ② เจอตัวปิดที่ไม่เข้าคู่กับตัวบนสุด<br>
+        ③ อ่านจบแล้ว stack ยังไม่ว่าง</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 1 วิธีคิด + เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · วิธีคิด + เฉลย</div>
+    <h2 class="slide-title">เจอเปิดใส่ เจอปิดเอาออก</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ผังงาน</div>
+        <div class="diagram">   ┌──────────┐
+   │  START   │
+   └────┬─────┘
+        ▼
+  ┌──────────────┐
+  │ top = −1     │
+  │ (stack ว่าง) │
+  └──────┬───────┘
+         ▼
+    ╱─────────╲  ไม่  ╱────────────╲
+   ╱ ยังมีตัว   ╲────▶╱ stack ว่าง? ╲
+   ╲ อักษร?    ╱      ╲────┬───┬────╱
+    ╲─────────╱        ใช่ │   │ ไม่
+         │ ใช่             ▼   ▼
+         ▼            ┌──────┐┌────────┐
+   ╱───────────╲ ใช่  │สมดุล ││เปิดค้าง│
+  ╱ เป็นตัวเปิด?╲──┐  └──────┘└────────┘
+  ╲            ╱   ▼
+   ╲──────────╱  ┌──────┐
+         │ ไม่   │ push │
+         ▼       └──┬───┘
+   ╱───────────╲    │
+  ╱ เป็นตัวปิด? ╲───┼─(ไม่)─┐
+  ╲            ╱    │       │
+   ╲──────────╱     │       │
+         │ ใช่      │       │
+         ▼          │       │
+  ╱─────────────╲   │       │
+ ╱ ว่าง? หรือ    ╲  │       │
+ ╲ ไม่เข้าคู่?   ╱  │       │
+  ╲─────────────╱   │       │
+    ใช่│    │ไม่    │       │
+       ▼    ▼       │       │
+ ┌────────┐┌─────┐  │       │
+ │แจ้งผิด ││ pop │  │       │
+ │  END   │└──┬──┘  │       │
+ └────────┘   └─────┴───────┴──▶ ตัวถัดไป</div>
+      </div>
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+
+<span class="kw">int</span> main() {
+    <span class="kw">char</span> s[<span class="nu">201</span>];
+    fgets(s, <span class="nu">201</span>, stdin);
+
+    <span class="kw">char</span> st[<span class="nu">201</span>];
+    <span class="kw">int</span> top = <span class="nu">-1</span>;          <span class="cm">// −1 = stack ว่าง</span>
+    <span class="kw">int</span> bad = <span class="nu">0</span>;
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; s[i] != <span class="st">'\0'</span> &amp;&amp; s[i] != <span class="st">'\n'</span>; i++) {
+        <span class="kw">char</span> c = s[i];
+
+        <span class="kw">if</span> (c == <span class="st">'('</span> || c == <span class="st">'['</span> || c == <span class="st">'{'</span>) {
+            st[++top] = c;                <span class="cm">// push</span>
+        }
+        <span class="kw">else</span> <span class="kw">if</span> (c == <span class="st">')'</span> || c == <span class="st">']'</span> || c == <span class="st">'}'</span>) {
+            <span class="kw">if</span> (top == <span class="nu">-1</span>) {            <span class="cm">// จุดเช็ค ①</span>
+                printf(<span class="st">"ไม่สมดุล ที่ตำแหน่ง %d\n"</span>, i + <span class="nu">1</span>);
+                bad = <span class="nu">1</span>; <span class="kw">break</span>;
+            }
+            <span class="kw">char</span> o = st[top];
+            <span class="kw">int</span> ok = (o == <span class="st">'('</span> &amp;&amp; c == <span class="st">')'</span>)
+                  || (o == <span class="st">'['</span> &amp;&amp; c == <span class="st">']'</span>)
+                  || (o == <span class="st">'{'</span> &amp;&amp; c == <span class="st">'}'</span>);
+            <span class="kw">if</span> (!ok) {                    <span class="cm">// จุดเช็ค ②</span>
+                printf(<span class="st">"ไม่สมดุล ที่ตำแหน่ง %d\n"</span>, i + <span class="nu">1</span>);
+                bad = <span class="nu">1</span>; <span class="kw">break</span>;
+            }
+            top--;                        <span class="cm">// pop</span>
+        }
+    }
+
+    <span class="kw">if</span> (!bad) {
+        <span class="kw">if</span> (top == <span class="nu">-1</span>) printf(<span class="st">"สมดุล\n"</span>);       <span class="cm">// จุดเช็ค ③</span>
+        <span class="kw">else</span>          printf(<span class="st">"ไม่สมดุล — มีวงเล็บเปิดค้าง\n"</span>);
+    }
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block">s = input()
+pair = {<span class="st">')'</span>: <span class="st">'('</span>, <span class="st">']'</span>: <span class="st">'['</span>, <span class="st">'}'</span>: <span class="st">'{'</span>}
+st  = []
+bad = <span class="kw">False</span>
+
+<span class="kw">for</span> i, c <span class="kw">in</span> enumerate(s):
+    <span class="kw">if</span> c <span class="kw">in</span> <span class="st">"([{"</span>:
+        st.append(c)
+    <span class="kw">elif</span> c <span class="kw">in</span> <span class="st">")]}"</span>:
+        <span class="kw">if</span> <span class="kw">not</span> st <span class="kw">or</span> st[<span class="nu">-1</span>] != pair[c]:
+            print(<span class="st">f"ไม่สมดุล ที่ตำแหน่ง {i+1}"</span>)
+            bad = <span class="kw">True</span>
+            <span class="kw">break</span>
+        st.pop()
+
+<span class="kw">if</span> <span class="kw">not</span> bad:
+    print(<span class="st">"สมดุล"</span> <span class="kw">if</span> <span class="kw">not</span> st <span class="kw">else</span> <span class="st">"ไม่สมดุล — มีวงเล็บเปิดค้าง"</span>)</pre>
+        <div class="exam">💡 <b>Python ใช้ dict เก็บคู่วงเล็บ</b> ทำให้ไม่ต้องเขียน if ยาว 3 บรรทัด · ใน C ถ้าอยากสั้นก็ทำ array คู่กันได้เหมือนกัน</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">แปลง Infix → Postfix แล้วคำนวณ</h2>
+    <div class="prob">
+      <b>โจทย์:</b> รับนิพจน์แบบ <b>infix</b> (แบบที่คนเขียน เช่น <span style="font-family:monospace">3+4*2</span>)
+      แปลงเป็น <b>postfix</b> (แบบที่เครื่องคำนวณง่าย เช่น <span style="font-family:monospace">342*+</span>) แล้วคำนวณผลลัพธ์<br>
+      รองรับ <span style="font-family:monospace">+ − * /</span> และวงเล็บ · ตัวเลขหลักเดียว
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">input : 3+4*2
+postfix: 3 4 2 * +
+ผลลัพธ์: 11
+
+input : (3+4)*2
+postfix: 3 4 + 2 *
+ผลลัพธ์: 14
+
+input : 8/2-3
+postfix: 8 2 / 3 -
+ผลลัพธ์: 1</div>
+        <div class="code-label" style="margin-top:6px">ทำไม postfix ถึงมีประโยชน์</div>
+        <div class="prob">postfix <b>ไม่ต้องมีวงเล็บเลย</b> และไม่ต้องจำลำดับความสำคัญ — อ่านซ้ายไปขวาแล้วคำนวณได้ตรงๆ ด้วย stack เดียว นี่คือวิธีที่<b>คอมไพเลอร์และเครื่องคิดเลขจริงใช้</b></div>
+        <div class="exam">📌 <b>ตารางลำดับความสำคัญ</b><br>
+        <span style="font-family:monospace">* /</span> = 2 (สูง) &nbsp;·&nbsp; <span style="font-family:monospace">+ −</span> = 1 (ต่ำ) &nbsp;·&nbsp; <span style="font-family:monospace">(</span> = 0 (ต่ำสุด กันไม่ให้ pop ทะลุ)</div>
+      </div>
+      <div>
+        <div class="code-label">กติกาการแปลง — 4 ข้อ</div>
+        <table class="t">
+          <thead><tr><th>เจอ</th><th>ทำอะไร</th></tr></thead>
+          <tbody>
+            <tr><td>ตัวเลข</td><td>พิมพ์ออกผลลัพธ์เลย</td></tr>
+            <tr><td>(</td><td>push ลง stack</td></tr>
+            <tr><td>)</td><td>pop พิมพ์จนเจอ ( แล้วทิ้ง (</td></tr>
+            <tr><td>ตัวดำเนินการ</td><td>pop พิมพ์ตัวที่<b>ระดับ ≥</b> ตัวใหม่ ออกก่อน แล้วค่อย push ตัวใหม่</td></tr>
+          </tbody>
+        </table>
+        <div class="code-label">เดินด้วยมือ: 3+4*2</div>
+        <div class="diagram">อ่าน  stack   ผลลัพธ์
+ 3    (ว่าง)  3
+ +    +       3
+ 4    +       3 4
+ *    + *     3 4      (* สูงกว่า + → push)
+ 2    + *     3 4 2
+จบ    (ว่าง)  3 4 2 * +  (pop ทั้งหมด)</div>
+        <div class="code-label">เทียบ: (3+4)*2</div>
+        <div class="diagram">อ่าน  stack   ผลลัพธ์
+ (    (       —
+ 3    (       3
+ +    ( +     3
+ 4    ( +     3 4
+ )    (ว่าง)  3 4 +     (pop จนเจอ ()
+ *    *       3 4 +
+ 2    *       3 4 + 2
+จบ    (ว่าง)  3 4 + 2 *</div>
+        <div class="exam">⏸️ <b>หยุดลองเอง</b> — ลองแปลง <span style="font-family:monospace">2*(3+4)/7</span> ด้วยมือ (เฉลย: <span style="font-family:monospace">2 3 4 + * 7 /</span>)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 2 เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · เฉลย</div>
+    <h2 class="slide-title">โค้ดเต็ม — แปลง + คำนวณ</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;ctype.h&gt;</span>
+
+<span class="kw">int</span> prec(<span class="kw">char</span> op) {
+    <span class="kw">if</span> (op == <span class="st">'*'</span> || op == <span class="st">'/'</span>) <span class="kw">return</span> <span class="nu">2</span>;
+    <span class="kw">if</span> (op == <span class="st">'+'</span> || op == <span class="st">'-'</span>) <span class="kw">return</span> <span class="nu">1</span>;
+    <span class="kw">return</span> <span class="nu">0</span>;                     <span class="cm">// '(' ต่ำสุด</span>
+}
+
+<span class="kw">int</span> main() {
+    <span class="kw">char</span> s[<span class="nu">201</span>], post[<span class="nu">201</span>], st[<span class="nu">201</span>];
+    <span class="kw">int</span> top = <span class="nu">-1</span>, k = <span class="nu">0</span>;
+    scanf(<span class="st">"%s"</span>, s);
+
+    <span class="cm">// ---- ท่อน 1: แปลง infix → postfix ----</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; s[i]; i++) {
+        <span class="kw">char</span> c = s[i];
+        <span class="kw">if</span> (isdigit(c)) {
+            post[k++] = c;
+        } <span class="kw">else</span> <span class="kw">if</span> (c == <span class="st">'('</span>) {
+            st[++top] = c;
+        } <span class="kw">else</span> <span class="kw">if</span> (c == <span class="st">')'</span>) {
+            <span class="kw">while</span> (top &gt;= <span class="nu">0</span> &amp;&amp; st[top] != <span class="st">'('</span>)
+                post[k++] = st[top--];
+            top--;                     <span class="cm">// ทิ้ง '('</span>
+        } <span class="kw">else</span> {                       <span class="cm">// + − * /</span>
+            <span class="kw">while</span> (top &gt;= <span class="nu">0</span> &amp;&amp; prec(st[top]) &gt;= prec(c))
+                post[k++] = st[top--];
+            st[++top] = c;
+        }
+    }
+    <span class="kw">while</span> (top &gt;= <span class="nu">0</span>) post[k++] = st[top--];
+    post[k] = <span class="st">'\0'</span>;
+    printf(<span class="st">"postfix: %s\n"</span>, post);
+
+    <span class="cm">// ---- ท่อน 2: คำนวณ postfix ----</span>
+    <span class="kw">int</span> num[<span class="nu">201</span>], t2 = <span class="nu">-1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; post[i]; i++) {
+        <span class="kw">char</span> c = post[i];
+        <span class="kw">if</span> (isdigit(c)) {
+            num[++t2] = c - <span class="st">'0'</span>;
+        } <span class="kw">else</span> {
+            <span class="kw">int</span> b = num[t2--];       <span class="cm">// ตัวหลังออกก่อน!</span>
+            <span class="kw">int</span> a = num[t2--];
+            <span class="kw">int</span> r = <span class="nu">0</span>;
+            <span class="kw">if</span> (c == <span class="st">'+'</span>) r = a + b;
+            <span class="kw">if</span> (c == <span class="st">'-'</span>) r = a - b;
+            <span class="kw">if</span> (c == <span class="st">'*'</span>) r = a * b;
+            <span class="kw">if</span> (c == <span class="st">'/'</span>) r = a / b;
+            num[++t2] = r;
+        }
+    }
+    printf(<span class="st">"ผลลัพธ์: %d\n"</span>, num[t2]);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block"><span class="kw">def</span> prec(op):
+    <span class="kw">if</span> op <span class="kw">in</span> <span class="st">"*/"</span>: <span class="kw">return</span> <span class="nu">2</span>
+    <span class="kw">if</span> op <span class="kw">in</span> <span class="st">"+-"</span>: <span class="kw">return</span> <span class="nu">1</span>
+    <span class="kw">return</span> <span class="nu">0</span>
+
+s = input()
+st, post = [], []
+
+<span class="cm"># ---- ท่อน 1: แปลง ----</span>
+<span class="kw">for</span> c <span class="kw">in</span> s:
+    <span class="kw">if</span> c.isdigit():
+        post.append(c)
+    <span class="kw">elif</span> c == <span class="st">'('</span>:
+        st.append(c)
+    <span class="kw">elif</span> c == <span class="st">')'</span>:
+        <span class="kw">while</span> st <span class="kw">and</span> st[<span class="nu">-1</span>] != <span class="st">'('</span>:
+            post.append(st.pop())
+        st.pop()                <span class="cm"># ทิ้ง '('</span>
+    <span class="kw">else</span>:
+        <span class="kw">while</span> st <span class="kw">and</span> prec(st[<span class="nu">-1</span>]) &gt;= prec(c):
+            post.append(st.pop())
+        st.append(c)
+
+<span class="kw">while</span> st:
+    post.append(st.pop())
+
+print(<span class="st">"postfix:"</span>, <span class="st">" "</span>.join(post))
+
+<span class="cm"># ---- ท่อน 2: คำนวณ ----</span>
+num = []
+<span class="kw">for</span> c <span class="kw">in</span> post:
+    <span class="kw">if</span> c.isdigit():
+        num.append(<span class="kw">int</span>(c))
+    <span class="kw">else</span>:
+        b = num.pop()           <span class="cm"># ตัวหลังออกก่อน!</span>
+        a = num.pop()
+        <span class="kw">if</span>   c == <span class="st">'+'</span>: num.append(a + b)
+        <span class="kw">elif</span> c == <span class="st">'-'</span>: num.append(a - b)
+        <span class="kw">elif</span> c == <span class="st">'*'</span>: num.append(a * b)
+        <span class="kw">elif</span> c == <span class="st">'/'</span>: num.append(a // b)
+
+print(<span class="st">"ผลลัพธ์:"</span>, num[<span class="nu">-1</span>])</pre>
+        <div class="exam">⚠️ <b>จุดที่พลาดกันมากที่สุดของข้อนี้</b> — ตอนคำนวณ pop สองตัว ตัวที่ pop ออก<b>ตัวแรกคือตัวขวา (b)</b> ไม่ใช่ตัวซ้าย ถ้าสลับ <span style="font-family:monospace">8 2 /</span> จะได้ 0.25 แทนที่จะเป็น 4</div>
+        <div class="exam"><b>ทำไมเงื่อนไขเป็น <span style="font-family:monospace">&gt;=</span> ไม่ใช่ <span style="font-family:monospace">&gt;</span>?</b> เพราะ <span style="font-family:monospace">8-3-2</span> ต้องคิดจากซ้ายไปขวา ถ้าใช้ &gt; จะได้ <span style="font-family:monospace">8 3 2 - -</span> = 7 ซึ่งผิด (ที่ถูกคือ 3)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 3 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · โจทย์ + ตัวอย่าง</div>
+    <h2 class="slide-title">Circular Queue — เต็มกับว่างต่างกันตรงไหน</h2>
+    <div class="prob">
+      <b>โจทย์:</b> สร้าง <b>Circular Queue</b> ขนาด <b>5 ช่อง</b> ที่รองรับ <span style="font-family:monospace">enqueue</span> / <span style="font-family:monospace">dequeue</span>
+      โดยใช้อาร์เรย์ธรรมดา และต้อง<b>วนกลับมาใช้ช่องที่ว่างแล้วได้</b> พร้อมตรวจสถานะเต็ม/ว่างให้ถูกต้อง
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ทำไมต้องวน — ปัญหาของคิวธรรมดา</div>
+        <div class="diagram">คิวธรรมดา ขนาด 5, enqueue 5 ตัว
+แล้ว dequeue 3 ตัว:
+
+  [_][_][_][D][E]
+            ↑front  ↑rear
+  ช่อง 0-2 ว่างแต่<b>ใช้ไม่ได้</b>
+  เพราะ rear เดินหน้าอย่างเดียว
+  → เสียพื้นที่ไปเปล่าๆ
+
+Circular Queue แก้ด้วย:
+  rear = (rear + 1) % SIZE
+  front = (front + 1) % SIZE
+  ← พอถึงท้ายก็วนกลับช่อง 0</div>
+        <div class="code-label">ตัวอย่างการทำงาน (SIZE = 5)</div>
+        <div class="io">enqueue A B C D  → [A][B][C][D][_]
+                    f=0        r=3
+dequeue x2       → [_][_][C][D][_]
+                          f=2  r=3
+enqueue E F      → [F][_][C][D][E]
+                    r=0  f=2
+  ← F วนกลับไปช่อง 0 แล้ว!
+enqueue G        → คิวเต็ม ใส่ไม่ได้</div>
+      </div>
+      <div>
+        <div class="prob"><b>ปัญหาคลาสสิกของข้อนี้:</b><br>
+        ถ้าใช้แค่ front กับ rear เฉยๆ → เวลา<b>คิวว่าง</b>กับ<b>คิวเต็ม</b> ค่า front กับ rear จะอยู่ตำแหน่งเดียวกันพอดี แยกไม่ออก!</div>
+        <div class="code-label">2 วิธีแก้ที่ใช้กันจริง</div>
+        <table class="t">
+          <thead><tr><th>วิธี</th><th>เต็มเมื่อ</th><th>ว่างเมื่อ</th></tr></thead>
+          <tbody>
+            <tr><td>นับจำนวน (count)</td><td>count == SIZE</td><td>count == 0</td></tr>
+            <tr><td>เว้น 1 ช่อง</td><td>(r+1)%N == f</td><td>r == f</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">💡 <b>แนะนำวิธี count</b> สำหรับสอบ — เข้าใจง่ายกว่า ใช้ได้ครบทุกช่อง และไม่ต้องจำสูตร <span style="font-family:monospace">(r+1)%N</span> ให้สับสน<br>
+        ส่วนวิธี "เว้น 1 ช่อง" ต้องแลกด้วยการ<b>เสียไป 1 ช่องเสมอ</b> (ขนาด 5 ใส่ได้จริง 4)</div>
+        <div class="exam">⏸️ <b>หยุดลองเอง</b> — ลองตอบว่า ถ้า SIZE=5, front=3, rear=2, count=4 ตอนนี้คิวมีข้อมูลอยู่ช่องไหนบ้าง? (เฉลย: ช่อง 3, 4, 0, 1 — วนจาก front ไป 4 ตัว)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 3 เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · เฉลย</div>
+    <h2 class="slide-title">โค้ดเต็ม — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#define</span> SIZE <span class="nu">5</span>
+
+<span class="kw">int</span> q[SIZE];
+<span class="kw">int</span> front = <span class="nu">0</span>, rear = <span class="nu">-1</span>, cnt = <span class="nu">0</span>;
+
+<span class="kw">int</span> isFull()  { <span class="kw">return</span> cnt == SIZE; }
+<span class="kw">int</span> isEmpty() { <span class="kw">return</span> cnt == <span class="nu">0</span>; }
+
+<span class="kw">void</span> enqueue(<span class="kw">int</span> v) {
+    <span class="kw">if</span> (isFull()) {
+        printf(<span class="st">"คิวเต็ม ใส่ %d ไม่ได้\n"</span>, v);
+        <span class="kw">return</span>;
+    }
+    rear = (rear + <span class="nu">1</span>) % SIZE;    <span class="cm">// หัวใจของ circular</span>
+    q[rear] = v;
+    cnt++;
+    printf(<span class="st">"ใส่ %d ที่ช่อง %d (มี %d ตัว)\n"</span>, v, rear, cnt);
+}
+
+<span class="kw">int</span> dequeue() {
+    <span class="kw">if</span> (isEmpty()) {
+        printf(<span class="st">"คิวว่าง\n"</span>);
+        <span class="kw">return</span> <span class="nu">-1</span>;
+    }
+    <span class="kw">int</span> v = q[front];
+    front = (front + <span class="nu">1</span>) % SIZE;  <span class="cm">// วนเหมือนกัน</span>
+    cnt--;
+    printf(<span class="st">"เอา %d ออก (เหลือ %d ตัว)\n"</span>, v, cnt);
+    <span class="kw">return</span> v;
+}
+
+<span class="kw">void</span> show() {
+    printf(<span class="st">"คิวตอนนี้:"</span>);
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; cnt; i++)
+        printf(<span class="st">" %d"</span>, q[(front + i) % SIZE]);
+    printf(<span class="st">"\n"</span>);
+}
+
+<span class="kw">int</span> main() {
+    enqueue(<span class="nu">1</span>); enqueue(<span class="nu">2</span>); enqueue(<span class="nu">3</span>); enqueue(<span class="nu">4</span>);
+    dequeue(); dequeue();
+    enqueue(<span class="nu">5</span>); enqueue(<span class="nu">6</span>);   <span class="cm">// วนกลับช่อง 0</span>
+    show();
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block">SIZE = <span class="nu">5</span>
+
+<span class="kw">class</span> CircularQueue:
+    <span class="kw">def</span> __init__(self, size=SIZE):
+        self.size  = size
+        self.q     = [<span class="kw">None</span>] * size
+        self.front = <span class="nu">0</span>
+        self.rear  = <span class="nu">-1</span>
+        self.cnt   = <span class="nu">0</span>
+
+    <span class="kw">def</span> is_full(self):  <span class="kw">return</span> self.cnt == self.size
+    <span class="kw">def</span> is_empty(self): <span class="kw">return</span> self.cnt == <span class="nu">0</span>
+
+    <span class="kw">def</span> enqueue(self, v):
+        <span class="kw">if</span> self.is_full():
+            print(<span class="st">f"คิวเต็ม ใส่ {v} ไม่ได้"</span>)
+            <span class="kw">return</span>
+        self.rear = (self.rear + <span class="nu">1</span>) % self.size
+        self.q[self.rear] = v
+        self.cnt += <span class="nu">1</span>
+        print(<span class="st">f"ใส่ {v} ที่ช่อง {self.rear} (มี {self.cnt} ตัว)"</span>)
+
+    <span class="kw">def</span> dequeue(self):
+        <span class="kw">if</span> self.is_empty():
+            print(<span class="st">"คิวว่าง"</span>)
+            <span class="kw">return</span> <span class="kw">None</span>
+        v = self.q[self.front]
+        self.front = (self.front + <span class="nu">1</span>) % self.size
+        self.cnt -= <span class="nu">1</span>
+        print(<span class="st">f"เอา {v} ออก (เหลือ {self.cnt} ตัว)"</span>)
+        <span class="kw">return</span> v
+
+    <span class="kw">def</span> show(self):
+        items = [self.q[(self.front + i) % self.size]
+                 <span class="kw">for</span> i <span class="kw">in</span> range(self.cnt)]
+        print(<span class="st">"คิวตอนนี้:"</span>, *items)
+
+cq = CircularQueue()
+<span class="kw">for</span> v <span class="kw">in</span> [<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>, <span class="nu">4</span>]: cq.enqueue(v)
+cq.dequeue(); cq.dequeue()
+cq.enqueue(<span class="nu">5</span>); cq.enqueue(<span class="nu">6</span>)
+cq.show()</pre>
+        <div class="exam">🔑 <b>สูตรที่ต้องจำ 3 บรรทัด</b><br>
+        <span style="font-family:monospace">rear = (rear+1) % SIZE</span> — ตอนใส่<br>
+        <span style="font-family:monospace">front = (front+1) % SIZE</span> — ตอนเอาออก<br>
+        <span style="font-family:monospace">q[(front+i) % SIZE]</span> — ตอนไล่ดูข้อมูล<br>
+        ทั้งหมดคือ <b>% SIZE</b> เท่านั้น — จำแค่นี้ก็ทำข้อนี้ได้</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ตรวจความเข้าใจ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ตรวจความเข้าใจ</div>
+    <h2 class="slide-title">4 ข้อรวบยอด</h2>
+    <div class="two-col">
+      <div>
+        <div class="exercise">
+          <div class="ex-q">1) ข้อความ <span style="font-family:monospace">{(a)}]</span> ผิดที่จุดเช็คข้อไหน?</div>
+          <div class="mc-opts" id="q1">
+            <div class="mc-opt" onclick="pickMC('q1',0,0,'ถูก! อ่านถึง ] แล้ว stack ว่างพอดี = เจอตัวปิดตอน stack ว่าง')"><span class="mc-ltr">A</span>เจอตัวปิดตอน stack ว่าง</div>
+            <div class="mc-opt" onclick="pickMC('q1',1,0,'ตัว { ( ) } จับคู่กันครบถูกต้องหมดแล้ว')"><span class="mc-ltr">B</span>ตัวปิดไม่เข้าคู่กับตัวบนสุด</div>
+            <div class="mc-opt" onclick="pickMC('q1',2,0,'ไม่ใช่ — stack ว่างพอดีตอนอ่านจบ ปัญหาอยู่ที่ ] ที่เกินมา')"><span class="mc-ltr">C</span>อ่านจบแล้ว stack ไม่ว่าง</div>
+          </div>
+          <div class="ex-feedback" id="q1-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">2) เติมคำตอบ: postfix ของ <span style="font-family:monospace">(2+3)*4</span> คือ (เขียนติดกันไม่เว้นวรรค)</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in1" placeholder="เช่น 12+3*">
+            <button class="ex-btn" onclick="checkFill('in1','23+4*',['2 3 + 4 *','23+4* '],['234+*','23*4+'],'วงเล็บบังคับให้ + ทำก่อน จึงออกมาเป็น 23+ แล้วค่อย 4*','วงเล็บบังคับให้ 2+3 ทำก่อน → 23+ แล้วคูณ 4 → 23+4*')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb1"></div>
+        </div>
+      </div>
+      <div>
+        <div class="exercise">
+          <div class="ex-q">3) ตอนคำนวณ postfix เจอ <span style="font-family:monospace">−</span> แล้ว pop ได้ 2 กับ 8 ตามลำดับ ผลลัพธ์คือเท่าไร?</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in2" placeholder="ตอบเป็นตัวเลข">
+            <button class="ex-btn" onclick="checkFill('in2','6',['6.0','+6'],['-6'],'ตัว pop แรก (2) คือตัวขวา ตัว pop ที่สอง (8) คือตัวซ้าย → 8−2 = 6','ตัวที่ pop ออกมาก่อนคือตัวขวา จึงเป็น 8−2 ไม่ใช่ 2−8')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb2"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">4) Circular Queue ที่ใช้ตัวแปร count จะรู้ว่า "เต็ม" เมื่อไร?</div>
+          <div class="mc-opts" id="q2">
+            <div class="mc-opt" onclick="pickMC('q2',0,1,'front == rear เกิดได้ทั้งตอนเต็มและตอนว่าง จึงแยกไม่ออก')"><span class="mc-ltr">A</span>front == rear</div>
+            <div class="mc-opt" onclick="pickMC('q2',1,1,'ถูก! นี่คือข้อดีของวิธี count — ชัดเจน ไม่ต้องเสียช่อง')"><span class="mc-ltr">B</span>count == SIZE</div>
+            <div class="mc-opt" onclick="pickMC('q2',2,1,'นั่นคือเงื่อนไขของวิธี &quot;เว้น 1 ช่อง&quot; ซึ่งไม่ได้ใช้ count')"><span class="mc-ltr">C</span>(rear+1) % SIZE == front</div>
+          </div>
+          <div class="ex-feedback" id="q2-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🥞</div>
+      <div class="summary-title">จบชุดที่ 2 — Stack &amp; Queue</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">โจทย์ 1 วงเล็บ</div><div class="sum-body">เจอเปิด push · เจอปิด pop เทียบคู่ · เช็ค 3 จุด: ว่างตอนปิด / ไม่เข้าคู่ / เหลือค้าง</div></div>
+        <div class="sum-card"><div class="sum-head">โจทย์ 2 Postfix</div><div class="sum-body">ตัวเลขพิมพ์เลย · ตัวดำเนินการ pop ที่ระดับ ≥ ออกก่อน · ) pop จนเจอ (</div></div>
+        <div class="sum-card"><div class="sum-head">โจทย์ 3 Circular</div><div class="sum-body">(index+1) % SIZE คือทั้งหมดของเรื่องนี้ · ใช้ count แยกเต็ม/ว่าง</div></div>
+        <div class="sum-card"><div class="sum-head">จุดพลาดยอดฮิต 1</div><div class="sum-body">คำนวณ postfix: ตัว pop แรกคือตัว<b>ขวา</b> — สลับแล้วลบ/หารผิดทันที</div></div>
+        <div class="sum-card"><div class="sum-head">จุดพลาดยอดฮิต 2</div><div class="sum-body">ใช้ &gt;= ไม่ใช่ &gt; ตอนเทียบลำดับความสำคัญ ไม่งั้น 8−3−2 ผิด</div></div>
+        <div class="sum-card"><div class="sum-head">จุดพลาดยอดฮิต 3</div><div class="sum-body">Circular Queue ที่ไม่มี count จะแยกเต็มกับว่างไม่ออก</div></div>
+      </div>
+      <a href="slides_ch3.html" class="summary-next">→ ชุดที่ 3: Tree &amp; Hash</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 9</span>
+      <span class="nav-chapter" id="chapterLabel">ชุดที่ 2 — Stack &amp; Queue</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','① โจทย์วงเล็บสมดุล','① วิธีคิด + เฉลย','② โจทย์ Infix→Postfix','② เฉลย แปลง + คำนวณ','③ โจทย์ Circular Queue','③ เฉลย C + Python','ตรวจความเข้าใจ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

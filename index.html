@@ -14,12 +14,16 @@
   --c-ds:#2c4ea0;--c-dsl:#e8edf9;--c-dsm:#5b7fd4;
   --c-oop:#9b1d6a;--c-oopl:#fce7f3;--c-oopm:#d45fa0;
   --c-py:#b84c00;--c-pyl:#fff0e6;--c-pym:#e8763a;
+  --c-dr:#7c2d12;--c-drl:#fbe9e0;--c-drm:#c2643a;
+  --c-dd:#14532d;--c-ddl:#e3f2e7;--c-ddm:#3d8f5b;
   --c-sort:#005f73;--c-sortl:#e0f4f6;--c-sortm:#0a9396;
   --c-math:#6a2c91;--c-mathl:#f3e9fa;--c-mathm:#9b59b6;
   --c-dm:#a4133c;--c-dml:#fde8ef;--c-dmm:#d45a7e;
   --c-df:#6d1f7e;--c-dfl:#f6e8fa;--c-dfm:#a55cb5;
   --c-om:#4338ca;--c-oml:#e7e5fc;--c-omm:#7a6ff0;
   --c-of:#0f766e;--c-ofl:#dcf5f2;--c-ofm:#3fa89e;
+  --c-pm:#b45309;--c-pml:#fdf0dc;--c-pmm:#e0a458;
+  --c-pf:#4d7c0f;--c-pfl:#eef7dc;--c-pfm:#84b83c;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -45,12 +49,16 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
 .card.ds::after{background:linear-gradient(90deg,var(--c-ds),var(--c-dsm))}
 .card.oop::after{background:linear-gradient(90deg,var(--c-oop),var(--c-oopm))}
 .card.py::after{background:linear-gradient(90deg,var(--c-py),var(--c-pym))}
+.card.dd::after{background:linear-gradient(90deg,var(--c-dd),var(--c-ddm))}
+.card.dr::after{background:linear-gradient(90deg,var(--c-dr),var(--c-drm))}
 .card.sort::after{background:linear-gradient(90deg,var(--c-sort),var(--c-sortm))}
 .card.math::after{background:linear-gradient(90deg,var(--c-math),var(--c-mathm))}
 .card.dm::after{background:linear-gradient(90deg,var(--c-dm),var(--c-dmm))}
 .card.df::after{background:linear-gradient(90deg,var(--c-df),var(--c-dfm))}
 .card.om::after{background:linear-gradient(90deg,var(--c-om),var(--c-omm))}
 .card.of::after{background:linear-gradient(90deg,var(--c-of),var(--c-ofm))}
+.card.pm::after{background:linear-gradient(90deg,var(--c-pm),var(--c-pmm))}
+.card.pf::after{background:linear-gradient(90deg,var(--c-pf),var(--c-pfm))}
 .card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
 .em{font-size:30px;line-height:1}
 .arr{font-size:14px;color:var(--dim);transition:transform .18s,color .18s;margin-top:4px}
@@ -59,12 +67,16 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
 .card.ds .badge{background:var(--c-dsl);color:var(--c-ds)}
 .card.oop .badge{background:var(--c-oopl);color:var(--c-oop)}
 .card.py .badge{background:var(--c-pyl);color:var(--c-py)}
+.card.dd .badge{background:var(--c-ddl);color:var(--c-dd)}
+.card.dr .badge{background:var(--c-drl);color:var(--c-dr)}
 .card.sort .badge{background:var(--c-sortl);color:var(--c-sort)}
 .card.math .badge{background:var(--c-mathl);color:var(--c-math)}
 .card.dm .badge{background:var(--c-dml);color:var(--c-dm)}
 .card.df .badge{background:var(--c-dfl);color:var(--c-df)}
 .card.om .badge{background:var(--c-oml);color:var(--c-om)}
 .card.of .badge{background:var(--c-ofl);color:var(--c-of)}
+.card.pm .badge{background:var(--c-pml);color:var(--c-pm)}
+.card.pf .badge{background:var(--c-pfl);color:var(--c-pf)}
 .card-title{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1.3}
 .card-desc{font-size:12.5px;color:var(--dim);line-height:1.65;margin-bottom:12px;flex:1}
 .chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
@@ -120,6 +132,22 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
       <div class="chips"><span class="chip">7 บท + Cheat Sheet</span><span class="chip">เฉลย lab ครบ</span></div>
     </a>
 
+    <a class="card pm" href="subject_pymid/index.html">
+      <div class="card-top"><span class="em">🐍</span><span class="arr">→</span></div>
+      <span class="badge">Python · Midterm</span>
+      <div class="card-title">ติวสอบ Midterm — Python</div>
+      <div class="card-desc">Computers &amp; Programming lecture 1–7 — กฎ 3 ข้อ, Expression (−5%2=1), Flowchart, Loop + Cheat Sheet</div>
+      <div class="chips"><span class="chip">4 บท + Cheat Sheet</span><span class="chip">อิง lecture จริง</span></div>
+    </a>
+
+    <a class="card pf" href="subject_pyfinal/index.html">
+      <div class="card-top"><span class="em">🐍</span><span class="arr">→</span></div>
+      <span class="badge">Python · Final</span>
+      <div class="card-title">ติวสอบ Final — Python</div>
+      <div class="card-desc">lecture 8–14 — List, Dictionary, String, Nested Loop, Function (scope), File I/O, GUI + Cheat Sheet</div>
+      <div class="chips"><span class="chip">5 บท + Cheat Sheet</span><span class="chip">อิง lecture จริง</span></div>
+    </a>
+
   </div>
 
   <div class="sec-title sec-gap">📚 วิชาเรียน — ปูพื้นให้แน่น</div>
@@ -172,6 +200,22 @@ body{font-family:var(--sans);background:var(--paper);color:var(--body);min-heigh
       <div class="card-title">Python</div>
       <div class="card-desc">Syntax, OOP, Duck Typing, Comprehension — ทำไม Python ถึงต่างจาก C และ Java</div>
       <div class="chips"><span class="chip">7 บท</span><span class="chip">ครบ Syntax → OOP ขั้นสูง</span></div>
+    </a>
+
+    <a class="card dr" href="subject_drill/index.html">
+      <div class="card-top"><span class="em">🧗</span><span class="arr">→</span></div>
+      <span class="badge">ฝึกคิด</span>
+      <div class="card-title">ตะลุยโจทย์ — กระบวนการคิด</div>
+      <div class="card-desc">โจทย์ + ตัวอย่างการทำงาน + เฉลยผังงาน + โค้ดทั้ง C และ Python · ฝึกแปลงโจทย์เป็นโปรแกรมทีละขั้น</div>
+      <div class="chips"><span class="chip">4 บท</span><span class="chip">C + Python</span></div>
+    </a>
+
+    <a class="card dd" href="subject_drilldata/index.html">
+      <div class="card-top"><span class="em">🧩</span><span class="arr">→</span></div>
+      <span class="badge">ฝึกคิด</span>
+      <div class="card-title">ตะลุยโจทย์ — Data Structures</div>
+      <div class="card-desc">Linked List · Stack &amp; Queue · Tree &amp; Hash — โจทย์ + ตัวอย่างการทำงาน + ผังงาน + โค้ด C และ Python</div>
+      <div class="chips"><span class="chip">4 บท</span><span class="chip">C + Python</span></div>
     </a>
 
   </div>

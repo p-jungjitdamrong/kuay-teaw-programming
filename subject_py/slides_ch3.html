@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>บทที่ 3 — Functions | ก๋วยเตี๋ยวเรือ Programming</title>
+<title>บทที่ 4 — Functions | ก๋วยเตี๋ยวเรือ Programming</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../slide.css">
@@ -21,7 +21,7 @@
     <div class="cover-wrap">
       <div class="cover-left">
         <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Python</div>
-        <div class="cover-title">บทที่ 3<br><em>Functions</em></div>
+        <div class="cover-title">บทที่ 4<br><em>Functions</em></div>
         <div class="cover-subtitle">def, default args, *args, **kwargs, lambda — function ใน Python ยืดหยุ่นกว่า C มาก</div>
         <div class="cover-topics">
           <div class="topic-row"><div class="topic-dot"></div>def — นิยาม function, return หลายค่าได้</div>
@@ -44,7 +44,7 @@
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 3 · def</div>
+    <div class="slide-eyebrow">บทที่ 4 · def</div>
     <h2 class="slide-title">def — นิยาม function</h2>
     <p class="slide-lead">ใน C ต้อง declare return type และ parameter type — Python ไม่ต้อง และ return ได้หลายค่าพร้อมกัน</p>
     <div class="two-col">
@@ -81,7 +81,7 @@
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 3 · Arguments</div>
+    <div class="slide-eyebrow">บทที่ 4 · Arguments</div>
     <h2 class="slide-title">Default Arguments &amp; Keyword Arguments</h2>
     <p class="slide-lead">Default args ทำให้ไม่ต้องใส่ทุก argument — Keyword args เรียกโดยใส่ชื่อ parameter ได้เลย</p>
     <pre class="code-block"><span class="cm"># Default arguments — ต้องอยู่ท้าย parameter list</span>
@@ -106,7 +106,7 @@
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 3 · *args **kwargs</div>
+    <div class="slide-eyebrow">บทที่ 4 · *args **kwargs</div>
     <h2 class="slide-title">*args และ **kwargs — รับ argument ไม่จำกัดจำนวน</h2>
     <p class="slide-lead"><code class="inline-code">*args</code> รับ positional args เป็น tuple — <code class="inline-code">**kwargs</code> รับ keyword args เป็น dict</p>
     <pre class="code-block"><span class="cm"># *args — ไม่รู้ว่าจะส่งกี่ค่า</span>
@@ -137,7 +137,7 @@
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 3 · lambda</div>
+    <div class="slide-eyebrow">บทที่ 4 · lambda</div>
     <h2 class="slide-title">lambda — function แบบไม่มีชื่อ (Anonymous Function)</h2>
     <p class="slide-lead"><code class="inline-code">lambda</code> สร้าง function จากบรรทัดเดียว — ใช้เมื่อต้องการ function แบบ throw-away</p>
     <pre class="code-block"><span class="cm"># Syntax: lambda parameters: expression</span>
@@ -165,7 +165,7 @@
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 3 · map/filter</div>
+    <div class="slide-eyebrow">บทที่ 4 · map/filter</div>
     <h2 class="slide-title">map() และ filter() — Functional Programming</h2>
     <p class="slide-lead">แปลงและกรอง iterable โดยไม่ต้องเขียน loop — มักใช้คู่กับ lambda</p>
     <pre class="code-block"><span class="nm">amounts</span> = [<span class="nm">1000</span>, <span class="nm">5000</span>, <span class="nm">200</span>, <span class="nm">15000</span>, <span class="nm">800</span>]
@@ -192,7 +192,7 @@
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 3 · Scope</div>
+    <div class="slide-eyebrow">บทที่ 4 · Scope</div>
     <h2 class="slide-title">Scope — LEGB Rule</h2>
     <p class="slide-lead">Python หา variable ตาม LEGB: <strong>L</strong>ocal → <strong>E</strong>nclosing → <strong>G</strong>lobal → <strong>B</strong>uilt-in</p>
     <pre class="code-block"><span class="nm">balance</span> = <span class="nm">100_000</span>   <span class="cm"># Global</span>
@@ -223,7 +223,7 @@
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 3 · Banking Use Case</div>
+    <div class="slide-eyebrow">บทที่ 4 · Banking Use Case</div>
     <h2 class="slide-title">🏦 ระบบคำนวณดอกเบี้ยหลายรูปแบบ</h2>
     <p class="slide-lead">ใช้ default args และ lambda เพื่อสร้าง function ที่ยืดหยุ่น</p>
     <pre class="code-block"><span class="kw">def</span> <span class="fn">calc_interest</span>(principal, rate=<span class="nm">0.025</span>, years=<span class="nm">1</span>, compound=<span class="kw">False</span>):
@@ -271,7 +271,7 @@ print(a, b)</code><br><br><em>a และ b มีค่าเท่าไหร
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 3 · Trace</div>
+    <div class="slide-eyebrow">บทที่ 4 · Trace</div>
     <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
     <pre class="code-block"><span class="kw">def</span> <span class="fn">calc</span>(*nums):
     <span class="kw">return</span> <span class="fn">sum</span>(nums), <span class="fn">max</span>(nums)
@@ -291,7 +291,7 @@ print(a, b)</code><br><br><em>a และ b มีค่าเท่าไหร
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 3 · Fill-in</div>
+    <div class="slide-eyebrow">บทที่ 4 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
 
     <div class="exercise">
@@ -329,7 +329,7 @@ print(a, b)</code><br><br><em>a และ b มีค่าเท่าไหร
   <div class="slide-body center">
     <div class="summary-wrap">
       <div class="summary-icon">🎯</div>
-      <div class="summary-title">สรุปบทที่ 3</div>
+      <div class="summary-title">สรุปบทที่ 4</div>
       <div class="summary-grid">
         <div class="sum-card"><div class="sum-head">def</div><div class="sum-body">ไม่ต้องบอก type · return หลายค่าพร้อมกันได้</div></div>
         <div class="sum-card"><div class="sum-head">Default Args</div><div class="sum-body">ค่า default ต้องอยู่ท้าย · ใช้ None สำหรับ mutable default</div></div>
@@ -338,7 +338,7 @@ print(a, b)</code><br><br><em>a และ b มีค่าเท่าไหร
         <div class="sum-card"><div class="sum-head">lambda</div><div class="sum-body">lambda x: expr — ใช้กับ sorted/map/filter เป็น key</div></div>
         <div class="sum-card"><div class="sum-head">Scope LEGB</div><div class="sum-body">Local → Enclosing → Global → Built-in — หลีกเลี่ยง global</div></div>
       </div>
-      <a href="slides_ch4.html" class="summary-next">→ บทที่ 4: Built-in Data Structures</a>
+      <a href="slides_ch4.html" class="summary-next">→ บทที่ 5: Built-in Data Structures</a>
     </div>
   </div>
 </div>
@@ -350,7 +350,7 @@ print(a, b)</code><br><br><em>a และ b มีค่าเท่าไหร
   <div class="nav-prog-wrap">
     <div class="nav-meta">
       <span class="nav-counter" id="counter">1 / 12</span>
-      <span class="nav-chapter" id="chapterLabel">บทที่ 3 — Functions</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 4 — Functions</span>
     </div>
     <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
   </div>

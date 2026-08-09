@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>บทที่ 6 — OOP ขั้นสูง & Python vs ภาษาอื่น | ก๋วยเตี๋ยวเรือ Programming</title>
+<title>บทที่ 7 — OOP ขั้นสูง & Python vs ภาษาอื่น | ก๋วยเตี๋ยวเรือ Programming</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../slide.css">
@@ -26,7 +26,7 @@
     <div class="cover-wrap">
       <div class="cover-left">
         <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Python</div>
-        <div class="cover-title">บทที่ 6<br><em>OOP ขั้นสูง &amp; Python vs ภาษาอื่น</em></div>
+        <div class="cover-title">บทที่ 7<br><em>OOP ขั้นสูง &amp; Python vs ภาษาอื่น</em></div>
         <div class="cover-subtitle">Inheritance, Polymorphism, Duck Typing, Dunder Methods, @dataclass — และทำไม Python OOP ต่างจาก Java/C++ มาก</div>
         <div class="cover-topics">
           <div class="topic-row"><div class="topic-dot"></div>Inheritance — super() และ MRO</div>
@@ -49,7 +49,7 @@
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 6 · Inheritance</div>
+    <div class="slide-eyebrow">บทที่ 7 · Inheritance</div>
     <h2 class="slide-title">Inheritance — class ลูกสืบทอดจาก class พ่อแม่</h2>
     <p class="slide-lead">ใส่ชื่อ parent class ในวงเล็บ — ใช้ <code class="inline-code">super()</code> เรียก constructor พ่อแม่</p>
     <pre class="code-block"><span class="kw">class</span> <span class="fn">BankAccount</span>:            <span class="cm"># Parent / Base class</span>
@@ -86,7 +86,7 @@ acc.<span class="fn">add_interest</span>()     <span class="cm"># method ขอ�
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 6 · Override</div>
+    <div class="slide-eyebrow">บทที่ 7 · Override</div>
     <h2 class="slide-title">Method Overriding — เขียนทับ method ของ parent</h2>
     <p class="slide-lead">ถ้า child class นิยาม method ชื่อเดิมจาก parent — จะใช้ method ของ child แทน</p>
     <pre class="code-block"><span class="kw">class</span> <span class="fn">PremiumAccount</span>(BankAccount):
@@ -118,7 +118,7 @@ prem.<span class="fn">withdraw</span>(<span class="nm">120_000</span>)   <span c
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 6 · Polymorphism</div>
+    <div class="slide-eyebrow">บทที่ 7 · Polymorphism</div>
     <h2 class="slide-title">Polymorphism — เรียก method เดิม ผลต่างกัน</h2>
     <p class="slide-lead">เรียก method ชื่อเดิมบน object ต่าง type — แต่ละ object ทำงานตาม class ของตัวเอง</p>
     <pre class="code-block"><span class="kw">class</span> <span class="fn">FixedDeposit</span>(BankAccount):
@@ -150,7 +150,7 @@ prem.<span class="fn">withdraw</span>(<span class="nm">120_000</span>)   <span c
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 6 · Duck Typing</div>
+    <div class="slide-eyebrow">บทที่ 7 · Duck Typing</div>
     <h2 class="slide-title">Duck Typing — "ถ้ามันเดินเหมือนเป็ด และร้องเหมือนเป็ด มันคือเป็ด"</h2>
     <p class="slide-lead">Python ไม่สนว่า object เป็น type อะไร — สนแค่ว่ามี method ที่ต้องการหรือเปล่า (ต่างจาก Java ที่ต้อง implement interface)</p>
     <div class="two-col">
@@ -190,7 +190,7 @@ prem.<span class="fn">withdraw</span>(<span class="nm">120_000</span>)   <span c
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 6 · ABC</div>
+    <div class="slide-eyebrow">บทที่ 7 · ABC</div>
     <h2 class="slide-title">Abstract Class — บังคับให้ subclass เขียน method</h2>
     <p class="slide-lead">ถ้าต้องการบังคับ subclass ทุกตัวให้มี method บางตัว — ใช้ <code class="inline-code">ABC</code> + <code class="inline-code">@abstractmethod</code></p>
     <pre class="code-block"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
@@ -224,7 +224,7 @@ prem.<span class="fn">withdraw</span>(<span class="nm">120_000</span>)   <span c
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 6 · @dataclass</div>
+    <div class="slide-eyebrow">บทที่ 7 · @dataclass</div>
     <h2 class="slide-title">@dataclass — Data Class อัตโนมัติ</h2>
     <p class="slide-lead">Python 3.7+ มี <code class="inline-code">@dataclass</code> ที่สร้าง __init__, __str__, __repr__, __eq__ ให้อัตโนมัติ</p>
     <div class="two-col">
@@ -274,7 +274,7 @@ prem.<span class="fn">withdraw</span>(<span class="nm">120_000</span>)   <span c
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 6 · เปรียบเทียบ</div>
+    <div class="slide-eyebrow">บทที่ 7 · เปรียบเทียบ</div>
     <h2 class="slide-title">Python OOP vs Java vs C++ — ต่างกันยังไง?</h2>
     <table class="vs-table">
       <thead><tr><th>หัวข้อ</th><th>Python</th><th>Java</th><th>C++</th></tr></thead>
@@ -296,7 +296,7 @@ prem.<span class="fn">withdraw</span>(<span class="nm">120_000</span>)   <span c
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 6 · Banking Use Case</div>
+    <div class="slide-eyebrow">บทที่ 7 · Banking Use Case</div>
     <h2 class="slide-title">🏦 ระบบบัญชีธนาคาร OOP แบบสมบูรณ์</h2>
     <pre class="code-block"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
 <span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
@@ -355,7 +355,7 @@ acc.<span class="fn">deposit</span>(<span class="nm">50_000</span>).<span class=
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 6 · Trace</div>
+    <div class="slide-eyebrow">บทที่ 7 · Trace</div>
     <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
     <pre class="code-block"><span class="kw">class</span> <span class="fn">A</span>:
     <span class="kw">def</span> <span class="fn">greet</span>(self): <span class="kw">return</span> <span class="st">"A"</span>
@@ -380,7 +380,7 @@ acc.<span class="fn">deposit</span>(<span class="nm">50_000</span>).<span class=
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 6 · Fill-in</div>
+    <div class="slide-eyebrow">บทที่ 7 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
 
     <div class="exercise">
@@ -421,15 +421,15 @@ acc.<span class="fn">deposit</span>(<span class="nm">50_000</span>).<span class=
       <div class="summary-title">จบ Course Python — สรุปทั้งหมด</div>
       <div class="summary-grid">
         <div class="sum-card"><div class="sum-head">บทที่ 0 — ทำไม Python</div><div class="sum-body">Philosophy · PEP 8 · Indentation = Syntax · Dynamic Typing</div></div>
-        <div class="sum-card"><div class="sum-head">บทที่ 1 — Syntax</div><div class="sum-body">Types · f-string · input() · // ** · Multiple assignment</div></div>
-        <div class="sum-card"><div class="sum-head">บทที่ 2 — Control Flow</div><div class="sum-body">elif · for/range/enumerate · while+else · List Comprehension</div></div>
-        <div class="sum-card"><div class="sum-head">บทที่ 3 — Functions</div><div class="sum-body">def · default/keyword args · *args **kwargs · lambda</div></div>
-        <div class="sum-card"><div class="sum-head">บทที่ 4 — Data Structures</div><div class="sum-body">list · tuple · dict · set — แทน struct/array/hashtable ของ C</div></div>
-        <div class="sum-card"><div class="sum-head">บทที่ 5 — OOP พื้นฐาน</div><div class="sum-body">class · __init__ · self · @property · Encapsulation</div></div>
-        <div class="sum-card"><div class="sum-head">บทที่ 6 — OOP ขั้นสูง</div><div class="sum-body">Inheritance · Polymorphism · Duck Typing · ABC · @dataclass</div></div>
+        <div class="sum-card"><div class="sum-head">บทที่ 2 — Syntax</div><div class="sum-body">Types · f-string · input() · // ** · Multiple assignment</div></div>
+        <div class="sum-card"><div class="sum-head">บทที่ 3 — Control Flow</div><div class="sum-body">elif · for/range/enumerate · while+else · List Comprehension</div></div>
+        <div class="sum-card"><div class="sum-head">บทที่ 4 — Functions</div><div class="sum-body">def · default/keyword args · *args **kwargs · lambda</div></div>
+        <div class="sum-card"><div class="sum-head">บทที่ 5 — Data Structures</div><div class="sum-body">list · tuple · dict · set — แทน struct/array/hashtable ของ C</div></div>
+        <div class="sum-card"><div class="sum-head">บทที่ 6 — OOP พื้นฐาน</div><div class="sum-body">class · __init__ · self · @property · Encapsulation</div></div>
+        <div class="sum-card"><div class="sum-head">บทที่ 7 — OOP ขั้นสูง</div><div class="sum-body">Inheritance · Polymorphism · Duck Typing · ABC · @dataclass</div></div>
         <div class="sum-card"><div class="sum-head">Python vs ภาษาอื่น</div><div class="sum-body">ยืดหยุ่นกว่า Java · เขียนเร็วกว่า C · Duck Typing แทน Interface</div></div>
       </div>
-      <a href="index.html" class="summary-next">→ กลับหน้าหลัก Python</a>
+      <a href="slides_ch8.html" class="summary-next">→ บทที่ 8: Nested Loop &amp; break/continue</a>
     </div>
   </div>
 </div>
@@ -441,7 +441,7 @@ acc.<span class="fn">deposit</span>(<span class="nm">50_000</span>).<span class=
   <div class="nav-prog-wrap">
     <div class="nav-meta">
       <span class="nav-counter" id="counter">1 / 13</span>
-      <span class="nav-chapter" id="chapterLabel">บทที่ 6 — OOP ขั้นสูง & Python vs ภาษาอื่น</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 7 — OOP ขั้นสูง & Python vs ภาษาอื่น</span>
     </div>
     <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
   </div>

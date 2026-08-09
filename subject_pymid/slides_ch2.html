@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ติวบทที่ 2 — Expression | ติวสอบ Python Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#b45309;--cal:#fdf0dc;--cam:#e0a458;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.t{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:5px 10px;text-align:left;font-weight:600;font-family:var(--sans);}
+.t td{padding:5px 10px;border:1px solid var(--line);}
+.t td.a{color:var(--ca);font-weight:700;}
+.t td.warn{background:var(--cal);color:#c0392b;font-weight:700;}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🐍 ติวสอบ Midterm · Computers &amp; Programming</div>
+        <div class="cover-title">ติวบทที่ 2<br><em>Expression</em></div>
+        <div class="cover-subtitle">lecture 3 · บทที่คำนวณเยอะสุด — ตารางค่าจากสไลด์อาจารย์ต้องจำให้ได้</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ตารางค่าที่อาจารย์ให้ (−5%2, 5/2, 5%0)</div>
+          <div class="topic-row"><div class="topic-dot"></div>ลำดับตัวดำเนินการ ( ) → * / % → + −</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตัวดำเนินการย่อ += −= *= /= %=</div>
+          <div class="topic-row"><div class="topic-dot"></div>Type Conversion — Implicit vs Explicit</div>
+          <div class="topic-row"><div class="topic-dot"></div>Relational + Logical (and or not)</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">M2</div>
+        <div class="cover-badge">คำนวณเยอะสุด</div>
+        <div class="cover-slides-count">14 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 ตารางค่า -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · ตารางทองจากสไลด์</div>
+    <h2 class="slide-title">ค่าเหล่านี้อยู่ในสไลด์อาจารย์ตรงๆ — ออกสอบได้เลย</h2>
+    <div class="two-col">
+      <div>
+        <table class="t">
+          <thead><tr><th>นิพจน์</th><th>ผลลัพธ์</th></tr></thead>
+          <tbody>
+            <tr><td>2 + 4.9</td><td class="a">6.9</td></tr>
+            <tr><td>3.8 − 4</td><td class="a">−0.2</td></tr>
+            <tr><td>2 * 3.4</td><td class="a">6.8</td></tr>
+            <tr><td>5 / 2.0</td><td class="a">2.5</td></tr>
+            <tr><td>5 / 2</td><td class="a">2.5</td></tr>
+            <tr><td>5 % 2</td><td class="a">1</td></tr>
+            <tr><td>5.0 % 2</td><td class="a">1.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <table class="t">
+          <thead><tr><th>นิพจน์</th><th>ผลลัพธ์</th></tr></thead>
+          <tbody>
+            <tr><td>−5 / 2</td><td class="a">−2.5</td></tr>
+            <tr><td class="warn">−5 % 2</td><td class="warn">1 ⚠️</td></tr>
+            <tr><td>11 % 3</td><td class="a">2</td></tr>
+            <tr><td class="warn">5 / 0</td><td class="warn">Error</td></tr>
+            <tr><td class="warn">5 % 0</td><td class="warn">Error</td></tr>
+            <tr><td>2.5 * 2</td><td class="a">5.0</td></tr>
+            <tr><td>2.5 / 2</td><td class="a">1.25</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="exam"><b>3 จุดที่คนพลาดมากที่สุด:</b><br>
+① <code class="inline-code">5 / 2 = 2.5</code> — Python 3 หารได้ทศนิยมเสมอ ไม่ปัดลง (ต่างจาก C!) · อยากได้จำนวนเต็มใช้ <code class="inline-code">//</code><br>
+② <code class="inline-code">−5 % 2 = 1</code> — ไม่ใช่ −1! Python ให้ผลลัพธ์ mod <b>เครื่องหมายตามตัวหาร</b><br>
+③ <code class="inline-code">5 / 0</code> และ <code class="inline-code">5 % 0</code> → <b>Error ทั้งคู่</b> (ZeroDivisionError)</div>
+  </div>
+</div>
+
+<!-- 2 mod ลบ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · เจาะจุดหลอก</div>
+    <h2 class="slide-title">ทำไม −5 % 2 = 1 (ไม่ใช่ −1)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">หลักการ: Python ยึด "ตัวหาร"</div>
+        <pre class="code-block"><span class="cm"># สูตร: a % b มีเครื่องหมายตาม b</span>
+
+ <span class="nm">5</span> % <span class="nm">2</span>  = <span class="nm">1</span>     <span class="cm"># b บวก → ผลบวก</span>
+-<span class="nm">5</span> % <span class="nm">2</span>  = <span class="nm">1</span>     <span class="cm"># b บวก → ผลบวก</span>
+ <span class="nm">5</span> % -<span class="nm">2</span> = -<span class="nm">1</span>    <span class="cm"># b ลบ → ผลลบ</span>
+-<span class="nm">5</span> % -<span class="nm">2</span> = -<span class="nm">1</span>    <span class="cm"># b ลบ → ผลลบ</span></pre>
+        <div class="code-label" style="margin-top:8px">คิดยังไงให้ได้ 1</div>
+        <pre class="code-block"><span class="cm"># Python: a // b ปัดลงเสมอ (floor)
+-5 // 2 = -3      (ไม่ใช่ -2!)
+
+# แล้วใช้สูตร a = (a//b)*b + (a%b)
+-5 = (-3)*2 + r
+-5 = -6 + r
+ r = 1          ✓</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ตัวหารและตัวหารลงตัว</div>
+        <pre class="code-block"><span class="nm">7</span> // <span class="nm">2</span>   = <span class="nm">3</span>      <span class="cm"># หารปัดลง (int)</span>
+<span class="nm">7</span> / <span class="nm">2</span>    = <span class="nm">3.5</span>    <span class="cm"># หารปกติ (float)</span>
+<span class="nm">7</span> % <span class="nm">2</span>    = <span class="nm">1</span>      <span class="cm"># เศษ</span>
+
+-<span class="nm">7</span> // <span class="nm">2</span>  = -<span class="nm">4</span>     <span class="cm">⚠️ ปัดลง ไม่ใช่ -3</span>
+-<span class="nm">7</span> % <span class="nm">2</span>   = <span class="nm">1</span>      <span class="cm">⚠️</span>
+
+<span class="nm">2</span> ** <span class="nm">3</span>   = <span class="nm">8</span>      <span class="cm"># ยกกำลัง</span>
+<span class="nm">2</span> ** <span class="nm">0.5</span> = <span class="nm">1.414</span>  <span class="cm"># รากที่สอง</span></pre>
+        <pre class="code-block"><span class="cm"># การใช้ % ที่ออกสอบบ่อย:
+# เช็คเลขคู่/คี่</span>
+<span class="kw">if</span> n % <span class="nm">2</span> == <span class="nm">0</span>: <span class="fn">print</span>(<span class="st">"คู่"</span>)
+<span class="cm"># หารลงตัวไหม</span>
+<span class="kw">if</span> n % <span class="nm">5</span> == <span class="nm">0</span>: <span class="fn">print</span>(<span class="st">"หาร 5 ลงตัว"</span>)
+<span class="cm"># แยกหลัก</span>
+n = <span class="nm">123</span>
+<span class="fn">print</span>(n % <span class="nm">10</span>)     <span class="cm"># 3  หลักหน่วย</span>
+<span class="fn">print</span>(n // <span class="nm">10</span> % <span class="nm">10</span>) <span class="cm"># 2  หลักสิบ</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>ท่องสั้นๆ:</b> <code class="inline-code">%</code> ผลลัพธ์<b>เครื่องหมายตามตัวหาร</b> · <code class="inline-code">//</code> <b>ปัดลงเสมอ</b> (−7//2 = −4 ไม่ใช่ −3) — สองข้อนี้คือจุดที่คนคุ้นภาษา C ตอบผิด</div>
+  </div>
+</div>
+
+<!-- 3 precedence -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · ลำดับ</div>
+    <h2 class="slide-title">ลำดับตัวดำเนินการ — ตามสไลด์อาจารย์</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ลำดับ (สูงไปต่ำ)</div>
+        <pre class="code-block"><span class="nm">1</span>.  ( )           วงเล็บ
+<span class="nm">2</span>.  **            ยกกำลัง
+<span class="nm">3</span>.  *  /  //  %   คูณ หาร มอด
+<span class="nm">4</span>.  +  -          บวก ลบ
+
+<span class="cm">Note จากสไลด์: ถ้าลำดับเท่ากัน
+คำนวณจากซ้ายไปขวา</span></pre>
+        <div class="code-label" style="margin-top:8px">ตัวอย่างที่อาจารย์ให้</div>
+        <pre class="code-block">Width = <span class="nm">2</span>*<span class="nm">5</span>+(<span class="nm">6</span>*<span class="nm">2</span>)/<span class="nm">5</span>
+
+<span class="cm"># ① วงเล็บก่อน: (6*2) = 12
+# ② คูณ/หาร ซ้าย→ขวา:
+#    2*5 = 10
+#    12/5 = 2.4
+# ③ บวก: 10 + 2.4 = 12.4</span></pre>
+      </div>
+      <div>
+        <div class="code-label">อีกตัวอย่าง</div>
+        <pre class="code-block">High = (<span class="nm">6</span>+<span class="nm">5</span>)+<span class="nm">102</span>%<span class="nm">2</span>
+
+<span class="cm"># ① วงเล็บ: (6+5) = 11
+# ② % : 102 % 2 = 0
+# ③ + : 11 + 0 = 11</span></pre>
+        <div class="code-label" style="margin-top:8px">ฝึกเอง — ไล่ทีละขั้น</div>
+        <pre class="code-block"><span class="nm">10</span> + <span class="nm">6</span> * <span class="nm">2</span> - <span class="nm">4</span> / <span class="nm">2</span>
+<span class="cm"># ① 6*2 = 12    (คูณก่อน)
+# ② 4/2 = 2.0   (หาร ซ้ายไปขวา)
+# ③ 10+12 = 22
+# ④ 22-2.0 = 20.0    ← float!</span>
+
+<span class="nm">2</span> ** <span class="nm">3</span> ** <span class="nm">2</span>
+<span class="cm"># ** คำนวณ "ขวาไปซ้าย" (ข้อยกเว้น!)
+# 3**2 = 9 ก่อน → 2**9 = 512
+# ไม่ใช่ (2**3)**2 = 64</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เทคนิคทำข้อสอบคำนวณ:</b> เขียนผลลัพธ์กำกับใต้แต่ละขั้น ห้ามคิดในหัวรวดเดียว · และ<b>ระวังชนิดข้อมูล</b> — มี <code class="inline-code">/</code> เมื่อไหร่ผลลัพธ์เป็น float ทันที (20.0 ไม่ใช่ 20)</div>
+  </div>
+</div>
+
+<!-- 4 compound -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · ตัวดำเนินการย่อ</div>
+    <h2 class="slide-title">+= −= *= /= %= — ตามสไลด์อาจารย์</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ความหมาย</div>
+        <pre class="code-block">x += <span class="nm">1</span>    ➔  x = x + <span class="nm">1</span>
+x += <span class="nm">5</span>    ➔  x = x + <span class="nm">5</span>
+x -= <span class="nm">9</span>    ➔  x = x - <span class="nm">9</span>
+x -= -<span class="nm">9</span>   ➔  x = x - (-<span class="nm">9</span>)  <span class="cm"># = x + 9</span>
+x *= <span class="nm">7</span>    ➔  x = x * <span class="nm">7</span>
+x /= <span class="nm">5</span>    ➔  x = x / <span class="nm">5</span>
+x %= <span class="nm">5</span>    ➔  x = x % <span class="nm">5</span>
+x %= x    ➔  x = x % x     <span class="cm"># = 0 เสมอ</span></pre>
+        <div class="code-label" style="margin-top:8px">ตัวอย่างในสไลด์</div>
+        <pre class="code-block">n, m = <span class="nm">3</span>, <span class="nm">4</span>      <span class="cm"># กำหนดหลายตัวพร้อมกัน</span>
+n *= m
+<span class="fn">print</span>(n)          <span class="cm"># 12</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ไล่ trace ให้เป็น</div>
+        <pre class="code-block">x = <span class="nm">10</span>
+x += <span class="nm">5</span>      <span class="cm"># x = 15</span>
+x -= <span class="nm">3</span>      <span class="cm"># x = 12</span>
+x *= <span class="nm">2</span>      <span class="cm"># x = 24</span>
+x /= <span class="nm">4</span>      <span class="cm"># x = 6.0  ← กลายเป็น float!</span>
+x %= <span class="nm">4</span>      <span class="cm"># x = 2.0</span>
+<span class="fn">print</span>(x)     <span class="cm"># 2.0</span></pre>
+        <pre class="code-block"><span class="cm"># ⚠️ Python ไม่มี ++ และ --
+x++        # ❌ SyntaxError
+x += 1     # ✓ ต้องเขียนแบบนี้
+
+# กำหนดค่าหลายตัวพร้อมกัน
+a, b = 3, 4
+a, b = b, a      # สลับค่า! a=4 b=3
+x = y = z = 0    # ให้ค่าเดียวกันหมด</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>2 จุดหลอก:</b> ① Python <b>ไม่มี <code class="inline-code">++</code> / <code class="inline-code">--</code></b> (ต่างจาก C) ต้องใช้ <code class="inline-code">+= 1</code> ② <code class="inline-code">/=</code> ทำให้ตัวแปรกลายเป็น <b>float</b> แม้หารลงตัว (24/4 = 6.0)</div>
+  </div>
+</div>
+
+<!-- 5 type conversion -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · Type Conversion</div>
+    <h2 class="slide-title">แปลงชนิดข้อมูล 2 รูปแบบ (ตามสไลด์)</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">① Implicit — Python แปลงให้เอง</div>
+        <pre class="code-block"><span class="cm"># "Python automatically converts"</span>
+
+a = <span class="nm">10</span>        <span class="cm"># int</span>
+b = <span class="nm">3.5</span>       <span class="cm"># float</span>
+c = a + b     <span class="cm"># int + float</span>
+<span class="fn">print</span>(c)      <span class="cm"># 13.5</span>
+<span class="fn">print</span>(<span class="fn">type</span>(c)) <span class="cm"># &lt;class 'float'&gt;</span>
+
+<span class="cm"># กฎ: แปลงไปทาง "ชนิดที่ใหญ่กว่า"
+# เพื่อไม่ให้ข้อมูลหาย
+#   int → float → complex</span>
+
+<span class="nm">5</span> / <span class="nm">2</span>       <span class="cm"># 2.5 (int/int ได้ float!)</span>
+<span class="kw">True</span> + <span class="nm">1</span>    <span class="cm"># 2   (bool→int, True=1)</span>
+<span class="kw">False</span> + <span class="nm">10</span>  <span class="cm"># 10  (False=0)</span></pre>
+      </div>
+      <div>
+        <div class="code-label">② Explicit — เราสั่งแปลงเอง</div>
+        <pre class="code-block"><span class="fn">int</span>(<span class="st">"10"</span>)       <span class="cm"># 10</span>
+<span class="fn">int</span>(<span class="nm">3.9</span>)        <span class="cm"># 3   ← ตัดทิ้ง ไม่ปัด!</span>
+<span class="fn">int</span>(-<span class="nm">3.9</span>)       <span class="cm"># -3  ← ตัดเข้าหา 0</span>
+<span class="fn">float</span>(<span class="st">"3.5"</span>)    <span class="cm"># 3.5</span>
+<span class="fn">float</span>(<span class="nm">10</span>)       <span class="cm"># 10.0</span>
+<span class="fn">str</span>(<span class="nm">100</span>)        <span class="cm"># "100"</span>
+<span class="fn">bool</span>(<span class="nm">0</span>)         <span class="cm"># False</span>
+<span class="fn">bool</span>(<span class="nm">5</span>)         <span class="cm"># True</span></pre>
+        <pre class="code-block"><span class="cm"># ⚠️ แปลงไม่ได้ → ValueError</span>
+<span class="fn">int</span>(<span class="st">"abc"</span>)      <span class="cm"># ❌ ValueError</span>
+<span class="fn">int</span>(<span class="st">"3.5"</span>)      <span class="cm"># ❌ ValueError!</span>
+<span class="fn">float</span>(<span class="st">"3.5"</span>)    <span class="cm"># ✓ 3.5</span>
+<span class="fn">int</span>(<span class="fn">float</span>(<span class="st">"3.5"</span>)) <span class="cm"># ✓ 3 (แปลง 2 ชั้น)</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>จุดหลอกที่ออกบ่อย:</b> <code class="inline-code">int(3.9)</code> ได้ <b>3 ไม่ใช่ 4</b> (ตัดทิ้ง ไม่ใช่ปัด — ถ้าอยากปัดใช้ <code class="inline-code">round()</code>) · และ <code class="inline-code">int("3.5")</code> <b>error</b> ต้องผ่าน float ก่อน</div>
+  </div>
+</div>
+
+<!-- 6 relational -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · Relational</div>
+    <h2 class="slide-title">ตัวดำเนินการเปรียบเทียบ — ผลลัพธ์เป็น bool</h2>
+    <div class="two-col">
+      <div>
+        <table class="t">
+          <thead><tr><th>ตัวดำเนินการ</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr></thead>
+          <tbody>
+            <tr><td>==</td><td>เท่ากับ</td><td>5 == 5 → True</td></tr>
+            <tr><td>!=</td><td>ไม่เท่ากับ</td><td>5 != 3 → True</td></tr>
+            <tr><td>&gt;</td><td>มากกว่า</td><td>5 &gt; 3 → True</td></tr>
+            <tr><td>&lt;</td><td>น้อยกว่า</td><td>5 &lt; 3 → False</td></tr>
+            <tr><td>&gt;=</td><td>มากกว่าหรือเท่า</td><td>5 &gt;= 5 → True</td></tr>
+            <tr><td>&lt;=</td><td>น้อยกว่าหรือเท่า</td><td>3 &lt;= 5 → True</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="code-label">⚠️ = กับ == คนละตัว!</div>
+        <pre class="code-block">x = <span class="nm">5</span>      <span class="cm"># กำหนดค่า (assignment)</span>
+x == <span class="nm">5</span>     <span class="cm"># เปรียบเทียบ → True</span>
+
+<span class="kw">if</span> x = <span class="nm">5</span>:   <span class="cm"># ❌ SyntaxError!</span>
+<span class="kw">if</span> x == <span class="nm">5</span>:  <span class="cm"># ✓</span></pre>
+        <pre class="code-block"><span class="cm"># เปรียบเทียบ string ได้ (ตามลำดับ ASCII)</span>
+<span class="st">"abc"</span> == <span class="st">"abc"</span>   <span class="cm"># True</span>
+<span class="st">"a"</span> &lt; <span class="st">"b"</span>        <span class="cm"># True (a=97, b=98)</span>
+<span class="st">"A"</span> &lt; <span class="st">"a"</span>        <span class="cm"># True (A=65, a=97)</span>
+<span class="st">"apple"</span> &lt; <span class="st">"banana"</span> <span class="cm"># True</span>
+
+<span class="cm"># เชื่อมต่อกันได้ (Python พิเศษ!)</span>
+<span class="nm">1</span> &lt; x &lt; <span class="nm">10</span>        <span class="cm"># ✓ ใช้ได้เลย</span>
+<span class="cm"># ภาษาอื่นต้องเขียน x&gt;1 and x&lt;10</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>เก็งข้อสอบ:</b> ให้นิพจน์เปรียบเทียบมาแล้วถามว่า True หรือ False · ระวัง <code class="inline-code">=</code> (กำหนดค่า) กับ <code class="inline-code">==</code> (เปรียบเทียบ) ซึ่งเป็นข้อผิดพลาดคลาสสิก</div>
+  </div>
+</div>
+
+<!-- 7 logical -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · Logical</div>
+    <h2 class="slide-title">and / or / not + ตารางค่าความจริง</h2>
+    <div class="two-col">
+      <div>
+        <table class="t">
+          <thead><tr><th>A</th><th>B</th><th>A and B</th><th>A or B</th></tr></thead>
+          <tbody>
+            <tr><td>True</td><td>True</td><td class="a">True</td><td class="a">True</td></tr>
+            <tr><td>True</td><td>False</td><td>False</td><td class="a">True</td></tr>
+            <tr><td>False</td><td>True</td><td>False</td><td class="a">True</td></tr>
+            <tr><td>False</td><td>False</td><td>False</td><td>False</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="cm"># จำสั้นๆ
+# and → ต้องจริงทั้งคู่
+# or  → จริงตัวใดตัวหนึ่งก็พอ
+# not → กลับค่า</span>
+
+<span class="kw">not True</span>     <span class="cm"># False</span>
+<span class="kw">not</span> (<span class="nm">5</span> &gt; <span class="nm">3</span>)  <span class="cm"># False</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ลำดับ: not → and → or</div>
+        <pre class="code-block"><span class="kw">True or False and False</span>
+<span class="cm"># and ก่อน: False and False = False
+# แล้ว or: True or False = True  ✓</span>
+
+<span class="kw">not True and False</span>
+<span class="cm"># not ก่อน: not True = False
+# แล้ว and: False and False = False</span></pre>
+        <div class="code-label" style="margin-top:6px">ใช้จริงในเงื่อนไข</div>
+        <pre class="code-block"><span class="cm"># ตรวจช่วงคะแนน</span>
+<span class="kw">if</span> score &gt;= <span class="nm">0</span> <span class="kw">and</span> score &lt;= <span class="nm">100</span>:
+    <span class="fn">print</span>(<span class="st">"คะแนนถูกต้อง"</span>)
+
+<span class="cm"># หรือเขียนสั้นแบบ Python</span>
+<span class="kw">if</span> <span class="nm">0</span> &lt;= score &lt;= <span class="nm">100</span>:
+    <span class="fn">print</span>(<span class="st">"คะแนนถูกต้อง"</span>)
+
+<span class="cm"># ตรวจหลายเงื่อนไข</span>
+<span class="kw">if</span> age &gt;= <span class="nm">18</span> <span class="kw">and</span> has_id:
+    <span class="fn">print</span>(<span class="st">"เข้าได้"</span>)
+<span class="kw">if</span> day == <span class="st">"เสาร์"</span> <span class="kw">or</span> day == <span class="st">"อาทิตย์"</span>:
+    <span class="fn">print</span>(<span class="st">"วันหยุด"</span>)</pre>
+      </div>
+    </div>
+    <div class="exam"><b>ลำดับรวมทั้งหมด (สูง→ต่ำ):</b> <code class="inline-code">( )</code> → <code class="inline-code">**</code> → <code class="inline-code">* / // %</code> → <code class="inline-code">+ −</code> → <code class="inline-code">เปรียบเทียบ</code> → <code class="inline-code">not</code> → <code class="inline-code">and</code> → <code class="inline-code">or</code> · เลขคำนวณก่อน เปรียบเทียบทีหลัง ตรรกะท้ายสุด</div>
+  </div>
+</div>
+
+<!-- 8 โจทย์รวม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · ฝึกทำ</div>
+    <h2 class="slide-title">โจทย์คำนวณแนวสอบ — ไล่ทีละขั้น</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ข้อ 1</div>
+        <pre class="code-block">x = <span class="nm">17</span>
+y = <span class="nm">5</span>
+<span class="fn">print</span>(x // y)      <span class="cm"># ?</span>
+<span class="fn">print</span>(x % y)       <span class="cm"># ?</span>
+<span class="fn">print</span>(x / y)       <span class="cm"># ?</span>
+<span class="fn">print</span>(x ** <span class="nm">2</span>)      <span class="cm"># ?</span></pre>
+        <pre class="code-block"><span class="cm"># เฉลย
+# 17 // 5 = 3      (ปัดลง)
+# 17 % 5  = 2      (เศษ)
+# 17 / 5  = 3.4    (float!)
+# 17 ** 2 = 289</span></pre>
+        <div class="code-label" style="margin-top:6px">ข้อ 2</div>
+        <pre class="code-block">a = <span class="nm">5</span>
+a += <span class="nm">3</span>       <span class="cm"># a = 8</span>
+a *= <span class="nm">2</span>       <span class="cm"># a = 16</span>
+a %= <span class="nm">5</span>       <span class="cm"># a = 1</span>
+<span class="fn">print</span>(a)     <span class="cm"># 1</span></pre>
+      </div>
+      <div>
+        <div class="code-label">ข้อ 3 — ผสมชนิดข้อมูล</div>
+        <pre class="code-block"><span class="fn">print</span>(<span class="nm">10</span> + <span class="nm">3</span> * <span class="nm">2</span>)          <span class="cm"># 16</span>
+<span class="fn">print</span>((<span class="nm">10</span> + <span class="nm">3</span>) * <span class="nm">2</span>)        <span class="cm"># 26</span>
+<span class="fn">print</span>(<span class="nm">10</span> / <span class="nm">2</span> + <span class="nm">3</span>)          <span class="cm"># 8.0 ← float</span>
+<span class="fn">print</span>(<span class="fn">int</span>(<span class="nm">10</span> / <span class="nm">2</span>) + <span class="nm">3</span>)     <span class="cm"># 8   ← int</span>
+<span class="fn">print</span>(<span class="nm">10</span> // <span class="nm">3</span> + <span class="nm">10</span> % <span class="nm">3</span>)    <span class="cm"># 3+1 = 4</span></pre>
+        <div class="code-label" style="margin-top:6px">ข้อ 4 — ตรรกะ</div>
+        <pre class="code-block">x = <span class="nm">7</span>
+<span class="fn">print</span>(x &gt; <span class="nm">5</span> <span class="kw">and</span> x &lt; <span class="nm">10</span>)    <span class="cm"># True</span>
+<span class="fn">print</span>(x % <span class="nm">2</span> == <span class="nm">0</span>)          <span class="cm"># False</span>
+<span class="fn">print</span>(<span class="kw">not</span> (x &gt; <span class="nm">5</span>))         <span class="cm"># False</span>
+<span class="fn">print</span>(x &gt; <span class="nm">10</span> <span class="kw">or</span> x % <span class="nm">7</span> == <span class="nm">0</span>) <span class="cm"># True</span></pre>
+      </div>
+    </div>
+    <div class="exam"><b>วิธีทำข้อคำนวณให้ไม่พลาด:</b> ① วงเล็บก่อน ② <code class="inline-code">**</code> ③ <code class="inline-code">* / // %</code> ซ้ายไปขวา ④ <code class="inline-code">+ −</code> · เขียนค่ากำกับทุกขั้น และ<b>เช็คชนิดผลลัพธ์</b>ว่าเป็น int หรือ float</div>
+  </div>
+</div>
+
+<!-- 9 Think -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="think-wrap">
+      <div class="think-icon">💭</div>
+      <div class="think-label">เช็คตัวเอง!</div>
+      <div class="think-q">คำนวณค่าเหล่านี้ให้ครบ (อย่าเปิดเฉลย)<br><br>
+<code style="font-family:monospace;font-size:14px;background:var(--cal);padding:12px 20px;border-radius:8px;display:inline-block;text-align:left;line-height:2">
+-7 % 3&nbsp;&nbsp;&nbsp;&nbsp;= ?<br>
+-7 // 3&nbsp;&nbsp;&nbsp;= ?<br>
+int(-2.8)&nbsp;= ?<br>
+9 / 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ?<br>
+2 ** 3 ** 2 = ?
+</code><br><br>
+<em>ใบ้ทีละข้อ: % เครื่องหมายตามตัวหาร (บวก) ·<br>
+// ปัดลงเสมอ · int() ตัดทิ้งเข้าหา 0 ·<br>
+/ ได้ float เสมอแม้หารลงตัว · ** คำนวณขวาไปซ้าย</em><br><br>
+<span style="font-size:12px;color:var(--dim)">เฉลย: 2 · −3 · −2 · 3.0 · 512</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 10 MCQ1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ค่าของ <code class="inline-code">-5 % 2</code> คือ?</h2>
+    <div class="mc-opts" id="mc-e1">
+      <div class="mc-opt" onclick="pickMC('mc-e1',0,1,'−1 คือคำตอบในภาษา C/Java ที่ผลลัพธ์ตามตัวตั้ง — แต่ Python ต่างออกไป')"><span class="mc-ltr">A</span> -1</div>
+      <div class="mc-opt" onclick="pickMC('mc-e1',1,1,'Python ให้ผลลัพธ์ % มีเครื่องหมายตามตัวหาร (2 เป็นบวก) → ได้ 1 · ตรงกับสไลด์อาจารย์')"><span class="mc-ltr">B</span> 1</div>
+      <div class="mc-opt" onclick="pickMC('mc-e1',2,1,'−5 หาร 2 ไม่ลงตัว จึงมีเศษแน่นอน ไม่ใช่ 0')"><span class="mc-ltr">C</span> 0</div>
+      <div class="mc-opt" onclick="pickMC('mc-e1',3,1,'ไม่ error — % กับเลขลบใช้ได้ปกติ (error เฉพาะตัวหารเป็น 0)')"><span class="mc-ltr">D</span> Error</div>
+    </div>
+    <div class="ex-feedback" id="mc-e1-fb"></div>
+    <pre class="code-block" style="margin-top:12px">Python: a % b มีเครื่องหมาย<b>ตามตัวหาร (b)</b>
+  -5 % 2  = 1     (b=2 บวก → ผลบวก)
+   5 % -2 = -1    (b=-2 ลบ → ผลลบ)
+
+พิสูจน์: -5 // 2 = -3 (ปัดลง) → -5 = (-3)×2 + r → r = 1 ✓</pre>
+  </div>
+</div>
+
+<!-- 11 MCQ2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · ลองข้อสอบ</div>
+    <h2 class="slide-title">ค่าของ <code class="inline-code">2 * 5 + (6 * 2) / 5</code> คือ?</h2>
+    <div class="mc-opts" id="mc-e2">
+      <div class="mc-opt" onclick="pickMC('mc-e2',0,2,'12 คือลืมบวก 2*5 หรือคำนวณลำดับผิด')"><span class="mc-ltr">A</span> 12</div>
+      <div class="mc-opt" onclick="pickMC('mc-e2',1,2,'ถ้าตอบ 12 (int) แสดงว่าลืมว่า / ให้ผลเป็น float')"><span class="mc-ltr">B</span> 12.0</div>
+      <div class="mc-opt" onclick="pickMC('mc-e2',2,2,'(6*2)=12 → 12/5=2.4 · 2*5=10 · 10+2.4=12.4 ✓ ตรงกับตัวอย่างในสไลด์')"><span class="mc-ltr">C</span> 12.4</div>
+      <div class="mc-opt" onclick="pickMC('mc-e2',3,2,'4.4 เกิดจากคำนวณ 2*5 ผิดเป็นอย่างอื่น — ลองไล่ใหม่ทีละขั้น')"><span class="mc-ltr">D</span> 4.4</div>
+    </div>
+    <div class="ex-feedback" id="mc-e2-fb"></div>
+    <pre class="code-block" style="margin-top:12px">① วงเล็บก่อน:   (6 * 2) = 12
+② คูณ/หาร ซ้าย→ขวา:  2 * 5 = 10  ·  12 / 5 = 2.4
+③ บวก:          10 + 2.4 = <b>12.4</b>
+
+⚠️ มี / อยู่ในนิพจน์ → ผลลัพธ์เป็น float แน่นอน</pre>
+  </div>
+</div>
+
+<!-- 12 Fill-in -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ติวบทที่ 2 · เติมคำ</div>
+    <h2 class="slide-title">เติมให้ถูก</h2>
+
+    <div class="exercise">
+      <div class="ex-q">① 5 / 0 และ 5 % 0 ได้ผลลัพธ์อะไร</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in1" placeholder="ผลลัพธ์">
+        <button class="ex-btn" onclick="checkFill('in1','error',['ZeroDivisionError','เออเรอร์','ผิดพลาด'],['0'],'Error ทั้งคู่ (ZeroDivisionError) — หารด้วยศูนย์ไม่ได้','Error — ทั้ง / และ % ที่ตัวหารเป็น 0 จะเกิด ZeroDivisionError')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb1"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">② int(3.9) ได้ค่าเท่าไหร่</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in2" placeholder="ตัวเลข">
+        <button class="ex-btn" onclick="checkFill('in2','3',['3'],['4'],'3 — int() ตัดทศนิยมทิ้ง ไม่ปัด (ถ้าอยากปัดใช้ round())','3 — ตัดทิ้ง ไม่ใช่ปัดขึ้น · round(3.9) ถึงจะได้ 4')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb2"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-q">③ Python ไม่มีตัวดำเนินการ ++ ต้องเขียนแทนด้วยอะไร (เพิ่มค่า x ทีละ 1)</div>
+      <div class="ex-input-row">
+        <input class="ex-input" type="text" id="in3" placeholder="เขียนยังไง">
+        <button class="ex-btn" onclick="checkFill('in3','x += 1',['x+=1','x = x + 1','x=x+1'],['x++'],'x += 1 หรือ x = x + 1 — Python ไม่มี ++ / -- แบบภาษา C','x += 1 (หรือ x = x + 1) — x++ เป็น SyntaxError ใน Python')">ตรวจ</button>
+      </div>
+      <div class="ex-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 13 Summary -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🧮</div>
+      <div class="summary-title">จบติวบทที่ 2 — Expression</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">ค่าที่ต้องจำ</div><div class="sum-body">5/2 = 2.5 · −5%2 = <b>1</b> · 5/0 และ 5%0 = <b>Error</b> · 5.0%2 = 1.0</div></div>
+        <div class="sum-card"><div class="sum-head">% และ //</div><div class="sum-body">% เครื่องหมายตามตัวหาร · // ปัดลงเสมอ (−7//2 = −4)</div></div>
+        <div class="sum-card"><div class="sum-head">ลำดับ</div><div class="sum-body">( ) → ** → * / // % → + − → เปรียบเทียบ → not → and → or</div></div>
+        <div class="sum-card"><div class="sum-head">ตัวย่อ</div><div class="sum-body">+= −= *= /= %= · <b>ไม่มี ++ / −−</b> · /= ทำให้เป็น float</div></div>
+        <div class="sum-card"><div class="sum-head">Type Conversion</div><div class="sum-body">Implicit (int→float อัตโนมัติ) · Explicit int()/float()/str() · int(3.9)=3</div></div>
+        <div class="sum-card"><div class="sum-head">Logical</div><div class="sum-body">and ต้องจริงทั้งคู่ · or ตัวใดตัวหนึ่ง · not กลับค่า · 0&lt;=x&lt;=100 เขียนได้เลย</div></div>
+      </div>
+      <a href="slides_ch3.html" class="summary-next">→ ติวบทที่ 3: Flowchart &amp; Selection</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 14</span>
+      <span class="nav-chapter" id="chapterLabel">ติวบทที่ 2 — Expression</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','ตารางค่าจากสไลด์','ทำไม −5%2 = 1','ลำดับตัวดำเนินการ','+= −= *=','Type Conversion','Relational','Logical','โจทย์คำนวณ','เช็คตัวเอง','ข้อสอบ: −5%2','ข้อสอบ: ลำดับ','เติมคำ','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
