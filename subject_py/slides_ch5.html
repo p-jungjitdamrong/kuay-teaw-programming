@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>บทที่ 5 — OOP พื้นฐาน | ก๋วยเตี๋ยวเรือ Programming</title>
+<title>บทที่ 6 — OOP พื้นฐาน | ก๋วยเตี๋ยวเรือ Programming</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../slide.css">
@@ -34,7 +34,7 @@
     <div class="cover-wrap">
       <div class="cover-left">
         <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Python</div>
-        <div class="cover-title">บทที่ 5<br><em>OOP พื้นฐาน</em></div>
+        <div class="cover-title">บทที่ 6<br><em>OOP พื้นฐาน</em></div>
         <div class="cover-subtitle">class, __init__, self, @property, Encapsulation — ทำไม self ไม่ใช่ this และทำไม Python OOP อ่านง่ายกว่า Java</div>
         <div class="cover-topics">
           <div class="topic-row"><div class="topic-dot"></div>class และ __init__ — constructor</div>
@@ -57,7 +57,7 @@
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 5 · class</div>
+    <div class="slide-eyebrow">บทที่ 6 · class</div>
     <h2 class="slide-title">class คืออะไร — Blueprint ของ Object</h2>
     <p class="slide-lead">class คือแม่แบบ — Object คือสิ่งที่สร้างจากแม่แบบนั้น เช่น class <em>BankAccount</em> → object <em>บัญชีของสมชาย</em></p>
     <div class="two-col">
@@ -96,7 +96,7 @@ acc.<span class="fn">deposit</span>(<span class="nm">50_000</span>)</pre>
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 5 · __init__ &amp; self</div>
+    <div class="slide-eyebrow">บทที่ 6 · __init__ &amp; self</div>
     <h2 class="slide-title">__init__ และ self — Constructor ของ Python</h2>
     <p class="slide-lead"><code class="inline-code">__init__</code> ถูกเรียกอัตโนมัติตอน create object — <code class="inline-code">self</code> คือ reference ถึง object ตัวเอง (เหมือน <code>this</code> ใน Java แต่ต้องเขียนชัดเจน)</p>
     <pre class="code-block"><span class="kw">class</span> <span class="fn">BankAccount</span>:
@@ -127,7 +127,7 @@ acc.<span class="fn">deposit</span>(<span class="nm">50_000</span>)</pre>
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 5 · Encapsulation</div>
+    <div class="slide-eyebrow">บทที่ 6 · Encapsulation</div>
     <h2 class="slide-title">Encapsulation — _ และ __ Convention</h2>
     <p class="slide-lead">Python ไม่มี private/public keyword เหมือน Java — ใช้ naming convention แทน</p>
     <pre class="code-block"><span class="kw">class</span> <span class="fn">BankAccount</span>:
@@ -157,7 +157,7 @@ acc.<span class="fn">deposit</span>(<span class="nm">50_000</span>)</pre>
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 5 · @property</div>
+    <div class="slide-eyebrow">บทที่ 6 · @property</div>
     <h2 class="slide-title">@property — Getter/Setter แบบ Pythonic</h2>
     <p class="slide-lead">ใน Java ต้องเขียน getBalance(), setBalance() — Python ใช้ <code class="inline-code">@property</code> ทำให้ method เรียกได้เหมือน attribute</p>
     <div class="two-col">
@@ -205,7 +205,7 @@ acc.balance = <span class="nm">1000</span>  <span class="cm"># setter</span></pr
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 5 · Attributes</div>
+    <div class="slide-eyebrow">บทที่ 6 · Attributes</div>
     <h2 class="slide-title">Class Attribute vs Instance Attribute</h2>
     <p class="slide-lead">Class attribute ใช้ร่วมกันทุก object — Instance attribute เป็นของแต่ละ object</p>
     <pre class="code-block"><span class="kw">class</span> <span class="fn">BankAccount</span>:
@@ -240,7 +240,7 @@ acc.balance = <span class="nm">1000</span>  <span class="cm"># setter</span></pr
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 5 · Dunder Methods</div>
+    <div class="slide-eyebrow">บทที่ 6 · Dunder Methods</div>
     <h2 class="slide-title">__str__ และ __repr__ — แสดง Object เป็น String</h2>
     <p class="slide-lead">ถ้าไม่เขียน __str__ การ print object จะได้ <code class="inline-code">&lt;BankAccount object at 0x...&gt;</code> — ต้องเขียนเองให้อ่านได้</p>
     <pre class="code-block"><span class="kw">class</span> <span class="fn">BankAccount</span>:
@@ -271,7 +271,7 @@ acc.balance = <span class="nm">1000</span>  <span class="cm"># setter</span></pr
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 5 · Banking Use Case</div>
+    <div class="slide-eyebrow">บทที่ 6 · Banking Use Case</div>
     <h2 class="slide-title">🏦 BankAccount class แบบสมบูรณ์</h2>
     <pre class="code-block"><span class="kw">class</span> <span class="fn">BankAccount</span>:
     <span class="kw">def</span> <span class="fn">__init__</span>(self, owner, account_id):
@@ -332,7 +332,7 @@ print(Counter.count)</code><br><br><em>count มีค่าเท่าไห�
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 5 · Trace</div>
+    <div class="slide-eyebrow">บทที่ 6 · Trace</div>
     <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
     <pre class="code-block"><span class="kw">class</span> <span class="fn">Acc</span>:
     <span class="kw">def</span> <span class="fn">__init__</span>(self, b):
@@ -357,7 +357,7 @@ print(Counter.count)</code><br><br><em>count มีค่าเท่าไห�
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 5 · Fill-in</div>
+    <div class="slide-eyebrow">บทที่ 6 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
 
     <div class="exercise">
@@ -395,7 +395,7 @@ print(Counter.count)</code><br><br><em>count มีค่าเท่าไห�
   <div class="slide-body center">
     <div class="summary-wrap">
       <div class="summary-icon">🎯</div>
-      <div class="summary-title">สรุปบทที่ 5</div>
+      <div class="summary-title">สรุปบทที่ 6</div>
       <div class="summary-grid">
         <div class="sum-card"><div class="sum-head">class</div><div class="sum-body">blueprint · สร้าง object ด้วย ClassName() · data + methods รวมกัน</div></div>
         <div class="sum-card"><div class="sum-head">__init__ &amp; self</div><div class="sum-body">constructor · self = this แต่ต้องเขียนชัดเจน (Explicit)</div></div>
@@ -404,7 +404,7 @@ print(Counter.count)</code><br><br><em>count มีค่าเท่าไห�
         <div class="sum-card"><div class="sum-head">Class vs Instance attr</div><div class="sum-body">Class attr ใช้ร่วมกัน · @classmethod(cls) · @staticmethod</div></div>
         <div class="sum-card"><div class="sum-head">Dunder Methods</div><div class="sum-body">__str__ (print) · __repr__ (debug) · __len__ · และอื่นๆ</div></div>
       </div>
-      <a href="slides_ch6.html" class="summary-next">→ บทที่ 6: OOP ขั้นสูง &amp; Python vs ภาษาอื่น</a>
+      <a href="slides_ch6.html" class="summary-next">→ บทที่ 7: OOP ขั้นสูง &amp; Python vs ภาษาอื่น</a>
     </div>
   </div>
 </div>
@@ -416,7 +416,7 @@ print(Counter.count)</code><br><br><em>count มีค่าเท่าไห�
   <div class="nav-prog-wrap">
     <div class="nav-meta">
       <span class="nav-counter" id="counter">1 / 12</span>
-      <span class="nav-chapter" id="chapterLabel">บทที่ 5 — OOP พื้นฐาน</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 6 — OOP พื้นฐาน</span>
     </div>
     <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
   </div>

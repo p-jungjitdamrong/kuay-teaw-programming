@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>บทที่ 4 — Built-in Data Structures | ก๋วยเตี๋ยวเรือ Programming</title>
+<title>บทที่ 5 — Built-in Data Structures | ก๋วยเตี๋ยวเรือ Programming</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../slide.css">
@@ -26,7 +26,7 @@
     <div class="cover-wrap">
       <div class="cover-left">
         <div class="cover-chapter">🍜 ก๋วยเตี๋ยวเรือ Programming · Python</div>
-        <div class="cover-title">บทที่ 4<br><em>Built-in Data Structures</em></div>
+        <div class="cover-title">บทที่ 5<br><em>Built-in Data Structures</em></div>
         <div class="cover-subtitle">list, tuple, dict, set — Python มีให้ built-in ทั้งหมด ไม่ต้องสร้าง struct เอง</div>
         <div class="cover-topics">
           <div class="topic-row"><div class="topic-dot"></div>list — dynamic array, ordered, mutable</div>
@@ -49,7 +49,7 @@
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 4 · ภาพรวม</div>
+    <div class="slide-eyebrow">บทที่ 5 · ภาพรวม</div>
     <h2 class="slide-title">เปรียบเทียบ 4 Data Structures</h2>
     <p class="slide-lead">Python มี 4 collection built-in — เลือกให้ถูกตามงาน</p>
     <table class="ds-table">
@@ -69,7 +69,7 @@
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 4 · list</div>
+    <div class="slide-eyebrow">บทที่ 5 · list</div>
     <h2 class="slide-title">list — Dynamic Array ของ Python</h2>
     <p class="slide-lead">list ขยายขนาดได้เอง เก็บได้ทุก type ปะปนกัน — ไม่ต้องกำหนดขนาดล่วงหน้าเหมือน array C</p>
     <pre class="code-block"><span class="nm">txns</span> = [<span class="nm">1000</span>, <span class="nm">5000</span>, <span class="nm">200</span>]   <span class="cm"># สร้าง</span>
@@ -102,7 +102,7 @@ txns[::-<span class="nm">1</span>]   <span class="cm"># reverse ทั้ง lis
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 4 · tuple</div>
+    <div class="slide-eyebrow">บทที่ 5 · tuple</div>
     <h2 class="slide-title">tuple — Immutable Sequence</h2>
     <p class="slide-lead">tuple คือ list ที่เปลี่ยนแปลงไม่ได้หลัง create — เร็วกว่า list และใช้เป็น key ของ dict ได้</p>
     <pre class="code-block"><span class="cm"># สร้าง tuple</span>
@@ -136,7 +136,7 @@ txns[::-<span class="nm">1</span>]   <span class="cm"># reverse ทั้ง lis
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 4 · dict</div>
+    <div class="slide-eyebrow">บทที่ 5 · dict</div>
     <h2 class="slide-title">dict — Key-Value Store, O(1) Lookup</h2>
     <p class="slide-lead">dict คือ Hash Map ที่ Python สร้างให้ built-in — lookup เร็ว O(1) ไม่ว่าจะมีกี่ key</p>
     <pre class="code-block"><span class="nm">account</span> = {
@@ -174,7 +174,7 @@ account.<span class="fn">update</span>({<span class="st">"tier"</span>: <span cl
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 4 · set</div>
+    <div class="slide-eyebrow">บทที่ 5 · set</div>
     <h2 class="slide-title">set — Unique Values, O(1) Membership Test</h2>
     <p class="slide-lead">set เก็บค่าไม่ซ้ำ ค้นหาเร็ว O(1) — รองรับ set operations เหมือนในคณิตศาสตร์</p>
     <pre class="code-block"><span class="cm"># กรองค่าซ้ำออกด้วย set</span>
@@ -205,7 +205,7 @@ unique.<span class="fn">discard</span>(<span class="st">"A999"</span>)   <span c
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 4 · Nested</div>
+    <div class="slide-eyebrow">บทที่ 5 · Nested</div>
     <h2 class="slide-title">Nested Collections — ซ้อนกันได้</h2>
     <p class="slide-lead">list of dict, dict of list — ใช้แทน struct array ของ C ได้เลย</p>
     <pre class="code-block"><span class="cm"># List of dicts — แทน array of struct ใน C</span>
@@ -237,7 +237,7 @@ unique.<span class="fn">discard</span>(<span class="st">"A999"</span>)   <span c
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 4 · Banking Use Case</div>
+    <div class="slide-eyebrow">บทที่ 5 · Banking Use Case</div>
     <h2 class="slide-title">🏦 ระบบ Mini Bank ด้วย dict + list</h2>
     <p class="slide-lead">ไม่ต้องใช้ struct หรือ Node — dict + list ทำได้เลย</p>
     <pre class="code-block"><span class="nm">bank</span> = {}   <span class="cm"># dict เก็บ account</span>
@@ -283,7 +283,7 @@ unique.<span class="fn">discard</span>(<span class="st">"A999"</span>)   <span c
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 4 · Trace</div>
+    <div class="slide-eyebrow">บทที่ 5 · Trace</div>
     <h2 class="slide-title">โค้ดนี้พิมพ์อะไร?</h2>
     <pre class="code-block"><span class="nm">d</span> = {<span class="st">"a"</span>: <span class="nm">1</span>, <span class="st">"b"</span>: <span class="nm">2</span>, <span class="st">"c"</span>: <span class="nm">3</span>}
 <span class="nm">result</span> = [v*<span class="nm">2</span> <span class="kw">for</span> k, v <span class="kw">in</span> d.<span class="fn">items</span>() <span class="kw">if</span> v > <span class="nm">1</span>]
@@ -301,7 +301,7 @@ unique.<span class="fn">discard</span>(<span class="st">"A999"</span>)   <span c
 <div class="slide">
   <div class="slide-strip"></div>
   <div class="slide-body">
-    <div class="slide-eyebrow">บทที่ 4 · Fill-in</div>
+    <div class="slide-eyebrow">บทที่ 5 · Fill-in</div>
     <h2 class="slide-title">เติมโค้ดให้ถูกต้อง</h2>
 
     <div class="exercise">
@@ -339,7 +339,7 @@ unique.<span class="fn">discard</span>(<span class="st">"A999"</span>)   <span c
   <div class="slide-body center">
     <div class="summary-wrap">
       <div class="summary-icon">🎯</div>
-      <div class="summary-title">สรุปบทที่ 4</div>
+      <div class="summary-title">สรุปบทที่ 5</div>
       <div class="summary-grid">
         <div class="sum-card"><div class="sum-head">list</div><div class="sum-body">dynamic · ordered · mutable · append/pop/sort</div></div>
         <div class="sum-card"><div class="sum-head">tuple</div><div class="sum-body">immutable · เร็วกว่า list · ใช้ return หลายค่า · เป็น dict key ได้</div></div>
@@ -348,7 +348,7 @@ unique.<span class="fn">discard</span>(<span class="st">"A999"</span>)   <span c
         <div class="sum-card"><div class="sum-head">เลือกให้ถูก</div><div class="sum-body">ลำดับ+แก้ไข→list · คงที่→tuple · ค้นด้วยชื่อ→dict · unique→set</div></div>
         <div class="sum-card"><div class="sum-head">Nested</div><div class="sum-body">list of dict แทน struct array · dict of list แทน hash of linked list</div></div>
       </div>
-      <a href="slides_ch5.html" class="summary-next">→ บทที่ 5: OOP พื้นฐาน</a>
+      <a href="slides_ch5.html" class="summary-next">→ บทที่ 6: OOP พื้นฐาน</a>
     </div>
   </div>
 </div>
@@ -360,7 +360,7 @@ unique.<span class="fn">discard</span>(<span class="st">"A999"</span>)   <span c
   <div class="nav-prog-wrap">
     <div class="nav-meta">
       <span class="nav-counter" id="counter">1 / 12</span>
-      <span class="nav-chapter" id="chapterLabel">บทที่ 4 — Built-in Data Structures</span>
+      <span class="nav-chapter" id="chapterLabel">บทที่ 5 — Built-in Data Structures</span>
     </div>
     <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
   </div>
