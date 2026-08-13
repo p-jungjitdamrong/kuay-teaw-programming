@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ชุดที่ 4 — โจทย์ระบบงานจริง | ตะลุยโจทย์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#7c2d12;--cal:#fbe9e0;--cam:#c2643a;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.prob{background:#fff;border:1px solid var(--line);border-left:4px solid var(--ca);border-radius:8px;padding:14px 18px;margin:8px 0;font-size:13.5px;line-height:1.8;}
+.prob b{color:var(--ca);}
+.io{font-family:var(--mono);font-size:12.5px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:8px 0;white-space:pre;color:var(--ca);line-height:1.6;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.6;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:5px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);}
+.t td:first-child{font-weight:700;color:var(--ca);}
+.lang{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--ca);color:#fff;margin-bottom:4px}
+.key{background:#fff7ed;border:1px solid var(--cam);border-radius:8px;padding:12px 16px;margin:8px 0;font-size:13px;line-height:1.75}
+.key b{color:var(--ca)}
+.key .kh{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;color:var(--ca);display:block;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🧗 ก๋วยเตี๋ยวเรือ Programming · ตะลุยโจทย์</div>
+        <div class="cover-title">ชุดที่ 4<br><em>โจทย์ระบบงานจริง</em></div>
+        <div class="cover-subtitle">โจทย์ → หลักการ → เฉลย C + Python · ไม่มีทฤษฎี ลุยอย่างเดียว</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 1: ระบบลานจอดรถ</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 2: ระบบเรียกคิวร้านอาหาร แบ่งโต๊ะตามจำนวนคน</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 3: ระบบสต๊อกสินค้าหน้าร้าน</div>
+          <div class="topic-row"><div class="topic-dot"></div>ทุกข้อ: ตัวอย่างการทำงานจริง + เฉลยเต็ม</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">🏢</div>
+        <div class="cover-badge">3 ระบบ · C + PYTHON</div>
+        <div class="cover-slides-count">8 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1</div>
+    <h2 class="slide-title">ระบบลานจอดรถ</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          <b>โจทย์:</b> ลานจอดมี <b>N ช่อง</b> (หมายเลข 1..N) เขียนโปรแกรมรับเหตุการณ์ทีละบรรทัดจนเจอ <span style="font-family:monospace">END</span><br>
+          <span style="font-family:monospace">IN &lt;ทะเบียน&gt; &lt;ชั่วโมงเข้า&gt;</span> — รถเข้า ให้จัด<b>ช่องว่างหมายเลขน้อยที่สุด</b> ถ้าเต็มให้แจ้งว่าเต็ม<br>
+          <span style="font-family:monospace">OUT &lt;ทะเบียน&gt; &lt;ชั่วโมงออก&gt;</span> — รถออก ให้คืนช่องและคิดเงิน<br>
+          <b>อัตราค่าจอด:</b> ชั่วโมงแรกฟรี · ชั่วโมงที่ 2–3 ชั่วโมงละ 20 · ชั่วโมงที่ 4 ขึ้นไป ชั่วโมงละ 30<br>
+          สุดท้ายสรุป<b>รายได้รวม</b>และ<b>ช่องที่ยังมีรถจอดอยู่</b>
+        </div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">input:
+3
+IN กข1234 8
+IN จฉ5678 9
+IN ชซ9999 9
+IN ดต1111 10
+OUT กข1234 13
+OUT จฉ5678 10
+END
+
+output:
+กข1234 เข้าช่อง 1
+จฉ5678 เข้าช่อง 2
+ชซ9999 เข้าช่อง 3
+ดต1111 ลานเต็ม ไม่มีช่องว่าง
+กข1234 ออกจากช่อง 1 จอด 5 ชม. = 100 บาท
+จฉ5678 ออกจากช่อง 2 จอด 1 ชม. = 0 บาท
+--------------------
+รายได้รวม = 100 บาท
+ช่องที่ยังมีรถ: 3</div>
+      </div>
+      <div>
+        <div class="key">
+          <span class="kh">หลักการของข้อนี้</span>
+          <b>① อาร์เรย์ขนาน (parallel array) แทนตาราง</b><br>
+          <span style="font-family:monospace">plate[i]</span> = ทะเบียนในช่อง i · <span style="font-family:monospace">inTime[i]</span> = เวลาเข้า · ช่องว่างใช้สตริงว่าง<br>
+          ดัชนีเดียวกัน = ข้อมูลของคันเดียวกัน — วิธีแทน struct แบบเบาที่สุด<br><br>
+          <b>② หาช่องน้อยสุด = วนจากต้นแล้ว break ทันที</b><br>
+          ไม่ต้องเรียงอะไร เพราะวนจาก 1 ไป N ตัวแรกที่เจอคือน้อยที่สุดโดยอัตโนมัติ<br><br>
+          <b>③ ค้นหาด้วย key = วนเทียบทะเบียน</b><br>
+          รถออกไม่ได้บอกเลขช่อง ต้องวนหาว่าทะเบียนนี้อยู่ช่องไหน — แล้วเก็บ index ไว้ใช้ต่อ<br><br>
+          <b>④ ค่าบริการขั้นบันได = คิดทีละชั้นแล้วบวกสะสม</b><br>
+          ห้ามเอาอัตราเดียวคูณทั้งก้อน (กับดักเดียวกับโจทย์ค่าไฟในชุดที่ 3)
+        </div>
+        <div class="code-label">ตารางคิดเงินแบบขั้นบันได</div>
+        <table class="t">
+          <thead><tr><th>จอด (ชม.)</th><th>คิดยังไง</th><th>เงิน</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>ฟรีทั้งหมด</td><td>0</td></tr>
+            <tr><td>3</td><td>0 + 20×2</td><td>40</td></tr>
+            <tr><td>5</td><td>0 + 20×2 + 30×2</td><td>100</td></tr>
+            <tr><td>8</td><td>0 + 20×2 + 30×5</td><td>190</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">⏸️ ลองเขียนเองก่อนเปิดเฉลย — เช็ค 3 เคสนี้ให้ผ่าน: ลานเต็ม · OUT ทะเบียนที่ไม่มีอยู่ · จอด 1 ชม. พอดี (ต้องได้ 0 บาท)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- เฉลย 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · เฉลย</div>
+    <h2 class="slide-title">ระบบลานจอดรถ — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+
+<span class="kw">int</span> fee(<span class="kw">int</span> h) {                 <span class="cm">// ค่าจอดแบบขั้นบันได</span>
+    <span class="kw">int</span> total = <span class="nu">0</span>;
+    <span class="kw">if</span> (h &gt; <span class="nu">1</span>) {                    <span class="cm">// ชม. 2–3</span>
+        <span class="kw">int</span> n = (h &lt; <span class="nu">3</span> ? h : <span class="nu">3</span>) - <span class="nu">1</span>;
+        total += n * <span class="nu">20</span>;
+    }
+    <span class="kw">if</span> (h &gt; <span class="nu">3</span>) total += (h - <span class="nu">3</span>) * <span class="nu">30</span>;   <span class="cm">// ชม. 4 ขึ้นไป</span>
+    <span class="kw">return</span> total;
+}
+
+<span class="kw">int</span> main() {
+    <span class="kw">int</span> N;
+    scanf(<span class="st">"%d"</span>, &amp;N);
+
+    <span class="kw">char</span> plate[<span class="nu">101</span>][<span class="nu">32</span>];       <span class="cm">// อาร์เรย์ขนาน</span>
+    <span class="kw">int</span>  inTime[<span class="nu">101</span>];
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">1</span>; i &lt;= N; i++) plate[i][<span class="nu">0</span>] = <span class="st">'\0'</span>;  <span class="cm">// ว่าง</span>
+
+    <span class="kw">char</span> cmd[<span class="nu">16</span>], p[<span class="nu">32</span>];
+    <span class="kw">int</span> t, income = <span class="nu">0</span>;
+
+    <span class="kw">while</span> (scanf(<span class="st">"%s"</span>, cmd) == <span class="nu">1</span> &amp;&amp; strcmp(cmd, <span class="st">"END"</span>) != <span class="nu">0</span>) {
+        scanf(<span class="st">"%s %d"</span>, p, &amp;t);
+
+        <span class="kw">if</span> (strcmp(cmd, <span class="st">"IN"</span>) == <span class="nu">0</span>) {
+            <span class="kw">int</span> slot = <span class="nu">-1</span>;
+            <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">1</span>; i &lt;= N; i++)
+                <span class="kw">if</span> (plate[i][<span class="nu">0</span>] == <span class="st">'\0'</span>) { slot = i; <span class="kw">break</span>; }
+
+            <span class="kw">if</span> (slot == <span class="nu">-1</span>) {
+                printf(<span class="st">"%s ลานเต็ม ไม่มีช่องว่าง\n"</span>, p);
+            } <span class="kw">else</span> {
+                strcpy(plate[slot], p);
+                inTime[slot] = t;
+                printf(<span class="st">"%s เข้าช่อง %d\n"</span>, p, slot);
+            }
+        }
+        <span class="kw">else</span> <span class="kw">if</span> (strcmp(cmd, <span class="st">"OUT"</span>) == <span class="nu">0</span>) {
+            <span class="kw">int</span> slot = <span class="nu">-1</span>;
+            <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">1</span>; i &lt;= N; i++)
+                <span class="kw">if</span> (strcmp(plate[i], p) == <span class="nu">0</span>) { slot = i; <span class="kw">break</span>; }
+
+            <span class="kw">if</span> (slot == <span class="nu">-1</span>) {
+                printf(<span class="st">"ไม่พบรถทะเบียน %s\n"</span>, p);
+            } <span class="kw">else</span> {
+                <span class="kw">int</span> h = t - inTime[slot];
+                <span class="kw">int</span> money = fee(h);
+                income += money;
+                printf(<span class="st">"%s ออกจากช่อง %d จอด %d ชม. = %d บาท\n"</span>,
+                       p, slot, h, money);
+                plate[slot][<span class="nu">0</span>] = <span class="st">'\0'</span>;      <span class="cm">// คืนช่อง</span>
+            }
+        }
+    }
+
+    printf(<span class="st">"--------------------\n"</span>);
+    printf(<span class="st">"รายได้รวม = %d บาท\n"</span>, income);
+    printf(<span class="st">"ช่องที่ยังมีรถ:"</span>);
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">1</span>; i &lt;= N; i++)
+        <span class="kw">if</span> (plate[i][<span class="nu">0</span>] != <span class="st">'\0'</span>) printf(<span class="st">" %d"</span>, i);
+    printf(<span class="st">"\n"</span>);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block"><span class="kw">def</span> fee(h):
+    total = <span class="nu">0</span>
+    <span class="kw">if</span> h &gt; <span class="nu">1</span>:
+        total += (<span class="kw">min</span>(h, <span class="nu">3</span>) - <span class="nu">1</span>) * <span class="nu">20</span>
+    <span class="kw">if</span> h &gt; <span class="nu">3</span>:
+        total += (h - <span class="nu">3</span>) * <span class="nu">30</span>
+    <span class="kw">return</span> total
+
+N = <span class="kw">int</span>(input())
+slots = {i: <span class="kw">None</span> <span class="kw">for</span> i <span class="kw">in</span> range(<span class="nu">1</span>, N + <span class="nu">1</span>)}   <span class="cm"># ช่อง → (ทะเบียน, เวลาเข้า)</span>
+income = <span class="nu">0</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    parts = input().split()
+    <span class="kw">if</span> parts[<span class="nu">0</span>] == <span class="st">"END"</span>:
+        <span class="kw">break</span>
+    cmd, p, t = parts[<span class="nu">0</span>], parts[<span class="nu">1</span>], <span class="kw">int</span>(parts[<span class="nu">2</span>])
+
+    <span class="kw">if</span> cmd == <span class="st">"IN"</span>:
+        <span class="cm"># ช่องว่างหมายเลขน้อยสุด</span>
+        empty = [i <span class="kw">for</span> i <span class="kw">in</span> slots <span class="kw">if</span> slots[i] <span class="kw">is</span> <span class="kw">None</span>]
+        <span class="kw">if</span> <span class="kw">not</span> empty:
+            print(<span class="st">f"{p} ลานเต็ม ไม่มีช่องว่าง"</span>)
+        <span class="kw">else</span>:
+            s = <span class="kw">min</span>(empty)
+            slots[s] = (p, t)
+            print(<span class="st">f"{p} เข้าช่อง {s}"</span>)
+
+    <span class="kw">elif</span> cmd == <span class="st">"OUT"</span>:
+        s = <span class="kw">None</span>
+        <span class="kw">for</span> i, v <span class="kw">in</span> slots.items():
+            <span class="kw">if</span> v <span class="kw">is</span> <span class="kw">not</span> <span class="kw">None</span> <span class="kw">and</span> v[<span class="nu">0</span>] == p:
+                s = i
+                <span class="kw">break</span>
+        <span class="kw">if</span> s <span class="kw">is</span> <span class="kw">None</span>:
+            print(<span class="st">f"ไม่พบรถทะเบียน {p}"</span>)
+        <span class="kw">else</span>:
+            h = t - slots[s][<span class="nu">1</span>]
+            money = fee(h)
+            income += money
+            print(<span class="st">f"{p} ออกจากช่อง {s} จอด {h} ชม. = {money} บาท"</span>)
+            slots[s] = <span class="kw">None</span>
+
+print(<span class="st">"-"</span> * <span class="nu">20</span>)
+print(<span class="st">f"รายได้รวม = {income} บาท"</span>)
+busy = [<span class="kw">str</span>(i) <span class="kw">for</span> i <span class="kw">in</span> slots <span class="kw">if</span> slots[i]]
+print(<span class="st">"ช่องที่ยังมีรถ:"</span>, <span class="st">" "</span>.join(busy) <span class="kw">if</span> busy <span class="kw">else</span> <span class="st">"(ไม่มี)"</span>)</pre>
+        <div class="exam"><b>จุดที่มักพลาด:</b><br>
+        ① คืนช่องแล้วลืมล้างทะเบียน → รถคันเดิมออกซ้ำได้<br>
+        ② คิดเงินแบบ <span style="font-family:monospace">h × 30</span> ทั้งก้อน → จอด 5 ชม. ได้ 150 แทนที่จะเป็น 100<br>
+        ③ C: เทียบสตริงด้วย <span style="font-family:monospace">==</span> ต้องใช้ <span style="font-family:monospace">strcmp()</span> เท่านั้น</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2</div>
+    <h2 class="slide-title">ระบบเรียกคิวร้านอาหาร — แบ่งโต๊ะตามจำนวนคน</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          <b>โจทย์:</b> ร้านมีโต๊ะ 3 ขนาด <b>S</b> (นั่งได้ 2), <b>M</b> (นั่งได้ 4), <b>L</b> (นั่งได้ 8)
+          รับจำนวนโต๊ะแต่ละขนาดมาก่อน แล้วรับเหตุการณ์จนเจอ <span style="font-family:monospace">END</span><br>
+          <span style="font-family:monospace">ADD &lt;หมายเลขกลุ่ม&gt; &lt;จำนวนคน&gt;</span> — กลุ่มมาถึง<br>
+          <span style="font-family:monospace">FREE &lt;ขนาดโต๊ะ&gt;</span> — มีโต๊ะขนาดนั้นว่าง 1 ตัว<br>
+          <b>กติกาจัดโต๊ะ:</b> ให้โต๊ะ<b>ขนาดเล็กที่สุดที่นั่งพอ</b> ถ้าขนาดนั้นเต็ม ให้<b>เข้าคิวของขนาดนั้น</b> (ไม่เลื่อนไปใช้โต๊ะใหญ่)<br>
+          เมื่อมีโต๊ะว่าง ให้เรียก<b>คิวหน้าสุดของขนาดนั้น</b>เข้าทันที
+        </div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">input:
+1 1 1
+ADD 101 2
+ADD 102 3
+ADD 103 2
+ADD 104 6
+ADD 105 9
+FREE S
+FREE M
+END
+
+output:
+กลุ่ม 101 (2 คน) → โต๊ะ S
+กลุ่ม 102 (3 คน) → โต๊ะ M
+กลุ่ม 103 (2 คน) → คิว S (รอ 1)
+กลุ่ม 104 (6 คน) → โต๊ะ L
+กลุ่ม 105 (9 คน) → เกินความจุ รับไม่ได้
+โต๊ะ S ว่าง → เรียกกลุ่ม 103
+โต๊ะ M ว่าง → ไม่มีคิวรอ
+--------------------
+คิวคงเหลือ S:- M:- L:-</div>
+      </div>
+      <div>
+        <div class="key">
+          <span class="kh">หลักการของข้อนี้</span>
+          <b>① เลือกขนาดโต๊ะ = ตารางค่าคงที่ ไม่ใช่ if ซ้อน</b><br>
+          <span style="font-family:monospace">cap[] = {2, 4, 8}</span> แล้ววนหาตัวแรกที่ <span style="font-family:monospace">คน &lt;= cap[i]</span><br>
+          → เพิ่มขนาดโต๊ะใหม่ในอนาคตแค่เติมตัวเลข ไม่ต้องแก้ตรรกะ<br><br>
+          <b>② คิวแยกกัน 3 ชุด ไม่ใช่คิวเดียว</b><br>
+          เพราะโจทย์บอกว่ารอเฉพาะขนาดของตัวเอง → ใช้คิว 2 มิติ <span style="font-family:monospace">q[3][MAX]</span> พร้อม <span style="font-family:monospace">head[3]</span>, <span style="font-family:monospace">tail[3]</span><br><br>
+          <b>③ ตัวนับโต๊ะว่างต่อขนาด</b><br>
+          <span style="font-family:monospace">free[i]</span> ลดตอนจัดโต๊ะ เพิ่มตอน FREE — แต่<b>ถ้ามีคิวรอ อย่าเพิ่ง +1</b> เพราะโต๊ะถูกใช้ต่อทันที<br><br>
+          <b>④ เคสปฏิเสธ</b><br>
+          คนเกิน 8 = ไม่มีขนาดไหนรับได้ → ต้องแยกออกมาก่อนเข้าตรรกะจัดโต๊ะ
+        </div>
+        <div class="diagram">ADD &lt;กลุ่ม&gt; &lt;คน&gt;
+       │
+       ▼
+  หา i ตัวแรกที่ คน &lt;= cap[i]
+       │
+   ┌───┴────────────┐
+ ไม่เจอ           เจอ i
+   │                │
+ ปฏิเสธ      free[i] &gt; 0 ?
+              ┌─────┴─────┐
+             ใช่         ไม่
+              │           │
+        free[i]−−     เข้าคิว i
+        นั่งเลย</div>
+        <div class="exam">⏸️ ลองทำเองก่อน — เคสที่ต้องผ่าน: กลุ่ม 9 คน (ปฏิเสธ) · FREE ตอนไม่มีคิว (โต๊ะว่างเพิ่ม) · FREE ตอนมีคิว (โต๊ะว่างเท่าเดิม)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- เฉลย 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · เฉลย</div>
+    <h2 class="slide-title">ระบบเรียกคิว — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+<span class="cm">#define</span> MAXQ <span class="nu">1000</span>
+
+<span class="kw">int</span> main() {
+    <span class="kw">char</span> name[<span class="nu">3</span>] = {<span class="st">'S'</span>, <span class="st">'M'</span>, <span class="st">'L'</span>};
+    <span class="kw">int</span> cap[<span class="nu">3</span>]  = {<span class="nu">2</span>, <span class="nu">4</span>, <span class="nu">8</span>};       <span class="cm">// ความจุแต่ละขนาด</span>
+    <span class="kw">int</span> freeT[<span class="nu">3</span>];
+    scanf(<span class="st">"%d %d %d"</span>, &amp;freeT[<span class="nu">0</span>], &amp;freeT[<span class="nu">1</span>], &amp;freeT[<span class="nu">2</span>]);
+
+    <span class="kw">int</span> q[<span class="nu">3</span>][MAXQ];                <span class="cm">// คิวแยก 3 ชุด</span>
+    <span class="kw">int</span> head[<span class="nu">3</span>] = {<span class="nu">0</span>,<span class="nu">0</span>,<span class="nu">0</span>}, tail[<span class="nu">3</span>] = {<span class="nu">0</span>,<span class="nu">0</span>,<span class="nu">0</span>};
+
+    <span class="kw">char</span> cmd[<span class="nu">16</span>];
+    <span class="kw">while</span> (scanf(<span class="st">"%s"</span>, cmd) == <span class="nu">1</span> &amp;&amp; strcmp(cmd, <span class="st">"END"</span>) != <span class="nu">0</span>) {
+
+        <span class="kw">if</span> (strcmp(cmd, <span class="st">"ADD"</span>) == <span class="nu">0</span>) {
+            <span class="kw">int</span> g, n;
+            scanf(<span class="st">"%d %d"</span>, &amp;g, &amp;n);
+
+            <span class="kw">int</span> k = <span class="nu">-1</span>;                <span class="cm">// ขนาดเล็กสุดที่นั่งพอ</span>
+            <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; <span class="nu">3</span>; i++)
+                <span class="kw">if</span> (n &lt;= cap[i]) { k = i; <span class="kw">break</span>; }
+
+            <span class="kw">if</span> (k == <span class="nu">-1</span>) {
+                printf(<span class="st">"กลุ่ม %d (%d คน) → เกินความจุ รับไม่ได้\n"</span>, g, n);
+            } <span class="kw">else</span> <span class="kw">if</span> (freeT[k] &gt; <span class="nu">0</span>) {
+                freeT[k]--;
+                printf(<span class="st">"กลุ่ม %d (%d คน) → โต๊ะ %c\n"</span>, g, n, name[k]);
+            } <span class="kw">else</span> {
+                q[k][tail[k]++] = g;
+                printf(<span class="st">"กลุ่ม %d (%d คน) → คิว %c (รอ %d)\n"</span>,
+                       g, n, name[k], tail[k] - head[k]);
+            }
+        }
+        <span class="kw">else</span> <span class="kw">if</span> (strcmp(cmd, <span class="st">"FREE"</span>) == <span class="nu">0</span>) {
+            <span class="kw">char</span> s[<span class="nu">4</span>];
+            scanf(<span class="st">"%s"</span>, s);
+            <span class="kw">int</span> k = (s[<span class="nu">0</span>] == <span class="st">'S'</span>) ? <span class="nu">0</span> : (s[<span class="nu">0</span>] == <span class="st">'M'</span>) ? <span class="nu">1</span> : <span class="nu">2</span>;
+
+            <span class="kw">if</span> (head[k] &lt; tail[k]) {          <span class="cm">// มีคิวรอ</span>
+                <span class="kw">int</span> g = q[k][head[k]++];
+                printf(<span class="st">"โต๊ะ %c ว่าง → เรียกกลุ่ม %d\n"</span>, name[k], g);
+            } <span class="kw">else</span> {                          <span class="cm">// ไม่มีคิว</span>
+                freeT[k]++;
+                printf(<span class="st">"โต๊ะ %c ว่าง → ไม่มีคิวรอ\n"</span>, name[k]);
+            }
+        }
+    }
+
+    printf(<span class="st">"--------------------\n"</span>);
+    printf(<span class="st">"คิวคงเหลือ"</span>);
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; <span class="nu">3</span>; i++) {
+        printf(<span class="st">" %c:"</span>, name[i]);
+        <span class="kw">if</span> (head[i] == tail[i]) printf(<span class="st">"-"</span>);
+        <span class="kw">for</span> (<span class="kw">int</span> j = head[i]; j &lt; tail[i]; j++) printf(<span class="st">"%d "</span>, q[i][j]);
+    }
+    printf(<span class="st">"\n"</span>);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+name = [<span class="st">'S'</span>, <span class="st">'M'</span>, <span class="st">'L'</span>]
+cap  = [<span class="nu">2</span>, <span class="nu">4</span>, <span class="nu">8</span>]
+idx  = {<span class="st">'S'</span>: <span class="nu">0</span>, <span class="st">'M'</span>: <span class="nu">1</span>, <span class="st">'L'</span>: <span class="nu">2</span>}
+
+free_t = <span class="kw">list</span>(<span class="kw">map</span>(<span class="kw">int</span>, input().split()))
+queues = [deque(), deque(), deque()]     <span class="cm"># คิวแยก 3 ชุด</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    parts = input().split()
+    <span class="kw">if</span> parts[<span class="nu">0</span>] == <span class="st">"END"</span>:
+        <span class="kw">break</span>
+
+    <span class="kw">if</span> parts[<span class="nu">0</span>] == <span class="st">"ADD"</span>:
+        g, n = <span class="kw">int</span>(parts[<span class="nu">1</span>]), <span class="kw">int</span>(parts[<span class="nu">2</span>])
+
+        k = <span class="kw">None</span>                          <span class="cm"># ขนาดเล็กสุดที่นั่งพอ</span>
+        <span class="kw">for</span> i <span class="kw">in</span> range(<span class="nu">3</span>):
+            <span class="kw">if</span> n &lt;= cap[i]:
+                k = i
+                <span class="kw">break</span>
+
+        <span class="kw">if</span> k <span class="kw">is</span> <span class="kw">None</span>:
+            print(<span class="st">f"กลุ่ม {g} ({n} คน) → เกินความจุ รับไม่ได้"</span>)
+        <span class="kw">elif</span> free_t[k] &gt; <span class="nu">0</span>:
+            free_t[k] -= <span class="nu">1</span>
+            print(<span class="st">f"กลุ่ม {g} ({n} คน) → โต๊ะ {name[k]}"</span>)
+        <span class="kw">else</span>:
+            queues[k].append(g)
+            print(<span class="st">f"กลุ่ม {g} ({n} คน) → คิว {name[k]} (รอ {len(queues[k])})"</span>)
+
+    <span class="kw">elif</span> parts[<span class="nu">0</span>] == <span class="st">"FREE"</span>:
+        k = idx[parts[<span class="nu">1</span>]]
+        <span class="kw">if</span> queues[k]:                     <span class="cm"># มีคิวรอ → ใช้โต๊ะต่อทันที</span>
+            g = queues[k].popleft()
+            print(<span class="st">f"โต๊ะ {name[k]} ว่าง → เรียกกลุ่ม {g}"</span>)
+        <span class="kw">else</span>:
+            free_t[k] += <span class="nu">1</span>
+            print(<span class="st">f"โต๊ะ {name[k]} ว่าง → ไม่มีคิวรอ"</span>)
+
+print(<span class="st">"-"</span> * <span class="nu">20</span>)
+parts = []
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="nu">3</span>):
+    body = <span class="st">" "</span>.join(<span class="kw">map</span>(<span class="kw">str</span>, queues[i])) <span class="kw">if</span> queues[i] <span class="kw">else</span> <span class="st">"-"</span>
+    parts.append(<span class="st">f"{name[i]}:{body}"</span>)
+print(<span class="st">"คิวคงเหลือ"</span>, <span class="st">" "</span>.join(parts))</pre>
+        <div class="exam"><b>จุดที่มักพลาด:</b><br>
+        ① ตอน FREE รีบ <span style="font-family:monospace">free_t[k] += 1</span> ก่อนเช็คคิว → โต๊ะงอกเกินจำนวนจริง<br>
+        ② เลือกโต๊ะด้วย if ซ้อนแล้วลืมเคส "เล็กสุดที่พอ" → 3 คนไปได้โต๊ะ L<br>
+        ③ ลืมเคสคนเกิน 8 → วนหาไม่เจอแล้วใช้ค่า k ที่ยังไม่ได้ตั้ง</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 3 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3</div>
+    <h2 class="slide-title">ระบบสต๊อกสินค้าหน้าร้าน</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          <b>โจทย์:</b> ร้านมีสินค้า <b>M</b> รายการ แต่ละรายการมี <b>ชื่อ · ราคา · จำนวนคงเหลือ</b><br>
+          รับเหตุการณ์จนเจอ <span style="font-family:monospace">END</span><br>
+          <span style="font-family:monospace">SELL &lt;ชื่อ&gt; &lt;จำนวน&gt;</span> — ขาย ถ้าของไม่พอให้<b>ขายเท่าที่มี</b>และแจ้งเตือน<br>
+          <span style="font-family:monospace">ADD &lt;ชื่อ&gt; &lt;จำนวน&gt;</span> — เติมสต๊อก<br>
+          <span style="font-family:monospace">REPORT</span> — แสดงสินค้าที่<b>เหลือน้อยกว่า 5 ชิ้น</b><br>
+          จบแล้วสรุป <b>ยอดขายรวม</b> และ <b>สินค้าที่ขายดีที่สุด</b>
+        </div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">input:
+3
+นม 25 10
+ขนมปัง 30 4
+น้ำ 10 20
+SELL นม 3
+SELL ขนมปัง 6
+ADD ขนมปัง 10
+SELL น้ำ 15
+REPORT
+END
+
+output:
+ขาย นม 3 ชิ้น = 75 บาท
+ของไม่พอ! ขาย ขนมปัง ได้แค่ 4 ชิ้น = 120 บาท
+เติม ขนมปัง เป็น 10 ชิ้น
+ขาย น้ำ 15 ชิ้น = 150 บาท
+[REPORT] ใกล้หมด: (ไม่มี)
+--------------------
+ยอดขายรวม = 345 บาท
+ขายดีที่สุด = น้ำ (15 ชิ้น)</div>
+      </div>
+      <div>
+        <div class="key">
+          <span class="kh">หลักการของข้อนี้</span>
+          <b>① ค้นหาด้วยชื่อ → ต้องมีฟังก์ชัน find()</b><br>
+          ทุกคำสั่งเริ่มด้วยการหา index ของสินค้า → เขียนแยกเป็นฟังก์ชันครั้งเดียว แล้วเรียกใช้ทุกที่<br>
+          คืน <span style="font-family:monospace">-1</span> เมื่อไม่เจอ = แบบแผนมาตรฐาน<br><br>
+          <b>② ขายเท่าที่มี = min(ที่ขอ, ที่เหลือ)</b><br>
+          หัวใจของข้อนี้ ห้ามให้ยอดคงเหลือติดลบเด็ดขาด<br><br>
+          <b>③ ตัวแปรสะสม 2 ชั้น</b><br>
+          <span style="font-family:monospace">income</span> สะสมทั้งร้าน · <span style="font-family:monospace">sold[i]</span> สะสมรายสินค้า (ไว้หาตัวขายดี)<br><br>
+          <b>④ หาค่ามากสุด = จำ index ไม่ใช่จำค่า</b><br>
+          เก็บ <span style="font-family:monospace">best</span> เป็นดัชนี แล้วเทียบ <span style="font-family:monospace">sold[i] &gt; sold[best]</span> — จะได้ทั้งชื่อและจำนวนพร้อมกัน
+        </div>
+        <table class="t">
+          <thead><tr><th>คำสั่ง</th><th>สิ่งที่ต้องทำ</th></tr></thead>
+          <tbody>
+            <tr><td>SELL</td><td>find → min(ขอ, เหลือ) → หักสต๊อก → บวก income และ sold</td></tr>
+            <tr><td>ADD</td><td>find → บวกสต๊อก</td></tr>
+            <tr><td>REPORT</td><td>วนทั้งหมด พิมพ์ตัวที่ qty &lt; 5</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">⏸️ ลองทำเองก่อน — เคสที่ต้องผ่าน: ขายมากกว่าที่มี · ขายตอนของหมดสนิท (0 ชิ้น) · ชื่อสินค้าที่ไม่มีในระบบ · REPORT ตอนไม่มีของใกล้หมด</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- เฉลย 3 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · เฉลย</div>
+    <h2 class="slide-title">ระบบสต๊อกสินค้า — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+<span class="cm">#define</span> MAXM <span class="nu">100</span>
+
+<span class="kw">char</span> nameP[MAXM][<span class="nu">64</span>];
+<span class="kw">int</span> price[MAXM], qty[MAXM], sold[MAXM];
+<span class="kw">int</span> M;
+
+<span class="kw">int</span> findItem(<span class="kw">char</span> *s) {          <span class="cm">// คืน −1 ถ้าไม่เจอ</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; M; i++)
+        <span class="kw">if</span> (strcmp(nameP[i], s) == <span class="nu">0</span>) <span class="kw">return</span> i;
+    <span class="kw">return</span> <span class="nu">-1</span>;
+}
+
+<span class="kw">int</span> main() {
+    scanf(<span class="st">"%d"</span>, &amp;M);
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; M; i++) {
+        scanf(<span class="st">"%s %d %d"</span>, nameP[i], &amp;price[i], &amp;qty[i]);
+        sold[i] = <span class="nu">0</span>;
+    }
+
+    <span class="kw">char</span> cmd[<span class="nu">16</span>], s[<span class="nu">64</span>];
+    <span class="kw">int</span> n, income = <span class="nu">0</span>;
+
+    <span class="kw">while</span> (scanf(<span class="st">"%s"</span>, cmd) == <span class="nu">1</span> &amp;&amp; strcmp(cmd, <span class="st">"END"</span>) != <span class="nu">0</span>) {
+
+        <span class="kw">if</span> (strcmp(cmd, <span class="st">"SELL"</span>) == <span class="nu">0</span>) {
+            scanf(<span class="st">"%s %d"</span>, s, &amp;n);
+            <span class="kw">int</span> i = findItem(s);
+            <span class="kw">if</span> (i == <span class="nu">-1</span>) { printf(<span class="st">"ไม่มีสินค้า %s\n"</span>, s); <span class="kw">continue</span>; }
+
+            <span class="kw">int</span> give = (n &lt; qty[i]) ? n : qty[i];   <span class="cm">// ขายเท่าที่มี</span>
+            qty[i]  -= give;
+            sold[i] += give;
+            income  += give * price[i];
+
+            <span class="kw">if</span> (give &lt; n)
+                printf(<span class="st">"ของไม่พอ! ขาย %s ได้แค่ %d ชิ้น = %d บาท\n"</span>,
+                       s, give, give * price[i]);
+            <span class="kw">else</span>
+                printf(<span class="st">"ขาย %s %d ชิ้น = %d บาท\n"</span>,
+                       s, give, give * price[i]);
+        }
+        <span class="kw">else</span> <span class="kw">if</span> (strcmp(cmd, <span class="st">"ADD"</span>) == <span class="nu">0</span>) {
+            scanf(<span class="st">"%s %d"</span>, s, &amp;n);
+            <span class="kw">int</span> i = findItem(s);
+            <span class="kw">if</span> (i == <span class="nu">-1</span>) { printf(<span class="st">"ไม่มีสินค้า %s\n"</span>, s); <span class="kw">continue</span>; }
+            qty[i] += n;
+            printf(<span class="st">"เติม %s เป็น %d ชิ้น\n"</span>, s, qty[i]);
+        }
+        <span class="kw">else</span> <span class="kw">if</span> (strcmp(cmd, <span class="st">"REPORT"</span>) == <span class="nu">0</span>) {
+            printf(<span class="st">"[REPORT] ใกล้หมด:"</span>);
+            <span class="kw">int</span> found = <span class="nu">0</span>;
+            <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; M; i++)
+                <span class="kw">if</span> (qty[i] &lt; <span class="nu">5</span>) { printf(<span class="st">" %s(%d)"</span>, nameP[i], qty[i]); found = <span class="nu">1</span>; }
+            <span class="kw">if</span> (!found) printf(<span class="st">" (ไม่มี)"</span>);
+            printf(<span class="st">"\n"</span>);
+        }
+    }
+
+    <span class="kw">int</span> best = <span class="nu">0</span>;                 <span class="cm">// จำ index ไม่ใช่จำค่า</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">1</span>; i &lt; M; i++)
+        <span class="kw">if</span> (sold[i] &gt; sold[best]) best = i;
+
+    printf(<span class="st">"--------------------\n"</span>);
+    printf(<span class="st">"ยอดขายรวม = %d บาท\n"</span>, income);
+    printf(<span class="st">"ขายดีที่สุด = %s (%d ชิ้น)\n"</span>, nameP[best], sold[best]);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block">M = <span class="kw">int</span>(input())
+names, price, qty, sold = [], [], [], []
+
+<span class="kw">for</span> _ <span class="kw">in</span> range(M):
+    nm, p, q = input().split()
+    names.append(nm)
+    price.append(<span class="kw">int</span>(p))
+    qty.append(<span class="kw">int</span>(q))
+    sold.append(<span class="nu">0</span>)
+
+<span class="kw">def</span> find_item(s):
+    <span class="kw">return</span> names.index(s) <span class="kw">if</span> s <span class="kw">in</span> names <span class="kw">else</span> <span class="nu">-1</span>
+
+income = <span class="nu">0</span>
+<span class="kw">while</span> <span class="kw">True</span>:
+    parts = input().split()
+    cmd = parts[<span class="nu">0</span>]
+    <span class="kw">if</span> cmd == <span class="st">"END"</span>:
+        <span class="kw">break</span>
+
+    <span class="kw">if</span> cmd == <span class="st">"SELL"</span>:
+        s, n = parts[<span class="nu">1</span>], <span class="kw">int</span>(parts[<span class="nu">2</span>])
+        i = find_item(s)
+        <span class="kw">if</span> i == <span class="nu">-1</span>:
+            print(<span class="st">f"ไม่มีสินค้า {s}"</span>)
+            <span class="kw">continue</span>
+
+        give = <span class="kw">min</span>(n, qty[i])            <span class="cm"># ขายเท่าที่มี</span>
+        qty[i]  -= give
+        sold[i] += give
+        money    = give * price[i]
+        income  += money
+
+        <span class="kw">if</span> give &lt; n:
+            print(<span class="st">f"ของไม่พอ! ขาย {s} ได้แค่ {give} ชิ้น = {money} บาท"</span>)
+        <span class="kw">else</span>:
+            print(<span class="st">f"ขาย {s} {give} ชิ้น = {money} บาท"</span>)
+
+    <span class="kw">elif</span> cmd == <span class="st">"ADD"</span>:
+        s, n = parts[<span class="nu">1</span>], <span class="kw">int</span>(parts[<span class="nu">2</span>])
+        i = find_item(s)
+        <span class="kw">if</span> i == <span class="nu">-1</span>:
+            print(<span class="st">f"ไม่มีสินค้า {s}"</span>)
+            <span class="kw">continue</span>
+        qty[i] += n
+        print(<span class="st">f"เติม {s} เป็น {qty[i]} ชิ้น"</span>)
+
+    <span class="kw">elif</span> cmd == <span class="st">"REPORT"</span>:
+        low = [<span class="st">f"{names[i]}({qty[i]})"</span> <span class="kw">for</span> i <span class="kw">in</span> range(M) <span class="kw">if</span> qty[i] &lt; <span class="nu">5</span>]
+        print(<span class="st">"[REPORT] ใกล้หมด:"</span>, <span class="st">" "</span>.join(low) <span class="kw">if</span> low <span class="kw">else</span> <span class="st">"(ไม่มี)"</span>)
+
+best = <span class="nu">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="nu">1</span>, M):
+    <span class="kw">if</span> sold[i] &gt; sold[best]:
+        best = i
+
+print(<span class="st">"-"</span> * <span class="nu">20</span>)
+print(<span class="st">f"ยอดขายรวม = {income} บาท"</span>)
+print(<span class="st">f"ขายดีที่สุด = {names[best]} ({sold[best]} ชิ้น)"</span>)</pre>
+        <div class="exam"><b>จุดที่มักพลาด:</b><br>
+        ① หัก <span style="font-family:monospace">qty[i] -= n</span> ตรงๆ → สต๊อกติดลบ ต้องใช้ give<br>
+        ② คิดเงินจาก n (ที่ขอ) แทน give (ที่ขายจริง) → ยอดเกิน<br>
+        ③ หาตัวขายดีโดยเก็บแค่ค่ามากสุด → รู้จำนวนแต่ไม่รู้ว่าสินค้าไหน</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- สรุป -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🏢</div>
+      <div class="summary-title">จบชุดที่ 4 — โจทย์ระบบงานจริง</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">ระบบลานจอดรถ</div><div class="sum-body">อาร์เรย์ขนาน · หาช่องว่างน้อยสุดด้วย break · ค่าบริการขั้นบันได</div></div>
+        <div class="sum-card"><div class="sum-head">ระบบเรียกคิว</div><div class="sum-body">ตารางความจุแทน if ซ้อน · คิวแยกตามขนาด · มีคิวรออย่าเพิ่มโต๊ะว่าง</div></div>
+        <div class="sum-card"><div class="sum-head">ระบบสต๊อก</div><div class="sum-body">ฟังก์ชัน find คืน −1 · ขายเท่าที่มีด้วย min · หาค่ามากสุดด้วยการจำ index</div></div>
+        <div class="sum-card"><div class="sum-head">รูปแบบร่วมของ 3 ข้อ</div><div class="sum-body">วนอ่านคำสั่งจนเจอ END → แยกด้วย if ตามคำสั่ง → จบแล้วสรุปผล</div></div>
+        <div class="sum-card"><div class="sum-head">กับดักที่เจอทุกข้อ</div><div class="sum-body">ลืมเคส "ไม่พบ" · ลืมเคส "ไม่พอ/เต็ม" · อัปเดตตัวนับผิดจังหวะ</div></div>
+        <div class="sum-card"><div class="sum-head">กับดักภาษา C</div><div class="sum-body">เทียบสตริงต้องใช้ strcmp · คัดลอกต้องใช้ strcpy · ห้ามใช้ = หรือ ==</div></div>
+      </div>
+      <a href="index.html" class="summary-next">→ กลับหน้าวิชาตะลุยโจทย์</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 8</span>
+      <span class="nav-chapter" id="chapterLabel">ชุดที่ 4 — โจทย์ระบบงานจริง</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','① ระบบลานจอดรถ','① เฉลย C + Python','② ระบบเรียกคิวร้านอาหาร','② เฉลย C + Python','③ ระบบสต๊อกสินค้า','③ เฉลย C + Python','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>

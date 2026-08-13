@@ -35,7 +35,7 @@
       <div class="cover-right">
         <div class="cover-bignum">L5</div>
         <div class="cover-badge">HAS-A · CLASS DIAGRAM</div>
-        <div class="cover-slides-count">12 slides</div>
+        <div class="cover-slides-count">16 slides</div>
       </div>
     </div>
   </div>
@@ -46,7 +46,7 @@
   <div class="slide-strip"></div>
   <div class="slide-body">
     <div class="slide-eyebrow">Lab 5 · แนวคิด</div>
-    <h2 class="slide-title">คลาสสัมพันธ์กัน 3 แบบ (has-a)</h2>
+    <h2 class="slide-title">คลาสสัมพันธ์กัน 3 แบบที่ Lab นี้ใช้ (has-a)</h2>
     <div class="two-col">
       <div>
         <div class="code-label">① Association — รู้จักกัน ใช้งานกัน</div>
@@ -76,6 +76,200 @@ new เองข้างใน constructor  → Composition</pre>
       </div>
     </div>
     <div class="callout">ทั้งสามแบบคือ "has-a / uses-a" — ต่างจาก "is-a" (inheritance) ที่จะเรียนใน Lab 6</div>
+  </div>
+</div>
+
+<!-- SLIDE 1b ภาพรวมครบทุกแบบ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 5 · เสริม — ภาพรวมครบ</div>
+    <h2 class="slide-title">ความสัมพันธ์ระหว่างคลาส — 4 แบบหลัก + สืบทอดอีก 2</h2>
+    <div class="two-col">
+      <div>
+        <table class="t">
+          <thead><tr><th>ความสัมพันธ์</th><th>ชื่อไทย / อ่านว่า</th><th>UML</th></tr></thead>
+          <tbody>
+            <tr><td>Dependency</td><td>แบบขึ้นอยู่กับ · uses-a</td><td>- - - -&gt;</td></tr>
+            <tr><td>Association</td><td>เกี่ยวข้องกันโดยตรง · knows-a</td><td>────────</td></tr>
+            <tr><td>Aggregation</td><td>การเป็นส่วนหนึ่งของ · has-a</td><td>◇────────</td></tr>
+            <tr><td>Composition</td><td>การเป็นองค์ประกอบของ · part-of</td><td>◆────────</td></tr>
+            <tr><td>Inheritance</td><td>การสืบทอด · is-a</td><td>────────▷</td></tr>
+            <tr><td>Realization</td><td>การนำไปใช้จริง · implements</td><td>- - - - ▷</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">เรียงตาม<b>ความแรงของพันธะ</b>จากบนลงล่าง — ยิ่งลงล่าง คลาสยิ่งผูกกันแน่น แก้ตัวหนึ่งกระทบอีกตัวมากขึ้น</div>
+        <div class="code-label">ข้อสอบชอบถามว่าอันไหน "แรงกว่า"</div>
+        <pre class="code-block"><span class="cm">Dependency &lt; Association
+           &lt; Aggregation
+           &lt; Composition
+
+// Composition แรงสุดในกลุ่ม has-a
+// เพราะ part ตายพร้อม whole</span></pre>
+      </div>
+      <div>
+        <div class="code-label">โค้ด Java ของแต่ละแบบ — จำรูปนี้ไว้</div>
+        <pre class="code-block"><span class="cm">// ① Dependency — โผล่แค่ใน method</span>
+<span class="kw">class</span> Cashier {
+    <span class="kw">public void</span> <span class="fn">print</span>(InventoryCart ic) { ... }
+}   <span class="cm">// ไม่มี field เก็บไว้เลย</span>
+
+<span class="cm">// ② Association — เก็บเป็น field แต่ไม่ได้เป็นเจ้าของ</span>
+<span class="kw">class</span> Student {
+    <span class="kw">private</span> Teacher advisor;   <span class="cm">// รู้จักกัน</span>
+}
+
+<span class="cm">// ③ Aggregation — เก็บ object ที่รับมาจากข้างนอก</span>
+<span class="kw">class</span> InventoryCart {
+    <span class="kw">private</span> Product[] products;
+    <span class="kw">public void</span> <span class="fn">add</span>(Product p) {
+        products[count++] = p;   <span class="cm">// รับมา ไม่ได้ new</span>
+    }
+}
+
+<span class="cm">// ④ Composition — new เองข้างใน</span>
+<span class="kw">class</span> BankAccount {
+    <span class="kw">private</span> Date openDate;
+    <span class="kw">public</span> <span class="fn">BankAccount</span>() {
+        openDate = <span class="kw">new</span> <span class="fn">Date</span>();   <span class="cm">// สร้างเอง</span>
+    }
+}
+
+<span class="cm">// ⑤ Inheritance — is-a</span>
+<span class="kw">class</span> Milk <span class="kw">extends</span> Product { ... }
+
+<span class="cm">// ⑥ Realization — สัญญาว่าจะทำตาม interface</span>
+<span class="kw">class</span> Milk <span class="kw">implements</span> Discountable { ... }</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1c Multiplicity -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 5 · เสริม — Multiplicity</div>
+    <h2 class="slide-title">Multiplicity — บอกว่า "มีได้กี่ตัว"</h2>
+    <div class="two-col">
+      <div>
+        <table class="t">
+          <thead><tr><th>เขียนว่า</th><th>หมายถึง</th><th>เก็บใน Java ยังไง</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>มีตัวเดียว บังคับมี</td><td>field ตัวเดียว</td></tr>
+            <tr><td>0..1</td><td>มีหรือไม่มีก็ได้</td><td>field ที่เป็น null ได้</td></tr>
+            <tr><td>0..*</td><td>ไม่มีเลยก็ได้ กี่ตัวก็ได้</td><td>array / ArrayList</td></tr>
+            <tr><td>1..*</td><td>อย่างน้อย 1 ตัว</td><td>array + ตรวจใน constructor</td></tr>
+            <tr><td>0..10</td><td>ได้ไม่เกิน 10</td><td>array ขนาด 10 + count</td></tr>
+          </tbody>
+        </table>
+        <div class="code-label">อ่านไดอะแกรมของ Lab นี้</div>
+        <pre class="code-block"><span class="cm">InventoryCart ◆──── 0..10 ────  Product
+
+อ่านว่า: รถเข็น 1 คัน มี Product
+        ได้ตั้งแต่ 0 ถึง 10 ชิ้น
+
+ในโค้ดจึงกลายเป็น:
+  private Product[] products;   // หลายตัว
+  private int count;            // นับว่ามีจริงกี่ตัว
+  new InventoryCart(10)         // กำหนดเพดาน</span></pre>
+        <div class="callout"><b>เลขอยู่ฝั่งไหน อ่านฝั่งนั้น</b> — ตัวเลขที่ติดกับ Product แปลว่า "Cart หนึ่งคัน มี Product กี่ตัว" ไม่ใช่กลับกัน</div>
+      </div>
+      <div>
+        <div class="code-label">Multiplicity 2 ฝั่ง — อ่านทั้งไปและกลับ</div>
+        <div class="diagram">   Student            Course
+  ┌────────┐  1..*    0..*  ┌────────┐
+  │        │────────────────│        │
+  └────────┘                └────────┘
+
+อ่านซ้าย → ขวา:
+  นักศึกษา 1 คน ลงได้ 0..* วิชา
+อ่านขวา → ซ้าย:
+  วิชา 1 วิชา มีนักศึกษา 1..* คน
+
+= ความสัมพันธ์แบบ many-to-many</div>
+        <div class="code-label">ทิศทางของลูกศร (navigability)</div>
+        <pre class="code-block"><span class="cm">// ทางเดียว — Cart รู้จัก Product
+//            แต่ Product ไม่รู้ว่าอยู่ Cart ไหน</span>
+<span class="kw">class</span> InventoryCart { <span class="kw">private</span> Product[] items; }
+<span class="kw">class</span> Product { <span class="cm">/* ไม่มี field ชี้กลับ */</span> }
+
+<span class="cm">// สองทาง — ชี้หากันทั้งคู่ (bidirectional)</span>
+<span class="kw">class</span> Student { <span class="kw">private</span> Course[] courses; }
+<span class="kw">class</span> Course  { <span class="kw">private</span> Student[] students; }
+<span class="cm">// ⚠️ ต้องระวังให้ทั้ง 2 ฝั่งตรงกันเสมอ
+// เพิ่มวิชาให้นักศึกษา ต้องเพิ่มนักศึกษาให้วิชาด้วย</span></pre>
+        <div class="callout">เวลาเขียน class diagram ส่งอาจารย์ <b>ต้องใส่ multiplicity ทุกเส้น</b> — เส้นที่ไม่มีตัวเลขถือว่าไม่สมบูรณ์ และเป็นจุดที่โดนหักคะแนนบ่อยที่สุด</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 1d แยกให้ออก -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">Lab 5 · เสริม — จุดที่สับสน</div>
+    <h2 class="slide-title">แยกให้ออก: คู่ที่คนสับสนมากที่สุด</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">Aggregation vs Composition</div>
+        <table class="t">
+          <thead><tr><th>ประเด็น</th><th>Aggregation ◇</th><th>Composition ◆</th></tr></thead>
+          <tbody>
+            <tr><td>ใครสร้าง</td><td>ข้างนอกสร้าง แล้วส่งเข้ามา</td><td>คลาสแม่ new เอง</td></tr>
+            <tr><td>แม่ถูกลบ</td><td>ลูกยังอยู่ได้</td><td>ลูกหายตามไปด้วย</td></tr>
+            <tr><td>แชร์ได้ไหม</td><td>ได้ หลายที่ใช้ตัวเดียวกัน</td><td>ไม่ได้ เป็นของแม่คนเดียว</td></tr>
+            <tr><td>ตัวอย่าง</td><td>ทีม ↔ ผู้เล่น</td><td>บ้าน ↔ ห้อง</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="cm">// ทดสอบด้วยคำถามเดียว:
+// "ถ้าลบ object แม่ทิ้ง ลูกยังมีความหมายไหม?"
+//   ยังมี  → Aggregation
+//   ไม่มี  → Composition
+
+// ทีมยุบ ผู้เล่นยังเป็นผู้เล่น  → Aggregation
+// บ้านถูกทุบ ห้องไม่เหลืออะไร → Composition</span></pre>
+        <div class="code-label" style="margin-top:8px">Dependency vs Association</div>
+        <pre class="code-block"><span class="cm">// Dependency — เจอแค่ในวงเล็บ method
+void print(InventoryCart ic) { ... }
+// ใช้เสร็จก็จบ ไม่จำอะไรไว้
+
+// Association — เก็บเป็น field
+private InventoryCart cart;
+// จำไว้ ใช้ได้ตลอดอายุ object</span></pre>
+      </div>
+      <div>
+        <div class="code-label">Inheritance vs Composition — เลือกอันไหน</div>
+        <pre class="code-block"><span class="cm">// ถามว่า "A เป็น B" หรือ "A มี B"
+
+Milk เป็น Product        → extends  ✅
+Car  เป็น Engine         → ผิด!
+Car  มี  Engine          → field    ✅
+
+// กฎที่ใช้ในงานจริง:
+// "Favor composition over inheritance"
+// เพราะ extends ผูกแน่นเกินไป
+// แก้ superclass กระทบ subclass ทั้งหมด</span></pre>
+        <div class="callout">ข้อสอบชอบหลอกด้วยคู่ที่ฟังดูเข้ากัน เช่น <b>Employee extends Company</b> — ผิด เพราะพนักงาน<b>ไม่ได้เป็น</b>บริษัท แต่<b>ทำงานให้</b>บริษัท (association)</div>
+        <div class="exercise">
+          <div class="ex-q">④ "โรงเรียนมีห้องเรียน — โรงเรียนปิด ห้องเรียนก็ไม่เหลือ" คือความสัมพันธ์แบบใด</div>
+          <div class="ex-input-row">
+            <input class="ex-input" type="text" id="in4" placeholder="ชื่อความสัมพันธ์">
+            <button class="ex-btn" onclick="checkFill('in4','composition',['Composition','คอมโพสิชัน'],['aggregation'],'Composition — ลบแม่แล้วลูกหายตาม ใช้สัญลักษณ์ ◆','ลูกหายตามแม่ = Composition (◆) ไม่ใช่ Aggregation (◇)')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb4"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">⑤ ใน UML สัญลักษณ์ <span style="font-family:monospace">0..*</span> ที่ปลายเส้นเรียกว่าอะไร</div>
+          <div class="ex-input-row">
+            <input class="ex-input" type="text" id="in5" placeholder="ศัพท์ UML">
+            <button class="ex-btn" onclick="checkFill('in5','multiplicity',['Multiplicity','cardinality'],[],'Multiplicity — บอกว่ามีได้กี่ตัว · เส้นที่ไม่ใส่ถือว่าไดอะแกรมไม่สมบูรณ์','คือ Multiplicity (บางตำราเรียก cardinality)')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb5"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -423,11 +617,11 @@ p2.<span class="fn">setWeight</span>(<span class="nm">250</span>);      <span cl
       <div class="summary-icon">🔗</div>
       <div class="summary-title">สรุป Lab 5 — Class Relationships</div>
       <div class="summary-grid">
-        <div class="sum-card"><div class="sum-head">3 ความสัมพันธ์</div><div class="sum-body">Association ใช้ชั่วคราว · Aggregation รับมาเก็บ · Composition new เองข้างใน</div></div>
+        <div class="sum-card"><div class="sum-head">4 ความสัมพันธ์หลัก</div><div class="sum-body">Dependency ขึ้นอยู่กับ (⇢) · Association เกี่ยวข้องโดยตรง (─) · Aggregation เป็นส่วนหนึ่งของ (◇) · Composition เป็นองค์ประกอบของ (◆)</div></div>
         <div class="sum-card"><div class="sum-head">ถอดสเปคจาก main</div><div class="sum-body">โจทย์ให้ main มา → reverse engineer ว่าคลาสต้องมี constructor/method อะไร</div></div>
         <div class="sum-card"><div class="sum-head">ระบบร้านค้า</div><div class="sum-body">Product เก็บข้อมูล · Cart จัดการเข้าออก (คือ Stack!) · Cashier คิดเงิน</div></div>
         <div class="sum-card"><div class="sum-head">Single Responsibility</div><div class="sum-body">คลาสละหนึ่งหน้าที่ — แก้ใบเสร็จแก้แค่ Cashier</div></div>
-        <div class="sum-card"><div class="sum-head">Class Diagram</div><div class="sum-body">− private · + public · ◆ aggregation · ⇢ uses · 0..10 multiplicity</div></div>
+        <div class="sum-card"><div class="sum-head">Class Diagram</div><div class="sum-body">− private · + public · ◇ aggregation · ◆ composition · ⇢ dependency · ▷ inheritance · ใส่ multiplicity ทุกเส้น</div></div>
         <div class="sum-card"><div class="sum-head">ต่อยอด</div><div class="sum-body">Lab 6 จะ extends Product เป็น Milk/Sugar/Coffee — ระบบเดิมใช้ต่อได้</div></div>
       </div>
       <a href="slides_ch6.html" class="summary-next">→ Lab 6: Inheritance</a>
@@ -442,7 +636,7 @@ p2.<span class="fn">setWeight</span>(<span class="nm">250</span>);      <span cl
   <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
   <div class="nav-prog-wrap">
     <div class="nav-meta">
-      <span class="nav-counter" id="counter">1 / 13</span>
+      <span class="nav-counter" id="counter">1 / 16</span>
       <span class="nav-chapter" id="chapterLabel">Lab 5 — Class Relationships</span>
     </div>
     <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
@@ -451,7 +645,7 @@ p2.<span class="fn">setWeight</span>(<span class="nm">250</span>);      <span cl
 </div>
 
 <script>
-const TITLES = ['Cover','ความสัมพันธ์ 3 แบบ','ถอดสเปคจาก main','Product','InventoryCart','Cashier','ภาพรวมการไหล','Class Diagram','เตรียมไป Lab 6','Think!','MCQ','Fill-in','Summary'];
+const TITLES = ['Cover','ความสัมพันธ์ 3 แบบ','ครบ 6 แบบ + UML','Multiplicity','แยกให้ออก','ถอดสเปคจาก main','Product','InventoryCart','Cashier','ภาพรวมการไหล','Class Diagram','เตรียมไป Lab 6','Think!','MCQ','Fill-in','Summary'];
 </script>
 <script src="../slide-engine.js"></script>
 </body>

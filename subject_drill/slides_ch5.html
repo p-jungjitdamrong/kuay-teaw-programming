@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ชุดที่ 5 — ระบบที่ต้องใช้ Linked List / Hash | ตะลุยโจทย์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#7c2d12;--cal:#fbe9e0;--cam:#c2643a;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.prob{background:#fff;border:1px solid var(--line);border-left:4px solid var(--ca);border-radius:8px;padding:14px 18px;margin:8px 0;font-size:13.5px;line-height:1.8;}
+.prob b{color:var(--ca);}
+.io{font-family:var(--mono);font-size:12.5px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:8px 0;white-space:pre;color:var(--ca);line-height:1.6;}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.6;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:5px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);}
+.t td:first-child{font-weight:700;color:var(--ca);}
+.lang{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--ca);color:#fff;margin-bottom:4px}
+.key{background:#fff7ed;border:1px solid var(--cam);border-radius:8px;padding:12px 16px;margin:8px 0;font-size:13px;line-height:1.75}
+.key b{color:var(--ca)}
+.key .kh{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;color:var(--ca);display:block;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🧗 ก๋วยเตี๋ยวเรือ Programming · ตะลุยโจทย์</div>
+        <div class="cover-title">ชุดที่ 5<br><em>ระบบที่ต้องใช้<br>Linked List / Hash</em></div>
+        <div class="cover-subtitle">โจทย์ที่ใช้อาร์เรย์ธรรมดาแล้ว "ทำได้แต่แย่" — จึงบังคับให้ต้องเปลี่ยนโครงสร้าง</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 1: ระบบเพลย์ลิสต์เพลง — Linked List</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 2: ระบบสมาชิกสะสมแต้ม — Hash Table</div>
+          <div class="topic-row"><div class="topic-dot"></div>โจทย์ 3: ระบบตะกร้าสินค้าออนไลน์ — ใช้ทั้งคู่</div>
+          <div class="topic-row"><div class="topic-dot"></div>ทุกข้อ: โจทย์ · หลักการ · เฉลย C + Python</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">🔗</div>
+        <div class="cover-badge">3 ระบบ · C + PYTHON</div>
+        <div class="cover-slides-count">8 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · Linked List</div>
+    <h2 class="slide-title">ระบบเพลย์ลิสต์เพลง</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          <b>โจทย์:</b> เขียนระบบจัดการเพลย์ลิสต์ รับคำสั่งจนเจอ <span style="font-family:monospace">END</span><br>
+          <span style="font-family:monospace">ADD &lt;ชื่อเพลง&gt;</span> — เพิ่มต่อท้ายเพลย์ลิสต์<br>
+          <span style="font-family:monospace">INSERT &lt;ชื่อเพลง&gt; &lt;ตำแหน่ง&gt;</span> — แทรกเพลงที่ตำแหน่งนั้น (เริ่มนับ 1)<br>
+          <span style="font-family:monospace">DEL &lt;ชื่อเพลง&gt;</span> — ลบเพลงนั้นออกจากเพลย์ลิสต์<br>
+          <span style="font-family:monospace">NEXT</span> — เลื่อนไปเพลงถัดไป (ถ้าถึงท้ายให้วนกลับเพลงแรก)<br>
+          <span style="font-family:monospace">NOW</span> — บอกว่ากำลังเล่นเพลงอะไร อยู่ลำดับที่เท่าไร<br>
+          <span style="font-family:monospace">LIST</span> — แสดงเพลย์ลิสต์ทั้งหมด<br>
+          <b>ข้อบังคับ:</b> ห้ามใช้อาร์เรย์เก็บลำดับเพลง — ต้องใช้ <b>linked list</b>
+        </div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">input:
+ADD เพลงA
+ADD เพลงB
+ADD เพลงC
+INSERT เพลงX 2
+LIST
+NOW
+NEXT
+NEXT
+NOW
+DEL เพลงB
+LIST
+END
+
+output:
+เพิ่ม เพลงA (ทั้งหมด 1 เพลง)
+เพิ่ม เพลงB (ทั้งหมด 2 เพลง)
+เพิ่ม เพลงC (ทั้งหมด 3 เพลง)
+แทรก เพลงX ที่ลำดับ 2
+เพลย์ลิสต์: 1.เพลงA 2.เพลงX 3.เพลงB 4.เพลงC
+กำลังเล่น: เพลงA (ลำดับ 1)
+▶ เพลงX
+▶ เพลงB
+กำลังเล่น: เพลงB (ลำดับ 3)
+ลบ เพลงB → เล่นต่อที่ เพลงC
+เพลย์ลิสต์: 1.เพลงA 2.เพลงX 3.เพลงC</div>
+      </div>
+      <div>
+        <div class="key">
+          <span class="kh">ทำไมข้อนี้ถึงต้องใช้ Linked List</span>
+          <b>เพราะงานหลักคือ "แทรกกลาง" กับ "ลบกลาง"</b><br>
+          อาร์เรย์: แทรกที่ลำดับ 2 ต้องเลื่อนทุกเพลงข้างหลังไป 1 ช่อง = O(n) ทุกครั้ง<br>
+          Linked List: แค่ย้ายลูกศร 2 เส้น = O(1) เมื่อรู้ตำแหน่งแล้ว<br><br>
+          <b>และเพราะมี "เพลงที่กำลังเล่น" ที่ต้องรอดจากการแก้ลิสต์</b><br>
+          ถ้าใช้อาร์เรย์แล้วเก็บตำแหน่งเป็นตัวเลข พอลบเพลงข้างหน้า ตัวเลขจะชี้ผิดเพลงทันที<br>
+          แต่ถ้าเก็บเป็น <b>pointer ไปยังโหนด</b> ต่อให้ลิสต์เปลี่ยนยังไง มันก็ยังชี้เพลงเดิมอยู่
+        </div>
+        <div class="key">
+          <span class="kh">หลักการที่ต้องใช้</span>
+          <b>① เก็บ head + cur</b> — cur คือโหนดที่กำลังเล่น ไม่ใช่ตัวเลขลำดับ<br>
+          <b>② แทรกที่ลำดับ k</b> — เดินไปโหนดที่ k−1 แล้วต่อลูกศรตัวใหม่ก่อนเสมอ<br>
+          <b>③ ลบ</b> — ต้องหาโหนด<b>ก่อนหน้า</b>ให้ได้ · ถ้าลบตัวที่กำลังเล่นอยู่ ให้เลื่อน cur ไปตัวถัดไปก่อนลบ<br>
+          <b>④ NEXT วนกลับ</b> — ถ้า <span style="font-family:monospace">cur-&gt;next == NULL</span> ให้ <span style="font-family:monospace">cur = head</span>
+        </div>
+        <div class="exam">⏸️ ลองทำเองก่อน — เคสที่ต้องผ่าน: แทรกที่ลำดับ 1 (ต้องเปลี่ยน head) · ลบเพลงแรก · ลบเพลงที่กำลังเล่นอยู่ · ลบจนเหลือเพลงเดียวแล้วกด NEXT</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- เฉลย 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · เฉลย</div>
+    <h2 class="slide-title">ระบบเพลย์ลิสต์ — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;stdlib.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+
+<span class="kw">struct</span> Song {
+    <span class="kw">char</span> name[<span class="nu">64</span>];
+    <span class="kw">struct</span> Song *next;
+};
+
+<span class="kw">struct</span> Song *head = NULL, *cur = NULL;
+
+<span class="kw">struct</span> Song* newSong(<span class="kw">char</span> *s) {
+    <span class="kw">struct</span> Song *p = malloc(<span class="kw">sizeof</span>(<span class="kw">struct</span> Song));
+    strcpy(p-&gt;name, s);
+    p-&gt;next = NULL;
+    <span class="kw">return</span> p;
+}
+
+<span class="kw">int</span> count() {
+    <span class="kw">int</span> n = <span class="nu">0</span>;
+    <span class="kw">for</span> (<span class="kw">struct</span> Song *c = head; c; c = c-&gt;next) n++;
+    <span class="kw">return</span> n;
+}
+
+<span class="kw">int</span> posOf(<span class="kw">struct</span> Song *t) {         <span class="cm">// ลำดับของโหนด (เริ่ม 1)</span>
+    <span class="kw">int</span> i = <span class="nu">1</span>;
+    <span class="kw">for</span> (<span class="kw">struct</span> Song *c = head; c; c = c-&gt;next, i++)
+        <span class="kw">if</span> (c == t) <span class="kw">return</span> i;
+    <span class="kw">return</span> <span class="nu">0</span>;
+}
+
+<span class="kw">void</span> addEnd(<span class="kw">char</span> *s) {
+    <span class="kw">struct</span> Song *n = newSong(s);
+    <span class="kw">if</span> (!head) { head = cur = n; }
+    <span class="kw">else</span> {
+        <span class="kw">struct</span> Song *c = head;
+        <span class="kw">while</span> (c-&gt;next) c = c-&gt;next;
+        c-&gt;next = n;
+    }
+    printf(<span class="st">"เพิ่ม %s (ทั้งหมด %d เพลง)\n"</span>, s, count());
+}
+
+<span class="kw">void</span> insertAt(<span class="kw">char</span> *s, <span class="kw">int</span> k) {
+    <span class="kw">struct</span> Song *n = newSong(s);
+    <span class="kw">if</span> (k &lt;= <span class="nu">1</span> || !head) {           <span class="cm">// แทรกหัว</span>
+        n-&gt;next = head;
+        head = n;
+        <span class="kw">if</span> (!cur) cur = n;
+    } <span class="kw">else</span> {
+        <span class="kw">struct</span> Song *c = head;
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">1</span>; i &lt; k - <span class="nu">1</span> &amp;&amp; c-&gt;next; i++)
+            c = c-&gt;next;                <span class="cm">// ไปโหนดที่ k−1</span>
+        n-&gt;next = c-&gt;next;              <span class="cm">// ต่อตัวใหม่ก่อน</span>
+        c-&gt;next = n;
+    }
+    printf(<span class="st">"แทรก %s ที่ลำดับ %d\n"</span>, s, k);
+}
+
+<span class="kw">void</span> delSong(<span class="kw">char</span> *s) {
+    <span class="kw">if</span> (!head) { printf(<span class="st">"เพลย์ลิสต์ว่าง\n"</span>); <span class="kw">return</span>; }
+
+    <span class="kw">struct</span> Song *target = NULL, *prev = NULL;
+    <span class="kw">for</span> (<span class="kw">struct</span> Song *c = head; c; prev = c, c = c-&gt;next)
+        <span class="kw">if</span> (strcmp(c-&gt;name, s) == <span class="nu">0</span>) { target = c; <span class="kw">break</span>; }
+
+    <span class="kw">if</span> (!target) { printf(<span class="st">"ไม่พบเพลง %s\n"</span>, s); <span class="kw">return</span>; }
+
+    <span class="kw">if</span> (cur == target)                  <span class="cm">// เลื่อน cur ก่อนลบ</span>
+        cur = target-&gt;next ? target-&gt;next : head;
+
+    <span class="kw">if</span> (prev) prev-&gt;next = target-&gt;next;
+    <span class="kw">else</span>      head = target-&gt;next;
+
+    <span class="kw">if</span> (cur == target) cur = head;      <span class="cm">// เหลือเพลงเดียวแล้วลบ</span>
+    free(target);
+
+    <span class="kw">if</span> (!head) printf(<span class="st">"ลบ %s → เพลย์ลิสต์ว่าง\n"</span>, s);
+    <span class="kw">else</span>       printf(<span class="st">"ลบ %s → เล่นต่อที่ %s\n"</span>, s, cur-&gt;name);
+}
+
+<span class="kw">int</span> main() {
+    <span class="kw">char</span> cmd[<span class="nu">16</span>], s[<span class="nu">64</span>];
+    <span class="kw">int</span> k;
+    <span class="kw">while</span> (scanf(<span class="st">"%s"</span>, cmd) == <span class="nu">1</span> &amp;&amp; strcmp(cmd, <span class="st">"END"</span>)) {
+        <span class="kw">if</span> (!strcmp(cmd, <span class="st">"ADD"</span>))    { scanf(<span class="st">"%s"</span>, s); addEnd(s); }
+        <span class="kw">else</span> <span class="kw">if</span> (!strcmp(cmd, <span class="st">"INSERT"</span>)) { scanf(<span class="st">"%s %d"</span>, s, &amp;k); insertAt(s, k); }
+        <span class="kw">else</span> <span class="kw">if</span> (!strcmp(cmd, <span class="st">"DEL"</span>)) { scanf(<span class="st">"%s"</span>, s); delSong(s); }
+        <span class="kw">else</span> <span class="kw">if</span> (!strcmp(cmd, <span class="st">"NEXT"</span>)) {
+            <span class="kw">if</span> (!cur) { printf(<span class="st">"ไม่มีเพลง\n"</span>); <span class="kw">continue</span>; }
+            cur = cur-&gt;next ? cur-&gt;next : head;   <span class="cm">// วนกลับ</span>
+            printf(<span class="st">"▶ %s\n"</span>, cur-&gt;name);
+        }
+        <span class="kw">else</span> <span class="kw">if</span> (!strcmp(cmd, <span class="st">"NOW"</span>)) {
+            <span class="kw">if</span> (!cur) printf(<span class="st">"ไม่มีเพลง\n"</span>);
+            <span class="kw">else</span> printf(<span class="st">"กำลังเล่น: %s (ลำดับ %d)\n"</span>, cur-&gt;name, posOf(cur));
+        }
+        <span class="kw">else</span> <span class="kw">if</span> (!strcmp(cmd, <span class="st">"LIST"</span>)) {
+            printf(<span class="st">"เพลย์ลิสต์:"</span>);
+            <span class="kw">int</span> i = <span class="nu">1</span>;
+            <span class="kw">for</span> (<span class="kw">struct</span> Song *c = head; c; c = c-&gt;next, i++)
+                printf(<span class="st">" %d.%s"</span>, i, c-&gt;name);
+            printf(<span class="st">"\n"</span>);
+        }
+    }
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block"><span class="kw">class</span> Song:
+    <span class="kw">def</span> __init__(self, name):
+        self.name = name
+        self.next = <span class="kw">None</span>
+
+head = <span class="kw">None</span>
+cur  = <span class="kw">None</span>
+
+<span class="kw">def</span> count():
+    n, c = <span class="nu">0</span>, head
+    <span class="kw">while</span> c:
+        n += <span class="nu">1</span>; c = c.next
+    <span class="kw">return</span> n
+
+<span class="kw">def</span> pos_of(t):
+    i, c = <span class="nu">1</span>, head
+    <span class="kw">while</span> c:
+        <span class="kw">if</span> c <span class="kw">is</span> t: <span class="kw">return</span> i
+        i += <span class="nu">1</span>; c = c.next
+    <span class="kw">return</span> <span class="nu">0</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    parts = input().split()
+    cmd = parts[<span class="nu">0</span>]
+    <span class="kw">if</span> cmd == <span class="st">"END"</span>:
+        <span class="kw">break</span>
+
+    <span class="kw">if</span> cmd == <span class="st">"ADD"</span>:
+        n = Song(parts[<span class="nu">1</span>])
+        <span class="kw">if</span> head <span class="kw">is</span> <span class="kw">None</span>:
+            head = cur = n
+        <span class="kw">else</span>:
+            c = head
+            <span class="kw">while</span> c.next: c = c.next
+            c.next = n
+        print(<span class="st">f"เพิ่ม {n.name} (ทั้งหมด {count()} เพลง)"</span>)
+
+    <span class="kw">elif</span> cmd == <span class="st">"INSERT"</span>:
+        name, k = parts[<span class="nu">1</span>], <span class="kw">int</span>(parts[<span class="nu">2</span>])
+        n = Song(name)
+        <span class="kw">if</span> k &lt;= <span class="nu">1</span> <span class="kw">or</span> head <span class="kw">is</span> <span class="kw">None</span>:
+            n.next = head
+            head = n
+            <span class="kw">if</span> cur <span class="kw">is</span> <span class="kw">None</span>: cur = n
+        <span class="kw">else</span>:
+            c, i = head, <span class="nu">1</span>
+            <span class="kw">while</span> i &lt; k - <span class="nu">1</span> <span class="kw">and</span> c.next:
+                c = c.next; i += <span class="nu">1</span>
+            n.next = c.next        <span class="cm"># ต่อตัวใหม่ก่อน</span>
+            c.next = n
+        print(<span class="st">f"แทรก {name} ที่ลำดับ {k}"</span>)
+
+    <span class="kw">elif</span> cmd == <span class="st">"DEL"</span>:
+        s = parts[<span class="nu">1</span>]
+        target, prev, c = <span class="kw">None</span>, <span class="kw">None</span>, head
+        <span class="kw">while</span> c:
+            <span class="kw">if</span> c.name == s:
+                target = c; <span class="kw">break</span>
+            prev, c = c, c.next
+
+        <span class="kw">if</span> target <span class="kw">is</span> <span class="kw">None</span>:
+            print(<span class="st">f"ไม่พบเพลง {s}"</span>)
+        <span class="kw">else</span>:
+            <span class="kw">if</span> cur <span class="kw">is</span> target:
+                cur = target.next <span class="kw">if</span> target.next <span class="kw">else</span> head
+            <span class="kw">if</span> prev: prev.next = target.next
+            <span class="kw">else</span>:    head = target.next
+            <span class="kw">if</span> cur <span class="kw">is</span> target: cur = head
+            <span class="kw">if</span> head <span class="kw">is</span> <span class="kw">None</span>:
+                print(<span class="st">f"ลบ {s} → เพลย์ลิสต์ว่าง"</span>)
+            <span class="kw">else</span>:
+                print(<span class="st">f"ลบ {s} → เล่นต่อที่ {cur.name}"</span>)
+
+    <span class="kw">elif</span> cmd == <span class="st">"NEXT"</span>:
+        <span class="kw">if</span> cur <span class="kw">is</span> <span class="kw">None</span>:
+            print(<span class="st">"ไม่มีเพลง"</span>)
+        <span class="kw">else</span>:
+            cur = cur.next <span class="kw">if</span> cur.next <span class="kw">else</span> head
+            print(<span class="st">f"▶ {cur.name}"</span>)
+
+    <span class="kw">elif</span> cmd == <span class="st">"NOW"</span>:
+        <span class="kw">if</span> cur <span class="kw">is</span> <span class="kw">None</span>: print(<span class="st">"ไม่มีเพลง"</span>)
+        <span class="kw">else</span>: print(<span class="st">f"กำลังเล่น: {cur.name} (ลำดับ {pos_of(cur)})"</span>)
+
+    <span class="kw">elif</span> cmd == <span class="st">"LIST"</span>:
+        out, c, i = [], head, <span class="nu">1</span>
+        <span class="kw">while</span> c:
+            out.append(<span class="st">f"{i}.{c.name}"</span>)
+            c = c.next; i += <span class="nu">1</span>
+        print(<span class="st">"เพลย์ลิสต์:"</span>, <span class="st">" "</span>.join(out))</pre>
+        <div class="exam"><b>จุดที่มักพลาด:</b><br>
+        ① ลบโหนดที่ cur ชี้อยู่โดยไม่เลื่อน cur ก่อน → cur ชี้หน่วยความจำที่ free ไปแล้ว<br>
+        ② แทรกที่ลำดับ 1 แล้วลืมอัปเดต head<br>
+        ③ NEXT ตอนอยู่เพลงสุดท้ายแล้วไม่วนกลับ → cur เป็น NULL แล้วพังรอบถัดไป</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · Hash Table</div>
+    <h2 class="slide-title">ระบบสมาชิกสะสมแต้ม</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          <b>โจทย์:</b> ร้านมีสมาชิกได้ถึง <b>100,000 คน</b> แต่ละคนมี<b>รหัสสมาชิก</b> (ตัวเลข) และ<b>แต้มสะสม</b><br>
+          รับคำสั่งจนเจอ <span style="font-family:monospace">END</span><br>
+          <span style="font-family:monospace">REG &lt;รหัส&gt;</span> — สมัครสมาชิกใหม่ (แต้มเริ่ม 0) ถ้ามีอยู่แล้วให้แจ้ง<br>
+          <span style="font-family:monospace">EARN &lt;รหัส&gt; &lt;ยอดซื้อ&gt;</span> — ได้แต้ม = ยอดซื้อ ÷ 25 (ปัดลง)<br>
+          <span style="font-family:monospace">USE &lt;รหัส&gt; &lt;แต้ม&gt;</span> — ใช้แต้ม ถ้าไม่พอให้แจ้งและไม่หัก<br>
+          <span style="font-family:monospace">CHECK &lt;รหัส&gt;</span> — ดูแต้มคงเหลือ<br>
+          <b>ข้อบังคับ:</b> การค้นหาสมาชิกต้อง<b>ไม่วนทั้งฐานข้อมูล</b> — ใช้ <b>hash table</b> แก้ชนแบบ chaining
+        </div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">input:
+REG 10021
+REG 30045
+REG 10021
+EARN 10021 500
+EARN 30045 130
+USE 10021 15
+USE 30045 99
+CHECK 10021
+CHECK 99999
+END
+
+output:
+สมัครสมาชิก 10021 สำเร็จ
+สมัครสมาชิก 30045 สำเร็จ
+รหัส 10021 มีอยู่แล้ว
+10021 ซื้อ 500 → ได้ 20 แต้ม (รวม 20)
+30045 ซื้อ 130 → ได้ 5 แต้ม (รวม 5)
+10021 ใช้ 15 แต้ม (เหลือ 5)
+30045 แต้มไม่พอ (มี 5 ขอใช้ 99)
+10021 มี 5 แต้ม
+ไม่พบสมาชิก 99999</div>
+      </div>
+      <div>
+        <div class="key">
+          <span class="kh">ทำไมข้อนี้ถึงต้องใช้ Hash</span>
+          <b>เพราะทุกคำสั่งเริ่มด้วยการ "หาสมาชิกจากรหัส"</b><br>
+          วนหาทีละคนในฐาน 100,000 คน = 100,000 ครั้งต่อ 1 คำสั่ง<br>
+          Hash: <span style="font-family:monospace">รหัส % SIZE</span> ได้ช่องทันที แล้วเดินเฉพาะโซ่ในช่องนั้น (ปกติ 1–2 ตัว)<br><br>
+          <b>ทำไมไม่ใช้อาร์เรย์ตรงๆ ที่ index = รหัส?</b><br>
+          ทำได้ถ้ารหัสเป็น 0..99999 — แต่พอรหัสเป็น 13 หลักหรือมีตัวอักษร ต้องจองอาร์เรย์ใหญ่มหาศาล<br>
+          hash แปลง<b>รหัสอะไรก็ได้</b>ให้เหลือช่วงเล็กๆ ที่จองไหว
+        </div>
+        <div class="key">
+          <span class="kh">หลักการที่ต้องใช้</span>
+          <b>① h(k) = k % SIZE</b> — เลือก SIZE เป็นจำนวนเฉพาะ (เช่น 1009) ให้กระจายดี<br>
+          <b>② chaining</b> — แต่ละช่องเป็นหัวของ linked list · ชนกันก็ต่อหัวเข้าไป<br>
+          <b>③ ฟังก์ชัน find(k)</b> — คำนวณช่อง → เดินโซ่ → คืนโหนดหรือ NULL · <b>ทุกคำสั่งเรียกตัวนี้</b><br>
+          <b>④ REG ต้องเช็คซ้ำก่อน</b> — เรียก find ก่อน ถ้าเจอแล้วห้ามใส่ซ้ำ
+        </div>
+        <div class="diagram">SIZE = 1009,  h(k) = k % 1009
+
+10021 % 1009 = 953
+30045 % 1009 = 815
+
+  [815] → 30045(5 แต้ม)
+  [953] → 10021(5 แต้ม)
+  ช่องอื่น → NULL
+
+CHECK 99999 → 99999%1009 = 811
+              [811] ว่าง → ไม่พบ ทันที</div>
+        <div class="exam">⏸️ ลองทำเองก่อน — เคสที่ต้องผ่าน: สมัครซ้ำ · ใช้แต้มเกินที่มี · ทำคำสั่งกับรหัสที่ไม่เคยสมัคร · รหัส 2 ตัวที่ชนช่องเดียวกัน (เช่น 5 กับ 1014)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- เฉลย 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · เฉลย</div>
+    <h2 class="slide-title">ระบบสมาชิกสะสมแต้ม — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;stdlib.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+<span class="cm">#define</span> SIZE <span class="nu">1009</span>          <span class="cm">// จำนวนเฉพาะ กระจายดี</span>
+
+<span class="kw">struct</span> Member {
+    <span class="kw">int</span> id, points;
+    <span class="kw">struct</span> Member *next;    <span class="cm">// โซ่ของ chaining</span>
+};
+
+<span class="kw">struct</span> Member *table[SIZE] = {NULL};
+
+<span class="kw">int</span> hashFn(<span class="kw">int</span> k) { <span class="kw">return</span> k % SIZE; }
+
+<span class="kw">struct</span> Member* find(<span class="kw">int</span> k) {      <span class="cm">// หัวใจของทั้งโปรแกรม</span>
+    <span class="kw">struct</span> Member *c = table[hashFn(k)];
+    <span class="kw">while</span> (c) {
+        <span class="kw">if</span> (c-&gt;id == k) <span class="kw">return</span> c;
+        c = c-&gt;next;
+    }
+    <span class="kw">return</span> NULL;
+}
+
+<span class="kw">void</span> reg(<span class="kw">int</span> k) {
+    <span class="kw">if</span> (find(k)) { printf(<span class="st">"รหัส %d มีอยู่แล้ว\n"</span>, k); <span class="kw">return</span>; }
+    <span class="kw">int</span> idx = hashFn(k);
+    <span class="kw">struct</span> Member *m = malloc(<span class="kw">sizeof</span>(<span class="kw">struct</span> Member));
+    m-&gt;id = k; m-&gt;points = <span class="nu">0</span>;
+    m-&gt;next = table[idx];       <span class="cm">// ต่อหัว O(1)</span>
+    table[idx] = m;
+    printf(<span class="st">"สมัครสมาชิก %d สำเร็จ\n"</span>, k);
+}
+
+<span class="kw">int</span> main() {
+    <span class="kw">char</span> cmd[<span class="nu">16</span>];
+    <span class="kw">int</span> k, v;
+
+    <span class="kw">while</span> (scanf(<span class="st">"%s"</span>, cmd) == <span class="nu">1</span> &amp;&amp; strcmp(cmd, <span class="st">"END"</span>)) {
+
+        <span class="kw">if</span> (!strcmp(cmd, <span class="st">"REG"</span>)) {
+            scanf(<span class="st">"%d"</span>, &amp;k);
+            reg(k);
+        }
+        <span class="kw">else</span> <span class="kw">if</span> (!strcmp(cmd, <span class="st">"EARN"</span>)) {
+            scanf(<span class="st">"%d %d"</span>, &amp;k, &amp;v);
+            <span class="kw">struct</span> Member *m = find(k);
+            <span class="kw">if</span> (!m) { printf(<span class="st">"ไม่พบสมาชิก %d\n"</span>, k); <span class="kw">continue</span>; }
+            <span class="kw">int</span> got = v / <span class="nu">25</span>;          <span class="cm">// int หาร int = ปัดลงอยู่แล้ว</span>
+            m-&gt;points += got;
+            printf(<span class="st">"%d ซื้อ %d → ได้ %d แต้ม (รวม %d)\n"</span>,
+                   k, v, got, m-&gt;points);
+        }
+        <span class="kw">else</span> <span class="kw">if</span> (!strcmp(cmd, <span class="st">"USE"</span>)) {
+            scanf(<span class="st">"%d %d"</span>, &amp;k, &amp;v);
+            <span class="kw">struct</span> Member *m = find(k);
+            <span class="kw">if</span> (!m) { printf(<span class="st">"ไม่พบสมาชิก %d\n"</span>, k); <span class="kw">continue</span>; }
+            <span class="kw">if</span> (m-&gt;points &lt; v)
+                printf(<span class="st">"%d แต้มไม่พอ (มี %d ขอใช้ %d)\n"</span>, k, m-&gt;points, v);
+            <span class="kw">else</span> {
+                m-&gt;points -= v;
+                printf(<span class="st">"%d ใช้ %d แต้ม (เหลือ %d)\n"</span>, k, v, m-&gt;points);
+            }
+        }
+        <span class="kw">else</span> <span class="kw">if</span> (!strcmp(cmd, <span class="st">"CHECK"</span>)) {
+            scanf(<span class="st">"%d"</span>, &amp;k);
+            <span class="kw">struct</span> Member *m = find(k);
+            <span class="kw">if</span> (!m) printf(<span class="st">"ไม่พบสมาชิก %d\n"</span>, k);
+            <span class="kw">else</span>    printf(<span class="st">"%d มี %d แต้ม\n"</span>, k, m-&gt;points);
+        }
+    }
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON — เขียนเองแบบเดียวกับ C</span>
+        <pre class="code-block">SIZE = <span class="nu">1009</span>
+
+<span class="kw">class</span> Member:
+    <span class="kw">def</span> __init__(self, mid):
+        self.id     = mid
+        self.points = <span class="nu">0</span>
+        self.next   = <span class="kw">None</span>
+
+table = [<span class="kw">None</span>] * SIZE
+
+<span class="kw">def</span> hash_fn(k):
+    <span class="kw">return</span> k % SIZE
+
+<span class="kw">def</span> find(k):
+    c = table[hash_fn(k)]
+    <span class="kw">while</span> c:
+        <span class="kw">if</span> c.id == k:
+            <span class="kw">return</span> c
+        c = c.next
+    <span class="kw">return</span> <span class="kw">None</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    parts = input().split()
+    cmd = parts[<span class="nu">0</span>]
+    <span class="kw">if</span> cmd == <span class="st">"END"</span>:
+        <span class="kw">break</span>
+    k = <span class="kw">int</span>(parts[<span class="nu">1</span>])
+
+    <span class="kw">if</span> cmd == <span class="st">"REG"</span>:
+        <span class="kw">if</span> find(k):
+            print(<span class="st">f"รหัส {k} มีอยู่แล้ว"</span>)
+        <span class="kw">else</span>:
+            idx = hash_fn(k)
+            m = Member(k)
+            m.next = table[idx]        <span class="cm"># ต่อหัว</span>
+            table[idx] = m
+            print(<span class="st">f"สมัครสมาชิก {k} สำเร็จ"</span>)
+        <span class="kw">continue</span>
+
+    m = find(k)
+    <span class="kw">if</span> m <span class="kw">is</span> <span class="kw">None</span>:
+        print(<span class="st">f"ไม่พบสมาชิก {k}"</span>)
+        <span class="kw">continue</span>
+
+    <span class="kw">if</span> cmd == <span class="st">"EARN"</span>:
+        v = <span class="kw">int</span>(parts[<span class="nu">2</span>])
+        got = v // <span class="nu">25</span>                <span class="cm"># // = ปัดลง</span>
+        m.points += got
+        print(<span class="st">f"{k} ซื้อ {v} → ได้ {got} แต้ม (รวม {m.points})"</span>)
+
+    <span class="kw">elif</span> cmd == <span class="st">"USE"</span>:
+        v = <span class="kw">int</span>(parts[<span class="nu">2</span>])
+        <span class="kw">if</span> m.points &lt; v:
+            print(<span class="st">f"{k} แต้มไม่พอ (มี {m.points} ขอใช้ {v})"</span>)
+        <span class="kw">else</span>:
+            m.points -= v
+            print(<span class="st">f"{k} ใช้ {v} แต้ม (เหลือ {m.points})"</span>)
+
+    <span class="kw">elif</span> cmd == <span class="st">"CHECK"</span>:
+        print(<span class="st">f"{k} มี {m.points} แต้ม"</span>)</pre>
+        <div class="exam"><b>ถ้าโจทย์ไม่ห้าม Python เขียนได้สั้นกว่านี้มาก</b> — <span style="font-family:monospace">dict</span> ของ Python <b>คือ hash table</b> ที่เขียนมาให้แล้ว<br>
+        <span style="font-family:monospace">points = {}</span> · <span style="font-family:monospace">points[k] = 0</span> · <span style="font-family:monospace">if k in points</span><br>
+        แต่ถ้าโจทย์สั่งให้ทำ hash เอง (ซึ่งข้อสอบมักสั่ง) ต้องเขียนแบบข้างบน</div>
+        <div class="exam"><b>จุดที่มักพลาด:</b><br>
+        ① REG ไม่เช็คซ้ำ → มี id เดียวกัน 2 โหนดในโซ่ แก้ตัวหนึ่ง อ่านเจออีกตัว<br>
+        ② USE แต้มไม่พอแล้วยังหัก → แต้มติดลบ<br>
+        ③ ลืม <span style="font-family:monospace">continue</span> หลังแจ้ง "ไม่พบ" → ไปใช้ pointer NULL ต่อ</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- โจทย์ 3 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · Hash + Linked List</div>
+    <h2 class="slide-title">ระบบตะกร้าสินค้าออนไลน์</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          <b>โจทย์:</b> ระบบตะกร้าสินค้า รับคำสั่งจนเจอ <span style="font-family:monospace">END</span><br>
+          <span style="font-family:monospace">PUT &lt;รหัสสินค้า&gt; &lt;ราคา&gt; &lt;จำนวน&gt;</span> — ใส่ลงตะกร้า<br>
+          &nbsp;&nbsp;· ถ้าสินค้านั้น<b>มีอยู่ในตะกร้าแล้ว</b> ให้<b>บวกจำนวนรวมกัน</b> ไม่ใช่เพิ่มรายการใหม่<br>
+          &nbsp;&nbsp;· ถ้ายังไม่มี ให้<b>ต่อท้ายรายการ</b> ตามลำดับที่ใส่<br>
+          <span style="font-family:monospace">REMOVE &lt;รหัสสินค้า&gt;</span> — เอาออกจากตะกร้าทั้งรายการ<br>
+          <span style="font-family:monospace">SHOW</span> — แสดงรายการตามลำดับที่ใส่ พร้อมยอดรวม<br>
+          <b>ข้อบังคับ:</b> เช็คว่ามีสินค้าอยู่แล้วหรือไม่ ต้องใช้ <b>hash</b> · เก็บลำดับรายการต้องใช้ <b>linked list</b>
+        </div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">input:
+PUT 501 120 2
+PUT 302 45 1
+PUT 501 120 3
+SHOW
+REMOVE 302
+PUT 777 90 1
+SHOW
+END
+
+output:
+ใส่ 501 x2
+ใส่ 302 x1
+501 มีอยู่แล้ว → รวมเป็น x5
+ตะกร้า:
+  501 ราคา 120 x5 = 600
+  302 ราคา 45 x1 = 45
+  รวม 645 บาท
+เอา 302 ออกจากตะกร้า
+ใส่ 777 x1
+ตะกร้า:
+  501 ราคา 120 x5 = 600
+  777 ราคา 90 x1 = 90
+  รวม 690 บาท</div>
+      </div>
+      <div>
+        <div class="key">
+          <span class="kh">ทำไมต้องใช้ทั้งสองอย่าง</span>
+          <b>โจทย์บังคับ 2 เรื่องที่ขัดกัน:</b><br>
+          ① <b>ต้องรู้เร็วว่ามีสินค้านี้แล้วหรือยัง</b> → งานของ hash<br>
+          ② <b>ต้องแสดงตามลำดับที่ใส่ และลบกลางได้</b> → งานของ linked list<br><br>
+          hash อย่างเดียวไม่จำลำดับ · linked list อย่างเดียวต้องวนหาทุกครั้ง<br>
+          <b>คำตอบคือใช้คู่กัน:</b> เก็บโหนดไว้ในลิสต์ตามลำดับ แล้วให้ hash เก็บ<b>ตัวชี้ไปยังโหนดเดียวกันนั้น</b><br>
+          → โหนดมีชุดเดียว แต่เข้าถึงได้ 2 ทาง
+        </div>
+        <div class="diagram">Linked list (ลำดับที่ใส่):
+ head → [501] → [302] → [777] → NULL
+
+Hash table (ค้นหาเร็ว):
+ [ ... ]
+ [302 %S] ─────┐
+ [501 %S] ──┐  │
+ [777 %S] ─┐│  │
+           ││  │
+           ▼▼  ▼
+      ชี้ไปโหนดเดียวกันในลิสต์
+
+PUT 501 → hash บอกทันทีว่ามี
+        → ไปบวกจำนวนที่โหนดนั้นเลย
+REMOVE  → hash หาโหนดเจอ
+        → ตัดออกจากลิสต์ + ลบจาก hash</div>
+        <div class="key">
+          <span class="kh">หลักการที่ต้องใช้</span>
+          <b>① โหนดเดียว 2 ลิงก์</b> — <span style="font-family:monospace">next</span> ใช้เรียงลำดับ · <span style="font-family:monospace">hnext</span> ใช้ต่อโซ่ในช่อง hash<br>
+          <b>② PUT</b> = find ก่อนเสมอ · เจอ → บวกจำนวน · ไม่เจอ → สร้างโหนด แล้ว<b>ใส่ทั้ง 2 ที่</b><br>
+          <b>③ REMOVE</b> = ต้องลบ<b>ทั้ง 2 ที่</b> ไม่งั้น hash จะชี้โหนดที่ไม่อยู่ในลิสต์แล้ว<br>
+          <b>④ SHOW</b> = เดินตาม <span style="font-family:monospace">next</span> อย่างเดียว ไม่ยุ่งกับ hash
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- เฉลย 3 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · เฉลย</div>
+    <h2 class="slide-title">ระบบตะกร้าสินค้า — C และ Python</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;stdlib.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+<span class="cm">#define</span> SIZE <span class="nu">101</span>
+
+<span class="kw">struct</span> Item {
+    <span class="kw">int</span> id, price, qty;
+    <span class="kw">struct</span> Item *next;    <span class="cm">// ลำดับในตะกร้า</span>
+    <span class="kw">struct</span> Item *hnext;   <span class="cm">// โซ่ใน hash</span>
+};
+
+<span class="kw">struct</span> Item *head = NULL, *tailP = NULL;
+<span class="kw">struct</span> Item *table[SIZE] = {NULL};
+
+<span class="kw">int</span> hashFn(<span class="kw">int</span> k) { <span class="kw">return</span> k % SIZE; }
+
+<span class="kw">struct</span> Item* find(<span class="kw">int</span> k) {
+    <span class="kw">struct</span> Item *c = table[hashFn(k)];
+    <span class="kw">while</span> (c) {
+        <span class="kw">if</span> (c-&gt;id == k) <span class="kw">return</span> c;
+        c = c-&gt;hnext;
+    }
+    <span class="kw">return</span> NULL;
+}
+
+<span class="kw">void</span> put(<span class="kw">int</span> id, <span class="kw">int</span> price, <span class="kw">int</span> qty) {
+    <span class="kw">struct</span> Item *m = find(id);
+    <span class="kw">if</span> (m) {                          <span class="cm">// มีแล้ว → บวกจำนวน</span>
+        m-&gt;qty += qty;
+        printf(<span class="st">"%d มีอยู่แล้ว → รวมเป็น x%d\n"</span>, id, m-&gt;qty);
+        <span class="kw">return</span>;
+    }
+    m = malloc(<span class="kw">sizeof</span>(<span class="kw">struct</span> Item));
+    m-&gt;id = id; m-&gt;price = price; m-&gt;qty = qty;
+    m-&gt;next = NULL;
+
+    <span class="kw">if</span> (!head) head = tailP = m;      <span class="cm">// ต่อท้ายลิสต์</span>
+    <span class="kw">else</span> { tailP-&gt;next = m; tailP = m; }
+
+    <span class="kw">int</span> idx = hashFn(id);             <span class="cm">// ใส่ลง hash ด้วย</span>
+    m-&gt;hnext = table[idx];
+    table[idx] = m;
+
+    printf(<span class="st">"ใส่ %d x%d\n"</span>, id, qty);
+}
+
+<span class="kw">void</span> removeItem(<span class="kw">int</span> id) {
+    <span class="kw">struct</span> Item *m = find(id);
+    <span class="kw">if</span> (!m) { printf(<span class="st">"ไม่มี %d ในตะกร้า\n"</span>, id); <span class="kw">return</span>; }
+
+    <span class="cm">// ① ตัดออกจากลิสต์ลำดับ</span>
+    <span class="kw">if</span> (head == m) head = m-&gt;next;
+    <span class="kw">else</span> {
+        <span class="kw">struct</span> Item *c = head;
+        <span class="kw">while</span> (c-&gt;next != m) c = c-&gt;next;
+        c-&gt;next = m-&gt;next;
+        <span class="kw">if</span> (tailP == m) tailP = c;
+    }
+    <span class="kw">if</span> (!head) tailP = NULL;
+
+    <span class="cm">// ② ตัดออกจากโซ่ hash ด้วย — ห้ามลืม!</span>
+    <span class="kw">int</span> idx = hashFn(id);
+    <span class="kw">if</span> (table[idx] == m) table[idx] = m-&gt;hnext;
+    <span class="kw">else</span> {
+        <span class="kw">struct</span> Item *c = table[idx];
+        <span class="kw">while</span> (c-&gt;hnext != m) c = c-&gt;hnext;
+        c-&gt;hnext = m-&gt;hnext;
+    }
+
+    free(m);
+    printf(<span class="st">"เอา %d ออกจากตะกร้า\n"</span>, id);
+}
+
+<span class="kw">int</span> main() {
+    <span class="kw">char</span> cmd[<span class="nu">16</span>];
+    <span class="kw">int</span> a, b, c;
+    <span class="kw">while</span> (scanf(<span class="st">"%s"</span>, cmd) == <span class="nu">1</span> &amp;&amp; strcmp(cmd, <span class="st">"END"</span>)) {
+        <span class="kw">if</span> (!strcmp(cmd, <span class="st">"PUT"</span>)) {
+            scanf(<span class="st">"%d %d %d"</span>, &amp;a, &amp;b, &amp;c);
+            put(a, b, c);
+        }
+        <span class="kw">else</span> <span class="kw">if</span> (!strcmp(cmd, <span class="st">"REMOVE"</span>)) {
+            scanf(<span class="st">"%d"</span>, &amp;a);
+            removeItem(a);
+        }
+        <span class="kw">else</span> <span class="kw">if</span> (!strcmp(cmd, <span class="st">"SHOW"</span>)) {
+            printf(<span class="st">"ตะกร้า:\n"</span>);
+            <span class="kw">int</span> total = <span class="nu">0</span>;
+            <span class="kw">for</span> (<span class="kw">struct</span> Item *p = head; p; p = p-&gt;next) {
+                <span class="kw">int</span> sub = p-&gt;price * p-&gt;qty;
+                total += sub;
+                printf(<span class="st">"  %d ราคา %d x%d = %d\n"</span>,
+                       p-&gt;id, p-&gt;price, p-&gt;qty, sub);
+            }
+            printf(<span class="st">"  รวม %d บาท\n"</span>, total);
+        }
+    }
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <span class="lang">PYTHON</span>
+        <pre class="code-block">SIZE = <span class="nu">101</span>
+
+<span class="kw">class</span> Item:
+    <span class="kw">def</span> __init__(self, iid, price, qty):
+        self.id    = iid
+        self.price = price
+        self.qty   = qty
+        self.next  = <span class="kw">None</span>     <span class="cm"># ลำดับในตะกร้า</span>
+        self.hnext = <span class="kw">None</span>     <span class="cm"># โซ่ใน hash</span>
+
+head = tail = <span class="kw">None</span>
+table = [<span class="kw">None</span>] * SIZE
+
+<span class="kw">def</span> hash_fn(k):
+    <span class="kw">return</span> k % SIZE
+
+<span class="kw">def</span> find(k):
+    c = table[hash_fn(k)]
+    <span class="kw">while</span> c:
+        <span class="kw">if</span> c.id == k: <span class="kw">return</span> c
+        c = c.hnext
+    <span class="kw">return</span> <span class="kw">None</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    parts = input().split()
+    cmd = parts[<span class="nu">0</span>]
+    <span class="kw">if</span> cmd == <span class="st">"END"</span>:
+        <span class="kw">break</span>
+
+    <span class="kw">if</span> cmd == <span class="st">"PUT"</span>:
+        iid, price, qty = <span class="kw">map</span>(<span class="kw">int</span>, parts[<span class="nu">1</span>:<span class="nu">4</span>])
+        m = find(iid)
+        <span class="kw">if</span> m:
+            m.qty += qty
+            print(<span class="st">f"{iid} มีอยู่แล้ว → รวมเป็น x{m.qty}"</span>)
+        <span class="kw">else</span>:
+            m = Item(iid, price, qty)
+            <span class="kw">if</span> head <span class="kw">is</span> <span class="kw">None</span>:
+                head = tail = m
+            <span class="kw">else</span>:
+                tail.next = m
+                tail = m
+            idx = hash_fn(iid)            <span class="cm"># ใส่ลง hash ด้วย</span>
+            m.hnext = table[idx]
+            table[idx] = m
+            print(<span class="st">f"ใส่ {iid} x{qty}"</span>)
+
+    <span class="kw">elif</span> cmd == <span class="st">"REMOVE"</span>:
+        iid = <span class="kw">int</span>(parts[<span class="nu">1</span>])
+        m = find(iid)
+        <span class="kw">if</span> m <span class="kw">is</span> <span class="kw">None</span>:
+            print(<span class="st">f"ไม่มี {iid} ในตะกร้า"</span>)
+            <span class="kw">continue</span>
+
+        <span class="cm"># ① ตัดออกจากลิสต์ลำดับ</span>
+        <span class="kw">if</span> head <span class="kw">is</span> m:
+            head = m.next
+        <span class="kw">else</span>:
+            c = head
+            <span class="kw">while</span> c.next <span class="kw">is</span> <span class="kw">not</span> m:
+                c = c.next
+            c.next = m.next
+            <span class="kw">if</span> tail <span class="kw">is</span> m:
+                tail = c
+        <span class="kw">if</span> head <span class="kw">is</span> <span class="kw">None</span>:
+            tail = <span class="kw">None</span>
+
+        <span class="cm"># ② ตัดออกจากโซ่ hash ด้วย</span>
+        idx = hash_fn(iid)
+        <span class="kw">if</span> table[idx] <span class="kw">is</span> m:
+            table[idx] = m.hnext
+        <span class="kw">else</span>:
+            c = table[idx]
+            <span class="kw">while</span> c.hnext <span class="kw">is</span> <span class="kw">not</span> m:
+                c = c.hnext
+            c.hnext = m.hnext
+
+        print(<span class="st">f"เอา {iid} ออกจากตะกร้า"</span>)
+
+    <span class="kw">elif</span> cmd == <span class="st">"SHOW"</span>:
+        print(<span class="st">"ตะกร้า:"</span>)
+        total, p = <span class="nu">0</span>, head
+        <span class="kw">while</span> p:
+            sub = p.price * p.qty
+            total += sub
+            print(<span class="st">f"  {p.id} ราคา {p.price} x{p.qty} = {sub}"</span>)
+            p = p.next
+        print(<span class="st">f"  รวม {total} บาท"</span>)</pre>
+        <div class="exam">⚠️ <b>บั๊กอันดับ 1 ของข้อนี้:</b> REMOVE แล้วลบออกจากลิสต์อย่างเดียว ลืมลบออกจาก hash<br>
+        → PUT รหัสเดิมอีกครั้ง find จะยัง "เจอ" โหนดที่ถูกลบไปแล้ว แล้วไปบวกจำนวนใส่โหนดที่ไม่อยู่ในตะกร้า<br>
+        ผลคือ SHOW ไม่เห็นสินค้านั้นเลย ทั้งที่ระบบบอกว่าใส่แล้ว — หาสาเหตุยากมาก</div>
+        <div class="exam"><b>จุดที่มักพลาด:</b><br>
+        ① ลบตัวท้ายแล้วไม่อัปเดต tail → PUT ครั้งถัดไปต่อผิดที่<br>
+        ② สับสน next กับ hnext ตอนเดินโซ่ — เดิน hash ต้องใช้ hnext เท่านั้น<br>
+        ③ PUT ของที่มีอยู่แล้วแต่ราคาต่างกัน — โจทย์นี้ให้ยึดราคาเดิม ไม่ต้องแก้</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- สรุป -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔗</div>
+      <div class="summary-title">จบชุดที่ 5 — Linked List / Hash</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">เพลย์ลิสต์เพลง</div><div class="sum-body">เก็บ "เพลงที่เล่นอยู่" เป็น pointer ไม่ใช่ตัวเลข · ลบตัวที่เล่นอยู่ต้องเลื่อน cur ก่อน</div></div>
+        <div class="sum-card"><div class="sum-head">สมาชิกสะสมแต้ม</div><div class="sum-body">ทุกคำสั่งเรียก find() ตัวเดียว · hash + chaining · REG ต้องเช็คซ้ำก่อน</div></div>
+        <div class="sum-card"><div class="sum-head">ตะกร้าสินค้า</div><div class="sum-body">โหนดเดียว 2 ลิงก์ (next / hnext) · ลบต้องลบทั้ง 2 ที่เสมอ</div></div>
+        <div class="sum-card"><div class="sum-head">เมื่อไรใช้ Linked List</div><div class="sum-body">แทรก-ลบตรงกลางบ่อย · ต้องอ้างถึงตัวใดตัวหนึ่งแบบไม่พังเมื่อลิสต์เปลี่ยน</div></div>
+        <div class="sum-card"><div class="sum-head">เมื่อไรใช้ Hash</div><div class="sum-body">ต้องค้นด้วย key ซ้ำๆ เยอะๆ · key ไม่ได้เรียงต่อกันจนใช้เป็น index ตรงๆ ไม่ได้</div></div>
+        <div class="sum-card"><div class="sum-head">เมื่อไรใช้ทั้งคู่</div><div class="sum-body">โจทย์ต้องการ<b>ทั้งลำดับและการค้นหาเร็ว</b> → ให้ hash ชี้ไปโหนดในลิสต์</div></div>
+      </div>
+      <a href="index.html" class="summary-next">→ กลับหน้าวิชาตะลุยโจทย์</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 8</span>
+      <span class="nav-chapter" id="chapterLabel">ชุดที่ 5 — Linked List / Hash</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','① ระบบเพลย์ลิสต์เพลง','① เฉลย C + Python','② ระบบสมาชิกสะสมแต้ม','② เฉลย C + Python','③ ระบบตะกร้าสินค้า','③ เฉลย C + Python','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
