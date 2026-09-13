@@ -388,11 +388,14 @@ print(<span class="st">f"รวม   = {total:.2f}"</span>)</pre>
     <div class="slide-eyebrow">โจทย์ที่ 3 · โจทย์ + ตัวอย่าง</div>
     <h2 class="slide-title">ระบบจัดคิวร้านอาหาร</h2>
     <div class="prob">
-      <b>โจทย์:</b> ร้านมีโต๊ะว่าง <b>T</b> โต๊ะ (1 โต๊ะ = 1 กลุ่ม) มีลูกค้ามาต่อคิว <b>n</b> กลุ่ม เรียงตามลำดับที่มาถึง<br>
-      • กลุ่มที่มาถึงตอนมีโต๊ะว่าง → <b>ได้นั่งทันที</b> (โต๊ะว่างลด 1)<br>
-      • กลุ่มที่มาตอนโต๊ะเต็ม → <b>ต้องรอ</b> เก็บไว้ในคิว<br>
-      • เมื่อกลุ่มไหนกินเสร็จ (ป้อนค่า <b>0</b>) → โต๊ะว่างเพิ่ม 1 และเรียกคิวหน้าสุดเข้าทันที<br>
-      สุดท้ายรายงานว่าใครได้นั่งบ้าง และเหลือใครรออยู่
+      ร้านก๋วยเตี๋ยวเรือของป้าแดงเป็นร้านเล็กๆ ริมคลอง มีโต๊ะอยู่ <b>T</b> ตัว แต่ละโต๊ะให้ลูกค้านั่งได้ครั้งละ <b>1 กลุ่ม</b> เท่านั้น
+      ช่วงพักเที่ยงคนมาเยอะมาก ป้าแดงจึงแจกบัตรหมายเลขกลุ่มให้ลูกค้าตามลำดับที่เดินเข้าร้าน<br>
+      ถ้ากลุ่มไหนมาถึงตอนที่<b>ยังมีโต๊ะว่าง</b> ป้าจะพาไปนั่งทันที แต่ถ้า<b>โต๊ะเต็มหมดแล้ว</b> ลูกค้าต้องยืนรอหน้าร้าน โดยป้ายึดหลัก<b>ใครมาก่อนได้นั่งก่อน</b>เสมอ
+      และเมื่อมีกลุ่มไหน<b>กินเสร็จลุกออกไป</b> ป้าจะเก็บโต๊ะแล้ว<b>เรียกกลุ่มที่รอนานที่สุดเข้ามานั่งทันที</b> ถ้าตอนนั้นไม่มีใครรอ โต๊ะตัวนั้นก็ว่างไว้<br>
+      ป้าอยากได้โปรแกรมช่วยจด — บรรทัดแรกป้าจะป้อน<b>จำนวนโต๊ะ T</b> จากนั้นป้อนเหตุการณ์ทีละบรรทัด:
+      ถ้าเป็น<b>เลขบวก k</b> แปลว่ากลุ่มหมายเลข k เดินเข้าร้าน · ถ้าเป็น <b>0</b> แปลว่ามีกลุ่มหนึ่งกินเสร็จ · ถ้าเป็น <b>−1</b> แปลว่าปิดร้าน
+      (ป้ารับรองว่าจะไม่ป้อน 0 ตอนที่ไม่มีใครนั่งอยู่เลย)<br>
+      ตอนปิดร้าน ป้าอยากรู้ว่า<b>กลุ่มไหนได้นั่งบ้าง</b> เรียงตามลำดับที่ได้นั่ง และ<b>กลุ่มไหนยังยืนรออยู่</b>
     </div>
     <div class="two-col">
       <div>
@@ -403,18 +406,17 @@ print(<span class="st">f"รวม   = {total:.2f}"</span>)</pre>
   0         = มีโต๊ะหนึ่งกินเสร็จ
   -1        = จบข้อมูล</span></pre>
         <div class="code-label" style="margin-top:6px">ตัวอย่างการทำงาน</div>
-        <div class="io">T = 2
-เหตุการณ์: 1 2 3 4 0 0 -1
-
-กลุ่ม 1 → ได้โต๊ะ (ว่างเหลือ 1)
-กลุ่ม 2 → ได้โต๊ะ (ว่างเหลือ 0)
-กลุ่ม 3 → เต็ม เข้าคิว [3]
-กลุ่ม 4 → เต็ม เข้าคิว [3,4]
-เสร็จ 1 โต๊ะ → เรียกกลุ่ม 3 เข้า
-เสร็จ 1 โต๊ะ → เรียกกลุ่ม 4 เข้า
-
-ได้นั่ง: 1 2 3 4
-ยังรอ : (ไม่มี)</div>
+        <div class="io">input      output
+2
+1          Group 1 seated (free tables: 1)
+2          Group 2 seated (free tables: 0)
+3          Group 3 waits (queue: 1)
+4          Group 4 waits (queue: 2)
+0          Table free -> Group 3 seated
+5          Group 5 waits (queue: 2)
+0          Table free -> Group 4 seated
+-1         Seated: 1 2 3 4
+           Waiting: 5</div>
       </div>
       <div>
         <div class="code-label">แก่นของข้อนี้ = คิว (Queue)</div>
@@ -504,27 +506,27 @@ print(<span class="st">f"รวม   = {total:.2f}"</span>)</pre>
             <span class="kw">if</span> (free_tb &gt; <span class="nu">0</span>) {
                 free_tb--;
                 seated[sc++] = e;
-                printf(<span class="st">"กลุ่ม %d ได้โต๊ะ (ว่างเหลือ %d)\n"</span>, e, free_tb);
+                printf(<span class="st">"Group %d seated (free tables: %d)\n"</span>, e, free_tb);
             } <span class="kw">else</span> {
                 q[tail++] = e;
-                printf(<span class="st">"กลุ่ม %d เต็ม เข้าคิว (รอ %d)\n"</span>, e, tail - head);
+                printf(<span class="st">"Group %d waits (queue: %d)\n"</span>, e, tail - head);
             }
         } <span class="kw">else</span> <span class="kw">if</span> (e == <span class="nu">0</span>) {               <span class="cm">// คนออก</span>
             <span class="kw">if</span> (head &lt; tail) {              <span class="cm">// คิวไม่ว่าง</span>
                 <span class="kw">int</span> k = q[head++];
                 seated[sc++] = k;
-                printf(<span class="st">"เรียกกลุ่ม %d เข้า\n"</span>, k);
+                printf(<span class="st">"Table free -&gt; Group %d seated\n"</span>, k);
             } <span class="kw">else</span> {
                 free_tb++;
-                printf(<span class="st">"โต๊ะว่างเพิ่ม (ว่าง %d)\n"</span>, free_tb);
+                printf(<span class="st">"Table free (free tables: %d)\n"</span>, free_tb);
             }
         }
     }
 
-    printf(<span class="st">"ได้นั่ง:"</span>);
+    printf(<span class="st">"Seated:"</span>);
     <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; sc; i++) printf(<span class="st">" %d"</span>, seated[i]);
-    printf(<span class="st">"\nยังรอ :"</span>);
-    <span class="kw">if</span> (head == tail) printf(<span class="st">" (ไม่มี)"</span>);
+    printf(<span class="st">"\nWaiting:"</span>);
+    <span class="kw">if</span> (head == tail) printf(<span class="st">" (none)"</span>);
     <span class="kw">for</span> (<span class="kw">int</span> i = head; i &lt; tail; i++) printf(<span class="st">" %d"</span>, q[i]);
     printf(<span class="st">"\n"</span>);
     <span class="kw">return</span> <span class="nu">0</span>;
@@ -543,21 +545,21 @@ seated = []
         <span class="kw">if</span> free_tb &gt; <span class="nu">0</span>:
             free_tb -= <span class="nu">1</span>
             seated.append(e)
-            print(<span class="st">f"กลุ่ม {e} ได้โต๊ะ (ว่างเหลือ {free_tb})"</span>)
+            print(<span class="st">f"Group {e} seated (free tables: {free_tb})"</span>)
         <span class="kw">else</span>:
             q.append(e)
-            print(<span class="st">f"กลุ่ม {e} เต็ม เข้าคิว (รอ {len(q)})"</span>)
+            print(<span class="st">f"Group {e} waits (queue: {len(q)})"</span>)
     <span class="kw">elif</span> e == <span class="nu">0</span>:                    <span class="cm"># คนออก</span>
         <span class="kw">if</span> q:
             k = q.pop(<span class="nu">0</span>)             <span class="cm"># ดึงหน้าสุด = FIFO</span>
             seated.append(k)
-            print(<span class="st">f"เรียกกลุ่ม {k} เข้า"</span>)
+            print(<span class="st">f"Table free -&gt; Group {k} seated"</span>)
         <span class="kw">else</span>:
             free_tb += <span class="nu">1</span>
-            print(<span class="st">f"โต๊ะว่างเพิ่ม (ว่าง {free_tb})"</span>)
+            print(<span class="st">f"Table free (free tables: {free_tb})"</span>)
 
-print(<span class="st">"ได้นั่ง:"</span>, *seated)
-print(<span class="st">"ยังรอ :"</span>, *q <span class="kw">if</span> q <span class="kw">else</span> [<span class="st">"(ไม่มี)"</span>])</pre>
+print(<span class="st">"Seated:"</span>, *seated)
+print(<span class="st">"Waiting:"</span>, *(q <span class="kw">if</span> q <span class="kw">else</span> [<span class="st">"(none)"</span>]))</pre>
         <div class="exam"><b>Python มี <span style="font-family:monospace">q.pop(0)</span> ให้ใช้เลย</b> แต่ใน C ต้องทำเอง — และวิธี head++ เร็วกว่าการเลื่อนอาร์เรย์ทั้งแถวทุกครั้ง</div>
       </div>
     </div>
