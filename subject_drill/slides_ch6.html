@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ชุดที่ 6 — ฝึกตีโจทย์ ก่อนเขียนโค้ด | ตะลุยโจทย์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#7c2d12;--cal:#fbe9e0;--cam:#c2643a;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.prob{background:#fff;border:1px solid var(--line);border-left:4px solid var(--ca);border-radius:8px;padding:14px 18px;margin:8px 0;font-size:13.5px;line-height:1.9;}
+.prob b{color:var(--ca);}
+.io{font-family:var(--mono);font-size:12.5px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:8px 0;white-space:pre;color:var(--ca);line-height:1.6;}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:5px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);vertical-align:top;line-height:1.6}
+.t td:first-child{font-weight:700;color:var(--ca);white-space:nowrap}
+.lang{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--ca);color:#fff;margin-bottom:4px}
+.exercise{margin:8px 0}
+.exercise .ex-q{font-size:13px}
+.code-block{overflow-x:auto;max-width:100%}
+.t code{white-space:normal;word-break:break-word}
+mark{padding:1px 3px;border-radius:3px;color:inherit}
+mark.h-in{background:#dbeafe}
+mark.h-out{background:#dcfce7}
+mark.h-ds{background:#fecaca}
+mark.h-cond{background:#fef08a}
+mark.h-edge{background:#e9d5ff}
+.h-noise{text-decoration:line-through;color:#9ca3af}
+.legend{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;margin:6px 0}
+.legend span{padding:2px 8px;border-radius:4px}
+.card6{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.c6{background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.6}
+.c6 .n{font-family:var(--mono);font-weight:700;color:var(--ca);font-size:15px;margin-right:4px}
+.c6 .q{font-weight:700;color:var(--ink,#0d0f14)}
+.c6 .h{color:var(--dim,#8a8276);font-size:12px}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 Cover -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🧗 ก๋วยเตี๋ยวเรือ Programming · ตะลุยโจทย์</div>
+        <div class="cover-title">ชุดที่ 6<br><em>ฝึกตีโจทย์ ก่อนเขียนโค้ด</em></div>
+        <div class="cover-subtitle">สำหรับคนที่อ่านโจทย์ lab แล้วสมองว่าง — ฝึกให้มีขั้นตอนตายตัวที่ใช้ได้ทุกข้อ ไม่ต้องจำ</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>บัตรตีโจทย์ 6 ช่อง — ใช้ซ้ำได้ทุกข้อ</div>
+          <div class="topic-row"><div class="topic-dot"></div>5 โจทย์สไตล์สอบ lab (C · stack / queue)</div>
+          <div class="topic-row"><div class="topic-dot"></div>ตอบคำถามแล้วระบบตรวจให้ทันที ทำคนเดียวได้</div>
+          <div class="topic-row"><div class="topic-dot"></div>โครงโค้ดสำเร็จรูป — เพื่อไม่ปล่อยกระดาษว่างอีก</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">🔍</div>
+        <div class="cover-badge">5 โจทย์ · ภาษา C</div>
+        <div class="cover-slides-count">15 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 วิธีใช้ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">อ่านก่อนเริ่ม</div>
+    <h2 class="slide-title">ทำไมอ่านโจทย์แล้วสมองว่าง — และบทนี้ช่วยยังไง</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          <b>สิ่งที่เกิดในห้องสอบ:</b> อ่านโจทย์ยาวครึ่งหน้า → มีข้อมูลเยอะเกิน ไม่รู้ว่าอันไหนสำคัญ → พยายามคิดโค้ดทั้งข้อในหัวทีเดียว → คิดไม่ออก → ปล่อยว่าง<br><br>
+          <b>ปัญหาจริงไม่ใช่ความจำ</b> — แต่คือ<b>กระโดดไปคิดโค้ดเลย</b> ทั้งที่ยังไม่ได้แยกโจทย์ออกเป็นชิ้น
+        </div>
+        <div class="exam">🔑 <b>กติกาของบทนี้:</b> ห้ามคิดโค้ดจนกว่าจะเขียน<b>บัตรตีโจทย์ 6 ช่อง</b>ครบ<br>
+        บัตรนี้ถามคำถามเดิมทุกข้อ ไม่ว่าโจทย์จะเป็นเรื่องอะไร — ไม่ต้องจำวิธีแก้ของแต่ละข้อ จำแค่ 6 คำถามนี้พอ</div>
+      </div>
+      <div>
+        <table class="t">
+          <thead><tr><th>ขั้น</th><th>ทำอะไร</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>อ่านโจทย์ในสไลด์ <b>ยังไม่ต้องดูเฉลย</b></td></tr>
+            <tr><td>2</td><td>ตอบคำถาม 4 ข้อด้านขวา — กดแล้วระบบบอกทันทีว่าถูกไหม พร้อมเหตุผล</td></tr>
+            <tr><td>3</td><td>หยิบกระดาษ เขียนบัตร 6 ช่องของข้อนั้นด้วยตัวเอง</td></tr>
+            <tr><td>4</td><td>เปิดสไลด์ถัดไป เทียบกับ<b>โจทย์ที่ไฮไลต์สีไว้</b>ว่าจับจุดตรงไหม</td></tr>
+            <tr><td>5</td><td>ค่อยดูโค้ด — ทุกบรรทัดมีเลขกำกับว่ามาจากช่องไหนของบัตร</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">👀 <b>สำหรับคนที่ช่วยดู:</b> ไม่ต้องสอนเนื้อหา — ตรวจอย่างเดียวว่า<b>เขียนบัตร 6 ช่องครบไหม</b> ถ้าครบแต่ยังเขียนโค้ดไม่ได้ ไม่เป็นไร นั่นคือความคืบหน้าแล้ว</div>
+        <div class="exam">⏱️ ทำวันละ 1 โจทย์ก็พอ ทำ 5 วันจบบท ข้อที่ผิดให้กลับมาทำซ้ำอีกรอบในอีก 2–3 วัน</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2 บัตรตีโจทย์ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">เครื่องมือเดียวที่ต้องมี</div>
+    <h2 class="slide-title">บัตรตีโจทย์ 6 ช่อง</h2>
+    <div class="card6">
+      <div class="c6"><span class="n">①</span><span class="q">รับอะไรเข้ามา?</span><br><span class="h">กี่ตัว · ชนิดอะไร (เลข/ตัวอักษร/คำ) · <b>หยุดรับเมื่อไร</b></span></div>
+      <div class="c6"><span class="n">②</span><span class="q">ต้องพิมพ์อะไรออก?</span><br><span class="h">ข้อความเป๊ะๆ ตามโจทย์ · พิมพ์ระหว่างทาง หรือพิมพ์ตอนจบ</span></div>
+      <div class="c6"><span class="n">③</span><span class="q">อะไรที่ทำซ้ำ?</span><br><span class="h">ซ้ำทีละคำสั่ง? ทีละตัวอักษร? → นี่คือลูปของโปรแกรม</span></div>
+      <div class="c6"><span class="n">④</span><span class="q">ต้องจำอะไรไว้?</span><br><span class="h">ตัวนับ · ผลรวม · ข้อมูลที่รอใช้ → <b>เข้าก่อนออกก่อน = queue · เข้าหลังออกก่อน = stack</b></span></div>
+      <div class="c6"><span class="n">⑤</span><span class="q">มีเงื่อนไขพิเศษอะไร?</span><br><span class="h">คำว่า "ห้าม" "ไม่เกิน" "ไม่สนใจ" "ปัดขึ้น" · ขนาดสูงสุด</span></div>
+      <div class="c6"><span class="n">⑥</span><span class="q">เคสขอบคืออะไร?</span><br><span class="h">ว่าง · เต็ม · เป็น 0 · มีตัวเดียว · โจทย์บอก "ถ้าไม่มี...ให้แสดง"</span></div>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="code-label">สีไฮไลต์ที่ใช้ในหน้าเฉลย</div>
+        <div class="legend">
+          <span style="background:#dbeafe">① ข้อมูลเข้า</span>
+          <span style="background:#dcfce7">② ผลลัพธ์</span>
+          <span style="background:#fecaca">④ คำที่บอกโครงสร้าง</span>
+          <span style="background:#fef08a">⑤ เงื่อนไข</span>
+          <span style="background:#e9d5ff">⑥ เคสขอบ</span>
+          <span class="h-noise" style="background:#f3f4f6">ข้อมูลประกอบ ไม่ต้องใช้</span>
+        </div>
+        <div class="exam">💡 <b>โจทย์ lab ชอบใส่ข้อมูลที่ไม่ต้องใช้</b> เช่น ชื่อยี่ห้อ เวลาเปิดร้าน — ใส่มาให้ดูเหมือนจริง ถ้าหาไม่เจอว่าจะใช้ในช่องไหนของบัตร แปลว่า<b>ข้ามได้เลย</b></div>
+      </div>
+      <div>
+        <div class="code-label">คำในโจทย์ → โครงสร้างที่ต้องใช้</div>
+        <table class="t">
+          <thead><tr><th>เจอคำว่า</th><th>ใช้</th></tr></thead>
+          <tbody>
+            <tr><td>ตามลำดับที่มาถึง · มาก่อนได้ก่อน · คิว</td><td>queue</td></tr>
+            <tr><td>ล่าสุด · บนสุด · ย้อนกลับ · undo · กลับด้าน</td><td>stack</td></tr>
+            <tr><td>รวม · นับ · มากสุด · เฉลี่ย</td><td>ตัวแปรสะสม ไม่ต้องใช้โครงสร้าง</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3 โจทย์ 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · ลองตีเอง</div>
+    <h2 class="slide-title">ตู้กดบัตรคิวธนาคาร</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          ธนาคารแห่งหนึ่งเปิดให้บริการตั้งแต่เวลา 8.30 น. มีตู้กดบัตรคิวให้ลูกค้า บัตรมีหมายเลขเรียงกันเริ่มจาก 1 พนักงานจะเรียกลูกค้าตามลำดับที่มาถึง ธนาคารรองรับลูกค้าได้ไม่เกิน 100 คนต่อวัน<br>
+          ให้เขียนโปรแกรมรับคำสั่งเป็นตัวเลขทีละบรรทัด<br>
+          • <b>1</b> — ลูกค้ากดบัตร ให้แสดง <code>Ticket X</code> ถ้าครบ 100 ใบแล้วให้แสดง <code>Sold out</code><br>
+          • <b>2</b> — พนักงานเรียกคิว ให้แสดง <code>Calling X</code> ถ้าไม่มีลูกค้ารออยู่ให้แสดง <code>No one waiting</code><br>
+          • <b>0</b> — ปิดธนาคาร ให้แสดง <code>Waiting: X</code> โดย X คือจำนวนลูกค้าที่ยังไม่ได้รับบริการ แล้วจบโปรแกรม
+        </div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">input      output
+1          Ticket 1
+1          Ticket 2
+2          Calling 1
+1          Ticket 3
+2          Calling 2
+2          Calling 3
+2          No one waiting
+1          Ticket 4
+0          Waiting: 1</div>
+      </div>
+      <div>
+        <div class="exercise">
+          <div class="ex-q">1) ข้อความ "เปิดให้บริการตั้งแต่ 8.30 น." ต้องใช้ในโปรแกรมไหม?</div>
+          <div class="mc-opts" id="q1a">
+            <div class="mc-opt" onclick="pickMC('q1a',0,1,'ไม่มีคำสั่งไหนเกี่ยวกับเวลาเลย ข้อมูลนี้ใส่มาให้ดูสมจริงเท่านั้น')"><span class="mc-ltr">A</span>ต้องเก็บเวลาไว้เช็คก่อนรับบัตร</div>
+            <div class="mc-opt" onclick="pickMC('q1a',1,1,'ใช่ — หาช่องในบัตร 6 ช่องให้ข้อมูลนี้ไม่ได้ แปลว่าข้ามได้')"><span class="mc-ltr">B</span>ไม่ต้องใช้ เป็นข้อมูลประกอบ</div>
+            <div class="mc-opt" onclick="pickMC('q1a',2,1,'รูปแบบผลลัพธ์ในโจทย์ไม่มีเวลาอยู่เลย')"><span class="mc-ltr">C</span>ต้องแสดงเวลาตอนรับบัตร</div>
+          </div>
+          <div class="ex-feedback" id="q1a-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">2) คำไหนในโจทย์บอกว่าต้องใช้ queue?</div>
+          <div class="mc-opts" id="q1b">
+            <div class="mc-opt" onclick="pickMC('q1b',0,2,'หมายเลขเรียงกันแค่บอกว่าเลขบัตรเพิ่มทีละ 1 — ใช้ตัวนับธรรมดาพอ')"><span class="mc-ltr">A</span>"หมายเลขเรียงกันเริ่มจาก 1"</div>
+            <div class="mc-opt" onclick="pickMC('q1b',1,2,'ทีละบรรทัดบอกวิธีรับข้อมูล (ช่อง ①) ไม่ได้บอกโครงสร้าง')"><span class="mc-ltr">B</span>"รับคำสั่งทีละบรรทัด"</div>
+            <div class="mc-opt" onclick="pickMC('q1b',2,2,'ใช่ — มาก่อนได้เรียกก่อน = เข้าก่อนออกก่อน = queue')"><span class="mc-ltr">C</span>"เรียกลูกค้าตามลำดับที่มาถึง"</div>
+          </div>
+          <div class="ex-feedback" id="q1b-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">3) โปรแกรมหยุดรับข้อมูลเมื่อไร?</div>
+          <div class="mc-opts" id="q1c">
+            <div class="mc-opt" onclick="pickMC('q1c',0,0,'ใช่ — 0 คือค่าหยุด ลูปจึงเป็น while (cmd != 0)')"><span class="mc-ltr">A</span>เมื่อรับเลข 0</div>
+            <div class="mc-opt" onclick="pickMC('q1c',1,0,'ครบ 100 แค่แสดง Sold out แต่โปรแกรมยังทำงานต่อ ยังเรียกคิวได้')"><span class="mc-ltr">B</span>เมื่อรับลูกค้าครบ 100 คน</div>
+            <div class="mc-opt" onclick="pickMC('q1c',2,0,'No one waiting แค่แจ้ง แล้วรับคำสั่งถัดไปต่อ')"><span class="mc-ltr">C</span>เมื่อแสดง "No one waiting"</div>
+          </div>
+          <div class="ex-feedback" id="q1c-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">4) ถ้ากด 1 ห้าครั้ง กด 2 สามครั้ง แล้วกด 0 — ต้องแสดงจำนวนคนที่ยังไม่ได้รับบริการเท่าไร?</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in1" placeholder="ตอบเป็นตัวเลข">
+            <button class="ex-btn" onclick="checkFill('in1','2',['2 คน','สอง'],['5','3','8'],'รับบัตร 5 คน เรียกไป 3 คน เหลือรอ 5 − 3 = 2 คน · ในโค้ดคือ tail − head','คนที่ยังรอ = คนที่รับบัตร − คนที่ถูกเรียกไปแล้ว')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb1"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4 เฉลย 1 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 1 · เฉลยการตีโจทย์</div>
+    <h2 class="slide-title">ตู้กดบัตรคิว — จับจุดตรงไหน</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          ธนาคารแห่งหนึ่ง<span class="h-noise">เปิดให้บริการตั้งแต่เวลา 8.30 น.</span> มีตู้กดบัตรคิวให้ลูกค้า บัตรมีหมายเลขเรียงกันเริ่มจาก 1 พนักงานจะ<mark class="h-ds">เรียกลูกค้าตามลำดับที่มาถึง</mark> ธนาคาร<mark class="h-cond">รองรับลูกค้าได้ไม่เกิน 100 คน</mark>ต่อวัน<br>
+          ให้เขียนโปรแกรม<mark class="h-in">รับคำสั่งเป็นตัวเลขทีละบรรทัด</mark><br>
+          • <b>1</b> — ลูกค้ากดบัตร ให้แสดง <mark class="h-out">Ticket X</mark> <mark class="h-edge">ถ้าครบ 100 ใบแล้วให้แสดง Sold out</mark><br>
+          • <b>2</b> — พนักงานเรียกคิว ให้แสดง <mark class="h-out">Calling X</mark> <mark class="h-edge">ถ้าไม่มีลูกค้ารออยู่ให้แสดง No one waiting</mark><br>
+          • <mark class="h-in"><b>0</b> — ปิดธนาคาร</mark> ให้แสดง <mark class="h-out">Waiting: X โดย X คือจำนวนลูกค้าที่ยังไม่ได้รับบริการ</mark> แล้วจบโปรแกรม
+        </div>
+        <table class="t">
+          <thead><tr><th>ช่อง</th><th>คำตอบ</th></tr></thead>
+          <tbody>
+            <tr><td>① รับ</td><td>ตัวเลขทีละบรรทัด (1 / 2 / 0) · <b>หยุดเมื่อเจอ 0</b></td></tr>
+            <tr><td>② พิมพ์</td><td>พิมพ์ทันทีทุกคำสั่ง + ตอนจบพิมพ์จำนวนคนที่รอ</td></tr>
+            <tr><td>③ ซ้ำ</td><td>อ่านคำสั่ง 1 ตัว แล้วทำตามคำสั่ง</td></tr>
+            <tr><td>④ จำ</td><td><b>queue</b> ของหมายเลขบัตร + เลขบัตรใบถัดไป</td></tr>
+            <tr><td>⑤ เงื่อนไข</td><td>ไม่เกิน 100 → จองอาร์เรย์ 100 ช่อง</td></tr>
+            <tr><td>⑥ ขอบ</td><td>Sold out (tail == 100) · No one waiting (head == tail)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> main() {
+    <span class="kw">int</span> q[<span class="nu">100</span>];                <span class="cm">// ④ queue  ⑤ ไม่เกิน 100</span>
+    <span class="kw">int</span> head = <span class="nu">0</span>, tail = <span class="nu">0</span>;
+    <span class="kw">int</span> next = <span class="nu">1</span>;               <span class="cm">// ④ เลขบัตรใบถัดไป</span>
+    <span class="kw">int</span> cmd;
+
+    <span class="cm">// ① ③ อ่านทีละคำสั่ง หยุดเมื่อเจอ 0</span>
+    <span class="kw">while</span> (scanf(<span class="st">"%d"</span>, &amp;cmd) == <span class="nu">1</span> &amp;&amp; cmd != <span class="nu">0</span>) {
+        <span class="kw">if</span> (cmd == <span class="nu">1</span>) {
+            <span class="kw">if</span> (tail == <span class="nu">100</span>) {                 <span class="cm">// ⑥</span>
+                printf(<span class="st">"Sold out\n"</span>);
+            } <span class="kw">else</span> {
+                q[tail++] = next;               <span class="cm">// เข้าท้ายคิว</span>
+                printf(<span class="st">"Ticket %d\n"</span>, next);  <span class="cm">// ②</span>
+                next++;
+            }
+        } <span class="kw">else if</span> (cmd == <span class="nu">2</span>) {
+            <span class="kw">if</span> (head == tail) {                 <span class="cm">// ⑥</span>
+                printf(<span class="st">"No one waiting\n"</span>);
+            } <span class="kw">else</span> {
+                printf(<span class="st">"Calling %d\n"</span>, q[head++]); <span class="cm">// ออกหน้าคิว</span>
+            }
+        }
+    }
+    printf(<span class="st">"Waiting: %d\n"</span>, tail - head); <span class="cm">// ②</span>
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+        <div class="exam">📌 <b>สังเกต:</b> ทุกบรรทัดสำคัญมีเลขช่องกำกับ — ถ้าเขียนบัตรครบ 6 ช่อง โค้ดแทบจะ<b>แปลตรงตัว</b>จากบัตรออกมาได้เลย</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 5 โจทย์ 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · ลองตีเอง</div>
+    <h2 class="slide-title">ปุ่ม Undo ของโปรแกรมพิมพ์ข้อความ</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          โปรแกรมพิมพ์ข้อความอย่างง่ายรับคำสั่งทีละบรรทัด จนกว่าจะพบคำว่า <code>END</code><br>
+          • <code>T c</code> — พิมพ์ตัวอักษร c หนึ่งตัวต่อท้ายข้อความ<br>
+          • <code>U</code> — ยกเลิกการพิมพ์ครั้งล่าสุด (Undo) ถ้าไม่มีอะไรให้ยกเลิก ไม่ต้องทำอะไร<br>
+          เมื่อจบให้แสดงข้อความที่เหลืออยู่ ถ้าไม่เหลือตัวอักษรเลยให้แสดง <code>(empty)</code><br>
+          รับประกันว่าข้อความยาวไม่เกิน 50 ตัวอักษร
+        </div>
+        <div class="code-label">ตัวอย่างที่ 1</div>
+        <div class="io">input:  T h / T i / T x / U / T ! / END
+output: hi!</div>
+        <div class="code-label">ตัวอย่างที่ 2</div>
+        <div class="io">input:  T a / T b / U / T c / END
+output: ac</div>
+        <div class="exam">(ในข้อมูลจริงแต่ละคำสั่งอยู่คนละบรรทัด — ใช้ / คั่นเพื่อให้อ่านง่าย)</div>
+      </div>
+      <div>
+        <div class="exercise">
+          <div class="ex-q">1) คำไหนในโจทย์บอกว่าต้องใช้ stack?</div>
+          <div class="mc-opts" id="q2a">
+            <div class="mc-opt" onclick="pickMC('q2a',0,1,'ต่อท้ายบอกแค่ว่าใส่ตัวใหม่ไว้ด้านหลัง ยังไม่บอกว่าเอาออกจากฝั่งไหน')"><span class="mc-ltr">A</span>"ต่อท้ายข้อความ"</div>
+            <div class="mc-opt" onclick="pickMC('q2a',1,1,'ใช่ — ยกเลิกตัวที่ใส่หลังสุดก่อน = เข้าหลังออกก่อน = stack')"><span class="mc-ltr">B</span>"ยกเลิกการพิมพ์ครั้งล่าสุด"</div>
+            <div class="mc-opt" onclick="pickMC('q2a',2,1,'END บอกว่าหยุดรับเมื่อไร (ช่อง ①)')"><span class="mc-ltr">C</span>"จนกว่าจะพบคำว่า END"</div>
+          </div>
+          <div class="ex-feedback" id="q2a-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">2) ประโยค "ถ้าไม่มีอะไรให้ยกเลิก ไม่ต้องทำอะไร" ควรจดไว้ในช่องไหนของบัตร?</div>
+          <div class="mc-opts" id="q2b">
+            <div class="mc-opt" onclick="pickMC('q2b',0,2,'ช่อง ① คือรูปแบบข้อมูลที่รับเข้ามา')"><span class="mc-ltr">A</span>① รับอะไรเข้ามา</div>
+            <div class="mc-opt" onclick="pickMC('q2b',1,2,'ประโยคนี้บอกว่าไม่ต้องพิมพ์อะไรด้วยซ้ำ')"><span class="mc-ltr">B</span>② ต้องพิมพ์อะไรออก</div>
+            <div class="mc-opt" onclick="pickMC('q2b',2,2,'ใช่ — stack ว่างแล้วถูกสั่ง pop คือเคสขอบคลาสสิก ในโค้ดคือ if (top &gt; 0)')"><span class="mc-ltr">C</span>⑥ เคสขอบ</div>
+          </div>
+          <div class="ex-feedback" id="q2b-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">3) "ข้อความยาวไม่เกิน 50 ตัวอักษร" ใช้ทำอะไรในโปรแกรม?</div>
+          <div class="mc-opts" id="q2c">
+            <div class="mc-opt" onclick="pickMC('q2c',0,1,'โจทย์ใช้คำว่า รับประกัน แปลว่าข้อมูลจะไม่เกินแน่นอน ไม่ต้องเช็ค')"><span class="mc-ltr">A</span>ต้องเช็คแล้วแจ้ง error ถ้าเกิน</div>
+            <div class="mc-opt" onclick="pickMC('q2c',1,1,'ใช่ — บอกขนาดอาร์เรย์ที่ต้องจอง (51 ช่อง เผื่อ \\0 ปิดท้าย)')"><span class="mc-ltr">B</span>บอกขนาดอาร์เรย์ที่ต้องจอง</div>
+            <div class="mc-opt" onclick="pickMC('q2c',2,1,'ภาษา C ต้องรู้ขนาดอาร์เรย์ล่วงหน้า ข้อมูลนี้จึงจำเป็น')"><span class="mc-ltr">C</span>ไม่ต้องใช้เลย</div>
+          </div>
+          <div class="ex-feedback" id="q2c-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">4) ป้อน <code>T x / T y / U / U / U / END</code> — โปรแกรมต้องแสดงอะไร?</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in2" placeholder="พิมพ์ผลลัพธ์">
+            <button class="ex-btn" onclick="checkFill('in2','(empty)',['empty'],['x','xy','y'],'U สองครั้งแรกลบ y กับ x จนหมด U ครั้งที่สามไม่มีอะไรให้ลบ (เคสขอบ) → เหลือข้อความว่าง','พิมพ์ 2 ตัว แต่ undo 3 ครั้ง — ตัวอักษรหมดตั้งแต่ undo ครั้งที่ 2 แล้ว')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 6 เฉลย 2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 2 · เฉลยการตีโจทย์</div>
+    <h2 class="slide-title">ปุ่ม Undo — จับจุดตรงไหน</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          โปรแกรมพิมพ์ข้อความอย่างง่าย<mark class="h-in">รับคำสั่งทีละบรรทัด จนกว่าจะพบคำว่า END</mark><br>
+          • <code>T c</code> — <mark class="h-in">พิมพ์ตัวอักษร c หนึ่งตัว</mark>ต่อท้ายข้อความ<br>
+          • <code>U</code> — <mark class="h-ds">ยกเลิกการพิมพ์ครั้งล่าสุด</mark> (Undo) <mark class="h-edge">ถ้าไม่มีอะไรให้ยกเลิก ไม่ต้องทำอะไร</mark><br>
+          เมื่อจบให้<mark class="h-out">แสดงข้อความที่เหลืออยู่</mark> <mark class="h-edge">ถ้าไม่เหลือตัวอักษรเลยให้แสดง (empty)</mark><br>
+          <mark class="h-cond">รับประกันว่าข้อความยาวไม่เกิน 50 ตัวอักษร</mark>
+        </div>
+        <table class="t">
+          <thead><tr><th>ช่อง</th><th>คำตอบ</th></tr></thead>
+          <tbody>
+            <tr><td>① รับ</td><td>คำสั่งเป็น<b>คำ</b> (T / U / END) · T ตามด้วยตัวอักษร 1 ตัว · <b>หยุดเมื่อเจอ END</b></td></tr>
+            <tr><td>② พิมพ์</td><td>พิมพ์ครั้งเดียว<b>ตอนจบ</b> (ระหว่างทางไม่พิมพ์)</td></tr>
+            <tr><td>③ ซ้ำ</td><td>อ่านคำสั่ง 1 คำ แล้วทำตาม</td></tr>
+            <tr><td>④ จำ</td><td><b>stack</b> ของตัวอักษร — ตัวข้อความเองคือ stack</td></tr>
+            <tr><td>⑤ เงื่อนไข</td><td>ไม่เกิน 50 → จอง 51 ช่อง (เผื่อ <code>\0</code>)</td></tr>
+            <tr><td>⑥ ขอบ</td><td>undo ตอนว่าง → ข้าม · จบแล้วว่าง → (empty)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+
+<span class="kw">int</span> main() {
+    <span class="kw">char</span> st[<span class="nu">51</span>];               <span class="cm">// ④ stack  ⑤ 50 + '\0'</span>
+    <span class="kw">int</span> top = <span class="nu">0</span>;
+    <span class="kw">char</span> cmd[<span class="nu">8</span>], c;
+
+    <span class="cm">// ① ③ อ่านทีละคำ หยุดเมื่อเจอ END</span>
+    <span class="kw">while</span> (scanf(<span class="st">"%s"</span>, cmd) == <span class="nu">1</span> &amp;&amp; strcmp(cmd, <span class="st">"END"</span>) != <span class="nu">0</span>) {
+        <span class="kw">if</span> (strcmp(cmd, <span class="st">"T"</span>) == <span class="nu">0</span>) {
+            scanf(<span class="st">" %c"</span>, &amp;c);         <span class="cm">// เว้นวรรคหน้า %c ข้ามช่องว่าง</span>
+            st[top++] = c;           <span class="cm">// push</span>
+        } <span class="kw">else if</span> (strcmp(cmd, <span class="st">"U"</span>) == <span class="nu">0</span>) {
+            <span class="kw">if</span> (top &gt; <span class="nu">0</span>) top--;      <span class="cm">// ⑥ pop เฉพาะตอนไม่ว่าง</span>
+        }
+    }
+
+    st[top] = <span class="st">'\0'</span>;                <span class="cm">// ปิดท้ายให้เป็นสตริง</span>
+    <span class="kw">if</span> (top == <span class="nu">0</span>) printf(<span class="st">"(empty)\n"</span>);   <span class="cm">// ⑥</span>
+    <span class="kw">else</span>          printf(<span class="st">"%s\n"</span>, st);  <span class="cm">// ②</span>
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+        <div class="exam">⚠️ <b>ต่างจากโจทย์ 1 ตรงไหน?</b> โจทย์ 1 หยุดด้วย<b>ตัวเลข</b> (0) ข้อนี้หยุดด้วย<b>คำ</b> (END) → ต้องอ่านด้วย <code>%s</code> และเทียบด้วย <code>strcmp</code> ห้ามใช้ <code>==</code><br>
+        ช่อง ① จึงต้องจดให้ละเอียดว่า "หยุดด้วยอะไร" เพราะเปลี่ยนวิธีเขียนลูปทั้งหมด</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 7 โจทย์ 3 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · ลองตีเอง</div>
+    <h2 class="slide-title">ชั้นวางจานในร้านอาหาร</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          ร้านอาหารมีชั้นวางจานที่วางซ้อนกันได้สูงสุด 5 ใบ พนักงานล้างจานเสร็จจะวางไว้ด้านบนสุด และเมื่อจะใช้จะหยิบใบบนสุดออกไป จานแต่ละใบมีรหัสเป็นตัวเลข จานทุกใบของร้านเป็นเซรามิกสีขาว<br>
+          รับจำนวนคำสั่ง N ก่อน แล้วรับคำสั่งอีก N บรรทัด<br>
+          • <code>W x</code> — วางจานรหัส x ถ้าชั้นเต็มให้แสดง <code>Full</code><br>
+          • <code>P</code> — หยิบจาน ให้แสดง <code>Take x</code> ถ้าไม่มีจานให้แสดง <code>Empty</code><br>
+          เมื่อทำครบทุกคำสั่ง ให้แสดง <code>Left:</code> ตามด้วยรหัสจานที่เหลือบนชั้นเรียงจากบนลงล่าง
+        </div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">input:
+8
+W 11
+W 12
+P
+W 13
+W 14
+W 15
+W 16
+W 17
+
+output:
+Take 12
+Full
+Left: 16 15 14 13 11</div>
+      </div>
+      <div>
+        <div class="exercise">
+          <div class="ex-q">1) โปรแกรมรู้ได้ยังไงว่าคำสั่งหมดแล้ว?</div>
+          <div class="mc-opts" id="q3a">
+            <div class="mc-opt" onclick="pickMC('q3a',0,1,'นั่นคือแบบของโจทย์ 1 — ข้อนี้ไม่มีค่าหยุด')"><span class="mc-ltr">A</span>เจอเลข 0</div>
+            <div class="mc-opt" onclick="pickMC('q3a',1,1,'ใช่ — บอกจำนวนมาก่อน ลูปจึงเป็น for (i = 0; i &lt; n; i++) · เป็นแบบที่ 3 ที่ต่างจากโจทย์ 1 และ 2')"><span class="mc-ltr">B</span>ทำครบ N คำสั่ง</div>
+            <div class="mc-opt" onclick="pickMC('q3a',2,1,'นั่นคือแบบของโจทย์ 2 — ข้อนี้ไม่มีคำว่า END')"><span class="mc-ltr">C</span>เจอคำว่า END</div>
+          </div>
+          <div class="ex-feedback" id="q3a-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">2) "เรียงจากบนลงล่าง" ต้องวนลูปแบบไหน? (top = จำนวนจานที่มี)</div>
+          <div class="mc-opts" id="q3b">
+            <div class="mc-opt" onclick="pickMC('q3b',0,1,'ช่อง 0 คือจานใบล่างสุด (วางก่อน) — แบบนี้จะได้ล่างขึ้นบน')"><span class="mc-ltr">A</span>for i = 0 ไปจนถึง top − 1</div>
+            <div class="mc-opt" onclick="pickMC('q3b',1,1,'ใช่ — ช่อง top − 1 คือใบบนสุด ต้องวนถอยหลังลงไปหาช่อง 0')"><span class="mc-ltr">B</span>for i = top − 1 ถอยลงมาจนถึง 0</div>
+            <div class="mc-opt" onclick="pickMC('q3b',2,1,'โจทย์ให้แสดงจานที่เหลือทุกใบ ไม่ใช่แค่ใบบนสุด')"><span class="mc-ltr">C</span>ไม่ต้องวน แสดงใบบนสุดใบเดียว</div>
+          </div>
+          <div class="ex-feedback" id="q3b-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">3) โจทย์ระบุเคสขอบไว้ให้กี่เคส?</div>
+          <div class="mc-opts" id="q3c">
+            <div class="mc-opt" onclick="pickMC('q3c',0,2,'มีประโยค ถ้า...ให้แสดง อยู่ในโจทย์ ลองอ่านอีกครั้ง')"><span class="mc-ltr">A</span>ไม่มี</div>
+            <div class="mc-opt" onclick="pickMC('q3c',1,2,'ยังขาดอีกหนึ่ง — อ่านคำสั่ง P ให้ครบ')"><span class="mc-ltr">B</span>1 เคส: ชั้นเต็ม</div>
+            <div class="mc-opt" onclick="pickMC('q3c',2,2,'ใช่ — สังเกตคำว่า ถ้า...ให้แสดง ทุกครั้งที่เจอคือเคสขอบ 1 เคส')"><span class="mc-ltr">C</span>2 เคส: ชั้นเต็ม และ ไม่มีจาน</div>
+          </div>
+          <div class="ex-feedback" id="q3c-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">4) N = 5 · คำสั่ง <code>W 1 / W 2 / W 3 / P / W 4</code> — จานที่เหลือจากบนลงล่างคือ? (เว้นวรรคระหว่างตัวเลข)</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in3" placeholder="เช่น 9 8 7">
+            <button class="ex-btn" onclick="checkFill('in3','4 2 1',['421','4,2,1','4, 2, 1'],['1 2 4','4 3 2 1','3 2 1'],'วาง 1 2 3 → หยิบใบบนสุด (3) ออก → วาง 4 ทับ → จากบนลงล่างคือ 4 2 1','วาดกองจานบนกระดาษทีละคำสั่ง — P หยิบใบที่วางหลังสุดออก')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 8 เฉลย 3 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 3 · เฉลยการตีโจทย์</div>
+    <h2 class="slide-title">ชั้นวางจาน — จับจุดตรงไหน</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          ร้านอาหารมีชั้นวางจานที่<mark class="h-cond">วางซ้อนกันได้สูงสุด 5 ใบ</mark> พนักงานล้างจานเสร็จจะ<mark class="h-ds">วางไว้ด้านบนสุด</mark> และเมื่อจะใช้จะ<mark class="h-ds">หยิบใบบนสุดออกไป</mark> จานแต่ละใบมีรหัสเป็นตัวเลข <span class="h-noise">จานทุกใบของร้านเป็นเซรามิกสีขาว</span><br>
+          <mark class="h-in">รับจำนวนคำสั่ง N ก่อน แล้วรับคำสั่งอีก N บรรทัด</mark><br>
+          • <code>W x</code> — วางจานรหัส x <mark class="h-edge">ถ้าชั้นเต็มให้แสดง Full</mark><br>
+          • <code>P</code> — หยิบจาน ให้แสดง <mark class="h-out">Take x</mark> <mark class="h-edge">ถ้าไม่มีจานให้แสดง Empty</mark><br>
+          เมื่อทำครบทุกคำสั่ง ให้แสดง <mark class="h-out">Left: ตามด้วยรหัสจานที่เหลือบนชั้น</mark><mark class="h-cond">เรียงจากบนลงล่าง</mark>
+        </div>
+        <table class="t">
+          <thead><tr><th>ช่อง</th><th>คำตอบ</th></tr></thead>
+          <tbody>
+            <tr><td>① รับ</td><td><b>N ก่อน</b> แล้วคำสั่ง N บรรทัด (W ตามด้วยเลข / P)</td></tr>
+            <tr><td>② พิมพ์</td><td>ตอน P พิมพ์ทันที · จบแล้วพิมพ์จานที่เหลือ</td></tr>
+            <tr><td>③ ซ้ำ</td><td>ทำ N รอบ รอบละ 1 คำสั่ง</td></tr>
+            <tr><td>④ จำ</td><td><b>stack</b> ของรหัสจาน</td></tr>
+            <tr><td>⑤ เงื่อนไข</td><td>สูงสุด 5 ใบ · พิมพ์<b>บนลงล่าง</b> = วนถอยหลัง</td></tr>
+            <tr><td>⑥ ขอบ</td><td>เต็ม (top == 5) · ว่าง (top == 0)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+
+<span class="kw">int</span> main() {
+    <span class="kw">int</span> st[<span class="nu">5</span>];                  <span class="cm">// ④ stack  ⑤ สูงสุด 5</span>
+    <span class="kw">int</span> top = <span class="nu">0</span>;
+    <span class="kw">int</span> n, x;
+    <span class="kw">char</span> cmd[<span class="nu">4</span>];
+
+    scanf(<span class="st">"%d"</span>, &amp;n);              <span class="cm">// ① N มาก่อน</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; n; i++) {  <span class="cm">// ③ ทำ N รอบ</span>
+        scanf(<span class="st">"%s"</span>, cmd);
+        <span class="kw">if</span> (strcmp(cmd, <span class="st">"W"</span>) == <span class="nu">0</span>) {
+            scanf(<span class="st">"%d"</span>, &amp;x);
+            <span class="kw">if</span> (top == <span class="nu">5</span>) printf(<span class="st">"Full\n"</span>);   <span class="cm">// ⑥</span>
+            <span class="kw">else</span>          st[top++] = x;          <span class="cm">// push</span>
+        } <span class="kw">else if</span> (strcmp(cmd, <span class="st">"P"</span>) == <span class="nu">0</span>) {
+            <span class="kw">if</span> (top == <span class="nu">0</span>) printf(<span class="st">"Empty\n"</span>);   <span class="cm">// ⑥</span>
+            <span class="kw">else</span>          printf(<span class="st">"Take %d\n"</span>, st[--top]);  <span class="cm">// pop ②</span>
+        }
+    }
+
+    printf(<span class="st">"Left:"</span>);
+    <span class="kw">for</span> (<span class="kw">int</span> i = top - <span class="nu">1</span>; i &gt;= <span class="nu">0</span>; i--)   <span class="cm">// ⑤ บนลงล่าง</span>
+        printf(<span class="st">" %d"</span>, st[i]);
+    printf(<span class="st">"\n"</span>);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+        <div class="exam">⚠️ <b>กับดักของข้อนี้:</b> ถ้าอ่านข้าม "เรียงจากบนลงล่าง" แล้ววน <code>i = 0 → top−1</code> ตามความเคยชิน จะได้ <code>11 13 14 15 16</code> — ผลลัพธ์กลับด้าน ผิดทั้งบรรทัด<br>
+        คำขยายท้ายประโยคแบบนี้คือช่อง ⑤ ที่คนอ่านข้ามบ่อยที่สุด</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 9 โจทย์ 4 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 4 · ลองตีเอง</div>
+    <h2 class="slide-title">เครื่องพิมพ์ในสำนักงาน</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          สำนักงานแห่งหนึ่งใช้เครื่องพิมพ์รุ่น LaserJet ความเร็วสูง ซึ่งพิมพ์ได้นาทีละ 5 หน้า งานที่ส่งเข้ามาจะถูกพิมพ์ตามลำดับที่ส่งทีละงาน โดยเครื่องเริ่มพิมพ์งานแรกที่นาทีที่ 0<br>
+          ให้รับจำนวนงาน N ตามด้วยจำนวนหน้าของแต่ละงาน (อย่างน้อย 1 หน้า) แล้วแสดงว่างานแต่ละงานพิมพ์เสร็จในนาทีที่เท่าไร ในรูปแบบ <code>Job i done at minute t</code><br>
+          ถ้างานใดใช้เวลาไม่ถึงนาทีเต็ม ให้นับเศษเป็น 1 นาทีเต็ม
+        </div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">input:
+3
+12
+5
+3
+
+output:
+Job 1 done at minute 3
+Job 2 done at minute 4
+Job 3 done at minute 5</div>
+        <div class="exam">12 หน้า ÷ 5 = 2.4 นาที → นับเป็น 3 · งานถัดไปเริ่มต่อจากนาทีที่ 3</div>
+      </div>
+      <div>
+        <div class="exercise">
+          <div class="ex-q">1) "เศษให้นับเป็น 1 นาทีเต็ม" ต้องคำนวณแบบไหนในภาษา C? (หน้า = pages)</div>
+          <div class="mc-opts" id="q4a">
+            <div class="mc-opt" onclick="pickMC('q4a',0,1,'int หาร int ปัดทิ้ง 12 / 5 ได้ 2 — แต่โจทย์ต้องการ 3')"><span class="mc-ltr">A</span>pages / 5</div>
+            <div class="mc-opt" onclick="pickMC('q4a',1,1,'ใช่ — บวก (ตัวหาร − 1) ก่อนหาร คือสูตรปัดขึ้นของ int · 12 → 16/5 = 3 · 10 → 14/5 = 2')"><span class="mc-ltr">B</span>(pages + 4) / 5</div>
+            <div class="mc-opt" onclick="pickMC('q4a',2,1,'% ให้เศษ (12 % 5 = 2) ไม่ใช่จำนวนนาที')"><span class="mc-ltr">C</span>pages % 5</div>
+          </div>
+          <div class="ex-feedback" id="q4a-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">2) "รุ่น LaserJet ความเร็วสูง" ใช้ทำอะไรในโปรแกรม?</div>
+          <div class="mc-opts" id="q4b">
+            <div class="mc-opt" onclick="pickMC('q4b',0,2,'ไม่มีผลลัพธ์ไหนต้องแสดงชื่อรุ่น')"><span class="mc-ltr">A</span>เก็บชื่อรุ่นไว้แสดงผล</div>
+            <div class="mc-opt" onclick="pickMC('q4b',1,2,'ความเร็วที่ใช้จริงคือตัวเลข 5 หน้าต่อนาที ไม่ใช่ชื่อรุ่น')"><span class="mc-ltr">B</span>ใช้กำหนดความเร็วในการพิมพ์</div>
+            <div class="mc-opt" onclick="pickMC('q4b',2,2,'ใช่ — ข้อมูลประกอบ ข้ามได้ ตัวเลขที่ต้องใช้คือ 5 หน้าต่อนาทีเท่านั้น')"><span class="mc-ltr">C</span>ไม่ต้องใช้</div>
+          </div>
+          <div class="ex-feedback" id="q4b-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">3) โจทย์บอก "พิมพ์ตามลำดับที่ส่ง" — ต้องสร้าง queue เก็บงานไหม?</div>
+          <div class="mc-opts" id="q4c">
+            <div class="mc-opt" onclick="pickMC('q4c',0,1,'queue จำเป็นเมื่อต้องเก็บไว้ก่อนแล้วค่อยเอาออกทีหลัง — ข้อนี้คำนวณได้ทันทีที่อ่าน')"><span class="mc-ltr">A</span>ต้อง เพราะโจทย์บอกว่าตามลำดับ</div>
+            <div class="mc-opt" onclick="pickMC('q4c',1,1,'ใช่ — อ่านงานไหนก็คำนวณและพิมพ์งานนั้นเลย ลำดับการอ่านเรียงอยู่แล้ว ใช้แค่ตัวแปรสะสมเวลา 1 ตัว')"><span class="mc-ltr">B</span>ไม่ต้อง อ่านทีละงานแล้วคำนวณทันทีก็เรียงอยู่แล้ว</div>
+            <div class="mc-opt" onclick="pickMC('q4c',2,1,'stack จะกลับลำดับงาน ซึ่งขัดกับโจทย์')"><span class="mc-ltr">C</span>ต้องใช้ stack</div>
+          </div>
+          <div class="ex-feedback" id="q4c-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">4) N = 2 · งานแรก 5 หน้า งานที่สอง 6 หน้า — งานที่ 2 เสร็จนาทีที่เท่าไร?</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in4" placeholder="ตอบเป็นตัวเลข">
+            <button class="ex-btn" onclick="checkFill('in4','3',['นาทีที่ 3'],['2','1'],'งานแรก 5 หน้า = 1 นาทีพอดี (เสร็จนาทีที่ 1) · งานสอง 6 หน้า = 1.2 → นับ 2 นาที → เสร็จนาทีที่ 1 + 2 = 3','อย่าลืมว่าเวลาสะสมต่อจากงานก่อนหน้า และ 6 หน้าใช้เกิน 1 นาที')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 10 เฉลย 4 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 4 · เฉลยการตีโจทย์</div>
+    <h2 class="slide-title">เครื่องพิมพ์ — จับจุดตรงไหน</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          สำนักงานแห่งหนึ่ง<span class="h-noise">ใช้เครื่องพิมพ์รุ่น LaserJet ความเร็วสูง</span> ซึ่ง<mark class="h-cond">พิมพ์ได้นาทีละ 5 หน้า</mark> งานที่ส่งเข้ามาจะถูกพิมพ์<mark class="h-ds">ตามลำดับที่ส่ง</mark>ทีละงาน โดยเครื่อง<mark class="h-cond">เริ่มพิมพ์งานแรกที่นาทีที่ 0</mark><br>
+          ให้<mark class="h-in">รับจำนวนงาน N ตามด้วยจำนวนหน้าของแต่ละงาน</mark> <mark class="h-edge">(อย่างน้อย 1 หน้า)</mark> แล้ว<mark class="h-out">แสดงว่างานแต่ละงานพิมพ์เสร็จในนาทีที่เท่าไร ในรูปแบบ Job i done at minute t</mark><br>
+          <mark class="h-cond">ถ้างานใดใช้เวลาไม่ถึงนาทีเต็ม ให้นับเศษเป็น 1 นาทีเต็ม</mark>
+        </div>
+        <table class="t">
+          <thead><tr><th>ช่อง</th><th>คำตอบ</th></tr></thead>
+          <tbody>
+            <tr><td>① รับ</td><td><b>N ก่อน</b> แล้วตัวเลข N ตัว (จำนวนหน้า)</td></tr>
+            <tr><td>② พิมพ์</td><td>พิมพ์ทันทีทุกงาน รูปแบบตามโจทย์</td></tr>
+            <tr><td>③ ซ้ำ</td><td>อ่านงาน 1 งาน → คำนวณ → พิมพ์</td></tr>
+            <tr><td>④ จำ</td><td><b>เวลาสะสม t ตัวเดียว</b> — ไม่ต้องใช้ queue</td></tr>
+            <tr><td>⑤ เงื่อนไข</td><td>5 หน้า/นาที · <b>เศษปัดขึ้น</b> · เริ่มที่ 0</td></tr>
+            <tr><td>⑥ ขอบ</td><td>อย่างน้อย 1 หน้า → ไม่ต้องกัน 0 · หน้าหารลงตัวพอดี (5, 10)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> main() {
+    <span class="kw">int</span> n, pages;
+    <span class="kw">int</span> t = <span class="nu">0</span>;                   <span class="cm">// ④ เวลาสะสม  ⑤ เริ่มที่ 0</span>
+
+    scanf(<span class="st">"%d"</span>, &amp;n);              <span class="cm">// ① N มาก่อน</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">1</span>; i &lt;= n; i++) { <span class="cm">// ③</span>
+        scanf(<span class="st">"%d"</span>, &amp;pages);
+        t += (pages + <span class="nu">4</span>) / <span class="nu">5</span>;       <span class="cm">// ⑤ ปัดขึ้น</span>
+        printf(<span class="st">"Job %d done at minute %d\n"</span>, i, t);  <span class="cm">// ②</span>
+    }
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+        <div class="exam">🔑 <b>บทเรียนของข้อนี้:</b> เจอคำว่า "ตามลำดับ" <b>ไม่ได้แปลว่าต้องสร้าง queue เสมอ</b><br>
+        ถามช่อง ④ ให้ชัดว่า "ต้อง<b>เก็บไว้ก่อน</b>แล้วค่อยใช้ทีหลังไหม" — ถ้าอ่านแล้วใช้ทันทีได้ ลำดับการอ่านก็คือคิวอยู่แล้ว<br>
+        โจทย์ 1 ต้องใช้ queue เพราะคนกดบัตร<b>ไม่ได้ถูกเรียกทันที</b> ต้องรอคำสั่ง 2 ก่อน</div>
+        <div class="exam">📌 <b>สูตรปัดขึ้นของ int ที่ต้องจำ:</b> <code>(a + b − 1) / b</code><br>
+        หาร 5 → <code>(a + 4) / 5</code> · หาร 3 → <code>(a + 2) / 3</code> · ไม่ต้อง include math.h</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 11 โจทย์ 5 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 5 · ลองตีเอง</div>
+    <h2 class="slide-title">ตรวจคำ Palindrome ด้วย Stack + Queue</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          คำ palindrome คือคำที่อ่านจากหน้าไปหลังและจากหลังไปหน้าได้เหมือนกัน เช่น level, noon<br>
+          ให้เขียนโปรแกรมตรวจว่าคำที่รับเข้ามาเป็น palindrome หรือไม่ โดยไม่สนใจตัวพิมพ์ใหญ่-เล็ก<br>
+          โปรแกรมต้องใช้ stack และ queue อย่างละ 1 ชุด: นำตัวอักษรทุกตัวของคำใส่ทั้ง stack และ queue แล้วดึงออกมาเทียบกันทีละคู่<br>
+          รับคำได้หลายคำ คำละ 1 บรรทัด จนกว่าจะพบคำว่า <code>STOP</code> แต่ละคำยาวไม่เกิน 30 ตัวอักษร ให้แสดง <code>YES</code> หรือ <code>NO</code> คำละ 1 บรรทัด
+        </div>
+        <div class="code-label">ตัวอย่างการทำงาน</div>
+        <div class="io">input      output
+Level      YES
+abca       NO
+Noon       YES
+STOP</div>
+      </div>
+      <div>
+        <div class="exercise">
+          <div class="ex-q">1) "ไม่สนใจตัวพิมพ์ใหญ่-เล็ก" ควรจดไว้ช่องไหน?</div>
+          <div class="mc-opts" id="q5a">
+            <div class="mc-opt" onclick="pickMC('q5a',0,1,'ช่อง ① คือรูปแบบข้อมูลเข้า ข้อนี้คือกฎที่ต้องทำกับข้อมูล')"><span class="mc-ltr">A</span>① รับอะไรเข้ามา</div>
+            <div class="mc-opt" onclick="pickMC('q5a',1,1,'ใช่ — กฎพิเศษที่ต้องจัดการ ในโค้ดคือแปลงเป็นตัวเล็กด้วย tolower() ก่อนเทียบ')"><span class="mc-ltr">B</span>⑤ เงื่อนไขพิเศษ</div>
+            <div class="mc-opt" onclick="pickMC('q5a',2,1,'ผลลัพธ์คือ YES / NO ไม่เกี่ยวกับตัวพิมพ์')"><span class="mc-ltr">C</span>② ต้องพิมพ์อะไรออก</div>
+          </div>
+          <div class="ex-feedback" id="q5a-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">2) ทำไมเอา stack กับ queue มาเทียบกันแล้วรู้ว่าเป็น palindrome?</div>
+          <div class="mc-opts" id="q5b">
+            <div class="mc-opt" onclick="pickMC('q5b',0,1,'ถ้าออกลำดับเดิมทั้งคู่ จะเทียบได้เหมือนกันทุกคำ ตรวจอะไรไม่ได้เลย')"><span class="mc-ltr">A</span>ทั้งคู่ดึงออกมาตามลำดับเดิม</div>
+            <div class="mc-opt" onclick="pickMC('q5b',1,1,'ใช่ — queue ให้ตัวแรกก่อน stack ให้ตัวสุดท้ายก่อน → เทียบหน้ากับหลังไล่เข้ามาตรงกลาง')"><span class="mc-ltr">B</span>queue ดึงลำดับเดิม stack ดึงกลับด้าน → เทียบหน้ากับหลัง</div>
+            <div class="mc-opt" onclick="pickMC('q5b',2,1,'ความเร็วไม่เกี่ยว — ประเด็นคือลำดับที่ดึงออก')"><span class="mc-ltr">C</span>stack ทำงานเร็วกว่า queue</div>
+          </div>
+          <div class="ex-feedback" id="q5b-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">3) รับหลายคำในโปรแกรมเดียว — บั๊กที่เจอบ่อยที่สุดคืออะไร?</div>
+          <div class="mc-opts" id="q5c">
+            <div class="mc-opt" onclick="pickMC('q5c',0,2,'scanf %s ใช้ได้เพราะแต่ละคำไม่มีช่องว่าง')"><span class="mc-ltr">A</span>ใช้ scanf แทน gets</div>
+            <div class="mc-opt" onclick="pickMC('q5c',1,2,'ไม่ทำให้ผลลัพธ์ผิด')"><span class="mc-ltr">B</span>ลืมใส่ return 0</div>
+            <div class="mc-opt" onclick="pickMC('q5c',2,2,'ใช่ — ถ้าไม่รีเซ็ต ตัวอักษรของคำก่อนหน้าจะค้างอยู่ คำที่สองเป็นต้นไปผิดหมด · เจอคำว่า หลายคำ ต้องถามเสมอว่าอะไรต้องเริ่มใหม่')"><span class="mc-ltr">C</span>ลืมรีเซ็ต top / head / tail ก่อนเริ่มคำใหม่</div>
+          </div>
+          <div class="ex-feedback" id="q5c-fb"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">4) ป้อนคำว่า <code>RaceCar</code> — ต้องแสดงอะไร?</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in5" placeholder="YES หรือ NO">
+            <button class="ex-btn" onclick="checkFill('in5','YES',['yes','Yes'],['NO','no'],'แปลงเป็นตัวเล็กได้ racecar → กลับด้านได้ racecar เหมือนเดิม → YES','ถ้าไม่สนตัวพิมพ์ใหญ่-เล็ก RaceCar จะกลายเป็น racecar ลองอ่านกลับด้านดู')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb5"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 12 เฉลย 5 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">โจทย์ที่ 5 · เฉลยการตีโจทย์</div>
+    <h2 class="slide-title">Palindrome — จับจุดตรงไหน</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          คำ palindrome คือคำที่อ่านจากหน้าไปหลังและจากหลังไปหน้าได้เหมือนกัน เช่น level, noon<br>
+          ให้เขียนโปรแกรมตรวจว่าคำที่รับเข้ามาเป็น palindrome หรือไม่ โดย<mark class="h-cond">ไม่สนใจตัวพิมพ์ใหญ่-เล็ก</mark><br>
+          โปรแกรม<mark class="h-cond">ต้องใช้ stack และ queue อย่างละ 1 ชุด</mark>: นำตัวอักษรทุกตัวของคำใส่ทั้ง <mark class="h-ds">stack และ queue แล้วดึงออกมาเทียบกันทีละคู่</mark><br>
+          <mark class="h-in">รับคำได้หลายคำ คำละ 1 บรรทัด จนกว่าจะพบคำว่า STOP</mark> <mark class="h-cond">แต่ละคำยาวไม่เกิน 30 ตัวอักษร</mark> ให้<mark class="h-out">แสดง YES หรือ NO คำละ 1 บรรทัด</mark>
+        </div>
+        <table class="t">
+          <thead><tr><th>ช่อง</th><th>คำตอบ</th></tr></thead>
+          <tbody>
+            <tr><td>① รับ</td><td>คำทีละคำ · <b>หยุดเมื่อเจอ STOP</b></td></tr>
+            <tr><td>② พิมพ์</td><td>YES / NO ทันทีหลังตรวจแต่ละคำ</td></tr>
+            <tr><td>③ ซ้ำ</td><td><b>2 ชั้น</b>: ซ้ำทีละคำ และในแต่ละคำซ้ำทีละตัวอักษร</td></tr>
+            <tr><td>④ จำ</td><td><b>stack + queue</b> ของตัวอักษร · ผลการเทียบ ok</td></tr>
+            <tr><td>⑤ เงื่อนไข</td><td>tolower ก่อนใส่ · ไม่เกิน 30 → จอง 31 ช่อง · ต้องใช้ stack+queue ตามที่โจทย์สั่ง</td></tr>
+            <tr><td>⑥ ขอบ</td><td><b>หลายคำ → รีเซ็ตทุกคำ</b> · คำยาว 1 ตัวอักษร (ต้องได้ YES)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;ctype.h&gt;</span>                 <span class="cm">// tolower()</span>
+
+<span class="kw">int</span> main() {
+    <span class="kw">char</span> w[<span class="nu">31</span>];                   <span class="cm">// ⑤ 30 + '\0'</span>
+    <span class="kw">char</span> st[<span class="nu">31</span>], q[<span class="nu">31</span>];           <span class="cm">// ④ stack + queue</span>
+
+    <span class="cm">// ① ③ ชั้นนอก: ทีละคำ หยุดเมื่อเจอ STOP</span>
+    <span class="kw">while</span> (scanf(<span class="st">"%s"</span>, w) == <span class="nu">1</span> &amp;&amp; strcmp(w, <span class="st">"STOP"</span>) != <span class="nu">0</span>) {
+        <span class="kw">int</span> top = <span class="nu">0</span>, head = <span class="nu">0</span>, tail = <span class="nu">0</span>;   <span class="cm">// ⑥ รีเซ็ตทุกคำ!</span>
+
+        <span class="cm">// ③ ชั้นใน: ใส่ทุกตัวอักษรลงทั้งคู่</span>
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; w[i] != <span class="st">'\0'</span>; i++) {
+            <span class="kw">char</span> c = tolower(w[i]);  <span class="cm">// ⑤</span>
+            st[top++] = c;           <span class="cm">// push</span>
+            q[tail++] = c;           <span class="cm">// enqueue</span>
+        }
+
+        <span class="cm">// ดึงออกเทียบทีละคู่</span>
+        <span class="kw">int</span> ok = <span class="nu">1</span>;
+        <span class="kw">while</span> (top &gt; <span class="nu">0</span>) {
+            <span class="kw">if</span> (st[--top] != q[head++]) {   <span class="cm">// pop เทียบ dequeue</span>
+                ok = <span class="nu">0</span>;
+                <span class="kw">break</span>;
+            }
+        }
+        printf(<span class="st">"%s\n"</span>, ok ? <span class="st">"YES"</span> : <span class="st">"NO"</span>);    <span class="cm">// ②</span>
+    }
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+        <div class="exam">⚠️ <b>ทำไมประกาศ top / head / tail <u>ในลูป</u>?</b> เพื่อให้เริ่มจาก 0 ใหม่ทุกคำโดยอัตโนมัติ — ถ้าประกาศไว้ข้างนอก ต้องจำไปตั้งเป็น 0 เอง และนั่นคือจุดที่ลืมกันบ่อยที่สุด</div>
+        <div class="exam">💡 เจอคำว่า "<b>รับได้หลายชุด</b> / หลายคำ / หลายกรณีทดสอบ" ในโจทย์ → จดในช่อง ⑥ ทันทีว่า <b>อะไรต้องเริ่มใหม่ทุกรอบ</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 13 โหมดสอบจริง -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ใช้ในห้องสอบ</div>
+    <h2 class="slide-title">ห้ามปล่อยว่าง — 3 นาทีแรกต้องเขียนอะไรลงไป</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          <b>ขั้นที่ 1</b> — อ่านโจทย์ แล้ว<b>เขียนบัตร 6 ช่องเป็น comment</b> ไว้บนสุดของโค้ดทันที<br>
+          <b>ขั้นที่ 2</b> — ลอกโครงข้างล่างนี้ลงไป (โครงเดียวใช้ได้เกือบทุกข้อ lab)<br>
+          <b>ขั้นที่ 3</b> — เติมทีละส่วน เริ่มจาก<b>ส่วนที่ง่ายที่สุด</b>คือ รับข้อมูล กับ พิมพ์ผลลัพธ์<br>
+          <b>ติดตรงไหน ข้ามไปก่อน</b> — โค้ดที่รับข้อมูลถูกและพิมพ์รูปแบบถูกได้คะแนนมากกว่ากระดาษเปล่าเสมอ
+        </div>
+        <span class="lang">C · โครงสำเร็จรูป</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+
+<span class="kw">int</span> main() {
+    <span class="cm">/* ① รับ   :
+       ② พิมพ์ :
+       ③ ซ้ำ   :
+       ④ จำ    :
+       ⑤ เงื่อนไข:
+       ⑥ ขอบ   :                     */</span>
+
+    <span class="cm">// [ก] ประกาศตัวแปร / stack / queue  ← จากช่อง ④ ⑤</span>
+
+    <span class="cm">// [ข] ลูปรับข้อมูล  ← จากช่อง ① ③ (เลือก 1 ใน 3 แบบข้างขวา)</span>
+    {
+        <span class="cm">// [ค] แยกกรณีตามคำสั่ง  if / else if</span>
+        <span class="cm">// [ง] เช็คเคสขอบก่อนทำจริง  ← จากช่อง ⑥</span>
+        <span class="cm">// [จ] พิมพ์ระหว่างทาง  ← จากช่อง ②</span>
+    }
+
+    <span class="cm">// [ฉ] พิมพ์สรุปตอนจบ  ← จากช่อง ②</span>
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">ลูปรับข้อมูล 3 แบบ — ช่อง ① บอกว่าต้องใช้แบบไหน</div>
+        <table class="t">
+          <thead><tr><th>โจทย์บอกว่า</th><th>ใช้ลูป</th></tr></thead>
+          <tbody>
+            <tr><td>หยุดเมื่อเจอตัวเลข<br><small>(โจทย์ 1)</small></td><td><code>while (scanf("%d", &amp;x) == 1 &amp;&amp; x != 0)</code></td></tr>
+            <tr><td>บอกจำนวน N มาก่อน<br><small>(โจทย์ 3, 4)</small></td><td><code>scanf("%d", &amp;n);</code><br><code>for (i = 0; i &lt; n; i++)</code></td></tr>
+            <tr><td>หยุดเมื่อเจอคำ<br><small>(โจทย์ 2, 5)</small></td><td><code>while (scanf("%s", s) == 1 &amp;&amp; strcmp(s, "END") != 0)</code></td></tr>
+          </tbody>
+        </table>
+        <div class="code-label">stack / queue ด้วยอาร์เรย์ — 4 บรรทัดที่ใช้ทั้งบท</div>
+        <table class="t">
+          <thead><tr><th>งาน</th><th>stack</th><th>queue</th></tr></thead>
+          <tbody>
+            <tr><td>ใส่</td><td><code>st[top++] = x;</code></td><td><code>q[tail++] = x;</code></td></tr>
+            <tr><td>เอาออก</td><td><code>x = st[--top];</code></td><td><code>x = q[head++];</code></td></tr>
+            <tr><td>ว่าง?</td><td><code>top == 0</code></td><td><code>head == tail</code></td></tr>
+            <tr><td>จำนวน</td><td><code>top</code></td><td><code>tail - head</code></td></tr>
+          </tbody>
+        </table>
+        <div class="exam">🔑 ทั้ง 5 โจทย์ในบทนี้ใช้แค่ <b>ลูป 3 แบบ</b> กับ <b>stack/queue 4 บรรทัด</b> นี้เท่านั้น — ความยากจริงอยู่ที่<b>อ่านโจทย์ให้ออกว่าต้องใช้แบบไหน</b> ซึ่งบัตร 6 ช่องทำหน้าที่นั้น</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 14 สรุป -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🔍</div>
+      <div class="summary-title">จบชุดที่ 6 — ฝึกตีโจทย์</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">บัตร 6 ช่อง</div><div class="sum-body">รับ · พิมพ์ · ซ้ำ · จำ · เงื่อนไข · ขอบ — ถามคำถามเดิมทุกข้อ ไม่ต้องจำวิธีแก้</div></div>
+        <div class="sum-card"><div class="sum-head">ข้อมูลที่ข้ามได้</div><div class="sum-body">หาช่องในบัตรให้ไม่ได้ = ข้อมูลประกอบ เช่น เวลาเปิดร้าน ยี่ห้อ สีจาน</div></div>
+        <div class="sum-card"><div class="sum-head">คำที่บอกโครงสร้าง</div><div class="sum-body">ตามลำดับที่มาถึง = queue · ล่าสุด / บนสุด = stack · แต่อ่านแล้วใช้ทันทีได้ ไม่ต้องสร้าง</div></div>
+        <div class="sum-card"><div class="sum-head">ช่อง ① สำคัญสุด</div><div class="sum-body">หยุดด้วยเลข / ครบ N / เจอคำ — เปลี่ยนวิธีเขียนลูปทั้งโปรแกรม</div></div>
+        <div class="sum-card"><div class="sum-head">คำที่คนอ่านข้าม</div><div class="sum-body">"เรียงจากบนลงล่าง" "ปัดขึ้น" "ไม่สนใจตัวพิมพ์" "ถ้าไม่มี...ให้แสดง"</div></div>
+        <div class="sum-card"><div class="sum-head">ในห้องสอบ</div><div class="sum-body">เขียนบัตรเป็น comment → ลอกโครงสำเร็จรูป → เติมส่วนรับ/พิมพ์ก่อน → ห้ามปล่อยว่าง</div></div>
+      </div>
+      <a href="index.html" class="summary-next">→ กลับหน้าวิชาตะลุยโจทย์</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 15</span>
+      <span class="nav-chapter" id="chapterLabel">ชุดที่ 6 — ฝึกตีโจทย์</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','วิธีใช้บทนี้','บัตรตีโจทย์ 6 ช่อง','① ตู้กดบัตรคิว','① เฉลยการตีโจทย์','② ปุ่ม Undo','② เฉลยการตีโจทย์','③ ชั้นวางจาน','③ เฉลยการตีโจทย์','④ เครื่องพิมพ์','④ เฉลยการตีโจทย์','⑤ Palindrome','⑤ เฉลยการตีโจทย์','ห้ามปล่อยว่าง','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
