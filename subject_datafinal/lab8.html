@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แบบฝึกหัด Lab 8 — Binary Tree | ติวสอบ Final Data Structures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../slide.css">
+<style>
+:root{--ca:#6d1f7e;--cal:#f6e8fa;--cam:#a55cb5;}
+.exam{background:var(--cal);border-left:4px solid var(--ca);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.exam b{color:var(--ca);}
+.prob{background:#fff;border:1px solid var(--line);border-left:4px solid var(--ca);border-radius:8px;padding:14px 18px;margin:8px 0;font-size:13.5px;line-height:1.85;}
+.prob b{color:var(--ca);}
+.io{font-family:var(--mono);font-size:12.5px;background:var(--cal);border-radius:8px;padding:10px 14px;margin:8px 0;white-space:pre;color:var(--ca);line-height:1.6;overflow-x:auto}
+.diagram{font-family:var(--mono);font-size:12px;line-height:1.6;background:var(--cal);border-radius:10px;padding:14px 18px;margin:8px 0;white-space:pre;overflow-x:auto}
+.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.t th{background:var(--ca);color:#fff;padding:5px 10px;text-align:left;font-weight:600;}
+.t td{padding:5px 10px;border:1px solid var(--line);vertical-align:top;line-height:1.6}
+.t td:first-child{font-weight:700;color:var(--ca);white-space:nowrap}
+.lang{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--ca);color:#fff;margin-bottom:4px}
+.code-block{overflow-x:auto;max-width:100%}
+.tag{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:#7f1d1d;color:#fff;letter-spacing:.5px}
+.tag.w{background:#1d4ed8}
+.ans{background:#f0fdf4;border:1px solid #86efac;border-left:4px solid #16a34a;border-radius:8px;padding:12px 16px;margin:8px 0;font-size:13px;line-height:1.8}
+.ans .h{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;color:#15803d;display:block;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 0 Cover -->
+<div class="slide active">
+  <div class="slide-strip cover-strip"></div>
+  <div class="slide-body center">
+    <div class="cover-wrap">
+      <div class="cover-left">
+        <div class="cover-chapter">🌳 ก๋วยเตี๋ยวเรือ Programming · ติวสอบ Final Data Structures</div>
+        <div class="cover-title">แบบฝึกหัด Lab 8<br><em>Binary Tree</em></div>
+        <div class="cover-subtitle">แยกทีละฟังก์ชันเป็นข้อๆ ทำเองก่อน แล้วค่อยเปิดเฉลย · รวมข้อเขียนจากใบแบบฝึกหัด</div>
+        <div class="cover-topics">
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 1: ต้นไม้ด้วยอาเรย์ — 7 ฟังก์ชัน แยกเป็น 7 แบบฝึกหัด</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 2: Expression Tree ด้วยลิงค์ลิสต์ + preorder/postorder</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อ 3: สร้างต้นไม้จาก Prefix ด้วยสแตค → Infix + คำนวณ</div>
+          <div class="topic-row"><div class="topic-dot"></div>ข้อเขียน: อธิบายฟังก์ชันเวียนเกิด + สูตรเขียนตอบ</div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-bignum">🌳</div>
+        <div class="cover-badge">ภาษา C · มีเฉลยทุกข้อ</div>
+        <div class="cover-slides-count">16 slides</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 วิธีใช้ + สูตร -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">อ่านก่อนเริ่ม</div>
+    <h2 class="slide-title">Lab 8 มีอะไรบ้าง และใช้หน้านี้ยังไง</h2>
+    <div class="two-col">
+      <div>
+        <table class="t">
+          <thead><tr><th>ส่วน</th><th>โจทย์ต้องการ</th></tr></thead>
+          <tbody>
+            <tr><td>ข้อ 1</td><td>เติมฟังก์ชันต้นไม้ที่สร้างด้วย<b>อาเรย์</b> 7 ตัว แล้วบอกผลลัพธ์ที่ออกจอ</td></tr>
+            <tr><td>ข้อ 2</td><td>สร้าง <b>Expression Tree ด้วยลิงค์ลิสต์</b> แล้วพิมพ์ Prefix / Postfix</td></tr>
+            <tr><td>ข้อ 3</td><td>รับนิพจน์ <b>Prefix</b> → สร้างต้นไม้ด้วยสแตค → พิมพ์ <b>Infix มีวงเล็บ</b> + ผลลัพธ์</td></tr>
+            <tr><td>ใบฝึกหัด</td><td><b>ข้อเขียน</b>: แปลงนิพจน์ 3 แบบ · วาดอาเรย์ · อธิบายฟังก์ชันเวียนเกิด</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">📌 <b>วิธีใช้:</b> แต่ละแบบฝึกหัดจะมีกล่อง <span class="tag">โจทย์</span> ให้ลองเขียนเองในกระดาษก่อน แล้วค่อยดูกล่อง <span style="background:#f0fdf4;border:1px solid #86efac;padding:1px 6px;border-radius:4px;color:#15803d;font-weight:700">เฉลย</span> ข้างล่าง — ห้ามดูเฉลยก่อนลงมือ แม้จะเขียนได้แค่บรรทัดเดียวก็ยังดีกว่าไม่เขียน</div>
+      </div>
+      <div>
+        <div class="code-label">สูตรอาเรย์ที่ต้องท่องให้ได้ก่อนทำข้อ 1</div>
+        <div class="diagram">           node k
+          ╱      ╲
+    2k + 1        2k + 2
+   (ลูกซ้าย)     (ลูกขวา)
+
+  โหนดแม่ของ k = (k − 1) / 2
+
+  k เป็นลูกซ้าย  ⇔  k เป็นเลขคี่
+  k เป็นลูกขวา   ⇔  k เป็นเลขคู่
+  (และ k ต้องมากกว่า 0 เสมอ)</div>
+        <div class="exam">💡 <b>ทำไมคี่ = ลูกซ้าย?</b> เพราะลูกซ้ายคือ <span style="font-family:monospace">2k+1</span> — เลขคู่บวกหนึ่งจึงเป็นเลขคี่เสมอ · ส่วนลูกขวา <span style="font-family:monospace">2k+2</span> เป็นเลขคู่เสมอ · ลองแทน k = 0, 1, 2 ดูจะเห็นทันที</div>
+        <div class="code-label">3 การท่องที่ต้องแยกให้ออก</div>
+        <table class="t">
+          <thead><tr><th>ชื่อ</th><th>ลำดับ</th><th>ได้นิพจน์แบบ</th></tr></thead>
+          <tbody>
+            <tr><td>preorder</td><td>ราก → ซ้าย → ขวา</td><td>Prefix</td></tr>
+            <tr><td>inorder</td><td>ซ้าย → ราก → ขวา</td><td>Infix</td></tr>
+            <tr><td>postorder</td><td>ซ้าย → ขวา → ราก</td><td>Postfix</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">🔑 <b>จำสั้นๆ:</b> ชื่อบอกว่า<b>ราก</b>อยู่ตรงไหน — pre = ก่อน, in = กลาง, post = หลัง · ส่วนซ้ายมาก่อนขวาเสมอทั้ง 3 แบบ</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2 ข้อ 1 โจทย์ + main -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ข้อ 1 · โจทย์</div>
+    <h2 class="slide-title">ต้นไม้ทวิภาคที่สร้างด้วยอาเรย์</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          <b>โจทย์:</b> จากส่วน main และการประกาศตัวแปรภายนอกที่กำหนดให้ จงเติมฟังก์ชันที่เกี่ยวข้องกับการจัดการต้นไม้ทวิภาคที่สร้างด้วยอาเรย์
+          ทั้ง 7 ตัว: <span style="font-family:monospace">isLeft · isRight · LeftNode · RightNode · MotherNode · SetLeft · SetRight</span>
+          แล้ว<b>แสดงผลลัพธ์ทางจอภาพ</b>ของโปรแกรมนี้
+        </div>
+        <span class="lang">C · ส่วนที่โจทย์ให้มา</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;stdbool.h&gt;</span>
+<span class="cm">#define</span> MAXTREE  <span class="nu">15</span>
+
+<span class="kw">char</span> T[MAXTREE] = {<span class="st">'C'</span>};   <span class="cm">// ราก = 'C' ช่องอื่นเป็น '\0'</span>
+
+<span class="kw">int</span> main() {
+   SetLeft(<span class="nu">0</span>,<span class="st">'P'</span>);   SetRight(<span class="nu">0</span>,<span class="st">'E'</span>);
+   SetLeft(<span class="nu">1</span>,<span class="st">'A'</span>);   SetRight(<span class="nu">1</span>,<span class="st">'T'</span>);
+   SetLeft(<span class="nu">2</span>,<span class="st">'K'</span>);   SetRight(<span class="nu">2</span>,<span class="st">'P'</span>);
+   SetLeft(<span class="nu">3</span>,<span class="st">'S'</span>);
+   SetRight(<span class="nu">5</span>,<span class="st">'X'</span>);
+   SetLeft(<span class="nu">6</span>,<span class="st">'Y'</span>);
+
+   printf(<span class="st">"%d\n"</span>,MotherNode(<span class="nu">1</span>));
+   printf(<span class="st">"%d\n"</span>,MotherNode(<span class="nu">2</span>));
+   printf(<span class="st">"%d\n"</span>,MotherNode(<span class="nu">3</span>));
+   printf(<span class="st">"%c is mother node of %c\n"</span>,T[MotherNode(<span class="nu">5</span>)],T[<span class="nu">5</span>]);
+   printf(<span class="st">"%c is left node of %c\n"</span>,T[LeftNode(<span class="nu">2</span>)],T[<span class="nu">2</span>]);
+   printf(<span class="st">"%c is right node of %c\n"</span>,T[RightNode(<span class="nu">5</span>)],T[<span class="nu">5</span>]);
+
+   printf(<span class="st">"%d\n"</span>,isLeft(<span class="nu">5</span>));
+   printf(<span class="st">"%d\n"</span>,isRight(<span class="nu">4</span>));
+
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nu">0</span>;i&lt;MAXTREE;i++)
+      <span class="kw">if</span>(T[i]==<span class="st">'\0'</span>)  printf(<span class="st">" "</span>);
+      <span class="kw">else</span>          printf(<span class="st">"%c"</span>,T[i]);
+  <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <div class="exam">⚠️ <b>จุดที่ต้องสังเกตก่อนเติมโค้ด</b><br>
+        ① <span style="font-family:monospace">T[MAXTREE] = {'C'}</span> — ภาษา C จะเติม <span style="font-family:monospace">'\0'</span> ให้ช่องที่เหลือ<b>อัตโนมัติ</b> ดังนั้น "ช่องว่าง" = <span style="font-family:monospace">'\0'</span><br>
+        ② โจทย์เรียก <span style="font-family:monospace">SetRight(5,'X')</span> — ลูกขวาของ 5 คือช่อง 12 ซึ่งยังอยู่ในอาเรย์ (&lt; 15) จึงใส่ได้<br>
+        ③ ฟังก์ชันคืนค่าเป็น <span style="font-family:monospace">bool</span> ได้เพราะ include <span style="font-family:monospace">stdbool.h</span> มาแล้ว</div>
+        <div class="code-label">โครงต้นไม้ที่ main สร้างขึ้น</div>
+        <div class="diagram">              C[0]
+            ╱      ╲
+        P[1]        E[2]
+        ╱  ╲        ╱  ╲
+    A[3]  T[4]  K[5]  P[6]
+     ╱            ╲     ╱
+  S[7]          X[12] Y[13]</div>
+        <div class="exam">⏸️ <b>ลองเองก่อน</b> — ปิดสไลด์ถัดไป แล้วเขียนทั้ง 7 ฟังก์ชันลงกระดาษ จับเวลา 15 นาที · ทำได้กี่ตัวก็ได้ แล้วค่อยเปิดเฉลยทีละตัว</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3 แบบฝึกหัด A -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ข้อ 1 · แบบฝึกหัด A</div>
+    <h2 class="slide-title">3 ฟังก์ชันคำนวณตำแหน่ง — LeftNode / RightNode / MotherNode</h2>
+    <div class="two-col">
+      <div>
+        <span class="tag">โจทย์</span>
+        <pre class="code-block"><span class="cm">// เติมชนิดข้อมูลและค่าที่คืนให้ครบ</span>
+…………. LeftNode(………. k)
+{
+   <span class="kw">return</span> ……………………….
+}
+…………. RightNode(………. k)
+{
+   <span class="kw">return</span> ……………………….
+}
+…………. MotherNode(………. k)
+{
+   <span class="kw">return</span> ……………………….
+}</pre>
+        <div class="ans">
+          <span class="h">เฉลย</span>
+          <pre class="code-block"><span class="kw">int</span> LeftNode(<span class="kw">int</span> k)
+{
+   <span class="kw">return</span> <span class="nu">2</span> * k + <span class="nu">1</span>;
+}
+<span class="kw">int</span> RightNode(<span class="kw">int</span> k)
+{
+   <span class="kw">return</span> <span class="nu">2</span> * k + <span class="nu">2</span>;
+}
+<span class="kw">int</span> MotherNode(<span class="kw">int</span> k)
+{
+   <span class="kw">return</span> (k - <span class="nu">1</span>) / <span class="nu">2</span>;
+}</pre>
+        </div>
+      </div>
+      <div>
+        <div class="exam">🔑 <b>ทำไมชนิดข้อมูลเป็น int ทั้งหมด?</b> เพราะทั้งสามตัว<b>คืนค่าเป็นตำแหน่ง (index) ในอาเรย์</b> ไม่ใช่ตัวอักษรในโหนด — ถ้าตอบ <span style="font-family:monospace">char</span> จะผิดทันที เพราะ main เอาค่าที่คืนไปใช้เป็น <span style="font-family:monospace">T[...]</span></div>
+        <div class="exam">⚠️ <b>กับดักของ MotherNode</b> — ต้องเป็น <span style="font-family:monospace">(k−1)/2</span> ไม่ใช่ <span style="font-family:monospace">k/2</span><br>
+        ลองแทน k = 5: ถูกคือ (5−1)/2 = 2 · ถ้าใช้ k/2 = 2 บังเอิญถูก<br>
+        แต่แทน k = 6: ถูกคือ (6−1)/2 = 2 · ถ้าใช้ k/2 = 3 <b>ผิด</b> → ต้องใช้ (k−1)/2 เสมอ</div>
+        <div class="code-label">ตรวจด้วยมือจากต้นไม้ในโจทย์</div>
+        <table class="t">
+          <thead><tr><th>เรียก</th><th>คำนวณ</th><th>ได้</th></tr></thead>
+          <tbody>
+            <tr><td>LeftNode(2)</td><td>2(2)+1</td><td>5 → T[5] = 'K'</td></tr>
+            <tr><td>RightNode(5)</td><td>2(5)+2</td><td>12 → T[12] = 'X'</td></tr>
+            <tr><td>MotherNode(1)</td><td>(1−1)/2</td><td>0</td></tr>
+            <tr><td>MotherNode(2)</td><td>(2−1)/2</td><td>0 <small>(1/2 ปัดลง)</small></td></tr>
+            <tr><td>MotherNode(3)</td><td>(3−1)/2</td><td>1</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">💡 <b>int หาร int ปัดทิ้งเศษ</b> — จุดนี้ทำให้ <span style="font-family:monospace">(2−1)/2</span> ได้ 0 ซึ่ง<b>ถูกต้อง</b> เพราะโหนด 1 และ 2 มีแม่เป็นโหนด 0 เหมือนกัน</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4 แบบฝึกหัด B -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ข้อ 1 · แบบฝึกหัด B</div>
+    <h2 class="slide-title">2 ฟังก์ชันตรวจสอบ — isLeft / isRight</h2>
+    <div class="two-col">
+      <div>
+        <span class="tag">โจทย์</span>
+        <pre class="code-block">..................... isLeft(........... k) {
+  <span class="kw">if</span> (.................................)
+       <span class="kw">return</span> <span class="kw">true</span>;
+  <span class="kw">return</span> <span class="kw">false</span>;
+}
+
+..................... isRight(........... k) {
+  <span class="kw">if</span> (.................................)
+       <span class="kw">return</span> <span class="kw">true</span>;
+  <span class="kw">return</span> <span class="kw">false</span>;
+}</pre>
+        <div class="ans">
+          <span class="h">เฉลย</span>
+          <pre class="code-block"><span class="kw">bool</span> isLeft(<span class="kw">int</span> k) {
+  <span class="kw">if</span> (k &gt; <span class="nu">0</span> &amp;&amp; k % <span class="nu">2</span> == <span class="nu">1</span>)
+       <span class="kw">return</span> <span class="kw">true</span>;
+  <span class="kw">return</span> <span class="kw">false</span>;
+}
+
+<span class="kw">bool</span> isRight(<span class="kw">int</span> k) {
+  <span class="kw">if</span> (k &gt; <span class="nu">0</span> &amp;&amp; k % <span class="nu">2</span> == <span class="nu">0</span>)
+       <span class="kw">return</span> <span class="kw">true</span>;
+  <span class="kw">return</span> <span class="kw">false</span>;
+}</pre>
+        </div>
+        <div class="exam">📝 <b>เขียนอีกแบบก็ได้คะแนนเหมือนกัน</b> — ใช้นิยามจากโหนดแม่ตรงๆ:<br>
+        <span style="font-family:monospace">if (k &gt; 0 &amp;&amp; LeftNode(MotherNode(k)) == k)</span><br>
+        อ่านว่า "ลูกซ้ายของแม่ของฉัน คือฉันเองหรือเปล่า" — ตรงตามนิยามที่สุด แต่ยาวกว่า</div>
+      </div>
+      <div>
+        <div class="exam">⚠️ <b>เงื่อนไข <span style="font-family:monospace">k &gt; 0</span> ที่คนลืมกันทั้งห้อง</b><br>
+        ถ้าไม่ใส่ แล้วเรียก <span style="font-family:monospace">isRight(0)</span> จะได้ <b>true</b> — แต่โหนด 0 คือ<b>ราก ไม่ใช่ลูกของใคร</b> ทั้งซ้ายและขวา จึงต้องได้ false ทั้งคู่</div>
+        <div class="code-label">ตรวจด้วยมือ</div>
+        <table class="t">
+          <thead><tr><th>เรียก</th><th>เหตุผล</th><th>ได้</th></tr></thead>
+          <tbody>
+            <tr><td>isLeft(5)</td><td>5 &gt; 0 และ 5 เป็นคี่</td><td>true → พิมพ์ 1</td></tr>
+            <tr><td>isRight(4)</td><td>4 &gt; 0 และ 4 เป็นคู่</td><td>true → พิมพ์ 1</td></tr>
+            <tr><td>isLeft(0)</td><td>k ไม่มากกว่า 0</td><td>false → พิมพ์ 0</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">💡 <b>ทำไม printf("%d") ถึงพิมพ์ 1 / 0?</b> เพราะในภาษา C ค่า <span style="font-family:monospace">true</span> คือ 1 และ <span style="font-family:monospace">false</span> คือ 0 — ถ้าอยากให้พิมพ์คำว่า true/false ต้องเขียน if เองแล้วพิมพ์ข้อความ</div>
+        <div class="exercise">
+          <div class="ex-q">ถ้าลืมเงื่อนไข <span style="font-family:monospace">k &gt; 0</span> แล้วเรียก <span style="font-family:monospace">isLeft(0)</span> จะได้ผลว่าอะไร</div>
+          <div class="mc-opts" id="m1">
+            <div class="mc-opt" onclick="pickMC('m1',0,1,'0 เป็นเลขคู่ เงื่อนไข k % 2 == 1 จึงเป็นเท็จอยู่แล้ว')"><span class="mc-ltr">A</span>true — เพราะ 0 หาร 2 ลงตัว</div>
+            <div class="mc-opt" onclick="pickMC('m1',1,1,'ถูก! isLeft(0) ยังได้ false เพราะ 0 เป็นคู่ แต่ isRight(0) ต่างหากที่จะได้ true ซึ่งผิด — เงื่อนไข k &gt; 0 จึงมีไว้กัน isRight เป็นหลัก')"><span class="mc-ltr">B</span>false อยู่ดี แต่ isRight(0) จะผิดแทน</div>
+            <div class="mc-opt" onclick="pickMC('m1',2,1,'โปรแกรมไม่ error — มันแค่ตอบผิดเงียบๆ ซึ่งอันตรายกว่า')"><span class="mc-ltr">C</span>โปรแกรม error ตอนรัน</div>
+          </div>
+          <div class="ex-feedback" id="m1-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 5 แบบฝึกหัด C -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ข้อ 1 · แบบฝึกหัด C</div>
+    <h2 class="slide-title">2 ฟังก์ชันสร้างโหนด — SetLeft / SetRight</h2>
+    <div class="two-col">
+      <div>
+        <span class="tag">โจทย์</span>
+        <pre class="code-block">………….. SetLeft(………… k, …………. data)
+{
+    <span class="kw">int</span> index;
+    index = ………………………..
+
+    <span class="kw">if</span>(……………………………………….)
+    {
+       <span class="kw">if</span>(………………………………………)
+           …………………………………………
+       <span class="kw">else</span>
+         printf(<span class="st">"Node Inused\n"</span>);
+    }
+    <span class="kw">else</span>  printf(<span class="st">"Tree Overflow\n"</span>);
+}</pre>
+        <div class="ans">
+          <span class="h">เฉลย</span>
+          <pre class="code-block"><span class="kw">void</span> SetLeft(<span class="kw">int</span> k, <span class="kw">char</span> data)
+{
+    <span class="kw">int</span> index;
+    index = <span class="nu">2</span> * k + <span class="nu">1</span>;            <span class="cm">// ตำแหน่งลูกซ้าย</span>
+
+    <span class="kw">if</span>(index &lt; MAXTREE)          <span class="cm">// ยังอยู่ในอาเรย์ไหม</span>
+    {
+       <span class="kw">if</span>(T[index] == <span class="st">'\0'</span>)        <span class="cm">// ช่องนั้นว่างไหม</span>
+           T[index] = data;
+       <span class="kw">else</span>
+         printf(<span class="st">"Node Inused\n"</span>);
+    }
+    <span class="kw">else</span>  printf(<span class="st">"Tree Overflow\n"</span>);
+}
+
+<span class="kw">void</span> SetRight(<span class="kw">int</span> k, <span class="kw">char</span> data)
+{
+    <span class="kw">int</span> index;
+    index = <span class="nu">2</span> * k + <span class="nu">2</span>;            <span class="cm">// เปลี่ยนแค่บรรทัดนี้</span>
+
+    <span class="kw">if</span>(index &lt; MAXTREE)
+    {
+       <span class="kw">if</span>(T[index] == <span class="st">'\0'</span>)
+           T[index] = data;
+       <span class="kw">else</span>
+         printf(<span class="st">"Node Inused\n"</span>);
+    }
+    <span class="kw">else</span>  printf(<span class="st">"Tree Overflow\n"</span>);
+}</pre>
+        </div>
+      </div>
+      <div>
+        <div class="exam">🔑 <b>โครง if ซ้อนที่โจทย์ให้มา บอกคำตอบอยู่แล้ว</b> — มี 2 ชั้นและมีข้อความ error 2 แบบ จึงต้องเดาได้ว่า:<br>
+        ชั้นนอก = <b>ล้นอาเรย์หรือยัง</b> (Tree Overflow)<br>
+        ชั้นใน = <b>ช่องนั้นมีคนอยู่หรือยัง</b> (Node Inused)<br>
+        เทคนิคนี้ใช้ได้ทุกข้อสอบเติมโค้ด: <b>ดูข้อความ error ที่โจทย์ให้ แล้วย้อนกลับไปหาเงื่อนไข</b></div>
+        <div class="exam">⚠️ <b>ต้องเป็น <span style="font-family:monospace">index &lt; MAXTREE</span> ไม่ใช่ <span style="font-family:monospace">&lt;=</span></b><br>
+        อาเรย์ขนาด 15 มีช่อง 0 ถึง 14 — ถ้าใช้ <span style="font-family:monospace">&lt;=</span> จะเขียนลงช่อง 15 ซึ่งอยู่นอกอาเรย์</div>
+        <div class="exam">💡 <b>ชนิดข้อมูลของพารามิเตอร์:</b> <span style="font-family:monospace">k</span> เป็น <span style="font-family:monospace">int</span> (ตำแหน่ง) · <span style="font-family:monospace">data</span> เป็น <span style="font-family:monospace">char</span> (ตัวอักษรในโหนด) · ฟังก์ชันไม่คืนค่าอะไร จึงเป็น <span style="font-family:monospace">void</span></div>
+        <div class="exercise">
+          <div class="ex-q">เติมค่า: ในฟังก์ชัน SetRight บรรทัด <span style="font-family:monospace">index = ?</span> (เขียนในรูป 2*k+... )</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in1" placeholder="เช่น 2*k+9">
+            <button class="ex-btn" onclick="checkFill('in1','2*k+2',['2k+2','2 * k + 2','2*k + 2'],['2*k+1'],'ลูกขวาของโหนด k อยู่ที่ 2k+2 เสมอ','ลูกซ้ายคือ 2k+1 ส่วนลูกขวาต้องบวกสอง')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb1"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">ถ้าเรียก <span style="font-family:monospace">SetLeft(7,'Z')</span> กับอาเรย์ขนาด 15 จะเกิดอะไรขึ้น (ตอบข้อความที่พิมพ์ออกมา)</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in2" placeholder="ข้อความที่โปรแกรมพิมพ์">
+            <button class="ex-btn" onclick="checkFill('in2','Tree Overflow',['tree overflow'],['Node Inused'],'2(7)+1 = 15 ซึ่งไม่น้อยกว่า MAXTREE(15) จึงหลุดเงื่อนไขชั้นนอก','คำนวณ 2*7+1 ได้เท่าไร แล้วเทียบกับ MAXTREE = 15')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 6 ข้อ 1 ผลลัพธ์ -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ข้อ 1 · เฉลยผลลัพธ์</div>
+    <h2 class="slide-title">"จงแสดงผลลัพธ์ทางจอภาพ" — ตอบแบบนี้</h2>
+    <div class="two-col">
+      <div>
+        <div class="code-label">ผลลัพธ์จริงของโปรแกรม (รันแล้ว)</div>
+        <div class="io">0
+0
+1
+E is mother node of K
+K is left node of E
+X is right node of K
+1
+1
+CPEATKPS    XY </div>
+        <div class="exam">⚠️ <b>บรรทัดสุดท้ายมีช่องว่าง</b> — ช่อง 8, 9, 10, 11 และ 14 ยังว่าง (<span style="font-family:monospace">'\0'</span>) โปรแกรมจึงพิมพ์ช่องว่างออกมา 4 ช่องกลาง และ 1 ช่องท้าย<br>
+        ตอนเขียนตอบในกระดาษ ให้เขียนว่า <span style="font-family:monospace">CPEATKPS␣␣␣␣XY␣</span> แล้วหมายเหตุว่า ␣ คือช่องว่าง จะได้ไม่โดนหักคะแนน</div>
+        <div class="code-label">ที่มาของแต่ละบรรทัด</div>
+        <table class="t">
+          <thead><tr><th>บรรทัด</th><th>มาจาก</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>MotherNode(1) = (1−1)/2</td></tr>
+            <tr><td>0</td><td>MotherNode(2) = (2−1)/2 ปัดลง</td></tr>
+            <tr><td>1</td><td>MotherNode(3) = (3−1)/2</td></tr>
+            <tr><td>E … K</td><td>T[MotherNode(5)] = T[2] และ T[5]</td></tr>
+            <tr><td>K … E</td><td>T[LeftNode(2)] = T[5] และ T[2]</td></tr>
+            <tr><td>X … K</td><td>T[RightNode(5)] = T[12] และ T[5]</td></tr>
+            <tr><td>1</td><td>isLeft(5) — 5 เป็นคี่</td></tr>
+            <tr><td>1</td><td>isRight(4) — 4 เป็นคู่</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="code-label">อาเรย์ T หลังรัน main จบ (ตอบข้อ 2 ของใบฝึกหัดด้วยวิธีนี้)</div>
+        <div class="diagram">index  0  1  2  3  4  5  6  7
+  T   [C][P][E][A][T][K][P][S]
+
+index  8  9 10 11 12 13 14
+  T   [ ][ ][ ][ ][X][Y][ ]
+
+     [ ] = '\0' (ช่องว่าง)</div>
+        <div class="exam">📌 <b>วิธีวาดอาเรย์ให้ถูกในข้อเขียน</b><br>
+        ① วาดกล่องพร้อม<b>เขียนเลข index กำกับทุกช่อง</b> — คนที่ลืมเขียน index มักวางผิดช่อง<br>
+        ② ไล่ใส่ทีละโหนดตามสูตร 2k+1 / 2k+2 <b>ห้ามไล่ตามลำดับที่โจทย์เรียก</b><br>
+        ③ ช่องที่ไม่มีโหนด ให้ขีด <span style="font-family:monospace">−</span> หรือเขียน <span style="font-family:monospace">'\0'</span> อย่าปล่อยว่างเฉยๆ</div>
+        <div class="exercise">
+          <div class="ex-q">จากต้นไม้ในข้อ 1 โหนด 'S' อยู่ที่ช่อง index เท่าไร</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in3" placeholder="ตอบเป็นตัวเลข">
+            <button class="ex-btn" onclick="checkFill('in3','7',['index 7','[7]'],['3'],'SetLeft(3,'S') → 2(3)+1 = 7','S ถูกใส่ด้วย SetLeft(3) ลองแทนในสูตร 2k+1')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb3"></div>
+        </div>
+        <div class="exercise">
+          <div class="ex-q">ต้นไม้นี้เป็นต้นไม้ทวิภาคแบบใด</div>
+          <div class="mc-opts" id="m2">
+            <div class="mc-opt" onclick="pickMC('m2',0,2,'บริบูรณ์ต้องเต็มทุกระดับ แต่ระดับล่างสุดมีแค่ S, X, Y')"><span class="mc-ltr">A</span>Complete (บริบูรณ์)</div>
+            <div class="mc-opt" onclick="pickMC('m2',1,2,'เกือบบริบูรณ์ต้องเติมจากซ้ายไปขวาติดกัน แต่ที่นี่ช่อง 8-11 ว่างแล้วข้ามไปช่อง 12, 13')"><span class="mc-ltr">B</span>Almost complete (เกือบบริบูรณ์)</div>
+            <div class="mc-opt" onclick="pickMC('m2',2,2,'ถูก! ระดับล่างสุดมีช่องว่างคั่นกลาง (8-11 ว่าง แต่ 12, 13 มีโหนด) จึงเป็นแค่ binary tree ธรรมดา')"><span class="mc-ltr">C</span>ไม่ใช่ทั้งสองแบบ เป็น binary tree ทั่วไป</div>
+          </div>
+          <div class="ex-feedback" id="m2-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 7 ข้อ 2 แบบฝึกหัด D -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ข้อ 2 · แบบฝึกหัด D</div>
+    <h2 class="slide-title">3 ฟังก์ชันพื้นฐานของลิงค์ลิสต์ — createNode / SetLeft / SetRight</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          <b>โจทย์ข้อ 2:</b> จงเขียนโปรแกรมและฟังก์ชันสำหรับสร้าง<b>ต้นไม้นิพจน์ด้วยลิงค์ลิสต์</b> แล้วแสดงนิพจน์แบบ <b>Prefix</b> และ <b>Postfix</b><br>
+          โครงสร้างและ main ที่โจทย์ให้มาแล้ว:
+        </div>
+        <pre class="code-block"><span class="kw">struct</span> Treenode {
+ <span class="kw">char</span> data;
+ <span class="kw">struct</span> Treenode *leftChild;
+ <span class="kw">struct</span> Treenode *rightChild;
+};
+<span class="kw">struct</span> Treenode *Root;
+
+<span class="cm">// ฟังก์ชันที่ต้องเขียนเอง</span>
+<span class="kw">struct</span> Treenode* createNode(<span class="kw">char</span>);
+<span class="kw">void</span> SetRight(<span class="kw">struct</span> Treenode*,<span class="kw">char</span>);
+<span class="kw">void</span> SetLeft(<span class="kw">struct</span> Treenode*,<span class="kw">char</span>);
+<span class="kw">void</span> preorder(<span class="kw">struct</span> Treenode *);
+<span class="kw">void</span> postorder(<span class="kw">struct</span> Treenode *);</pre>
+        <span class="tag">โจทย์</span> <span style="font-size:12.5px">เขียน 3 ฟังก์ชันนี้เองก่อนดูเฉลย</span>
+        <div class="ans">
+          <span class="h">เฉลย</span>
+          <pre class="code-block"><span class="kw">struct</span> Treenode* createNode(<span class="kw">char</span> data) {
+    <span class="kw">struct</span> Treenode *n = malloc(<span class="kw">sizeof</span>(<span class="kw">struct</span> Treenode));
+    n-&gt;data = data;
+    n-&gt;leftChild = NULL;      <span class="cm">// ห้ามลืม 2 บรรทัดนี้</span>
+    n-&gt;rightChild = NULL;
+    <span class="kw">return</span> n;
+}
+
+<span class="kw">void</span> SetLeft(<span class="kw">struct</span> Treenode *pn, <span class="kw">char</span> data) {
+    pn-&gt;leftChild = createNode(data);
+}
+
+<span class="kw">void</span> SetRight(<span class="kw">struct</span> Treenode *pn, <span class="kw">char</span> data) {
+    pn-&gt;rightChild = createNode(data);
+}</pre>
+        </div>
+      </div>
+      <div>
+        <div class="exam">⚠️ <b>บั๊กอันดับ 1 ของข้อนี้:</b> ลืมตั้ง <span style="font-family:monospace">leftChild</span> กับ <span style="font-family:monospace">rightChild</span> เป็น NULL ใน createNode<br>
+        <span style="font-family:monospace">malloc</span> <b>ไม่ล้างหน่วยความจำให้</b> ค่าที่อยู่ข้างในจึงเป็นขยะ — พอ preorder เดินไปเจอขยะก็จะวิ่งต่อไปเรื่อยๆ แล้ว <b>segmentation fault</b><br>
+        อาการ: โปรแกรมคอมไพล์ผ่าน แต่พอรันแล้วเด้ง หาสาเหตุไม่เจอ</div>
+        <div class="exam">💡 <b>ทำไม SetLeft ต้องรับ pointer (<span style="font-family:monospace">struct Treenode*</span>) ไม่ใช่ตัวเลขเหมือนข้อ 1?</b><br>
+        ข้อ 1 ต้นไม้อยู่ในอาเรย์ ตำแหน่งจึงเป็นตัวเลข index<br>
+        ข้อ 2 ต้นไม้เป็นโหนดกระจายอยู่ในหน่วยความจำ ต้องอ้างถึงด้วย<b>ที่อยู่ของโหนด</b> — นี่คือความต่างหลักของสองวิธีเก็บต้นไม้</div>
+        <div class="code-label">ต้นไม้ที่ main สร้าง (รูปที่ 1)</div>
+        <div class="diagram">          +
+        ╱   ╲
+      *       d
+    ╱   ╲
+   a     +
+       ╱   ╲
+      b     c
+
+  นิพจน์เดิม: a * (b + c) + d</div>
+        <div class="exercise">
+          <div class="ex-q">ถ้า createNode ลืมตั้ง leftChild/rightChild เป็น NULL ผลที่ตามมาคืออะไร</div>
+          <div class="mc-opts" id="m3">
+            <div class="mc-opt" onclick="pickMC('m3',0,2,'คอมไพเลอร์ไม่ได้ตรวจเรื่องนี้ให้ — มันมองว่าถูกต้องตามไวยากรณ์')"><span class="mc-ltr">A</span>คอมไพล์ไม่ผ่าน</div>
+            <div class="mc-opt" onclick="pickMC('m3',1,2,'ค่าขยะไม่ใช่ NULL เลยไม่มีอะไรหยุดการเรียกซ้ำ')"><span class="mc-ltr">B</span>preorder พิมพ์ครบปกติ</div>
+            <div class="mc-opt" onclick="pickMC('m3',2,2,'ถูก! ตัวชี้เป็นค่าขยะ เงื่อนไข r != NULL จึงเป็นจริงเรื่อยๆ วิ่งเข้าไปในหน่วยความจำที่ไม่ใช่ของเรา แล้วโปรแกรมพัง')"><span class="mc-ltr">C</span>รันแล้วพัง (segmentation fault)</div>
+          </div>
+          <div class="ex-feedback" id="m3-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 8 ข้อ 2 แบบฝึกหัด E -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ข้อ 2 · แบบฝึกหัด E</div>
+    <h2 class="slide-title">2 ฟังก์ชันท่องต้นไม้ — preorder / postorder</h2>
+    <div class="two-col">
+      <div>
+        <span class="tag">โจทย์</span>
+        <pre class="code-block"><span class="cm">// เขียน preorder และ postorder แบบเวียนเกิด (recursive)
+// แล้วเรียกใช้ใน main ตรงคอมเมนต์ //call preorder and postorder</span></pre>
+        <div class="ans">
+          <span class="h">เฉลย</span>
+          <pre class="code-block"><span class="kw">void</span> preorder(<span class="kw">struct</span> Treenode *r) {
+    <span class="kw">if</span> (r != NULL) {
+        printf(<span class="st">"%c "</span>, r-&gt;data);   <span class="cm">// ราก</span>
+        preorder(r-&gt;leftChild);       <span class="cm">// ซ้าย</span>
+        preorder(r-&gt;rightChild);      <span class="cm">// ขวา</span>
+    }
+}
+
+<span class="kw">void</span> postorder(<span class="kw">struct</span> Treenode *r) {
+    <span class="kw">if</span> (r != NULL) {
+        postorder(r-&gt;leftChild);      <span class="cm">// ซ้าย</span>
+        postorder(r-&gt;rightChild);     <span class="cm">// ขวา</span>
+        printf(<span class="st">"%c "</span>, r-&gt;data);   <span class="cm">// ราก</span>
+    }
+}
+
+<span class="cm">// ใน main ตรงคอมเมนต์ //call preorder and postorder</span>
+printf(<span class="st">"Prefix:  "</span>); preorder(Root);  printf(<span class="st">"\n"</span>);
+printf(<span class="st">"Postfix: "</span>); postorder(Root); printf(<span class="st">"\n"</span>);</pre>
+        </div>
+        <div class="code-label">ผลลัพธ์จริงของรูปที่ 1 (รันแล้ว)</div>
+        <div class="io">Prefix:  + * a + b c d
+Postfix: a b c + * d +</div>
+        <div class="exam">✅ ตรงกับตัวอย่างที่โจทย์ให้ไว้ทุกตัวอักษร</div>
+      </div>
+      <div>
+        <div class="exam">🔑 <b>สองฟังก์ชันนี้ต่างกันแค่ "บรรทัด printf อยู่ตรงไหน"</b><br>
+        ขึ้นต้น = preorder · ลงท้าย = postorder · อยู่ตรงกลาง = inorder<br>
+        ส่วนบรรทัดเรียกซ้ำซ้าย-ขวา <b>เรียงเหมือนกันทั้ง 3 แบบ</b> — ข้อสอบชอบสลับให้ดูว่าจับได้ไหม</div>
+        <div class="exam">⚠️ <b><span style="font-family:monospace">if (r != NULL)</span> คือเคสหยุด</b> ถ้าลืมบรรทัดนี้ ฟังก์ชันจะเรียกตัวเองไม่รู้จบ → โปรแกรมพังทันที<br>
+        ทุกฟังก์ชันเวียนเกิดของต้นไม้<b>ต้องมีบรรทัดนี้เป็นบรรทัดแรกเสมอ</b></div>
+        <div class="code-label">เดินด้วยมือ — preorder ของรูปที่ 1</div>
+        <div class="diagram">เยี่ยม +  → พิมพ์ +
+  ลงซ้ายไป *  → พิมพ์ *
+    ลงซ้ายไป a → พิมพ์ a (ไม่มีลูก กลับ)
+    ลงขวาไป +  → พิมพ์ +
+      ลงซ้ายไป b → พิมพ์ b
+      ลงขวาไป c  → พิมพ์ c
+  ลงขวาไป d → พิมพ์ d
+
+ได้: + * a + b c d</div>
+        <div class="exercise">
+          <div class="ex-q">จากรูปที่ 1 ถ้าเขียน inorder (ซ้าย → ราก → ขวา) จะได้อะไร (เว้นวรรคระหว่างตัวอักษร)</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in4" placeholder="เช่น a + b">
+            <button class="ex-btn" onclick="checkFill('in4','a * b + c + d',['a*b+c+d','a * b + c + d '],['+ * a + b c d'],'inorder ให้นิพจน์ infix แต่ไม่มีวงเล็บ จึงอ่านแล้วกำกวม — นี่คือเหตุผลที่ข้อ 3 ต้องใส่วงเล็บเอง','ไล่ซ้ายสุดก่อน: a แล้วราก * แล้วลงขวาซึ่งเป็นต้นไม้ย่อย b + c แล้วปิดท้ายด้วย + d')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 9 ข้อ 2 รูป 2-3 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ข้อ 2 · แบบฝึกหัด F</div>
+    <h2 class="slide-title">เขียนส่วนสร้างต้นไม้เอง — รูปที่ 2 และ 3</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob"><b>โจทย์บอกว่า:</b> ส่วนสร้างต้นไม้รูปที่ 1 ให้มาแล้ว · <b>รูปที่ 2 และ 3 นิสิตต้องเขียนเอง</b> และ<b>ให้ส่งโปรแกรมของตัวอย่างที่ 3</b></div>
+        <div class="code-label">รูปที่ 2 — โจทย์ให้ Prefix มาว่า + * * / A B C D E</div>
+        <div class="diagram">            +
+          ╱   ╲
+        *       E
+      ╱   ╲
+    *       D
+  ╱   ╲
+ /     C
+╱ ╲
+A   B</div>
+        <div class="ans">
+          <span class="h">เฉลย รูปที่ 2</span>
+          <pre class="code-block">Root = createNode(<span class="st">'+'</span>);
+SetLeft(Root,<span class="st">'*'</span>);   SetRight(Root,<span class="st">'E'</span>);
+
+pn = Root-&gt;leftChild;          <span class="cm">// ที่โหนด * บน</span>
+SetLeft(pn,<span class="st">'*'</span>);     SetRight(pn,<span class="st">'D'</span>);
+
+pn = pn-&gt;leftChild;            <span class="cm">// ที่โหนด * ล่าง</span>
+SetLeft(pn,<span class="st">'/'</span>);     SetRight(pn,<span class="st">'C'</span>);
+
+pn = pn-&gt;leftChild;            <span class="cm">// ที่โหนด /</span>
+SetLeft(pn,<span class="st">'A'</span>);     SetRight(pn,<span class="st">'B'</span>);</pre>
+        </div>
+        <div class="exam">✅ ตรวจคำตอบด้วยการไล่ preorder: <span style="font-family:monospace">+ * * / A B C D E</span> ตรงกับที่โจทย์ให้ · postorder ได้ <span style="font-family:monospace">A B / C * D * E +</span> ตรงเช่นกัน</div>
+      </div>
+      <div>
+        <div class="code-label">รูปที่ 3 — โจทย์ให้นิพจน์ (A*B+C/D)*(E-F)</div>
+        <div class="diagram">              *
+          ╱       ╲
+        +           −
+      ╱   ╲       ╱   ╲
+    *       /    E     F
+  ╱   ╲   ╱   ╲
+ A     B C     D</div>
+        <div class="ans">
+          <span class="h">เฉลย รูปที่ 3 (ข้อที่ต้องส่ง)</span>
+          <pre class="code-block">Root = createNode(<span class="st">'*'</span>);      <span class="cm">// ตัวดำเนินการนอกสุด</span>
+SetLeft(Root,<span class="st">'+'</span>);   SetRight(Root,<span class="st">'-'</span>);
+
+pn = Root-&gt;leftChild;            <span class="cm">// ที่โหนด +</span>
+SetLeft(pn,<span class="st">'*'</span>);     SetRight(pn,<span class="st">'/'</span>);
+SetLeft(pn-&gt;leftChild,<span class="st">'A'</span>);
+SetRight(pn-&gt;leftChild,<span class="st">'B'</span>);
+SetLeft(pn-&gt;rightChild,<span class="st">'C'</span>);
+SetRight(pn-&gt;rightChild,<span class="st">'D'</span>);
+
+pn = Root-&gt;rightChild;           <span class="cm">// ที่โหนด −</span>
+SetLeft(pn,<span class="st">'E'</span>);     SetRight(pn,<span class="st">'F'</span>);</pre>
+        </div>
+        <div class="code-label">ผลลัพธ์จริง (รันแล้ว)</div>
+        <div class="io">Prefix:  * + * A B / C D - E F
+Postfix: A B * C D / + E F - *</div>
+        <div class="exam">🔑 <b>วิธีวาดต้นไม้จากนิพจน์ที่มีวงเล็บ</b> — หา<b>ตัวดำเนินการที่ทำเป็นลำดับสุดท้าย</b> ให้เป็นราก<br>
+        (A*B+C/D)<b>*</b>(E−F) → ตัว * ตรงกลางทำหลังสุด เพราะต้องรอผลในวงเล็บทั้งสองข้างก่อน → เป็นราก แล้วแตกซ้าย-ขวาด้วยวิธีเดิมไปเรื่อยๆ</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 10 ข้อ 3 อัลกอริทึม -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ข้อ 3 · วิธีคิด</div>
+    <h2 class="slide-title">สร้าง Expression Tree จาก Prefix ด้วยสแตค</h2>
+    <div class="two-col">
+      <div>
+        <div class="prob">
+          <b>โจทย์ข้อ 3:</b> รับนิพจน์ <b>Prefix</b> ยาวไม่เกิน 50 ตัวอักษร ประกอบด้วย<b>เลขโดด</b>และเครื่องหมาย <span style="font-family:monospace">+ − * /</span>
+          แล้วแสดงนิพจน์ <b>Infix ที่มีวงเล็บ</b> พร้อม<b>ผลลัพธ์</b>
+        </div>
+        <div class="code-label">ขั้นตอนวิธีที่โจทย์กำหนด (ห้ามคิดเอง)</div>
+        <div class="prob">
+          เริ่มอ่านนิพจน์<b>จากหลังมาหน้า</b><br>
+          • เจอ<b>ตัวถูกดำเนินการ</b> (เลข) → สร้างโหนด แล้ว <b>push</b> ลงสแตค<br>
+          • เจอ<b>ตัวดำเนินการ</b> → <b>pop</b> 2 โหนดล่าสุดมาเป็นลูก<b>ซ้าย</b>และ<b>ขวา</b>ตามลำดับ แล้ว push โหนดกลางกลับลงสแตค<br>
+          • อ่านหมดแล้ว → pop ผลลัพธ์ออกมาเป็น Root
+        </div>
+        <div class="exam">⚠️ <b>ลำดับ pop สำคัญมาก</b> — ตัวที่ pop ออกมา<b>ตัวแรกเป็นลูกซ้าย</b> ตัวที่สองเป็นลูกขวา<br>
+        เพราะอ่านจากหลังมาหน้า ตัวที่อยู่บนสุดของสแตคคือตัวที่อยู่<b>ซ้ายกว่า</b>ในนิพจน์เดิม · ถ้าสลับกัน <span style="font-family:monospace">7−3</span> จะกลายเป็น <span style="font-family:monospace">3−7</span> ทันที</div>
+      </div>
+      <div>
+        <div class="code-label">เดินด้วยมือ: ++7*626 (อ่านจากขวาไปซ้าย)</div>
+        <table class="t">
+          <thead><tr><th>อ่าน</th><th>ทำอะไร</th><th>สแตค (บนสุดซ้าย)</th></tr></thead>
+          <tbody>
+            <tr><td>6</td><td>push</td><td>6</td></tr>
+            <tr><td>2</td><td>push</td><td>2, 6</td></tr>
+            <tr><td>6</td><td>push</td><td>6, 2, 6</td></tr>
+            <tr><td>*</td><td>pop 6 (ซ้าย), pop 2 (ขวา) → (6*2)</td><td>(6*2), 6</td></tr>
+            <tr><td>7</td><td>push</td><td>7, (6*2), 6</td></tr>
+            <tr><td>+</td><td>pop 7, pop (6*2) → (7+(6*2))</td><td>(7+(6*2)), 6</td></tr>
+            <tr><td>+</td><td>pop 2 ตัว → ((7+(6*2))+6)</td><td>((7+(6*2))+6)</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">✅ pop ตัวสุดท้ายออกมาเป็น Root แล้วพิมพ์ infix ได้ <span style="font-family:monospace">((7+(6*2))+6)</span> และคำนวณได้ <b>25</b> ตรงกับตัวอย่างที่ 1 ของโจทย์</div>
+        <div class="exercise">
+          <div class="ex-q">ทำไมต้องอ่านจาก<b>หลังมาหน้า</b> ไม่ใช่หน้าไปหลัง</div>
+          <div class="mc-opts" id="m4">
+            <div class="mc-opt" onclick="pickMC('m4',0,1,'ความเร็วไม่เกี่ยว ทั้งสองทางอ่านครบทุกตัวเท่ากัน')"><span class="mc-ltr">A</span>เพราะเร็วกว่า</div>
+            <div class="mc-opt" onclick="pickMC('m4',1,1,'ถูก! ใน prefix ตัวดำเนินการอยู่หน้าลูกของมัน ถ้าอ่านจากหน้าจะเจอตัวดำเนินการตอนที่ลูกยังไม่ถูกสร้าง — อ่านจากหลังทำให้ลูกพร้อมอยู่ในสแตคก่อนเสมอ')"><span class="mc-ltr">B</span>เพราะต้องมีลูกทั้งสองอยู่ในสแตคก่อน จึงจะประกอบโหนดได้</div>
+            <div class="mc-opt" onclick="pickMC('m4',2,1,'ไม่เกี่ยวกับ postfix — postfix ต่างหากที่อ่านจากหน้าไปหลัง')"><span class="mc-ltr">C</span>เพราะ prefix กับ postfix กลับด้านกันเสมอ</div>
+          </div>
+          <div class="ex-feedback" id="m4-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 11 ข้อ 3 เฉลย -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ข้อ 3 · เฉลย</div>
+    <h2 class="slide-title">โค้ดเต็ม — สร้างต้นไม้ + พิมพ์ Infix + คำนวณ</h2>
+    <div class="two-col">
+      <div>
+        <span class="lang">C</span>
+        <pre class="code-block"><span class="cm">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;stdlib.h&gt;</span>
+<span class="cm">#include</span> <span class="st">&lt;string.h&gt;</span>
+
+<span class="kw">struct</span> Treenode {
+    <span class="kw">char</span> data;
+    <span class="kw">struct</span> Treenode *leftChild, *rightChild;
+};
+
+<span class="kw">struct</span> Treenode* createNode(<span class="kw">char</span> data) {
+    <span class="kw">struct</span> Treenode *n = malloc(<span class="kw">sizeof</span>(<span class="kw">struct</span> Treenode));
+    n-&gt;data = data;
+    n-&gt;leftChild = n-&gt;rightChild = NULL;
+    <span class="kw">return</span> n;
+}
+
+<span class="kw">int</span> isOperator(<span class="kw">char</span> c) {
+    <span class="kw">return</span> c==<span class="st">'+'</span>||c==<span class="st">'-'</span>||c==<span class="st">'*'</span>||c==<span class="st">'/'</span>;
+}
+
+<span class="cm">// พิมพ์ infix พร้อมวงเล็บ</span>
+<span class="kw">void</span> infix(<span class="kw">struct</span> Treenode *r) {
+    <span class="kw">if</span> (r == NULL) <span class="kw">return</span>;
+    <span class="kw">if</span> (!isOperator(r-&gt;data)) {      <span class="cm">// เป็นเลข</span>
+        printf(<span class="st">"%c"</span>, r-&gt;data);
+        <span class="kw">return</span>;
+    }
+    printf(<span class="st">"("</span>);                     <span class="cm">// เปิดวงเล็บ</span>
+    infix(r-&gt;leftChild);
+    printf(<span class="st">"%c"</span>, r-&gt;data);
+    infix(r-&gt;rightChild);
+    printf(<span class="st">")"</span>);                     <span class="cm">// ปิดวงเล็บ</span>
+}
+
+<span class="cm">// คำนวณค่าของต้นไม้</span>
+<span class="kw">int</span> evaluate(<span class="kw">struct</span> Treenode *r) {
+    <span class="kw">if</span> (!isOperator(r-&gt;data))
+        <span class="kw">return</span> r-&gt;data - <span class="st">'0'</span>;         <span class="cm">// ตัวอักษร → ตัวเลข</span>
+    <span class="kw">int</span> a = evaluate(r-&gt;leftChild);
+    <span class="kw">int</span> b = evaluate(r-&gt;rightChild);
+    <span class="kw">switch</span> (r-&gt;data) {
+        <span class="kw">case</span> <span class="st">'+'</span>: <span class="kw">return</span> a + b;
+        <span class="kw">case</span> <span class="st">'-'</span>: <span class="kw">return</span> a - b;
+        <span class="kw">case</span> <span class="st">'*'</span>: <span class="kw">return</span> a * b;
+        <span class="kw">default</span> : <span class="kw">return</span> a / b;
+    }
+}
+
+<span class="kw">int</span> main() {
+    <span class="kw">char</span> s[<span class="nu">51</span>];
+    <span class="kw">struct</span> Treenode *st[<span class="nu">51</span>];   <span class="cm">// สแตคของโหนด</span>
+    <span class="kw">int</span> top = <span class="nu">0</span>;
+
+    scanf(<span class="st">"%s"</span>, s);
+    <span class="cm">// อ่านจากหลังมาหน้า</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i = strlen(s) - <span class="nu">1</span>; i &gt;= <span class="nu">0</span>; i--) {
+        <span class="kw">struct</span> Treenode *n = createNode(s[i]);
+        <span class="kw">if</span> (isOperator(s[i])) {
+            n-&gt;leftChild  = st[--top];   <span class="cm">// pop ตัวแรก = ซ้าย</span>
+            n-&gt;rightChild = st[--top];   <span class="cm">// pop ตัวสอง = ขวา</span>
+        }
+        st[top++] = n;                   <span class="cm">// push</span>
+    }
+
+    <span class="kw">struct</span> Treenode *Root = st[--top];
+    infix(Root);
+    printf(<span class="st">"=%d\n"</span>, evaluate(Root));
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</pre>
+      </div>
+      <div>
+        <div class="code-label">ผลลัพธ์จริง ครบทั้ง 3 ตัวอย่างของโจทย์ (รันแล้ว)</div>
+        <div class="io">input  : ++7*626
+output : ((7+(6*2))+6)=25
+
+input  : +**/93567
+output : ((((9/3)*5)*6)+7)=97
+
+input  : *+*54/62-73
+output : (((5*4)+(6/2))*(7-3))=92</div>
+        <div class="exam">✅ ตรงกับตารางตัวอย่างในใบ lab ทั้ง 3 แถว</div>
+        <div class="exam">🔑 <b>ฟังก์ชัน infix() คือ inorder ที่เติมวงเล็บ</b><br>
+        โครงเหมือน inorder เป๊ะ (ซ้าย → ราก → ขวา) เพิ่มแค่<b>พิมพ์ "(" ก่อน และ ")" หลัง เฉพาะตอนที่โหนดเป็นตัวดำเนินการ</b><br>
+        ถ้าใส่วงเล็บให้ทุกโหนดรวมทั้งเลข จะได้ <span style="font-family:monospace">((7)+((6)*(2)))</span> ซึ่งผิดรูปแบบที่โจทย์ต้องการ</div>
+        <div class="exam">💡 <b><span style="font-family:monospace">r-&gt;data − '0'</span> คืออะไร</b> — แปลงตัวอักษรเป็นตัวเลข เช่น <span style="font-family:monospace">'7' − '0'</span> ได้ 7 เพราะรหัส ASCII ของเลขเรียงติดกัน · ถ้าลืมลบ จะได้ 55 แทน 7</div>
+        <div class="exercise">
+          <div class="ex-q">เติมคำตอบ: นิพจน์ prefix <span style="font-family:monospace">-*234</span> จะให้ผลลัพธ์เท่าไร</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in5" placeholder="ตอบเป็นตัวเลข">
+            <button class="ex-btn" onclick="checkFill('in5','2',['=2'],['10','-2'],'อ่านจากหลัง: push 4, push 3, เจอ * → (2*3)... ระวัง! ลำดับคือ pop 2 ก่อนเป็นซ้าย · ได้ ((2*3)-4) = 2','สร้างต้นไม้ก่อน: ราก − ลูกซ้ายคือ (2*3) ลูกขวาคือ 4')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb5"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 12 ใบฝึกหัด ข้อเขียน 1-2 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ใบแบบฝึกหัด · ข้อเขียน</div>
+    <h2 class="slide-title">ข้อ 1–2: แปลงนิพจน์ 3 แบบ + วาดอาเรย์</h2>
+    <div class="two-col">
+      <div>
+        <div class="exam">📄 <b>หมายเหตุ:</b> รูปต้นไม้ในใบแบบฝึกหัดของอาจารย์เป็นรูปภาพ อ่านออกมาเป็นข้อความไม่ได้ จึงใช้<b>ต้นไม้ที่เทียบเท่ากัน</b>มาฝึกแทน — วิธีทำเหมือนกันทุกประการ</div>
+        <div class="code-label">ต้นไม้ฝึก (ใช้รูปที่ 1 ของ Lab)</div>
+        <div class="diagram">          +
+        ╱   ╲
+      *       d
+    ╱   ╲
+   a     +
+       ╱   ╲
+      b     c</div>
+        <div class="ans">
+          <span class="h">เฉลย ข้อ 1</span>
+          <b>Prefix</b> (preorder: ราก ซ้าย ขวา)<br>
+          <span style="font-family:monospace">+ * a + b c d</span><br><br>
+          <b>Infix</b> (inorder: ซ้าย ราก ขวา)<br>
+          <span style="font-family:monospace">a * b + c + d</span> &nbsp; <small>(เขียนแบบมีวงเล็บ: <span style="font-family:monospace">((a*(b+c))+d)</span>)</small><br><br>
+          <b>Postfix</b> (postorder: ซ้าย ขวา ราก)<br>
+          <span style="font-family:monospace">a b c + * d +</span>
+        </div>
+        <div class="exam">⚠️ <b>Infix ที่ได้จาก inorder ตรงๆ จะไม่มีวงเล็บ</b> ทำให้อ่านกำกวม — ถ้าโจทย์ไม่ได้ห้าม ให้<b>ใส่วงเล็บไปด้วย</b> แล้วหมายเหตุไว้ จะปลอดภัยกว่า</div>
+      </div>
+      <div>
+        <div class="code-label">วิธีทำที่ห้ามข้าม — ไล่ทีละโหนดด้วยปากกา</div>
+        <div class="prob">
+          ① เขียนหัวข้อ 3 บรรทัดไว้ก่อน: Prefix / Infix / Postfix<br>
+          ② ไล่ <b>preorder</b> โดย<b>ใช้นิ้วจิ้มโหนด</b> แล้วเขียนทันทีที่ผ่าน ห้ามคิดในหัว<br>
+          ③ ทำซ้ำกับ inorder และ postorder <b>ทีละรอบ ไม่ทำพร้อมกัน</b><br>
+          ④ ตรวจ: ทั้ง 3 แบบต้องมีตัวอักษร<b>ครบเท่ากัน</b> และ<b>เรียงตัวถูกดำเนินการ (a b c d) เหมือนกันทุกแบบ</b>
+        </div>
+        <div class="exam">🔑 <b>ข้อ ④ คือวิธีจับผิดตัวเอง</b> — ถ้าลำดับ a b c d สลับ แปลว่าไล่ต้นไม้ผิด ไม่ต้องรอครูตรวจ</div>
+        <div class="ans">
+          <span class="h">เฉลย ข้อ 2 — วาดอาเรย์</span>
+          <div class="diagram" style="background:#fff;border:1px solid #86efac">index  0  1  2  3  4  5  6
+  T   [+][*][d][a][+][ ][ ]
+
+index  7  8  9 10
+  T   [ ][ ][b][c]</div>
+          ราก + อยู่ช่อง 0 · ลูกของช่อง k อยู่ที่ 2k+1 และ 2k+2<br>
+          โหนด + ตัวล่างอยู่ช่อง 4 → ลูกคือช่อง 9 และ 10
+        </div>
+        <div class="exercise">
+          <div class="ex-q">จากอาเรย์ข้างบน โหนด 'c' อยู่ช่อง index เท่าไร</div>
+          <div class="ex-input-row">
+            <input class="ex-input" id="in6" placeholder="ตอบเป็นตัวเลข">
+            <button class="ex-btn" onclick="checkFill('in6','10',['index 10'],['6','5'],'c เป็นลูกขวาของ + ที่อยู่ช่อง 4 → 2(4)+2 = 10','หาช่องของโหนดแม่ก่อน (+ ตัวล่างอยู่ช่อง 4) แล้วใช้สูตร 2k+2')">ตรวจ</button>
+          </div>
+          <div class="ex-feedback" id="fb6"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 13 ใบฝึกหัด ข้อ 3 -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">ใบแบบฝึกหัด · ข้อเขียน</div>
+    <h2 class="slide-title">ข้อ 3: อธิบายฟังก์ชัน xxx() + บอกผลลัพธ์</h2>
+    <div class="two-col">
+      <div>
+        <span class="tag w">โจทย์ข้อเขียน</span>
+        <pre class="code-block"><span class="kw">int</span> xxx(<span class="kw">struct</span> Treenode * r)
+{
+    <span class="kw">if</span> (r == NULL)
+         <span class="kw">return</span> <span class="nu">0</span>;
+    <span class="kw">return</span> <span class="nu">1</span> + xxx(r-&gt;leftChild) + xxx(r-&gt;rightChild);
+}</pre>
+        <div class="prob">
+          <b>3.1</b> อธิบายการทำงานของฟังก์ชันนี้ พร้อมระบุว่าใช้ทำอะไร<br>
+          <b>3.2</b> ถ้าเพิ่มฟังก์ชันนี้ในโปรแกรมข้อ 2 แล้วเพิ่ม <span style="font-family:monospace">printf("%d\n",xxx(Root));</span> ใน main จะแสดงผลอะไร
+        </div>
+        <div class="ans">
+          <span class="h">เฉลย 3.1 — ตัวอย่างคำตอบที่เขียนส่งได้เลย</span>
+          ฟังก์ชัน <span style="font-family:monospace">xxx</span> รับตัวชี้ไปยังโหนดรากของต้นไม้ แล้วทำงานแบบ<b>เวียนเกิด (recursive)</b><br>
+          <b>เงื่อนไขหยุด:</b> ถ้าตัวชี้ที่รับมาเป็น NULL แสดงว่าไม่มีโหนด จึงคืนค่า 0<br>
+          <b>กรณีทั่วไป:</b> คืนค่า 1 (นับตัวเอง) บวกกับผลของการเรียกตัวเองที่<b>ต้นไม้ย่อยทางซ้าย</b> และ<b>ต้นไม้ย่อยทางขวา</b><br>
+          ดังนั้นทุกโหนดในต้นไม้จะถูกนับคนละ 1 ครั้ง<br>
+          <b>สรุป:</b> ฟังก์ชันนี้ใช้<b>นับจำนวนโหนดทั้งหมดในต้นไม้ทวิภาค</b>
+        </div>
+        <div class="ans">
+          <span class="h">เฉลย 3.2</span>
+          ต้นไม้ในข้อ 2 (รูปที่ 1) มีโหนด <span style="font-family:monospace">+ , * , d , a , + , b , c</span> รวม <b>7</b> โหนด<br>
+          ผลลัพธ์ทางจอภาพจึงเป็น <b>7</b> <small>(ตรวจด้วยการรันจริงแล้ว)</small>
+        </div>
+      </div>
+      <div>
+        <div class="exam">🔑 <b>สูตรเขียนตอบ "อธิบายการทำงานของฟังก์ชัน" — ใช้ได้ทุกข้อ</b><br>
+        เขียน 4 บรรทัดนี้เสมอ ไม่ต้องคิดคำเอง:<br>
+        <b>บรรทัด 1</b> — ฟังก์ชันนี้รับอะไรเข้ามา<br>
+        <b>บรรทัด 2</b> — เงื่อนไขหยุดคืออะไร คืนค่าอะไร<br>
+        <b>บรรทัด 3</b> — กรณีทั่วไปทำอะไร เรียกตัวเองกับอะไรบ้าง<br>
+        <b>บรรทัด 4</b> — สรุปเป็นประโยคเดียวว่า "ใช้ทำอะไร"<br>
+        คะแนนส่วนใหญ่อยู่ที่บรรทัด 4 แต่บรรทัด 1–3 คือสิ่งที่ทำให้กรรมการเชื่อว่าเข้าใจจริง</div>
+        <div class="exam">📝 <b>เทคนิคเดาว่าฟังก์ชันใช้ทำอะไร ภายใน 30 วินาที</b><br>
+        ดูว่า<b>คืนค่าอะไร</b>: คืน <span style="font-family:monospace">1 + ซ้าย + ขวา</span> = <b>นับจำนวน</b> · คืน <span style="font-family:monospace">1 + max(ซ้าย, ขวา)</span> = <b>หาความสูง</b> · คืน <span style="font-family:monospace">data + ซ้าย + ขวา</span> = <b>หาผลรวมค่าในโหนด</b><br>
+        ตัวเลขที่บวกเข้าไปบอกทุกอย่าง — ถ้าบวก 1 คือนับโหนด ถ้าบวกค่าในโหนดคือรวมค่า</div>
+        <div class="exercise">
+          <div class="ex-q">ถ้าเปลี่ยนบรรทัดสุดท้ายเป็น <span style="font-family:monospace">return 1 + (ซ้าย &gt; ขวา ? ซ้าย : ขวา);</span> ฟังก์ชันจะใช้ทำอะไร</div>
+          <div class="mc-opts" id="m5">
+            <div class="mc-opt" onclick="pickMC('m5',0,1,'การนับโหนดต้องบวกผลของทั้งสองข้าง ไม่ใช่เลือกข้างที่มากกว่า')"><span class="mc-ltr">A</span>นับจำนวนโหนดเหมือนเดิม</div>
+            <div class="mc-opt" onclick="pickMC('m5',1,1,'ถูก! เลือกกิ่งที่ลึกกว่าแล้วบวก 1 ต่อหนึ่งระดับ = ความสูงของต้นไม้')"><span class="mc-ltr">B</span>หาความสูงของต้นไม้</div>
+            <div class="mc-opt" onclick="pickMC('m5',2,1,'การนับใบต้องเช็คว่าโหนดไม่มีลูกทั้งสองข้าง ซึ่งโค้ดนี้ไม่ได้เช็ค')"><span class="mc-ltr">C</span>นับจำนวนใบ (leaf)</div>
+          </div>
+          <div class="ex-feedback" id="m5-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 14 เช็คตัวเอง -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body">
+    <div class="slide-eyebrow">เช็คตัวเองก่อนส่ง</div>
+    <h2 class="slide-title">ตรวจ 8 ข้อนี้ ถ้าผ่านหมดแปลว่า Lab 8 ใช้ได้</h2>
+    <div class="two-col">
+      <div>
+        <table class="t">
+          <thead><tr><th>#</th><th>ต้องทำได้</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>เขียนสูตร 2k+1 / 2k+2 / (k−1)/2 ได้โดยไม่เปิดสมุด</td></tr>
+            <tr><td>2</td><td>บอกได้ว่าทำไม isLeft ต้องมีเงื่อนไข k &gt; 0</td></tr>
+            <tr><td>3</td><td>เขียน SetLeft ครบทั้ง 2 เงื่อนไข (Overflow / Inused)</td></tr>
+            <tr><td>4</td><td>บอกผลลัพธ์ข้อ 1 ได้ครบ 9 บรรทัด รวมช่องว่าง</td></tr>
+            <tr><td>5</td><td>เขียน createNode ที่ตั้งลูกทั้งสองเป็น NULL</td></tr>
+            <tr><td>6</td><td>เขียน preorder / postorder จากความจำได้</td></tr>
+            <tr><td>7</td><td>สร้างต้นไม้รูปที่ 3 แล้ว preorder ออกมาตรงเฉลย</td></tr>
+            <tr><td>8</td><td>อธิบาย xxx() ด้วยสูตร 4 บรรทัดได้</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="exam">🧪 <b>วิธีเทสต์โปรแกรมก่อนส่ง</b><br>
+        ① <b>ข้อ 2</b> — preorder ต้องได้ <span style="font-family:monospace">+ * a + b c d</span> เป๊ะ ถ้าได้ไม่ครบ 7 ตัวแปลว่าต่อโหนดผิด<br>
+        ② <b>ข้อ 3</b> — ลองทั้ง 3 input ที่โจทย์ให้ ต้องได้ 25 / 97 / 92<br>
+        ③ ถ้าโปรแกรมเด้ง (crash) ให้ดู createNode ก่อนเสมอ — 90% มาจากลืมตั้ง NULL</div>
+        <div class="exam">⏱️ <b>ถ้าเวลาเหลือน้อยในห้องแลป ทำตามลำดับนี้</b><br>
+        ข้อ 1 ก่อน (สั้นที่สุด ได้คะแนนเร็ว) → ข้อ 2 ส่วน createNode/SetLeft/SetRight → preorder/postorder → ค่อยไปข้อ 3<br>
+        <b>ข้อ 3 ยากสุด อย่าเริ่มจากข้อนี้</b></div>
+        <div class="exam">📌 <b>สิ่งที่ต้องส่งตามใบ lab</b> — ข้อ 2 อาจารย์ให้<b>ส่งโปรแกรมของตัวอย่างที่ 3</b> (รูปที่ 3) ไม่ใช่รูปที่ 1 · อย่าส่งผิดไฟล์</div>
+        <div class="exercise">
+          <div class="ex-q">ถ้า preorder พิมพ์ออกมาได้แค่ <span style="font-family:monospace">+ * a</span> แล้วหยุด น่าจะเกิดจากอะไร</div>
+          <div class="mc-opts" id="m6">
+            <div class="mc-opt" onclick="pickMC('m6',0,2,'ถ้าลืมเคสหยุด โปรแกรมจะพังหรือวนไม่จบ ไม่ใช่หยุดเงียบๆ กลางคัน')"><span class="mc-ltr">A</span>ลืมใส่ if (r != NULL)</div>
+            <div class="mc-opt" onclick="pickMC('m6',1,2,'printf อยู่ผิดที่จะทำให้ลำดับเปลี่ยน แต่ยังพิมพ์ครบทุกตัว')"><span class="mc-ltr">B</span>วาง printf ผิดตำแหน่ง</div>
+            <div class="mc-opt" onclick="pickMC('m6',2,2,'ถูก! พิมพ์ได้ถึง a แล้วหยุด แปลว่าต้นไม้ขาดตรงลูกขวาของ * — น่าจะลืม SetRight(pn,'+') หรือเลื่อน pn ผิดโหนด')"><span class="mc-ltr">C</span>ต่อโหนดไม่ครบตอนสร้างต้นไม้ใน main</div>
+          </div>
+          <div class="ex-feedback" id="m6-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 15 สรุป -->
+<div class="slide">
+  <div class="slide-strip"></div>
+  <div class="slide-body center">
+    <div class="summary-wrap">
+      <div class="summary-icon">🌳</div>
+      <div class="summary-title">สรุป Lab 8 — Binary Tree</div>
+      <div class="summary-grid">
+        <div class="sum-card"><div class="sum-head">สูตรอาเรย์</div><div class="sum-body">ลูกซ้าย 2k+1 · ลูกขวา 2k+2 · แม่ (k−1)/2 · คี่=ลูกซ้าย คู่=ลูกขวา (k&gt;0)</div></div>
+        <div class="sum-card"><div class="sum-head">SetLeft / SetRight</div><div class="sum-body">เช็ค 2 ชั้น: index &lt; MAXTREE (Overflow) แล้วค่อย T[index]=='\0' (Inused)</div></div>
+        <div class="sum-card"><div class="sum-head">createNode</div><div class="sum-body">malloc แล้ว<b>ต้องตั้งลูกทั้งสองเป็น NULL</b> ไม่งั้นรันแล้วพัง</div></div>
+        <div class="sum-card"><div class="sum-head">3 การท่อง</div><div class="sum-body">ต่างกันแค่ตำแหน่ง printf · pre=Prefix · in=Infix · post=Postfix</div></div>
+        <div class="sum-card"><div class="sum-head">Prefix → Tree</div><div class="sum-body">อ่านจากหลังมาหน้า · เลข push · ตัวดำเนินการ pop 2 (ตัวแรก=ซ้าย)</div></div>
+        <div class="sum-card"><div class="sum-head">ข้อเขียน</div><div class="sum-body">อธิบายฟังก์ชันด้วย 4 บรรทัด: รับอะไร · หยุดเมื่อไร · ทำอะไรซ้ำ · สรุปใช้ทำอะไร</div></div>
+      </div>
+      <a href="index.html" class="summary-next">→ กลับหน้าติวสอบ Final Data Structures</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<div class="nav">
+  <a class="home-btn" href="index.html">🏠 Home</a>
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>← Back</button>
+  <div class="nav-prog-wrap">
+    <div class="nav-meta">
+      <span class="nav-counter" id="counter">1 / 16</span>
+      <span class="nav-chapter" id="chapterLabel">แบบฝึกหัด Lab 8 — Binary Tree</span>
+    </div>
+    <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" onclick="go(1)">Next →</button>
+</div>
+
+<script>
+const TITLES = ['Cover','Lab 8 มีอะไรบ้าง','ข้อ 1 โจทย์','A · LeftNode/RightNode/MotherNode','B · isLeft/isRight','C · SetLeft/SetRight','ข้อ 1 ผลลัพธ์ + อาเรย์','D · createNode/SetLeft/SetRight','E · preorder/postorder','F · รูปที่ 2 และ 3','ข้อ 3 วิธีคิด','ข้อ 3 เฉลยโค้ด','ข้อเขียน 1-2','ข้อเขียน 3 · xxx()','เช็คตัวเอง','สรุป'];
+</script>
+<script src="../slide-engine.js"></script>
+</body>
+</html>
